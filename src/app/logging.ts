@@ -42,4 +42,4 @@ export function configure(app, config) {
 
   // setup the logger
   app.use(morgan('combined', {stream: accessLogStream}))
-};
+}
