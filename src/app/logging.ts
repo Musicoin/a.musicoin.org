@@ -7,6 +7,19 @@ const path = require('path');
 // keep only 3 rotated files and compress (gzip) them.
 const defaultRotationConfig = {schedule: '5m', size: '10m', compress: true, count: 3};
 
+interface RotationConfig {
+  schedule: string,
+  size: string,
+  compress: boolean,
+  count: number
+}
+
+interface LogConfig {
+  logDirectory: string,
+  logFileName: string,
+  rotationConfig: RotationConfig
+}
+
 /**
  *
  * @param app
@@ -18,7 +31,7 @@ const defaultRotationConfig = {schedule: '5m', size: '10m', compress: true, coun
  * }
  */
   // use the global rotator
-export function configure(app, config) {
+export function configure(app, config: LogConfig) {
   const logDirectory = config.logDirectory;
   const logFileName = config.logFileName;
   const logFile = path.join(logDirectory, logFileName);
@@ -38,7 +51,7 @@ export function configure(app, config) {
   // ensure log directory exists
   fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
   // create a write stream (in append mode)
-  const accessLogStream = fs.createWriteStream(config.logFileName, {flags: 'a'})
+  const accessLogStream = fs.createWriteStream(logFile, {flags: 'a'})
 
   // setup the logger
   app.use(morgan('combined', {stream: accessLogStream}))

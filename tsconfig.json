@@ -2,7 +2,8 @@
   "compilerOptions": {
     "module": "commonjs",
     "allowJs": true,
-    "target": "es5"
+    "target": "es6",
+    "sourceMap": true
   },
   "include": [
     "./src/**/*"

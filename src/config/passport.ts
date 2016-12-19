@@ -4,11 +4,15 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 // load up the user model
 const User = require('../app/models/user');
-
-const configAuth = require('./auth');
+const defaultProfile = {
+  artistName: "",
+  description: "Say something interesting about yourself",
+  social: {google:"something"},
+  image: "/images/default-profile.jpeg"
+};
 
 // expose this function to our app using module.exports
-export function configure(passport: Passport) {
+export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
   // =========================================================================
   // passport session setup ==================================================
@@ -24,7 +28,9 @@ export function configure(passport: Passport) {
   // used to deserialize the user
   passport.deserializeUser(function (id, done) {
     User.findById(id, function (err, user) {
-      done(err, user);
+      if (err) return done(err, null);
+      user.profile = Object.assign(defaultProfile, user.draftProfile);
+      done(null, user);
     });
   });
 

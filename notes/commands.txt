@@ -1,0 +1,7 @@
+# Startup Mongo DB
+cd C:\Program Files\MongoDB\Server\3.4\bin
+mongod.exe
+
+cd C:\tmp\geth-build\bin
+geth --identity Musicoin --networkid 55313717 --datadir C:/Users/Dan/.musicoin/chain --rpc --rpcapi=db,eth,net,web3,personal,miner --rpcport 8545 --rpcaddr 127.0.0.1 --rpccorsdomain localhost console
+admin.addPeer("enode://ba2f6409f9894c12f5aad3471b9c4a2e7999b246af775c39f99d85b020cfc95d0b0dc6dd0985895bb2c4149cb45e4a3c17f7585be326cec293176bf81802a987@104.196.160.105:30303")

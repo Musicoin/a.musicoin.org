@@ -3,38 +3,113 @@
 <head>
     <title>Node Authentication</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/profile/profile.css">
     <style>
-        body        { padding-top:80px; word-wrap:break-word; }
+        body        { word-wrap:break-word; }
+        .profile-image {
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        .social-group {
+            display: flex;
+            flex-direction: column;
+        }
+        input.form-control  {
+            width: 230px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
 
     <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+        <h1>Profile Page</h1>
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
     </div>
 
-    <div class="row">
-
-        <!-- LOCAL INFORMATION -->
+    <div>
         <div class="col-sm-6">
             <div class="well">
-                <h3><span class="fa fa-user"></span> Local</h3>
-
-                <% if (user.local.email) { %>
-                <p>
-                    <strong>email</strong>: <%= user.local.email %><br>
-                </p>
-
-                <a href="/unlink/local" class="btn btn-default">Unlink</a>
-                <% } else { %>
-                <a href="/connect/local" class="btn btn-default">Connect Local</a>
-                <% } %>
+                <h3><span class="fa fa-user"></span> Public Profile</h3>
+                <form id=profileForm action="/profile/save" enctype="multipart/form-data" method="post">
+                    <div class="form-group profile-image">
+                        <img id="profileImage" style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"  src="<%=user.profile.image%>">
+                        (click to change)
+                        <input style="display: none" id="imageInput" type="file" name="photo">
+                    </div>
+                    <div class="form-group">
+                        <label>Artist Name</label>
+                        <input type="text" class="form-control" name="artistName" value="<%=user.profile.artistName%>">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" name="description"><%= user.profile.description %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Social</label>
+                        <table class="social-group">
+                            <%
+                            var socialTypes = [
+                                {id: "google", icon:"fa-google-plus"},
+                                "facebook", "twitter",
+                                {id: "soundcloud", name: "sound cloud"}, "linkedin", "youtube",
+                                {id: "reverbnation", icon:"fa-star", name: "reverb nation"},
+                                "pinterest", "instagram", "medium"
+                            ]
+                            for (var i=0; i < socialTypes.length; i++) {
+                              var item = socialTypes[i];
+                              if (typeof item == "string") {
+                                item = {id: item};
+                              }
+                              var value = user.profile && user.profile.social ? user.profile.social[item.id] : "";
+                              var name = item.name ? item.name : item.id;
+                              var icon = item.icon ? item.icon : "fa-" + item.id;
+                            %>
+                                <tr>
+                                    <td><span class="fa <%=icon%>"></span></td>
+                                    <td><input type="text" class="form-control" name="social.<%=item.id%>" value="<%=value%>" placeholder="<%=name%>"></td>
+                                </tr>
+                            <%}%>
+                        </table>
+                    </div>
+                    <div style="display:flex; justify-content: flex-end">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <%= (user.pendingTx || user.profileAddress) ? "Update" : "Publish" %>
+                        </button>
+                    </div>
+                    <% if (user.pendingTx) {%>
+                    <div>
+                        Waiting for confirmation (<%=user.pendingTx%>)
+                    </div>
+                    <% }  %>
+                </form>
 
             </div>
         </div>
+    </div>
+
+    <div class="row">
+        <!-- LOCAL INFORMATION -->
+        <!--<div class="col-sm-6">-->
+            <!--<div class="well">-->
+                <!--<h3><span class="fa fa-user"></span> Local</h3>-->
+
+                <!--<% if (user.local.email) { %>-->
+                <!--<p>-->
+                    <!--<strong>email</strong>: <%= user.local.email %><br>-->
+                <!--</p>-->
+
+                <!--<a href="/unlink/local" class="btn btn-default">Unlink</a>-->
+                <!--<% } else { %>-->
+                <!--<a href="/connect/local" class="btn btn-default">Connect Local</a>-->
+                <!--<% } %>-->
+
+            <!--</div>-->
+        <!--</div>-->
 
         <div class="col-sm-6">
             <div class="well">
@@ -54,9 +129,102 @@
 
             </div>
         </div>
+        <% if (user.profileAddress) {%>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="text-success"><span class="fa fa-music"></span> Upload</h3>
+                You can release multiple tracks at the same time.
+                <form id=profileForm action="/tracks/release" enctype="multipart/form-data" method="post">
+                    <% for (let i=0; i < 5; i++) {
+                        const rowId = `track${i}`;
+                        const displayId = rowId + "_imageDisplay";
+                    %>
+                    <div style="display: flex; padding: 10px;">
+                        <img onclick="<%=rowId%>_image.click()" id="<%=displayId%>" style="cursor:pointer; width: 96px; height: 96px; object-fit: contain">
+                        <div style="display:flex; flex-direction: column; height:100px; justify-content: space-around; padding-left: 10px">
+                            <input type="text" class="form-control" name="<%=rowId%>.title" placeholder="title">
+                            <label style="cursor: pointer" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>
+                            <input style="display: none" onchange="updateAudioLabel('<%=rowId%>_audioLabel', this.id)" id="<%=rowId%>_audio" type="file" name="<%=rowId%>.audio">
+                            <input style="display: none" onchange="updateImageDisplay('<%=displayId%>', this.id)" id="<%=rowId%>_image" type="file" name="<%=rowId%>.image">
+                        </div>
+                    </div>
+                    <%}%>
+                    <div style="display:flex; justify-content: flex-end">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            Release
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="text-success"><span class="fa fa-music"></span> Pending</h3>
+                <% for (var i=0; i < user.pendingReleases.length; i++) {%>
+                    <div><%=user.pendingReleases[i].title%></div>
+                <%}%>
+
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="text-success"><span class="fa fa-music"></span> Releases</h3>
+                <% for (var i=0; i < user.releases.length; i++) {%>
+                <div><%=user.releases[i]%></div>
+                <%}%>
+
+            </div>
+        </div>
+
+        <%} else {%>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="text-success"><span class="fa fa-music"></span> Release</h3>
+                Once you publish a profile, you can release songs here.
+            </div>
+        </div>
+        <%}%>
     </div>
 
 </div>
 </body>
+<script src="js/jquery-3.1.1.js"></script>
+<script>
+  $( document ).ready(function() {
+    $("#imageInput").change(function(){
+      readURL('profileImage', this);
+    });
+
+    $("#profileImage").click(function() {
+      $("#imageInput").click();
+    })
+  });
+  function readURL(targetId, input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        $('#' + targetId).attr('src', e.target.result);
+      }
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function updateImageDisplay(targetId, inputId) {
+    readURL(targetId, $('#' + inputId)[0]);
+  }
+
+  function updateAudioLabel(targetId, inputId) {
+    $('#' + targetId)[0].innerText = $('#' + inputId)[0].files[0].name;
+  }
+
+  function publishProfile() {
+    $.post("/profile/publish/", {}, function(data,status,xhr) {
+      alert("Publish initiated: " + data.tx);
+    }, "json")
+  }
+</script>
 </html>
