@@ -18,6 +18,8 @@ const musicoinApi = new MusicoinAPI(config.musicoinApi);
 const MediaProvider = require('./media/media-provider');
 const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
 
+console.log("Client ID: " + process.env.GOOGLE_CLIENT_ID);
+
 app.set('port', process.env.PORT || config.port || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
