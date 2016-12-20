@@ -133,9 +133,8 @@
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="text-success"><span class="fa fa-music"></span> Upload</h3>
-                You can release multiple tracks at the same time.
                 <form id=profileForm action="/tracks/release" enctype="multipart/form-data" method="post">
-                    <% for (let i=0; i < 5; i++) {
+                    <% for (let i=0; i < 1; i++) {
                         const rowId = `track${i}`;
                         const displayId = rowId + "_imageDisplay";
                     %>
@@ -158,6 +157,7 @@
             </div>
         </div>
 
+        <% if (user.pendingReleases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="text-success"><span class="fa fa-music"></span> Pending</h3>
@@ -167,7 +167,9 @@
 
             </div>
         </div>
+        <%}%>
 
+        <% if (user.releases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="text-success"><span class="fa fa-music"></span> Releases</h3>
@@ -177,6 +179,7 @@
 
             </div>
         </div>
+        <%}%>
 
         <%} else {%>
         <div class="col-sm-6">

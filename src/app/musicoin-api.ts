@@ -92,7 +92,7 @@ export class MusicoinAPI {
           console.log(err);
           return reject(err);
         }
-        resolve(body.profileAddress);
+        resolve(body.tx);
       });
     }.bind(this));
   }

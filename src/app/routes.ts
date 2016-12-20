@@ -314,7 +314,7 @@ function resolvePendingTx(musicoinApi: MusicoinAPI) {
         .then(function(allResults) {
           console.log("resolved promises, saving to db");
           req.user.pendingReleases = stillPending;
-          req.user.releases.concat(newReleases);
+          req.user.releases = newReleases.concat(req.user.releases);
           req.user.save(function(err) {
             if (err) console.log(err);
             next();
