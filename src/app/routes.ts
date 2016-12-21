@@ -275,7 +275,11 @@ function resolvePendingTx(musicoinApi: MusicoinAPI) {
           .then(function(result) {
             if (result.status == "complete") {
               req.user.pendingTx = "";
-              req.user.profileAddress = result.receipt.contractAddress;
+
+              // contract updates will not have a contractAddress in the receipt, just leave it alone
+              if (result.receipt.contractAddress) {
+                req.user.profileAddress = result.receipt.contractAddress;
+              }
             }
           }));
     }

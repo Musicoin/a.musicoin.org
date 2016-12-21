@@ -51,6 +51,6 @@ app.use(function(req, res) {
 
 
 app.listen(config.port, function () {
-  console.log("Client ID: " + process.env.GOOGLE_CLIENT_ID);
-  console.log('Listening on portx ' + config.port);
+  console.log('Listening on port ' + config.port);
+  console.log("loaded config: " + JSON.stringify(config, null, 2));
 });
