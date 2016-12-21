@@ -1,4 +1,6 @@
 const keyValueConfig = {
+  port: process.env.PORT || 3000,
+
   musicoinApiEndpoint: process.env.MUSICOIN_API_ENDPOINT || "http://localhost:8082",
   musicoinApiClientId: process.env.MUSICOIN_CLIENT_ID || "clientId",
   musicoinApiClientSecret: process.env.MUSICOIN_CLIENT_SECRET || "clientSecret",
@@ -13,11 +15,12 @@ const keyValueConfig = {
   authCallbackEndpoint: process.env.AUTH_CALLBACK_ENDPOINT || "http://localhost:3000",
   googleClientId: process.env.GOOGLE_CLIENT_ID || "yourClientId",
   googleClientSecret: process.env.GOOGLE_SECRET || "yourClientSecret",
+
 };
 
 
 const config = {
-  port: 3000,
+  port: keyValueConfig.port,
   sessionSecret: keyValueConfig.sessionSecret,
   loggingConfig: {
     logDirectory: 'logs',
