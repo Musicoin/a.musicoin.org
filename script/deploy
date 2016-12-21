@@ -1,0 +1,7 @@
+ssh coiner@104.199.112.49 <<EOF
+  cd ~/musicoin.org
+  git pull
+  npm install --production
+  forever restartall
+  exit
+EOF
