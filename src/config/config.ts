@@ -43,6 +43,8 @@ const config = {
     ipfsHost: keyValueConfig.ipfsReadEndpoint,
     apiHost: keyValueConfig.musicoinApiEndpoint,
     getProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
+    getLicenseDetails: `${keyValueConfig.musicoinApiEndpoint}/license/detail`,
+    getKey: `${keyValueConfig.musicoinApiEndpoint}/license/ppp`,
     getTransactionStatus: `${keyValueConfig.musicoinApiEndpoint}/tx/status`,
     publishProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
     releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,

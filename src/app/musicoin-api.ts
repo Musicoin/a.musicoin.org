@@ -1,11 +1,14 @@
 import {Promise} from 'bluebird';
 import * as request from 'request';
 import ReadableStream = NodeJS.ReadableStream;
-const StreamUtils = require("../media/stream-utils");
 
 interface MusicoinApiConfig {
   publishProfile: string,
   releaseLicense: string,
+  getKey: string,
+  getProfile: string,
+  getLicenseDetails: string,
+  getTransactionStatus: string,
   clientID: string,
   clientSecret: string
 }
@@ -14,31 +17,25 @@ export class MusicoinAPI {
   constructor(public apiConfig: MusicoinApiConfig) {
   }
 
-  getTransactionStatus(tx: string) {
-    return new Promise(function(resolve, reject) {
-      request({
-        url: this.apiConfig.getTransactionStatus + '/' + tx,
-        json: true
-      }, function(error, response, result) {
-        if (error) return reject(error);
-        resolve(result)
-      }.bind(this))
-    }.bind(this));
+  getKey(licenseAddress: string, clientId: string, clientSecret: string) {
+    // TODO: probably not the right way to pass clientSecret
+    return this.getJson(
+      this.apiConfig.getKey + '/' + licenseAddress, {
+        clientId: clientId,
+        clientSecret: clientSecret
+      });
   }
 
-  getProfile(profileAddress: string, pendingTransaction?: string) {
-    const properties = pendingTransaction ? {pendingTransaction: pendingTransaction} : {}
-    return new Promise(function(resolve, reject) {
-      request({
-        url: this.apiConfig.getProfile + '/' + profileAddress,
-        qs: properties,
-        json: true
-      }, function(error, response, result) {
-        if (error) return reject(error);
-        result.image = this.apiConfig.ipfsHost + result.image;
-        resolve(result)
-      }.bind(this))
-    }.bind(this));
+  getTransactionStatus(tx: string) {
+    return this.getJson(this.apiConfig.getTransactionStatus + '/' + tx);
+  }
+
+  getProfile(profileAddress: string) {
+    return this.getJson(this.apiConfig.getProfile + '/' + profileAddress);
+  }
+
+  getLicenseDetails(licenseAddress: string) {
+    return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress);
   }
 
   releaseTrack(profileAddress: string, title: string, imageUrl: string, metadataUrl: string, audioUrl: string, key: string) {
@@ -95,5 +92,21 @@ export class MusicoinAPI {
         resolve(body.tx);
       });
     }.bind(this));
+  }
+
+  getJson(url: string, properties?: any) {
+    return new Promise(function(resolve, reject) {
+      request({
+        url: url,
+        qs: properties,
+        json: true
+      }, function(error, response, result) {
+        if (error) {
+          console.log(`Request failed with ${error}, url: ${url}, properties: ${JSON.stringify(properties)}`);
+          return reject(error);
+        }
+        resolve(result)
+      })
+    });
   }
 }

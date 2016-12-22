@@ -2,8 +2,12 @@ import {MusicoinAPI} from './musicoin-api';
 import {Promise} from 'bluebird';
 import * as Formidable from 'formidable';
 import * as crypto from 'crypto';
+import {MusicoinHelper} from "./musicoin-helper";
+const User = require('../app/models/user');
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider) {
+
+  let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider);
 
   // =====================================
   // HOME PAGE (with login links) ========
@@ -49,6 +53,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   // process the signup form
   // app.post('/signup', do all our passport stuff here);
+
+
+  // =====================================
+  // PUBLIC ARTIST PROFILE SECTION =====================
+  // =====================================
+  app.get('/artist/:address', function (req, res, next) {
+    // find tracks for artist
+    User.findOne({profileAddress: req.params.address}, function (err, user) {
+      if (err) return next(err);
+      if (!user) return res.redirect("/"); //TODO: Show some "Not Found" page
+      mcHelper.getArtistProfileAndTracks(req.params.address, user.releases)
+        .then(function(artist) {
+          res.render('artist.ejs', {artist: artist});
+        })
+    })
+  });
+
 
   // =====================================
   // PROFILE SECTION =====================
@@ -223,6 +244,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     user.save(function(err) {
       res.redirect('/profile');
     });
+  });
+
+  app.get('/ppp/:address', function(req, res) {
+    const k = musicoinApi.getKey(req.params.address, "clientId", "clientSecret")
+    const l = musicoinApi.getLicenseDetails(req.params.address);
+    Promise.join(k, l, function(keyResponse, license) {
+      return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key);
+    })
+      .then(function(result) {
+        res.writeHead(200, result.headers);
+        result.stream.pipe(res);
+      })
+      .catch(function(err) {
+        console.error(err.stack);
+        res.status(500);
+        res.send(err);
+      });
   });
 
   function groupByPrefix(fields: any, prefix: string) {

@@ -84,14 +84,18 @@ MediaProvider.prototype.getIpfsResource = function(resourceUrl, keyProvider) {
     if (options.err) return reject(options.err);
 
     http.get(options.ipfsUrl, function (proxyRes) {
-      const headers = proxyRes.headers;
-      let stream = proxyRes;
-      stream = options.decrypt ? stream.pipe(crypto.createDecipher(algorithm, keyProvider())) : stream;
-      stream = options.unzip ? stream.pipe(zlib.createGunzip()) : stream;
-      resolve({
-        headers: headers,
-        stream: stream
-      });
+      try {
+        const headers = proxyRes.headers;
+        let stream = proxyRes;
+        stream = options.decrypt ? stream.pipe(crypto.createDecipher(algorithm, keyProvider())) : stream;
+        stream = options.unzip ? stream.pipe(zlib.createGunzip()) : stream;
+        resolve({
+          headers: headers,
+          stream: stream
+        });
+      } catch (e) {
+        reject(e);
+      }
     }).on('error', reject);
   }.bind(this));
 };

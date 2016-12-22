@@ -86,6 +86,11 @@
                         Waiting for confirmation (<%=user.pendingTx%>)
                     </div>
                     <% }  %>
+                    <% if (user.profileAddress) {%>
+                    <div>
+                        View your public profile page here <a href="/artist/<%=user.profileAddress%>">here</a>
+                    </div>
+                    <% }  %>
                 </form>
 
             </div>
