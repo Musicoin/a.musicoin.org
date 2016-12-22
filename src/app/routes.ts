@@ -93,8 +93,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       const profile = req.user.draftProfile;
       const i = files.photo.size == 0 ? Promise.resolve(profile.ipfsImageUrl) : mediaProvider.upload(files.photo.path);
-      const d = mediaProvider.uploadText(profile.description);
-      const s = mediaProvider.uploadText(JSON.stringify(profile.social));
+      const d = mediaProvider.uploadText(fields.description);
+      const s = mediaProvider.uploadText(JSON.stringify(socialData));
       return Promise.join(i, d, s, function (imageUrl, descriptionUrl, socialUrl) {
         req.user.draftProfile = {
           artistName: fields.artistName,
@@ -103,7 +103,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           ipfsImageUrl: imageUrl
         };
         console.log(`Sending updated profile to blockchain...`);
-        musicoinApi.publishProfile(req.user.profileAddress, profile.artistName, descriptionUrl, imageUrl, socialUrl)
+        musicoinApi.publishProfile(req.user.profileAddress, fields.artistName, descriptionUrl, imageUrl, socialUrl)
           .then(function(tx) {
             console.log(`Transaction submitted! Profile tx : ${tx}`);
             req.user.pendingTx = tx;
