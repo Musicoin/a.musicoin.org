@@ -43,10 +43,17 @@ function MediaProvider(ipfsHost, ipfsAddUrl) {
   };
 }
 
+
+MediaProvider.prototype.getRawIpfsResource = function(hash) {
+  return this.getIpfsResource(RAW + decryptText(hash, () => "TESTING@(*@$"));
+};
+
 MediaProvider.prototype.resolveIpfsUrl = function(url) {
   const parsed = this._parseIpfsUrl(url);
   if (parsed.err) throw new Error("Could not parse URL: " + url);
-  return  this.ipfsReadEndpoint + "/ipfs/" + parsed.hash;
+
+  // we have to proxy ipfs locally
+  return "/media/" + encryptText(parsed.hash, () => "TESTING@(*@$");
 };
 
 MediaProvider.prototype.readJsonFromIpfs = function(url) {
@@ -72,10 +79,6 @@ MediaProvider.prototype.readTextFromIpfs = function(url) {
         result.stream.on('err', reject);
       })
     });
-};
-
-MediaProvider.prototype.getRawIpfsResource = function(hash) {
-  return this.getIpfsResource(RAW + hash);
 };
 
 MediaProvider.prototype.getIpfsResource = function(resourceUrl, keyProvider) {
@@ -207,6 +210,20 @@ const _encrypt = function(pathOrStream, encryptionKeyProvider) {
     const encrypt = crypto.createCipher(algorithm, encryptionKeyProvider());
     resolve(StreamUtils.asStream(pathOrStream).pipe(encrypt));
   })
+};
+
+const encryptText = function(text, encryptionKeyProvider){
+  var cipher = crypto.createCipher(algorithm, encryptionKeyProvider())
+  var crypted = cipher.update(text,'utf8','hex')
+  crypted += cipher.final('hex');
+  return crypted;
+};
+
+const decryptText = function(text, encryptionKeyProvider){
+  var decipher = crypto.createDecipher(algorithm, encryptionKeyProvider())
+  var dec = decipher.update(text,'hex','utf8')
+  dec += decipher.final('utf8');
+  return dec;
 };
 
 module.exports = MediaProvider;

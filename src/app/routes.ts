@@ -263,8 +263,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/media/:encryptedHash', function(req, res) {
+    // Hash is encrypted to avoid being a global proxy for IPFS.  This should ensure we are only proxying the URLs
+    // we are giving out.
+    mediaProvider.getRawIpfsResource(req.params.encryptedHash)
+      .then(function(result) {
+        res.writeHead(200, result.headers);
+        result.stream.pipe(res);
+      })
+      .catch(function(err) {
+        console.error(err.stack);
+        res.status(500);
+        res.send(err);
+      });
+  });
+
   function groupByPrefix(fields: any, prefix: string) {
-    const output = Object.keys(fields)
+    return Object.keys(fields)
       .filter(f => f.length > prefix.length && f.substring(0, prefix.length) == prefix)
       .filter(f => fields[f])
       .map(f => f.substring(prefix.length))
@@ -272,9 +287,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         o[k] = fields[prefix + k];
         return o;
       }, {});
-    return output;
   }
-
 }
 
 // route middleware to make sure a user is logged in
