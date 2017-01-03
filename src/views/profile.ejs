@@ -21,6 +21,23 @@
         input.form-control  {
             width: 230px;
         }
+        .track-container {
+            background-color: rgba(0,0,0,0.05);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+        }
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+        }
+        .stat {
+            margin-right: 20px;
+        }
+        .track-title {
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
@@ -174,14 +191,25 @@
         </div>
         <%}%>
 
-        <% if (user.releases.length > 0) {%>
+        <% if (artist.releases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="text-success"><span class="fa fa-music"></span> Releases</h3>
-                <% for (var i=0; i < user.releases.length; i++) {%>
-                <div><%=user.releases[i]%></div>
+                <% for (var i=0; i < artist.releases.length; i++) {
+                    var release = artist.releases[i];
+                %>
+                <div class="track-container flex-row">
+                    <img width="64" height="64" src="<%=release.image%>">
+                    <div style="margin-left: 10px">
+                        <div class="track-title"><%=release.title%></div>
+                        <div class="flex-row">
+                            <label class="stat">Tips <%=release.tipCount%></label>
+                            <label class="stat">Plays <%=release.playCount%></label>
+                        </div>
+                        <div>contract: <%= release.address %></div>
+                    </div>
+                </div>
                 <%}%>
-
             </div>
         </div>
         <%}%>

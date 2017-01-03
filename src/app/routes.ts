@@ -77,9 +77,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
   app.get('/profile', isLoggedIn, preProcessUser(mediaProvider), resolvePendingTx(musicoinApi), function (req, res) {
-    res.render('profile.ejs', {
-      user: req.user // get the user out of session and pass to template
-    });
+    mcHelper.getArtistProfileAndTracks(req.user.profileAddress, req.user.releases)
+      .then(function(artist) {
+        res.render('profile.ejs', {user: req.user, artist: artist});
+      });
   });
 
   app.post('/profile/save', isLoggedIn, function(req, res) {
