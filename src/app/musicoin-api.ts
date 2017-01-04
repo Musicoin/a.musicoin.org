@@ -18,7 +18,11 @@ export class MusicoinAPI {
   }
 
   getKey(licenseAddress: string) {
-    return this.getJson(this.apiConfig.getKey + '/' + licenseAddress);
+    return this.getJson(this.apiConfig.getKey + '/' + licenseAddress)
+      .then(function(response) {
+        if (response.err) throw response.err;
+        return response;
+      });
   }
 
   getTransactionStatus(tx: string) {

@@ -373,6 +373,9 @@
     if (!audioPlayer) {
       audioPlayer = $('#player')[0];
       audioPlayer.style.display = "block";
+      audioPlayer.addEventListener('error', function(e) {
+        alert("Playback failed!")
+      });
       audioPlayer.addEventListener('timeupdate', function() {
         var progress_percent = audioPlayer.currentTime / audioPlayer.duration * 100;
         $("#player-progress-div").css("width", progress_percent + "%");
