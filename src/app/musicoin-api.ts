@@ -17,13 +17,8 @@ export class MusicoinAPI {
   constructor(public apiConfig: MusicoinApiConfig) {
   }
 
-  getKey(licenseAddress: string, clientId: string, clientSecret: string) {
-    // TODO: probably not the right way to pass clientSecret
-    return this.getJson(
-      this.apiConfig.getKey + '/' + licenseAddress, {
-        clientId: clientId,
-        clientSecret: clientSecret
-      });
+  getKey(licenseAddress: string) {
+    return this.getJson(this.apiConfig.getKey + '/' + licenseAddress);
   }
 
   getTransactionStatus(tx: string) {
@@ -54,7 +49,11 @@ export class MusicoinAPI {
         method: 'post',
         body: postData,
         json: true,
-        url: this.apiConfig.releaseLicense
+        url: this.apiConfig.releaseLicense,
+        headers: {
+          clientID: this.apiConfig.clientID,
+          clientSecret: this.apiConfig.clientSecret
+        }
       };
 
       request.post(options, function (err, resp, body) {
@@ -72,17 +71,17 @@ export class MusicoinAPI {
         descriptionUrl: descriptionUrl,
         imageUrl: imageUrl,
         socialUrl: socialUrl,
-
-        // TODO: read about oauth
-        clientID: this.apiConfig.clientID,
-        clientSecret: this.apiConfig.clientSecret
       };
       console.log(`Sending profile create/update request to ${this.apiConfig.publishProfile},  data=${JSON.stringify(postData)}`);
       const options = {
         method: 'post',
         body: postData,
         json: true,
-        url: this.apiConfig.publishProfile
+        url: this.apiConfig.publishProfile,
+        headers: {
+          clientID: this.apiConfig.clientID,
+          clientSecret: this.apiConfig.clientSecret
+        }
       };
       request(options, function (err, res, body) {
         if (err) {
@@ -99,7 +98,11 @@ export class MusicoinAPI {
       request({
         url: url,
         qs: properties,
-        json: true
+        json: true,
+        headers: {
+          clientID: this.apiConfig.clientID,
+          clientSecret: this.apiConfig.clientSecret
+        }
       }, function(error, response, result) {
         if (error) {
           console.log(`Request failed with ${error}, url: ${url}, properties: ${JSON.stringify(properties)}`);
@@ -107,6 +110,6 @@ export class MusicoinAPI {
         }
         resolve(result)
       })
-    });
+    }.bind(this));
   }
 }

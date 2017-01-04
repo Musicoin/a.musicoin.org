@@ -2,7 +2,7 @@ const keyValueConfig = {
   port: process.env.PORT || 3000,
 
   musicoinApiEndpoint: process.env.MUSICOIN_API_ENDPOINT || "http://localhost:8082",
-  musicoinApiClientId: process.env.MUSICOIN_CLIENT_ID || "clientId",
+  musicoinApiClientId: process.env.MUSICOIN_CLIENT_ID || "clientID",
   musicoinApiClientSecret: process.env.MUSICOIN_CLIENT_SECRET || "clientSecret",
 
   mongoEndpoint: process.env.MONGO_ENDPOINT || "mongodb://localhost",

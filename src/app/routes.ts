@@ -248,7 +248,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/ppp/:address', function(req, res) {
-    const k = musicoinApi.getKey(req.params.address, "clientId", "clientSecret")
+    const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
     Promise.join(k, l, function(keyResponse, license) {
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key);
