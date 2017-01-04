@@ -68,8 +68,11 @@ else {
   // returns an instance of node-letsencrypt with additional helper methods
   const lex = require('letsencrypt-express').create({
     // set to https://acme-v01.api.letsencrypt.org/directory in production
-    server: 'staging',
-    approveDomains: approveDomains
+    // server: 'staging',
+    server: 'https://acme-v01.api.letsencrypt.org/directory',
+    email: 'musicoin@berry.ai',
+    agreeTos: true,
+    approveDomains: ['join.musicoin.org']
   });
 
   require('http').createServer(lex.middleware(require('redirect-https')())).listen(80, function () {
