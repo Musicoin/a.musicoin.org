@@ -30,7 +30,8 @@ passportConfigurer.configure(passport, mediaProvider, config.auth);
 
 app.use(function(req, res, next) {
   if (!isDevEnvironment) {
-    res.setHeader('Content-Security-Policy', "default-src https:");
+    res.setHeader('Content-Security-Policy-Report-Only', "default-src https:");
+    res.setHeader('Strict-Transport-Security', "max-age=31536000");
   }
   res.setHeader('X-Frame-Options', "Deny");
   res.setHeader('X-XSS-Protection', "1; mode=block;");
