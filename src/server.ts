@@ -18,7 +18,7 @@ const musicoinApi = new MusicoinAPI(config.musicoinApi);
 const MediaProvider = require('./media/media-provider');
 const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
 
-app.set('port', process.env.PORT || config.port || 3000);
+app.set('port', config.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -49,8 +49,64 @@ app.use(function(req, res) {
   res.render('index');
 });
 
+if (app.get('env') === 'development') {
+  app.listen(config.port, function () {
+    console.log('Listening on port ' + config.port);
+    console.log('Environment ' + app.get('env'));
+    console.log("loaded config: " + JSON.stringify(config, null, 2));
+  });
 
-app.listen(config.port, function () {
-  console.log('Listening on port ' + config.port);
-  console.log("loaded config: " + JSON.stringify(config, null, 2));
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
+}
+else {
+  // returns an instance of node-letsencrypt with additional helper methods
+  const lex = require('letsencrypt-express').create({
+    // set to https://acme-v01.api.letsencrypt.org/directory in production
+    server: 'staging',
+    approveDomains: approveDomains
+  });
+
+  require('http').createServer(lex.middleware(require('redirect-https')())).listen(80, function () {
+    console.log("Listening for ACME http-01 challenges on", this.address());
+  });
+
+  require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(443, function () {
+    console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
+    console.log('Environment ' + app.get('env'));
+    console.log("loaded config: " + JSON.stringify(config, null, 2));
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
 });
+
+function approveDomains(opts, certs, cb) {
+  // This is where you check your database and associated
+  // email addresses with domains and agreements and such
+
+
+  // The domains being approved for the first time are listed in opts.domains
+  // Certs being renewed are listed in certs.altnames
+  if (certs) {
+    opts.domains = certs.altnames;
+  }
+  else {
+    opts.email = 'im@berry.ai';
+    opts.agreeTos = true;
+  }
+
+  cb(null, { options: opts, certs: certs });
+}
