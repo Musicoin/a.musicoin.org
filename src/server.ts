@@ -17,6 +17,7 @@ const flash = require('connect-flash');
 const musicoinApi = new MusicoinAPI(config.musicoinApi);
 const MediaProvider = require('./media/media-provider');
 const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
+const isDevEnvironment = app.get('env') === 'development';
 
 app.set('port', config.port);
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +28,15 @@ mongoose.connect(config.database.url);
 
 passportConfigurer.configure(passport, mediaProvider, config.auth);
 
+app.use(function(req, res, next) {
+  if (!isDevEnvironment) {
+    res.setHeader('Content-Security-Policy', "default-src https:");
+  }
+  res.setHeader('X-Frame-Options', "Deny");
+  res.setHeader('X-XSS-Protection', "1; mode=block;");
+  res.setHeader('X-Content-Type-Options', "nosniff");
+  next();
+});
 app.use(favicon(__dirname + '/public/favicon.ico'));
 logging.configure(app, config.loggingConfig);
 app.use(cookieParser());
