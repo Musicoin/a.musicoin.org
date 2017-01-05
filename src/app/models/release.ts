@@ -1,0 +1,25 @@
+import * as mongoose from 'mongoose';
+// const mongoose1 = require('mongoose');
+
+// create the model for users and expose it to our app
+module.exports = mongoose.model('Release', mongoose.Schema({
+  tx: String,
+  state: {
+    type: String,
+
+    enum: ['pending', 'published', 'error'],
+    default: 'pending',
+    index: true
+  },
+  artistName: String,
+  artistAddress: String,
+  title: String,
+  imageUrl: String,
+  releaseDate: {
+    type: Date,
+    default: Date.now
+  },
+
+  contractAddress: String, // non-null iff state=published
+  errorMessage: String // non-null iff state=error
+}));

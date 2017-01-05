@@ -4,7 +4,6 @@
     <title>Node Authentication</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/profile/profile.css">
     <style>
         body        { word-wrap:break-word; }
         .profile-image {
@@ -179,12 +178,12 @@
             </div>
         </div>
 
-        <% if (user.pendingReleases.length > 0) {%>
+        <% if (pendingReleases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="text-success"><span class="fa fa-music"></span> Pending</h3>
-                <% for (var i=0; i < user.pendingReleases.length; i++) {%>
-                    <div><%=user.pendingReleases[i].title%></div>
+                <% for (var i=0; i < pendingReleases.length; i++) {%>
+                    <div><%=pendingReleases[i].title%></div>
                 <%}%>
 
             </div>

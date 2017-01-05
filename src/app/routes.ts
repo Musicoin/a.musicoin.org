@@ -4,6 +4,7 @@ import * as Formidable from 'formidable';
 import * as crypto from 'crypto';
 import {MusicoinHelper} from "./musicoin-helper";
 const User = require('../app/models/user');
+const Release = require('../app/models/release');
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider) {
 
@@ -14,6 +15,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   app.get('/', function (req, res) {
     res.render('index.ejs'); // load the index.ejs file
+  });
+
+  app.get('/not-found', function (req, res) {
+    res.render('not-found.ejs');
   });
 
   // =====================================
@@ -60,14 +65,20 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   app.get('/artist/:address', function (req, res, next) {
     // find tracks for artist
-    User.findOne({profileAddress: req.params.address}, function (err, user) {
-      if (err) return next(err);
-      if (!user) return res.redirect("/"); //TODO: Show some "Not Found" page
-      mcHelper.getArtistProfileAndTracks(req.params.address, user.releases)
-        .then(function(artist) {
-          res.render('artist.ejs', {artist: artist});
-        })
-    })
+    User.findOne({profileAddress: req.params.address}).exec()
+      .then(function(artist) {
+        if (!artist) return res.redirect("/not-found");
+        Release.find({artistAddress: artist.profileAddress, state: 'published'}).exec()
+          .then(function(releases) {
+            mcHelper.getArtistProfileAndTracks(req.params.address, releases.map(item => item.contractAddress))
+              .then(function(artist) {
+                res.render('artist.ejs', {artist: artist});
+              })
+          })
+      })
+      .catch(function(err) {
+        next(err);
+      })
   });
 
 
@@ -76,11 +87,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
-  app.get('/profile', isLoggedIn, preProcessUser(mediaProvider), resolvePendingTx(musicoinApi), function (req, res) {
-    mcHelper.getArtistProfileAndTracks(req.user.profileAddress, req.user.releases)
-      .then(function(artist) {
-        res.render('profile.ejs', {user: req.user, artist: artist});
-      });
+  app.get('/profile', isLoggedIn, preProcessUser(mediaProvider), function (req, res) {
+    Release.find({artistAddress: req.user.profileAddress, state: 'published'}).exec()
+      .then(function(releases) {
+        const a = mcHelper.getArtistProfileAndTracks(req.user.profileAddress, releases.map(item => item.contractAddress));
+        const p = Release.find({artistAddress: req.user.profileAddress, state: 'pending'}).exec();
+        Promise.join(a, p, function(artist, pending) {
+          res.render('profile.ejs', {user: req.user, artist: artist, pendingReleases: pending});
+        })
+    })
   });
 
   app.post('/profile/save', isLoggedIn, function(req, res) {
@@ -108,6 +123,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           .then(function(tx) {
             console.log(`Transaction submitted! Profile tx : ${tx}`);
             req.user.pendingTx = tx;
+            req.user.updatePending = true;
             console.log(`Saving updated profile to database...`);
             req.user.save(function (err) {
               if (err) {
@@ -153,6 +169,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           const i = mediaProvider.upload(track.image.path); // unencrypted
           const m = mediaProvider.uploadText(JSON.stringify(metadata))
           return Promise.join(a, i, m, function(audioUrl, imageUrl, metadataUrl) {
+            track.imageUrl = imageUrl;
             return musicoinApi.releaseTrack(req.user.profileAddress, track.title, imageUrl, metadataUrl, audioUrl, key);
           })
       });
@@ -164,22 +181,27 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       Promise.all(promises)
         .then(function (txs: TxResult[]) {
           console.log("Got transactions: " + JSON.stringify(txs));
-          const pendingReleases = req.user.pendingReleases || [];
+          const releases = [];
           for (let i=0; i < txs.length; i++) {
-            pendingReleases.push({pendingTx: txs[i].tx, title: tracks[i].title})
+            releases.push({
+              tx: txs[i].tx,
+              title: tracks[i].title,
+              imageUrl: tracks[i].imageUrl,
+              artistName: req.user.artistName,
+              artistAddress: req.user.profileAddress,
+            });
           }
-          console.log(`Saving profile to database with: ${JSON.stringify(pendingReleases)}`);
-          req.user.pendingReleases = pendingReleases;
-          req.user.save(function (err) {
-            if (err) {
-              console.log(`Saving profile to database failed! ${err}`);
-              res.send(500);
-            }
-            else {
-              console.log(`Saving profile to database ok!`);
-              res.redirect("/profile");
-            }
-          });
+
+          console.log(`Saving ${releases.length} release txs to database ...`);
+          return Release.create(releases);
+        })
+        .then(function(records) {
+          console.log(`Saved releases txs to database!`);
+          res.redirect("/profile");
+        })
+        .catch(function (err) {
+          console.log(`Saving releases to database failed! ${err}`);
+          res.send(500);
         });
     });
   });
@@ -315,71 +337,5 @@ function preProcessUser(mediaProvider) {
       ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
       : user.profile.image;
     next();
-  }
-}
-
-function resolvePendingTx(musicoinApi: MusicoinAPI) {
-  return function preProcessUser(req, res, next) {
-    const toResolve = [];
-    if (req.user.pendingTx) {
-      toResolve.push(
-        musicoinApi.getTransactionStatus(req.user.pendingTx)
-          .then(function(result) {
-            if (result.status == "complete") {
-              req.user.pendingTx = "";
-
-              // contract updates will not have a contractAddress in the receipt, just leave it alone
-              if (result.receipt.contractAddress) {
-                req.user.profileAddress = result.receipt.contractAddress;
-              }
-            }
-          }));
-    }
-
-    const stillPending = [];
-    const newReleases = [];
-    if (req.user.pendingReleases && req.user.pendingReleases.length > 0) {
-      for (let i=0; i < req.user.pendingReleases.length; i++) {
-        const pr = req.user.pendingReleases[i];
-        console.log("Found pending release: " + pr.title);
-        toResolve.push(musicoinApi.getTransactionStatus(pr.pendingTx)
-          .then(function(result) {
-            if (result.status == "complete") {
-              console.log("pending release complete: " + pr.title);
-              newReleases.push(result.receipt.contractAddress);
-            }
-            else {
-              console.log("pending release still pending: " + pr.title);
-              stillPending.push(pr);
-            }
-          })
-          .catch(function(err) {
-            console.log(err);
-            stillPending.push(pr);
-          }));
-      }
-    }
-
-    if (toResolve.length == 0) {
-      console.log("Nothing to resolve");
-      next();
-    }
-    else {
-      console.log("Waiting on " + toResolve.length + " promises");
-      Promise.all(toResolve)
-        .then(function(allResults) {
-          console.log("resolved promises, saving to db");
-          req.user.pendingReleases = stillPending;
-          req.user.releases = newReleases.concat(req.user.releases);
-          req.user.save(function(err) {
-            if (err) console.log(err);
-            next();
-          });
-        })
-        .catch(function(err) {
-          console.log(err);
-          next();
-        });
-    }
   }
 }

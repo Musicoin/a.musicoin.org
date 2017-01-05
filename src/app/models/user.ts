@@ -4,6 +4,11 @@ const bcrypt   = require('bcrypt-nodejs');
 // define the schema for our user model
 const userSchema = mongoose.Schema({
   profileAddress: String,
+  updatePending: {
+    type: Boolean,
+    index: true,
+    default: false
+  },
   pendingTx: String,
   local: {
     email: String,
@@ -32,14 +37,7 @@ const userSchema = mongoose.Schema({
     description: String,
     social: Object,
     ipfsImageUrl: String
-  },
-  pendingReleases: [
-    {
-      pendingTx: String,
-      title: String
-    }
-  ],
-  releases: [String]
+  }
 });
 
 // methods ======================

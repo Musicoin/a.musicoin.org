@@ -33,7 +33,8 @@ const config = {
     }
   },
   database: {
-    url : `${keyValueConfig.mongoEndpoint}/musicoin-org`
+    url : `${keyValueConfig.mongoEndpoint}/musicoin-org`,
+    pendingReleaseIntervalMs: 30*1000
   },
   ipfs: {
     ipfsHost: keyValueConfig.ipfsReadEndpoint,
