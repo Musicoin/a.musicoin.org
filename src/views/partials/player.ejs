@@ -1,0 +1,310 @@
+<audio autoplay id="player"></audio>
+<script src="/js/jquery-3.1.1.js"></script>
+<style>
+    .player {
+        background-color: #333;
+        height: 125px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+    }
+
+    #player-fill {
+        height: 125px;
+        width: 100%;
+    }
+
+    .player-foreground {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 2;
+    }
+
+    .player-bookend {
+        height: 100%;
+        width: 250px;
+    }
+
+    .song-badge {
+        display: flex;
+        align-items: center;
+    }
+
+    .player-action-area {
+        display: flex;
+        flex-direction: row;
+        color: white;
+        font-size: 14pt;
+        height: 100%;
+        justify-content: flex-end;
+    }
+
+    .song-badge-info {
+        display: flex;
+        flex-direction: column;
+        margin: 10px;
+    }
+
+    .song-badge-image {
+        max-width: 64px;
+        height: 64px;
+        object-fit: contain;
+    }
+
+    .player-song-name {
+        color: white;
+        font-size: 18pt;
+    }
+
+    .player-artist-name {
+        color: white;
+    }
+
+    .player-controls {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+    }
+
+    .player-progress {
+        position: relative;
+        height: 10px;
+    }
+
+    .progress-bar {
+        position: absolute;
+        left: 0;
+        height: 4px;
+        border-radius: 5px!important;
+    }
+
+    .progress-background {
+        right: 0;
+        width: 100%;
+        background-color: rgba(255,255,255,0.2);
+    }
+
+    .progress-foreground {
+        width: 0%;
+        background-color: white;
+    }
+
+    @media screen and (max-width: 500px) {
+        .big-screen-only {
+            display: none !important;
+        }
+
+        .player-controls {
+            justify-content: flex-end;
+        }
+    }
+
+    .player-controls-area {
+        height: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .player-background {
+        position: absolute;
+        top:0;
+        left:0;
+        bottom:0;
+        right: 0;
+        background-size: cover;
+        filter:blur(45px);
+        overflow: hidden;
+        opacity: 0.2;
+        z-index: 1;
+    }
+
+
+    .play-controls-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .player-control:hover {
+        background-color: rgba(255,255,255,0.2);
+    }
+
+    .player-control {
+        border-radius: 50%!important;
+        width: 36px;
+        height: 36px;
+        margin-left: 10px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .player-control-large {
+        width: 48px;
+        height: 48px;
+    }
+
+    .player-action-values {
+        margin-right: 5px;
+        text-align: right;
+    }
+
+    .player-time-area {
+        display: flex;
+        justify-content: space-between;
+        color: white;
+    }
+
+    .player-row {
+        min-width: 300px;
+        width: 95%;
+        max-width: 800px;
+
+    }
+
+    .player-top-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .player-progress-row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .show-on-play {
+        display: none;
+    }
+
+    .selected-track {
+        background-color: rgba(255,255,255,0.1);
+    }
+</style>
+<script>
+  $( document ).ready(function() {
+    getAudioPlayer();
+
+    $(".audio-track").on('click', function() {
+      var item = $(this);
+      playItem(this,
+        item.attr("audioUrl"),
+        item.attr("trackTitle"),
+        item.attr("artistName"),
+        item.attr("image"),
+        item.attr("playCount"),
+        item.attr("tipCount"))
+    })
+  });
+
+  var previous = null;
+  function playItem(e, url, title, artist, img, playCount, tipCount) {
+    if (e) {
+      if (previous) previous.classList.remove("selected-track")
+      previous = e;
+      e.classList.add("selected-track");
+    }
+    $(".show-on-play").css("display", "block");
+    $("#player-title")[0].innerHTML = title;
+    $("#player-artist")[0].innerHTML = artist;
+    $("#player")[0].src = url + "?" + new Date().getTime();
+    $("#player-background")[0].style.backgroundImage = "url('" + img + "')";
+    $("#player-badge-image")[0].src = img;
+    $("#player-plays")[0].innerHTML = playCount;
+    $("#player-tips")[0].innerHTML = tipCount;
+  }
+
+  var audioPlayer = null;
+  function getAudioPlayer() {
+    if (!audioPlayer) {
+      audioPlayer = $('#player')[0];
+      audioPlayer.style.display = "block";
+      audioPlayer.addEventListener('error', function(e) {
+        alert("Playback failed!")
+      });
+      audioPlayer.addEventListener('timeupdate', function() {
+        var progress_percent = audioPlayer.currentTime / audioPlayer.duration * 100;
+        $("#player-progress-div").css("width", progress_percent + "%");
+        $("#player-time-played")[0].innerText = formatTime(audioPlayer.currentTime);
+        $("#player-time-left")[0].innerText = formatTime(audioPlayer.duration);
+      });
+
+      audioPlayer.addEventListener('play', function() {
+        $("#player-play-button")[0].src = "/images/player/pause.png";
+      })
+
+      audioPlayer.addEventListener('pause', function() {
+        $("#player-play-button")[0].src = "/images/player/play.png";
+      })
+    }
+    return audioPlayer;
+  }
+
+  function formatTime(seconds) {
+    var output = new Date(seconds * 1000).toISOString().substr(11, 8);
+    if (output.startsWith("00:")) return output.substr(3);
+    return output;
+  };
+
+  function togglePlayState() {
+    var player = getAudioPlayer();
+    if (player.paused) {
+      if (player.readyState > 0) {
+        player.play();
+      }
+    }
+    else {
+      player.pause();
+    }
+  }
+</script>
+
+<div id="player-fill" class="show-on-play"></div>
+<div id="player-section" class="fixed-footer player show-on-play">
+    <div class="player-foreground">
+        <div class="player-row player-top-row">
+            <div class="song-badge player-bookend">
+                <img id="player-badge-image" src="" class="song-badge-image">
+                <div class="song-badge-info">
+                    <div id="player-title" class="player-song-name"></div>
+                    <div id="player-artist" class="player-artist-name"></div>
+                </div>
+            </div>
+            <div class="player-controls-area">
+                <div class="player-controls">
+                    <img id="player-play-button" onclick="togglePlayState()" src="/images/player/play.png" class="player-control player-control-large">
+                </div>
+            </div>
+            <div class="player-action-area player-bookend big-screen-only">
+                <div class="player-action-values">
+                    <div id="player-plays"></div>
+                    <div id="player-tips"></div>
+                </div>
+                <div class="player-action-names">
+                    <div>plays</div>
+                    <div>tips</div>
+                </div>
+            </div>
+        </div>
+        <div class="player-row player-progress-row">
+            <div class="player-progress">
+                <div class="progress-bar progress-background"></div>
+                <div id="player-progress-div" class="progress-bar progress-foreground"></div>
+            </div>
+            <div class="player-time-area">
+                <div id="player-time-played"></div>
+                <div id="player-time-left"></div>
+            </div>
+        </div>
+    </div>
+    <div id="player-background" class="player-background" style="background-image: url('')"></div>
+</div>

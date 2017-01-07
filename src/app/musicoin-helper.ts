@@ -5,8 +5,8 @@ export class MusicoinHelper {
   constructor(public musicoinApi: MusicoinAPI, public mediaProvider: any) {
   }
 
-  getArtistProfileAndTracks(profileAddress: string, licenses: string[]) {
-    const p = this.musicoinApi.getProfile(profileAddress)
+  getArtistProfile(profileAddress: string) {
+    return this.musicoinApi.getProfile(profileAddress)
       .then((profile) => {
         const s = this.mediaProvider.readJsonFromIpfs(profile.socialUrl)
         const d = this.mediaProvider.readTextFromIpfs(profile.descriptionUrl);
@@ -17,24 +17,14 @@ export class MusicoinHelper {
           return profile;
         }.bind(this))
       });
+  };
 
-    const r = licenses
-      .map(address => {
-        return this.musicoinApi.getLicenseDetails(address)
-          .then(license => this.loadLicenseData(license))
-      });
-
-    return Promise.join(p, Promise.all(r), function(profile, releases) {
-      profile.releases = releases;
-      return profile;
-    });
-  }
-
-  loadLicenseData(license: any) {
-    return new Promise(function(resolve, reject) {
-      license.image = this.mediaProvider.resolveIpfsUrl(license.imageUrl);
-      license.audioUrl = "/ppp/" + license.address;
-      resolve(license);
-    }.bind(this));
+  getLicense(address: string) {
+    return this.musicoinApi.getLicenseDetails(address)
+      .then(license => {
+        license.image = this.mediaProvider.resolveIpfsUrl(license.imageUrl);
+        license.audioUrl = "/ppp/" + license.address;
+        return license;
+      })
   }
 }

@@ -1,26 +1,56 @@
 <!doctype html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Musicoin.org</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
     <style>
-        body        { padding-top:80px; }
+        body {
+            background-color: #333;
+            color: #eee;
+            background-image: url('/images/musician.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .well {
+            background-color: transparent;
+            border: none;
+        }
+        .section-header {
+            color: white;
+            font-weight: lighter;
+        }
+        .welcome {
+            padding: 10px;
+            height: 200px;
+        }
+        .outer-container {
+            background-color: rgba(0,0,0,0.8);
+            height: 100%;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="outer-container">
+    <%- include partials/header.ejs %>
+    <div class="container">
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-header"><span class="fa fa-music"></span> New Releases</h3>
+                <%- include partials/track-list.ejs %>
+            </div>
+        </div>
 
-    <div class="jumbotron text-center">
-        <h1><span class="fa fa-lock"></span> Sign in</h1>
-
-        <p>Login or Register with:</p>
-
-        <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Local Login</a>
-        <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Local Signup</a>
-        <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google</a>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-header"><span class="fa fa-user"></span> New Artists</h3>
+                <%- include partials/artist-list.ejs %>
+            </div>
+        </div>
     </div>
-
+    <%- include partials/player.ejs %>
 </div>
 </body>
 </html>

@@ -3,18 +3,34 @@ import {Promise} from 'bluebird';
 import * as Formidable from 'formidable';
 import * as crypto from 'crypto';
 import {MusicoinHelper} from "./musicoin-helper";
+import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
+import {MusicoinRestAPI} from "./rest-api/rest-api";
 const User = require('../app/models/user');
 const Release = require('../app/models/release');
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider) {
 
   let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider);
+  let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper);
+
+  let restAPI = new MusicoinRestAPI(jsonAPI);
+  app.use('/json-api', restAPI.getRouter());
+
+  function doRender(req, res, view, context) {
+    const defaultContext = {user: req.user, isAuthenticated: req.isAuthenticated()};
+    res.render(view, Object.assign({}, defaultContext, context));
+  }
 
   // =====================================
   // HOME PAGE (with login links) ========
   // =====================================
   app.get('/', function (req, res) {
-    res.render('index.ejs'); // load the index.ejs file
+    const rs = jsonAPI.getNewReleases(20);
+    const as = jsonAPI.getNewArtists(20);
+
+    Promise.join(rs, as, function(releases, artists) {
+      doRender(req, res, "index.ejs", {releases: releases, artists: artists});
+    });
   });
 
   app.get('/not-found', function (req, res) {
@@ -26,7 +42,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // show the login form
   app.get('/login', function (req, res) {
-
     // render the page and pass in any flash data if it exists
     res.render('login.ejs', {message: req.flash('loginMessage')});
   });
@@ -65,22 +80,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   app.get('/artist/:address', function (req, res, next) {
     // find tracks for artist
-    User.findOne({profileAddress: req.params.address}).exec()
-      .then(function(artist) {
-        if (!artist) return res.redirect("/not-found");
-        Release.find({artistAddress: artist.profileAddress, state: 'published'}).exec()
-          .then(function(releases) {
-            mcHelper.getArtistProfileAndTracks(req.params.address, releases.map(item => item.contractAddress))
-              .then(function(artist) {
-                res.render('artist.ejs', {artist: artist});
-              })
-          })
-      })
-      .catch(function(err) {
-        next(err);
+    jsonAPI.getArtist(req.params.address, true, false)
+      .then((output: ArtistProfile) => {
+        if (!output) return res.redirect("/not-found");
+        doRender(req, res, "artist.ejs", output);
       })
   });
-
 
   // =====================================
   // PROFILE SECTION =====================
@@ -88,14 +93,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
   app.get('/profile', isLoggedIn, preProcessUser(mediaProvider), function (req, res) {
-    Release.find({artistAddress: req.user.profileAddress, state: 'published'}).exec()
-      .then(function(releases) {
-        const a = mcHelper.getArtistProfileAndTracks(req.user.profileAddress, releases.map(item => item.contractAddress));
-        const p = Release.find({artistAddress: req.user.profileAddress, state: 'pending'}).exec();
-        Promise.join(a, p, function(artist, pending) {
-          res.render('profile.ejs', {user: req.user, artist: artist, pendingReleases: pending});
-        })
-    })
+    jsonAPI.getArtist(req.user.profileAddress, true, true)
+      .then((output: ArtistProfile) => {
+        doRender(req, res, "profile.ejs", output);
+      });
   });
 
   app.post('/profile/save', isLoggedIn, function(req, res) {
@@ -187,7 +188,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               tx: txs[i].tx,
               title: tracks[i].title,
               imageUrl: tracks[i].imageUrl,
-              artistName: req.user.artistName,
+              artistName: req.user.draftProfile.artistName,
               artistAddress: req.user.profileAddress,
             });
           }
@@ -270,12 +271,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/ppp/:address', function(req, res) {
+    if (req.params.address.endsWith(".mp3"))
+      req.params.address = req.params.address.substring(0, req.params.address.length-4);
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
     Promise.join(k, l, function(keyResponse, license) {
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key);
     })
       .then(function(result) {
+        result.headers['content-type'] = "audio/mpeg";
         res.writeHead(200, result.headers);
         result.stream.pipe(res);
       })

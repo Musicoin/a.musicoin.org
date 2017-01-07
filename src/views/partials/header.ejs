@@ -1,0 +1,54 @@
+<style>
+    .header {
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+        padding-left: 50px;
+        padding-right: 50px;
+        justify-content: space-between;
+        align-items: center;
+        background-color: rgba(255,255,255,0.5);
+    }
+    .logo_image {
+        height: 50px;
+        vertical-align: middle;
+        margin-top: -6px;
+    }
+    .sign-in {
+        height: 30px;
+        vertical-align: middle;
+        margin-top: -6px;
+    }
+    .header-fill {
+        flex-grow: 1;
+    }
+    .header-menu-item {
+        margin-left: 10px;
+        margin-right: 10px;
+        font-size: 1.5em;
+        cursor: pointer;
+    }
+    .header-menu-item:hover {
+        text-decoration: underline;
+    }
+    .header-nav {
+        display: flex;
+        justify-content: flex-end;
+        padding: 10px;
+        padding-right: 20px;
+    }
+</style>
+<div class="header">
+    <a id="logo-container" href="/" class="brand-logo mont"><img class="logo_image" src="/images/logo.png"> </a>
+    <div>
+        <% if (isAuthenticated) { %>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        <% } else { %>
+        <a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span> Sign in</a>
+        <% } %>
+    </div>
+</div>
+<div class="header-nav">
+    <div class="header-menu-item">Songs</div>
+    <div class="header-menu-item">Artists</div>
+</div>

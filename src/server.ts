@@ -32,13 +32,13 @@ new PendingTxDaemon().start(musicoinApi, config.database.pendingReleaseIntervalM
 passportConfigurer.configure(passport, mediaProvider, config.auth);
 
 app.use(function(req, res, next) {
-  if (!isDevEnvironment) {
-    res.setHeader('Content-Security-Policy-Report-Only', "default-src https: style-src 'unsafe-inline'");
-    res.setHeader('Strict-Transport-Security', "max-age=31536000");
-  }
-  res.setHeader('X-Frame-Options', "Deny");
-  res.setHeader('X-XSS-Protection', "1; mode=block;");
-  res.setHeader('X-Content-Type-Options', "nosniff");
+  // if (!isDevEnvironment) {
+  //   res.setHeader('Content-Security-Policy-Report-Only', "default-src https: style-src 'unsafe-inline'");
+  //   res.setHeader('Strict-Transport-Security', "max-age=31536000");
+  // }
+  // res.header('X-Frame-Options', "Deny");
+  // res.header('X-XSS-Protection', "1; mode=block;");
+  // res.header('X-Content-Type-Options', "nosniff");
   next();
 });
 app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -52,15 +52,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-app.get('/', function(req, res) {
-  res.render('index');
-});
-
 routes.configure(app, passport, musicoinApi, mediaProvider);
 
 // let angular catch them
 app.use(function(req, res) {
-  res.render('index');
+  res.render('not-found');
 });
 
 if (app.get('env') === 'development') {
@@ -121,7 +117,7 @@ function approveDomains(opts, certs, cb) {
     opts.domains = certs.altnames;
   }
   else {
-    opts.email = 'im@berry.ai';
+    opts.email = 'musicoin@berry.ai';
     opts.agreeTos = true;
   }
 

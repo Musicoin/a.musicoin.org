@@ -1,0 +1,61 @@
+<% if (artists && artists.length > 0) { %>
+<style>
+    .artist-badge-name {
+        margin-left: 10px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+    }
+    .artist-info {
+        display: flex;
+        flex-direction: row;
+        text-decoration: none;
+    }
+    .artist-info:hover {
+        text-decoration: none;
+    }
+    .artist-description {
+        color: #aaa;
+        max-height: 48px;
+        max-width: 300px;
+        display: inline-flex;
+        overflow: hidden;
+    }
+</style>
+<% for (var i=0; i < artists.length; i++) {
+    var artist = artists[i];
+%>
+<div class="artist-badge">
+    <a href="/artist/<%=artist.profileAddress%>"  class="artist-info">
+        <img width="64" height="64" src="<%=artist.image%>">
+        <div class="artist-badge-name">
+            <div class="artist-name"><%=artist.artistName%></div>
+            <div class="artist-description"><%=artist.description%></div>
+        </div>
+    </a>
+    <div>
+        <%
+            var socialTypes = [
+                {id: "google", icon: "fa-google-plus"},
+                "facebook", "twitter",
+                {id: "soundcloud", name: "sound cloud"}, "linkedin", "youtube",
+                {id: "reverbnation", icon: "fa-star", name: "reverb nation"},
+                "pinterest", "instagram", "medium"
+            ]
+        for (var i = 0; i < socialTypes.length; i++) {
+            var item = socialTypes[i];
+            if (typeof item == "string") {
+                item = {id: item};
+            }
+            var value = artist && artist.social ? artist.social[item.id] : "";
+            var name = item.name ? item.name : item.id;
+            var icon = item.icon ? item.icon : "fa-" + item.id;
+        if (value) { %>
+        <a href="<%=value%>" target="_blank" class="fa <%= icon %>"></a>
+        <% }
+        }
+        %>
+    </div>
+</div>
+<%}%>
+<%}%>

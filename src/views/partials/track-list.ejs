@@ -1,0 +1,66 @@
+<% if (releases && releases.length > 0) { %>
+    <style>
+        .tracks-flex-row {
+            display: flex;
+            flex-direction: row;
+        }
+        .tracks-flex-col {
+            display: flex;
+            flex-direction: column;
+        }
+        .track-container {
+            padding: 10px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: flex;
+            border-radius: 4px;
+        }
+        .tracks-stat {
+            margin-right: 20px;
+        }
+        .track-title {
+
+        }
+        .track-artist {
+            color: #aaa;
+        }
+        .track-list {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .description {
+            max-width: 180px;
+            display: inline-flex;
+            white-space: nowrap;
+            overflow-x: hidden;
+        }
+        .track-image {
+            background-size: cover;
+            height: 180px;
+            width: 180px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+    <div class="track-list">
+        <% for (var i=0; i < releases.length; i++) {
+            var release = releases[i];
+        %>
+        <div class="audio-track track-container tracks-flex-col"
+             audioUrl='<%=release.audioUrl%>'
+             trackTitle='<%=release.title%>'
+             artistName='<%=release.artistName%>'
+             image='<%=release.image%>'
+             playCount='<%=release.playCount%>'
+             tipCount='<%=release.tipCount%>'>
+            <div class="track-image" style="background-image: url('<%=release.image%>')">
+
+            </div>
+            <div class="description track-title"><%=release.title%></div>
+            <div class="description track-artist"><%=release.artistName%></div>
+            <div class="description track-artist">Tips <%=release.tipCount%>, Plays <%=release.playCount%></div>
+        </div>
+        <%}%>
+
+    </div>
+<%}%>

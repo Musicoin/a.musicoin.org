@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-        body        { word-wrap:break-word; }
+        body        { word-wrap:break-word; margin: 10px}
         .profile-image {
             justify-content: center;
             display: flex;
@@ -34,19 +34,11 @@
         .stat {
             margin-right: 20px;
         }
-        .track-title {
-            font-size: 24px;
-        }
     </style>
 </head>
 <body>
+<%- include partials/header.ejs %>
 <div class="container">
-
-    <div class="page-header text-center">
-        <h1>Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-    </div>
-
     <div>
         <div class="col-sm-6">
             <div class="well">
@@ -190,25 +182,11 @@
         </div>
         <%}%>
 
-        <% if (artist.releases.length > 0) {%>
+        <% if (releases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="text-success"><span class="fa fa-music"></span> Releases</h3>
-                <% for (var i=0; i < artist.releases.length; i++) {
-                    var release = artist.releases[i];
-                %>
-                <div class="track-container flex-row">
-                    <img width="64" height="64" src="<%=release.image%>">
-                    <div style="margin-left: 10px">
-                        <div class="track-title"><%=release.title%></div>
-                        <div class="flex-row">
-                            <label class="stat">Tips <%=release.tipCount%></label>
-                            <label class="stat">Plays <%=release.playCount%></label>
-                        </div>
-                        <div>contract: <%= release.address %></div>
-                    </div>
-                </div>
-                <%}%>
+                <%- include partials/track-list.ejs %>
             </div>
         </div>
         <%}%>
@@ -224,8 +202,8 @@
     </div>
 
 </div>
+<%- include partials/player.ejs %>
 </body>
-<script src="js/jquery-3.1.1.js"></script>
 <script>
   $( document ).ready(function() {
     $("#imageInput").change(function(){
