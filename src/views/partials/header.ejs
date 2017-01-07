@@ -57,6 +57,9 @@
     </div>
 </div>
 <div class="header-nav">
-    <div class="header-menu-item">songs</div>
-    <div class="header-menu-item">artists</div>
+    <% if (isAuthenticated) { %>
+    <a href="/profile" class="header-menu-item">profile</a>
+    <%}%>
+    <a class="header-menu-item">songs</a>
+    <a class="header-menu-item">artists</a>
 </div>
