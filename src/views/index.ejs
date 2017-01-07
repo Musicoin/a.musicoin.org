@@ -18,8 +18,9 @@
             border: none;
         }
         .section-header {
-            color: white;
+            color: #aaa;
             font-weight: lighter;
+            font-family: monospace;
         }
         .welcome {
             padding: 10px;
@@ -27,30 +28,35 @@
         }
         .outer-container {
             background-color: rgba(0,0,0,0.8);
-            height: 100%;
-            width: 100%;
+            position: absolute;
+            top:0;
+            left:0;
+            right:0;
+            bottom:0;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
 <div class="outer-container">
+</div>
     <%- include partials/header.ejs %>
     <div class="container">
         <div class="col-sm-6">
             <div class="well">
-                <h3 class="section-header"><span class="fa fa-music"></span> New Releases</h3>
+                <h3 class="section-header">new releases</h3>
                 <%- include partials/track-list.ejs %>
             </div>
         </div>
 
         <div class="col-sm-6">
             <div class="well">
-                <h3 class="section-header"><span class="fa fa-user"></span> New Artists</h3>
+                <h3 class="section-header">new artists</h3>
                 <%- include partials/artist-list.ejs %>
             </div>
         </div>
     </div>
     <%- include partials/player.ejs %>
-</div>
+
 </body>
 </html>
