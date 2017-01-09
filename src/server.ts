@@ -59,7 +59,7 @@ app.use(function(req, res) {
   res.render('not-found');
 });
 
-if (app.get('env') === 'development') {
+if (isDevEnvironment) {
   app.listen(config.port, function () {
     console.log('Listening on port ' + config.port);
     console.log('Environment ' + app.get('env'));

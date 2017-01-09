@@ -51,6 +51,13 @@
 
         <div class="col-sm-6">
             <div class="well">
+                <h3 class="section-header">recently played</h3>
+                <%- include('partials/track-list.ejs', {releases: recent}) %>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well">
                 <h3 class="section-header">new artists</h3>
                 <%- include partials/artist-list.ejs %>
             </div>

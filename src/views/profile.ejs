@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Node Authentication</title>
+    <title>Profile - Musicoin.org</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
@@ -34,11 +34,19 @@
         .stat {
             margin-right: 20px;
         }
+        .upload-image {
+            cursor:pointer;
+            width: 96px;
+            height: 96px;
+            object-fit: contain;
+            border: 1px solid #333;
+        }
     </style>
 </head>
 <body>
 <%- include partials/header.ejs %>
 <div class="container">
+    <div>Balance <%=artist.balance %></div>
     <div>
         <div class="col-sm-6">
             <div class="well">
@@ -152,7 +160,7 @@
                         const displayId = rowId + "_imageDisplay";
                     %>
                     <div style="display: flex; padding: 10px;">
-                        <img onclick="<%=rowId%>_image.click()" id="<%=displayId%>" style="cursor:pointer; width: 96px; height: 96px; object-fit: contain">
+                        <img onclick="<%=rowId%>_image.click()" id="<%=displayId%>" class="upload-image">
                         <div style="display:flex; flex-direction: column; height:100px; justify-content: space-around; padding-left: 10px">
                             <input type="text" class="form-control" name="<%=rowId%>.title" placeholder="title">
                             <label style="cursor: pointer" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>

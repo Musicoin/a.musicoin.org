@@ -3,6 +3,7 @@ import {MusicoinHelper} from "../musicoin-helper";
 import {MusicoinAPI} from "../musicoin-api";
 const User = require('../../app/models/user');
 const Release = require('../../app/models/release');
+const Playback = require('../../app/models/playback');
 
 export interface ArtistProfile {
   artist: any,
@@ -40,6 +41,14 @@ export class MusicoinOrgJsonAPI {
     return this._getLicensesForEntries({state: 'published'}, limit);
   }
 
+  getRecentPlays(limit: number): Promise<any> {
+    return Playback.find({}).sort({playbackDate: 'desc'}).limit(limit).exec()
+      .then(records => records.map(r => r.contractAddress))
+      .then(addresses => Array.from(new Set(addresses))) // insertion order is preserved
+      .then(addresses => addresses.map(address => this.getLicense(address)))
+      .then(promises => Promise.all(promises))
+  }
+
   getNewArtists(limit: number) {
     // TODO: Sort
     return User.find({}).limit(limit).exec()
@@ -70,8 +79,23 @@ export class MusicoinOrgJsonAPI {
       });
   }
 
+  getLicense(contractAddress: string): Promise<any> {
+    console.log("Getting license: " + contractAddress);
+    return this.mcHelper.getLicense(contractAddress)
+      .bind(this)
+      .then(function(license) {
+        console.log("Getting license: " + contractAddress + " ... done");
+        return User.findOne({profileAddress: license.artistProfileAddress}).exec()
+          .then(function(record) {
+            license.artistName = record.artistName;
+            return license;
+          })
+      })
+  }
+
   _convertDbRecordToLicense(record) {
     return this.mcHelper.getLicense(record.contractAddress)
+      .bind(this)
       .then(function(license) {
         license.artistName = record.artistName;
         return license;

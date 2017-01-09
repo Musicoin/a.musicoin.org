@@ -6,6 +6,7 @@ import {MusicoinHelper} from "./musicoin-helper";
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 const User = require('../app/models/user');
+const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider) {
@@ -27,9 +28,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/', function (req, res) {
     const rs = jsonAPI.getNewReleases(20);
     const as = jsonAPI.getNewArtists(20);
+    const ps = Promise.resolve(jsonAPI.getRecentPlays(20));
 
-    Promise.join(rs, as, function(releases, artists) {
-      doRender(req, res, "index.ejs", {releases: releases, artists: artists});
+    Promise.join(rs, as, ps, function(releases, artists, recent) {
+      doRender(req, res, "index.ejs", {releases: releases, artists: artists, recent: recent});
     });
   });
 
@@ -271,13 +273,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/ppp/:address', function(req, res) {
-    if (req.params.address.endsWith(".mp3"))
-      req.params.address = req.params.address.substring(0, req.params.address.length-4);
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
     Promise.join(k, l, function(keyResponse, license) {
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key);
     })
+      .then(function(result) {
+        Playback.create({contractAddress: req.params.address}); // async, not checking result
+        return result;
+      })
       .then(function(result) {
         result.headers['content-type'] = "audio/mpeg";
         res.writeHead(200, result.headers);
