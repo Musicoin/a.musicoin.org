@@ -210,7 +210,7 @@
 
         <div class="col-sm-6">
             <div class="well">
-                <h3><span class="fa fa-music"></span> Upload</h3>
+                <h3><span class="fa fa-arrow-circle-up"></span> Release</h3>
                 <form id=profileForm action="/tracks/release" enctype="multipart/form-data" method="post">
                     <% for (let i=0; i < 1; i++) {
                         const rowId = `track${i}`;
@@ -245,7 +245,7 @@
         <% if (pendingReleases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
-                <h3><span class="fa fa-music"></span> Pending</h3>
+                <h3>Pending</h3>
                 <% for (var i=0; i < pendingReleases.length; i++) {%>
                     <div><%=pendingReleases[i].title%></div>
                 <%}%>
@@ -257,7 +257,7 @@
         <% if (releases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
-                <h3><span class="fa fa-music"></span> My Releases</h3>
+                <h3>My Releases</h3>
                 <%- include partials/track-list.ejs %>
             </div>
         </div>

@@ -31,7 +31,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const ps = Promise.resolve(jsonAPI.getRecentPlays(20));
 
     Promise.join(rs, as, ps, function(releases, artists, recent) {
-      doRender(req, res, "index.ejs", {releases: releases, artists: artists, recent: recent});
+      doRender(req, res, "index.ejs", {
+        releases: releases,
+        artists: artists,
+        featuredArtists: artists, // HACK, for now
+        recent: recent});
     });
   });
 
@@ -187,7 +191,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           const m = mediaProvider.uploadText(JSON.stringify(metadata));
           return Promise.join(a, i, m, function(audioUrl, imageUrl, metadataUrl) {
             track.imageUrl = imageUrl;
-            return musicoinApi.releaseTrack(req.user.profileAddress, track.title, imageUrl, metadataUrl, audioUrl, key);
+            return musicoinApi.releaseTrack(req.user.profileAddress, track.title, imageUrl, metadataUrl, audioUrl, track.audio.type, key);
           })
       });
 
@@ -285,7 +289,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/ppp/:address', function(req, res) {
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
+    const context = {contentType: "audio/mpeg"};
     Promise.join(k, l, function(keyResponse, license) {
+      context.contentType = license.contentType ? license.contentType : context.contentType;
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key);
     })
       .then(function(result) {
@@ -293,7 +299,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return result;
       })
       .then(function(result) {
-        result.headers['content-type'] = "audio/mpeg";
+        result.headers['content-type'] = context.contentType;
         res.writeHead(200, result.headers);
         result.stream.pipe(res);
       })

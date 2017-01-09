@@ -1,0 +1,48 @@
+<% if (artists && artists.length > 0) { %>
+<style>
+    .featured-artist-badge-name {
+        margin-left: 10px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+    }
+    .featured-section {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .featured-item {
+        margin-left: 10px;
+        color: white;
+    }
+    .featured-artist-info {
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+    }
+    .featured-artist-info:hover {
+        text-decoration: none;
+    }
+    .featured-artist-description {
+        color: #aaa;
+        max-height: 48px;
+        max-width: 300px;
+        display: inline-flex;
+        overflow: hidden;
+    }
+</style>
+<div class="featured-section">
+    <% for (var i=0; i < artists.length; i++) {
+        var artist = artists[i];
+    %>
+    <div class="featured-item">
+        <a href="/artist/<%=artist.profileAddress%>"  class="featured-artist-info">
+            <img width="220" height="220" src="<%=artist.image%>">
+            <div class="featured-artist-badge-name">
+                <h3 class="featured-artist-name text-center"><%=artist.artistName%></h3>
+            </div>
+        </a>
+    </div>
+    <%}%>
+</div>
+<%}%>

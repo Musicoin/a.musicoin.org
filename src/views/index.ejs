@@ -24,6 +24,14 @@
 <body>
     <%- include partials/header.ejs %>
     <div class="container">
+        <div class="col-sm-12">
+            <div class="well">
+                <h3 class="section-header">featured artists</h3>
+                <%- include('partials/featured-artist-list.ejs', {artists: featuredArtists}) %>
+            </div>
+        </div>
+    </div>
+    <div class="container">
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="section-header">new releases</h3>
@@ -37,8 +45,9 @@
                 <%- include('partials/track-list.ejs', {releases: recent}) %>
             </div>
         </div>
-
-        <div class="col-sm-6">
+    </div>
+    <div class="container">
+        <div class="col-sm-12">
             <div class="well">
                 <h3 class="section-header">new artists</h3>
                 <%- include partials/artist-list.ejs %>
