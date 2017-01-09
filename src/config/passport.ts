@@ -29,7 +29,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
   passport.deserializeUser(function (id, done) {
     User.findById(id, function (err, user) {
       if (err) return done(err, null);
-      user.profile = Object.assign(defaultProfile, user.draftProfile);
+      user.profile = Object.assign({}, defaultProfile, user.draftProfile);
       done(null, user);
     });
   });

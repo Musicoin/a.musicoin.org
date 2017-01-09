@@ -41,3 +41,7 @@ label {
     align-content: center;
     align-items: center;
 }
+
+.subtle-text {
+    color: #aaa
+}

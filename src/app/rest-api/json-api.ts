@@ -16,8 +16,19 @@ export class MusicoinOrgJsonAPI {
   }
 
   getArtist(address: string, includeReleases: boolean, includePending: boolean): Promise<ArtistProfile> {
-    const a = User.findOne({profileAddress: address}).exec()
-      .then(dbRecord => this.mcHelper.getArtistProfile(address));
+    if (!address) {
+      return Promise.resolve({
+        artist: {},
+        releases: [],
+        pendingReleases: []
+      });
+    }
+
+    const a = User.findOne({profileAddress: "xxx"}).exec()
+      .then(dbRecord => {
+        if (!dbRecord) return null;
+        return this.mcHelper.getArtistProfile(address)
+      });
 
     const rs = !includeReleases
       ? Promise.resolve(null)
@@ -51,7 +62,7 @@ export class MusicoinOrgJsonAPI {
 
   getNewArtists(limit: number) {
     // TODO: Sort
-    return User.find({}).limit(limit).exec()
+    return User.find({profileAddress: {$ne: null}}).limit(limit).exec()
       .then(records => records.map(r => this._convertDbRecordToArtist(r)))
       .then(promises => Promise.all(promises))
   }
