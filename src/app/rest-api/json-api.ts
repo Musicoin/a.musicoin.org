@@ -24,7 +24,7 @@ export class MusicoinOrgJsonAPI {
       });
     }
 
-    const a = User.findOne({profileAddress: "xxx"}).exec()
+    const a = User.findOne({profileAddress: address}).exec()
       .then(dbRecord => {
         if (!dbRecord) return null;
         return this.mcHelper.getArtistProfile(address)
