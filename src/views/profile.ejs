@@ -1,11 +1,9 @@
 <!doctype html>
 <html>
 <head>
+    <%- include partials/page-head.ejs %>
     <title>Profile - Musicoin.org</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-        body        { word-wrap:break-word; margin: 10px}
         .profile-image {
             justify-content: center;
             display: flex;
@@ -20,13 +18,6 @@
         input.form-control  {
             width: 230px;
         }
-        .track-container {
-            background-color: rgba(0,0,0,0.05);
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            display: flex;
-        }
         .flex-row {
             display: flex;
             flex-direction: row;
@@ -39,14 +30,44 @@
             width: 96px;
             height: 96px;
             object-fit: contain;
-            border: 1px solid #333;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .instructions {
+        }
+        .well {
+            background-color: rgba(255,255,255,0.2);
+            border: none;
+        }
+        .form-entry {
+            background-color: rgba(255,255,255,0.1);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: normal;
+            color: #aaa
+        }
+
+        input.form-control {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+        }
+        textarea.form-control {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+        }
+        h3 {
+            font-family: monospace;
+            text-transform: lowercase;
+            text-align: center;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 <%- include partials/header.ejs %>
 <div class="container">
-    <div>Balance <%=artist.balance %></div>
     <div>
         <div class="col-sm-6">
             <div class="well">
@@ -132,38 +153,79 @@
             <!--</div>-->
         <!--</div>-->
 
+        <!--<div class="col-sm-6">-->
+            <!--<div class="well">-->
+                <!--<h3 class="text-danger"><span class="fa fa-google-plus"></span> Google+</h3>-->
+
+                <!--&lt;!&ndash; check if the user has this token (is the user authenticated with this social account) &ndash;&gt;-->
+                <!--<% if (user.google.token) { %>-->
+                    <!--<p>-->
+                        <!--<strong>email</strong>: <%= user.google.email %><br>-->
+                        <!--<strong>name</strong>: <%= user.google.name %>-->
+                    <!--</p>-->
+
+                    <!--<a href="/unlink/google" class="btn btn-danger">Unlink</a>-->
+                <!--<% } else { %>-->
+                    <!--<a href="/connect/google" class="btn btn-danger">Connect Google</a>-->
+                <!--<% } %>-->
+
+            <!--</div>-->
+        <!--</div>-->
+
         <div class="col-sm-6">
             <div class="well">
-                <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google+</h3>
-
-                <!-- check if the user has this token (is the user authenticated with this social account) -->
-                <% if (user.google.token) { %>
-                    <p>
-                        <strong>email</strong>: <%= user.google.email %><br>
-                        <strong>name</strong>: <%= user.google.name %>
-                    </p>
-
-                    <a href="/unlink/google" class="btn btn-danger">Unlink</a>
-                <% } else { %>
-                    <a href="/connect/google" class="btn btn-danger">Connect Google</a>
-                <% } %>
-
+                <h3>Wallet</h3>
+                <p>
+                    Balance: <%= artist.balance %> mc
+                </p>
+                <p class="instructions">
+                    You can easily send you musicoins to another address.  Just paste in their wallet address below, enter
+                    an amount, and click send!
+                </p>
+                <form action="/send" method="post">
+                    <table cellpadding="3">
+                        <tr>
+                            <td>Recipient</td>
+                            <td><input name=recipient type="text" class="form-control" placeholder="address"></td>
+                        </tr>
+                        <tr>
+                            <td>Amount</td>
+                            <td><input name=amount type="number" class="form-control" placeholder="0"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button type="submit" class="btn btn-warning">
+                                    Send
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
             </div>
         </div>
+
         <% if (user.profileAddress) {%>
         <div class="col-sm-6">
             <div class="well">
-                <h3 class="text-success"><span class="fa fa-music"></span> Upload</h3>
+                <h3><span class="fa fa-music"></span> Upload</h3>
                 <form id=profileForm action="/tracks/release" enctype="multipart/form-data" method="post">
                     <% for (let i=0; i < 1; i++) {
                         const rowId = `track${i}`;
                         const displayId = rowId + "_imageDisplay";
                     %>
                     <div style="display: flex; padding: 10px;">
-                        <img onclick="<%=rowId%>_image.click()" id="<%=displayId%>" class="upload-image">
+                        <div class="flex-column clickable" onclick="<%=rowId%>_image.click()" >
+                            <img src="<%=user.profile.image%>" id="<%=displayId%>" class="upload-image">
+                            <div class="text-center small">
+                                (click to change)
+                            </div>
+
+                        </div>
+
                         <div style="display:flex; flex-direction: column; height:100px; justify-content: space-around; padding-left: 10px">
                             <input type="text" class="form-control" name="<%=rowId%>.title" placeholder="title">
-                            <label style="cursor: pointer" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>
+                            <label class="form-entry" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>
                             <input style="display: none" onchange="updateAudioLabel('<%=rowId%>_audioLabel', this.id)" id="<%=rowId%>_audio" type="file" name="<%=rowId%>.audio">
                             <input style="display: none" onchange="updateImageDisplay('<%=displayId%>', this.id)" id="<%=rowId%>_image" type="file" name="<%=rowId%>.image">
                         </div>
@@ -181,7 +243,7 @@
         <% if (pendingReleases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
-                <h3 class="text-success"><span class="fa fa-music"></span> Pending</h3>
+                <h3><span class="fa fa-music"></span> Pending</h3>
                 <% for (var i=0; i < pendingReleases.length; i++) {%>
                     <div><%=pendingReleases[i].title%></div>
                 <%}%>
@@ -193,7 +255,7 @@
         <% if (releases.length > 0) {%>
         <div class="col-sm-6">
             <div class="well">
-                <h3 class="text-success"><span class="fa fa-music"></span> Releases</h3>
+                <h3><span class="fa fa-music"></span> My Releases</h3>
                 <%- include partials/track-list.ejs %>
             </div>
         </div>
@@ -202,7 +264,7 @@
         <%} else {%>
         <div class="col-sm-6">
             <div class="well">
-                <h3 class="text-success"><span class="fa fa-music"></span> Release</h3>
+                <h3><span class="fa fa-music"></span> Release</h3>
                 Once you publish a profile, you can release songs here.
             </div>
         </div>

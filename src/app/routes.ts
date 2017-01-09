@@ -101,6 +101,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.post('/send', isLoggedIn, function (req, res) {
+    musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
+      .then(function(tx) {
+        console.log(`Payment submitted! tx : ${tx}`);
+        res.redirect("/profile");
+      })
+      .catch(function(err) {
+        console.log(err);
+        throw err;
+      })
+  });
+
   app.post('/profile/save', isLoggedIn, function(req, res) {
     const form = new Formidable.IncomingForm();
     form.parse(req, (err, fields:any, files:any) => {
@@ -146,6 +158,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
+
   app.post('/tracks/release', isLoggedIn, hasProfile, function(req, res) {
     const form = new Formidable.IncomingForm();
     form.parse(req, (err, fields:any, files:any) => {
@@ -165,29 +178,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const promises = tracks
         .filter(t => t.title)
         .filter(t => t.audio.size > 0)
-        .filter(t => t.image.size > 0)
         .map(track => {
           const key = crypto.randomBytes(16).toString('base64'); // 128-bits
           const a = mediaProvider.upload(track.audio.path, () => key); // encrypted
-          const i = mediaProvider.upload(track.image.path); // unencrypted
-          const m = mediaProvider.uploadText(JSON.stringify(metadata))
+          const i = track.image && track.image.size > 0
+            ? mediaProvider.upload(track.image.path) // unencrypted
+            : Promise.resolve(req.user.draftProfile.ipfsImageUrl);
+          const m = mediaProvider.uploadText(JSON.stringify(metadata));
           return Promise.join(a, i, m, function(audioUrl, imageUrl, metadataUrl) {
             track.imageUrl = imageUrl;
             return musicoinApi.releaseTrack(req.user.profileAddress, track.title, imageUrl, metadataUrl, audioUrl, key);
           })
       });
 
-      interface TxResult {
-        tx: string
-      }
-
       Promise.all(promises)
-        .then(function (txs: TxResult[]) {
+        .then(function (txs: string[]) {
           console.log("Got transactions: " + JSON.stringify(txs));
           const releases = [];
           for (let i=0; i < txs.length; i++) {
             releases.push({
-              tx: txs[i].tx,
+              tx: txs[i],
               title: tracks[i].title,
               imageUrl: tracks[i].imageUrl,
               artistName: req.user.draftProfile.artistName,

@@ -2,10 +2,13 @@
 <html>
 <head>
     <title><%=artist.artistName%> - Musicoin</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <%- include partials/page-head.ejs %>
     <style>
-        body        { word-wrap:break-word; }
+        body        {
+            word-wrap:break-word;
+            background-image: url('<%=artist.image%>');
+            background-size: cover;
+        }
         .profile-image {
             justify-content: center;
             display: flex;
@@ -27,9 +30,6 @@
         .stat {
             margin-right: 20px;
         }
-        .track-title {
-            font-size: 24px;
-        }
     </style>
 </head>
 <body>
@@ -37,55 +37,32 @@
 <div class="container">
     <div class="page-header">
         <h1><%=artist.artistName%></h1>
-        <!--<a href="/logout" class="btn btn-default btn-sm">Logout</a>-->
+        <div><%= artist.description %></div>
+        <%- include partials/social-links.ejs %>
     </div>
 
-    <div>
-        <div class="col-sm-6">
-            <div class="well">
-                <div class="profile-image">
-                    <img id="profileImage" style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"  src="<%=artist.image%>">
-                </div>
-                <div class="form-group">
-                    <div name="description"><%= artist.description %></div>
-                </div>
-                <div class="form-group">
-                    <label>Social</label>
-                    <div>
-                    <%
-                    var socialTypes = [
-                        {id: "google", icon: "fa-google-plus"},
-                        "facebook", "twitter",
-                        {id: "soundcloud", name: "sound cloud"}, "linkedin", "youtube",
-                        {id: "reverbnation", icon: "fa-star", name: "reverb nation"},
-                        "pinterest", "instagram", "medium"
-                    ]
-                    for (var i = 0; i < socialTypes.length; i++) {
-                        var item = socialTypes[i];
-                        if (typeof item == "string") {
-                            item = {id: item};
-                        }
-                        var value = artist && artist.social ? artist.social[item.id] : "";
-                        var name = item.name ? item.name : item.id;
-                        var icon = item.icon ? item.icon : "fa-" + item.id;
-                    if (value) { %>
-                    <a href="<%=value%>" target="_blank" class="fa <%= icon %>"></a>
-                    <% }
-                    }
-                    %>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!--<div>-->
+        <!--<div class="col-sm-6">-->
+            <!--<div class="well">-->
+                <!--<div class="profile-image">-->
+                    <!--<img id="profileImage" style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"  src="<%=artist.image%>">-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<div name="description"><%= artist.description %></div>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<label>Social</label>-->
+
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 
     <% if (releases.length > 0) {%>
     <div class="row">
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="text-success"><span class="fa fa-music"></span> Releases</h3>
-                <%- include partials/track-list.ejs %>
-            </div>
+        <div class="well">
+            <h3 class="section-header"><span class="fa fa-music"></span> Releases</h3>
+            <%- include partials/track-list.ejs %>
         </div>
     </div>
     <%}%>

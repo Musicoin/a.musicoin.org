@@ -1,0 +1,43 @@
+.well {
+    background-color: rgba(255,255,255,0.15);
+    border: none;
+}
+
+body {
+    color: #eee;
+    background: #333 url('/images/musician.jpg') no-repeat fixed;
+}
+
+label {
+    font-family: monospace;
+    text-transform: lowercase;
+}
+
+.social-link {
+    color: #aaa;
+}
+
+.section-header {
+    color: #aaa;
+    font-weight: lighter;
+    font-family: monospace;
+    text-transform: lowercase;
+    text-align: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.center-text {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-content: center;
+    align-items: center;
+}

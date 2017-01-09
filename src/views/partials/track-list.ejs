@@ -29,21 +29,24 @@
             flex-wrap: wrap;
         }
         .description {
-            max-width: 120px;
+            max-width: 100px;
             display: inline-flex;
             white-space: nowrap;
             overflow-x: hidden;
         }
         .track-image {
             background-size: cover;
-            height: 120px;
-            width: 120px;
+            height: 100px;
+            width: 100px;
             background-position: center;
             background-repeat: no-repeat;
         }
     </style>
     <div class="track-list">
-        <% for (var i=0; i < releases.length; i++) {
+        <%
+        var max = typeof maxItems == "undefined" ? releases.length : maxItems;
+        var toShow = Math.min(max, releases.length);
+        for (var i=0; i < toShow; i++) {
             var release = releases[i];
         %>
         <div class="audio-track track-container tracks-flex-col"
@@ -53,9 +56,7 @@
              image='<%=release.image%>'
              playCount='<%=release.playCount%>'
              tipCount='<%=release.tipCount%>'>
-            <div class="track-image" style="background-image: url('<%=release.image%>')">
-
-            </div>
+            <div class="track-image" style="background-image: url('<%=release.image%>')"></div>
             <div class="description track-title"><%=release.title%></div>
             <div class="description track-artist"><%=release.artistName%></div>
             <div class="description track-artist">Tips <%=release.tipCount%>, Plays <%=release.playCount%></div>

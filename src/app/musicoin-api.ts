@@ -3,6 +3,7 @@ import * as request from 'request';
 import ReadableStream = NodeJS.ReadableStream;
 
 interface MusicoinApiConfig {
+  sendFromProfile: string,
   publishProfile: string,
   releaseLicense: string,
   getKey: string,
@@ -37,51 +38,44 @@ export class MusicoinAPI {
     return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress);
   }
 
-  releaseTrack(profileAddress: string, title: string, imageUrl: string, metadataUrl: string, audioUrl: string, key: string) {
+  releaseTrack(profileAddress: string, title: string, imageUrl: string, metadataUrl: string, audioUrl: string, key: string): Promise<string> {
     console.log(`releasing track ${title}`);
-    return new Promise(function (resolve, reject) {
-      const postData = {
-        profileAddress: profileAddress,
-        title: title,
-        imageUrl: imageUrl,
-        metadataUrl: metadataUrl,
-        audioUrl: audioUrl,
-        encryptionKey: key
-      };
+    return this.postJson(this.apiConfig.releaseLicense, {
+      profileAddress: profileAddress,
+      title: title,
+      imageUrl: imageUrl,
+      metadataUrl: metadataUrl,
+      audioUrl: audioUrl,
+      encryptionKey: key
+    }).then(body => body.tx);
+  }
 
-      const options = {
-        method: 'post',
-        body: postData,
-        json: true,
-        url: this.apiConfig.releaseLicense,
-        headers: {
-          clientID: this.apiConfig.clientID,
-          clientSecret: this.apiConfig.clientSecret
-        }
-      };
-
-      request.post(options, function (err, resp, body) {
-        if (err) return reject(err);
-        resolve(body);
-      });
-    }.bind(this));
+  sendFromProfile(profileAddress: string, recipientAddress: string, musicoins: number): Promise<string> {
+    return this.postJson(this.apiConfig.sendFromProfile, {
+      profileAddress: profileAddress,
+      recipientAddress: recipientAddress,
+      musicoins: musicoins
+    }).then(body => body.tx);
   }
 
   publishProfile(profileAddress: string, artistName: string, descriptionUrl: string, imageUrl: string, socialUrl: string): Promise<string> {
+    return this.postJson(this.apiConfig.publishProfile, {
+      profileAddress: profileAddress,
+      artistName: artistName,
+      descriptionUrl: descriptionUrl,
+      imageUrl: imageUrl,
+      socialUrl: socialUrl,
+    }).then(body => body.tx);
+  }
+
+  postJson(url: string, postData: any): Promise<any> {
     return new Promise(function (resolve, reject) {
-      let postData = {
-        profileAddress: profileAddress,
-        artistName: artistName,
-        descriptionUrl: descriptionUrl,
-        imageUrl: imageUrl,
-        socialUrl: socialUrl,
-      };
-      console.log(`Sending profile create/update request to ${this.apiConfig.publishProfile},  data=${JSON.stringify(postData)}`);
+      console.log(`Sending post ${url},  data=${JSON.stringify(postData)}`);
       const options = {
         method: 'post',
         body: postData,
         json: true,
-        url: this.apiConfig.publishProfile,
+        url: url,
         headers: {
           clientID: this.apiConfig.clientID,
           clientSecret: this.apiConfig.clientSecret
@@ -92,12 +86,12 @@ export class MusicoinAPI {
           console.log(err);
           return reject(err);
         }
-        resolve(body.tx);
+        resolve(body);
       });
     }.bind(this));
   }
 
-  getJson(url: string, properties?: any) {
+  getJson(url: string, properties?: any): Promise<any> {
     return new Promise(function(resolve, reject) {
       request({
         url: url,

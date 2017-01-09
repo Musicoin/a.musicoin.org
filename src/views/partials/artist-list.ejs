@@ -33,29 +33,7 @@
             <div class="artist-description"><%=artist.description%></div>
         </div>
     </a>
-    <div>
-        <%
-            var socialTypes = [
-                {id: "google", icon: "fa-google-plus"},
-                "facebook", "twitter",
-                {id: "soundcloud", name: "sound cloud"}, "linkedin", "youtube",
-                {id: "reverbnation", icon: "fa-star", name: "reverb nation"},
-                "pinterest", "instagram", "medium"
-            ]
-        for (var i = 0; i < socialTypes.length; i++) {
-            var item = socialTypes[i];
-            if (typeof item == "string") {
-                item = {id: item};
-            }
-            var value = artist && artist.social ? artist.social[item.id] : "";
-            var name = item.name ? item.name : item.id;
-            var icon = item.icon ? item.icon : "fa-" + item.id;
-        if (value) { %>
-        <a href="<%=value%>" target="_blank" class="fa <%= icon %>"></a>
-        <% }
-        }
-        %>
-    </div>
+    <%- include social-links.ejs %>
 </div>
 <%}%>
 <%}%>
