@@ -26,9 +26,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // HOME PAGE (with login links) ========
   // =====================================
   app.get('/', function (req, res) {
-    const rs = jsonAPI.getNewReleases(20);
-    const as = jsonAPI.getNewArtists(20);
-    const ps = Promise.resolve(jsonAPI.getRecentPlays(20));
+    const rs = jsonAPI.getNewReleases(6);
+    const as = jsonAPI.getNewArtists(12);
+    const ps = Promise.resolve(jsonAPI.getRecentPlays(6));
 
     Promise.join(rs, as, ps, function(releases, artists, recent) {
       doRender(req, res, "index.ejs", {
@@ -41,6 +41,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/not-found', function (req, res) {
     res.render('not-found.ejs');
+  });
+
+  app.get('/faq', function (req, res) {
+    doRender(req, res, 'faq.ejs', {});
   });
 
   // =====================================

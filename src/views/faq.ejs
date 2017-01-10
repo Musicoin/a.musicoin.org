@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+    <title>FAQ - Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body        {
+            word-wrap:break-word;
+            background-image: url('/images/musician.jpg');
+            background-size: cover;
+        }
+        .faq-question {
+            font-size: x-large;
+        }
+        .faq-answer {
+            font-size: x-large;
+        }
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<div class="container">
+    <div class="page-header">
+        <h1>FAQ</h1>
+    </div>
+    <div class="row">
+        <div class="well">
+            <%
+            var questions = [
+                {
+                    question: "If Musicoin isn't based on traditional currency, how do listeners obtain coins?",
+                    answer: (`Early adopters will get coins from an ICO (initial coin offering), mining, or
+                    peer-to-peer exchange. Later adopters will be able to exchange coins from fiat currency via
+                    exchanges. Eventually, it could be as easy as buying an digital gift card from
+                    convenient store.`)
+                },
+                {
+                    question: "Who sets the price per play--the musician or the listener?",
+                    answer: (`Our goal is to allow musicians themselves to control everything.
+                    They can follow the template to set a standard price (which is one coin per play), or
+                    they can set a higher or lower prices based on their personal will. Additionally,
+                    musicians can customize how how each payment is distributed.`)
+                },
+                {
+                    question: "What incentive is there for fans to pay for music?",
+                    answer: (`We believe that users, in general, would be happy to support
+                    their favorite musicians and that piracy is driven by two factors:
+                    (1) convenience and (2) a disconnect between the listener and the artist.
+                    By building a simple, low-cost system that provides a direct connection
+                    between listeners and artists, we believe there will be little incentive to
+                    obtain music illegally.`)
+                }
+            ];
+            %>
+            <ol>
+                <%
+                for (var q = 0; q < questions.length; q++) {
+                    var question = questions[q].question;
+                    var answer = questions[q].answer;
+                %>
+                <li class="faq-question"><%=question%></li>
+                <div class="subtle-text"><%=answer%></div>
+                <br><br>
+                <% } %>
+            </ol>
+        </div>
+    </div>
+</div>
+</body>
+</html>
