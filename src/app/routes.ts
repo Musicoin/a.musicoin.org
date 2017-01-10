@@ -327,7 +327,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return result;
       })
       .then(function(result) {
-        result.headers['content-type'] = context.contentType;
+        result.headers['Content-Type'] = context.contentType;
+        result.headers['Accept-Ranges'] = 'none';
         res.writeHead(200, result.headers);
         result.stream.pipe(res);
       })
