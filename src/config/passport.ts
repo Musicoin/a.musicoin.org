@@ -4,6 +4,8 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 // load up the user model
 const User = require('../app/models/user');
+const Invite = require('../app/models/invite');
+const InviteRequest = require('../app/models/invite-request');
 const defaultProfile = {
   artistName: "",
   description: "Say something interesting about yourself",
@@ -161,12 +163,32 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
               // set all of the relevant information
               newUser.google = asGoogleUser(profile);
 
-              // save the user
-              newUser.save(function (err) {
-                if (err)
+              // Check for an invite
+              Invite.findOne({email: newUser.google.email.toLowerCase()}).exec()
+                .then(function(record) {
+                  if (!record) {
+                    var query = {email: newUser.google.email},
+                      update = { expire: new Date() },
+                      options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+                    // Find the document
+                    InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
+                      if (error) return;
+                      console.log("Created invite request for user: " + newUser.google.email);
+                    });
+                    return done(null, false, req.flash('loginMessage', 'An invite is required'));
+                  }
+                  // save the user
+                  newUser.save(function (err) {
+                    if (err)
+                      throw err;
+                    return done(null, newUser);
+                  });
+                })
+                .catch(function(err) {
+                  console.log(`Failed checking for user invite: ${err}`);
                   throw err;
-                return done(null, newUser);
-              });
+                });
             }
           });
         }

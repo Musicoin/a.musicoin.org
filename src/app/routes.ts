@@ -5,7 +5,7 @@ import * as crypto from 'crypto';
 import {MusicoinHelper} from "./musicoin-helper";
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
-const User = require('../app/models/user');
+const Invite = require('../app/models/invite');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 
@@ -45,6 +45,25 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/faq', function (req, res) {
     doRender(req, res, 'faq.ejs', {});
+  });
+
+  app.get('/invite', function (req, res) {
+    doRender(req, res, 'invite.ejs', {});
+  });
+
+  app.post('/invite', isLoggedIn, function(req, res) {
+    if (canInvite(req.user)) {
+      Invite.create({email: req.body.email.toLowerCase(), invitedBy: req.user._id}, function(err, record) {
+        if (err) {
+          console.log(err);
+          res.redirect('profile?invited=' + req.body.email + "&success=false");
+        }
+        res.redirect('profile?invited=' + req.body.email + "&success=true");
+      });
+    }
+    else {
+      throw new Error("Not authorized");
+    }
   });
 
   // =====================================
@@ -105,6 +124,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/profile', isLoggedIn, preProcessUser(mediaProvider), function (req, res) {
     jsonAPI.getArtist(req.user.profileAddress, true, true)
       .then((output: ArtistProfile) => {
+        output['invited'] = {
+          email: req.query.invited,
+          success: req.query.success
+        };
         doRender(req, res, "profile.ejs", output);
       });
   });
@@ -247,7 +270,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/auth/google/callback',
     passport.authenticate('google', {
       successRedirect : '/profile',
-      failureRedirect : '/'
+      failureRedirect : '/invite'
     }));
 
   // =============================================================================
@@ -342,6 +365,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 }
 
+function canInvite(user) {
+  return user.canInvite ||
+    (user.google && user.google.email && user.google.email.endsWith("@berry.ai"));
+}
+
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
@@ -365,6 +393,7 @@ function preProcessUser(mediaProvider) {
     user.profile.image = user.profile.ipfsImageUrl
       ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
       : user.profile.image;
+    user.canInvite = canInvite(user);
     next();
   }
 }

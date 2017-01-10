@@ -37,7 +37,8 @@ const userSchema = mongoose.Schema({
     description: String,
     social: Object,
     ipfsImageUrl: String
-  }
+  },
+  canInvite: Boolean
 });
 
 // methods ======================
