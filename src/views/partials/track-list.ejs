@@ -40,6 +40,20 @@
             width: 100px;
             background-position: center;
             background-repeat: no-repeat;
+            border-radius: 4px;
+        }
+        .show-off {
+            width: 100px;
+            height: 114px;
+            position: absolute;
+            top: -10px;
+            left: -29px;
+            transform: rotate(10deg);
+            background: linear-gradient(0deg, rgba(255, 255, 255, 0)50%, rgba(255, 255, 255, 0.5)100%);
+        }
+        .show-off-container {
+            position: relative;
+            overflow: hidden;
         }
     </style>
     <div class="track-list">
@@ -56,10 +70,13 @@
              image='<%=release.image%>'
              playCount='<%=release.playCount%>'
              tipCount='<%=release.tipCount%>'>
-            <div class="track-image" style="background-image: url('<%=release.image%>')"></div>
-            <div class="description track-title"><%=release.title%></div>
+            <div class="track-image show-off-container shadow" style="background-image: url('<%=release.image%>')">
+                <div class="show-off"></div>
+            </div>
+
+            <div class="description track-title" title="<%=release.title%>"><%=release.title%></div>
             <div class="description track-artist"><%=release.artistName%></div>
-            <div class="description track-artist">Tips <%=release.tipCount%>, Plays <%=release.playCount%></div>
+            <div class="description track-artist"><%=release.playCount%> plays</div>
         </div>
         <%}%>
 

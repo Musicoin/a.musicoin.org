@@ -1,7 +1,7 @@
 <% if (artists && artists.length > 0) { %>
 <style>
     .artist-badge-name {
-        margin-left: 10px;
+        margin: 10px;
         color: white;
         display: flex;
         flex-direction: column;
@@ -21,19 +21,34 @@
         display: inline-flex;
         overflow: hidden;
     }
+    .artist-image {
+        border-radius: 50%;
+    }
+    .artist-list {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .artist-badge {
+        position: relative;
+        overflow: hidden;
+    }
+
 </style>
-<% for (var i=0; i < artists.length; i++) {
-    var artist = artists[i];
-%>
-<div class="artist-badge">
-    <a href="/artist/<%=artist.profileAddress%>"  class="artist-info">
-        <img width="64" height="64" src="<%=artist.image%>">
-        <div class="artist-badge-name">
-            <div class="artist-name"><%=artist.artistName%></div>
-            <div class="artist-description"><%=artist.description%></div>
-        </div>
-    </a>
-    <%- include social-links.ejs %>
+<div class="artist-list">
+    <% for (var i=0; i < artists.length; i++) {
+        var artist = artists[i];
+    %>
+    <div class="artist-badge">
+        <a href="/artist/<%=artist.profileAddress%>"  class="artist-info">
+            <img class="artist-image" width="64" height="64" src="<%=artist.image%>">
+            <div class="artist-badge-name">
+                <div class="artist-name"><%=artist.artistName%></div>
+                <div class="artist-description"><%=artist.description%></div>
+            </div>
+        </a>
+        <%- include social-links.ejs %>
+    </div>
+    <%}%>
+    <%}%>
 </div>
-<%}%>
-<%}%>

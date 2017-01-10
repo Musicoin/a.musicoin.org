@@ -44,6 +44,7 @@
         font-size: 2em;
         font-family: monospace;
         color: #aaa;
+        margin-right: 20px;
     }
     .background-cover {
         background-color: rgba(0,0,0,0.9);
@@ -57,7 +58,13 @@
 </style>
 <div class="background-cover"></div>
 <div class="header">
-    <a id="logo-container" href="/" class="brand-logo mont"><img src="/images/icon.png" width="48px" height="48px"> musicoin.org </a>
+    <div>
+        <a id="logo-container" href="/" class="brand-logo mont"><img src="/images/icon.png" width="48px" height="48px"></a>
+        <a id="logo-container" href="/" class="brand-logo mont big-screen-only">
+            musicoin.org
+        </a>
+    </div>
+
     <div>
         <% if (isAuthenticated) { %>
         <a href="/logout" class="btn btn-default btn-sm">logout</a>
@@ -72,4 +79,5 @@
     <%}%>
     <a class="header-menu-item">songs</a>
     <a class="header-menu-item">artists</a>
+    <a class="header-menu-item" href="/faq">faq</a>
 </div>

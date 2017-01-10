@@ -11,18 +11,52 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
-        .well {
-            background-color: rgba(255,255,255,0.2);
-            border: none;
+        .home_icon {
+            height: 80px;
         }
-        .welcome {
-            padding: 10px;
-            height: 200px;
+        .white-well {
+            color: #333;
+            background-color: #fcfcfc;
         }
     </style>
 </head>
 <body>
     <%- include partials/header.ejs %>
+    <div class="container">
+        <div class="col-sm-6">
+            <div class="well white-well">
+                <div class="text-center">
+                    <img src="images/microphone.png" height="64px">
+                </div>
+                <h3 class="section-header">
+                    musicians
+                </h3>
+                <p>
+                    Imagine being <strong>paid instantly for each playback</strong> and having a community of
+                listeners that value your work. On the Musicoin network, you can share your
+                music and find your audience. Stop collecting "Likes" and start collecting fans
+                that will support you with real value.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well white-well">
+                <div class="text-center">
+                    <img src="images/headphones.jpg" height="64px">
+                </div>
+                <h3 class="section-header">music lovers
+                </h3>
+                <p>
+                    Support your favorite musicians directly, just by listening. Whenever you listen to
+                    a song, a small payment is sent <strong>directly from you to the artist</strong>, instantly. Unlike the
+                    old model, where the artist receives only a small percentage (eventually), artists
+                    can instantly see the impact of their music.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="col-sm-12">
             <div class="well">
@@ -50,7 +84,7 @@
         <div class="col-sm-12">
             <div class="well">
                 <h3 class="section-header">new artists</h3>
-                <%- include partials/artist-list.ejs %>
+                <%- include('partials/featured-artist-list.ejs', {artists: featuredArtists, iconSize: "small"}) %>
             </div>
         </div>
     </div>

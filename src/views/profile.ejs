@@ -15,9 +15,6 @@
             display: flex;
             flex-direction: column;
         }
-        input.form-control  {
-            width: 230px;
-        }
         .flex-row {
             display: flex;
             flex-direction: row;
@@ -33,10 +30,6 @@
             background-color: rgba(255,255,255,0.1);
         }
         .instructions {
-        }
-        .well {
-            background-color: rgba(255,255,255,0.2);
-            border: none;
         }
         .form-entry {
             background-color: rgba(255,255,255,0.1);
@@ -63,6 +56,14 @@
             text-align: center;
             margin-top: 10px;
         }
+        .profile-release-item {
+            display:flex;
+            flex-direction: column;
+            height:100px;
+            justify-content: space-around;
+            padding-left: 10px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -71,7 +72,7 @@
     <div>
         <div class="col-sm-6">
             <div class="well">
-                <h3><span class="fa fa-user"></span> Public Profile</h3>
+                <h3>Public Profile</h3>
                 <form id=profileForm action="/profile/save" enctype="multipart/form-data" method="post">
                     <div class="form-group profile-image">
                         <img id="profileImage" style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"  src="<%=user.profile.image%>">
@@ -109,7 +110,7 @@
                             %>
                                 <tr>
                                     <td><span class="fa <%=icon%>"></span></td>
-                                    <td><input type="text" class="form-control" name="social.<%=item.id%>" value="<%=value%>" placeholder="<%=name%>"></td>
+                                    <td width="99%"><input type="text" class="form-control" name="social.<%=item.id%>" value="<%=value%>" placeholder="<%=name%>"></td>
                                 </tr>
                             <%}%>
                         </table>
@@ -181,9 +182,8 @@
                 <p>
                     Balance: <%= artist.balance %> mc
                 </p>
-                <p class="instructions">
-                    You can easily send you musicoins to another address.  Just paste in their wallet address below, enter
-                    an amount, and click send!
+                <p class="subtle-text">
+                    Send musicoins to a fiend or transfer to another wallet for safe keeping.
                 </p>
                 <form action="/send" method="post">
                     <table cellpadding="3">
@@ -193,7 +193,7 @@
                         </tr>
                         <tr>
                             <td>Amount</td>
-                            <td><input name=amount type="number" class="form-control" placeholder="0"></td>
+                            <td><input name=amount type="number" class="form-control text-right" placeholder="0"></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -210,7 +210,7 @@
 
         <div class="col-sm-6">
             <div class="well">
-                <h3><span class="fa fa-arrow-circle-up"></span> Release</h3>
+                <h3>Release</h3>
                 <form id=profileForm action="/tracks/release" enctype="multipart/form-data" method="post">
                     <% for (let i=0; i < 1; i++) {
                         const rowId = `track${i}`;
@@ -225,7 +225,7 @@
 
                         </div>
 
-                        <div style="display:flex; flex-direction: column; height:100px; justify-content: space-around; padding-left: 10px">
+                        <div class="profile-release-item">
                             <input type="text" class="form-control" name="<%=rowId%>.title" placeholder="title">
                             <label class="form-entry" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>
                             <input style="display: none" onchange="updateAudioLabel('<%=rowId%>_audioLabel', this.id)" id="<%=rowId%>_audio" type="file" name="<%=rowId%>.audio">
@@ -235,7 +235,7 @@
                     <%}%>
                     <div style="display:flex; justify-content: flex-end">
                         <button type="submit" class="btn btn-success btn-lg">
-                            Release
+                            <span class="fa fa-arrow-circle-up"></span> Release
                         </button>
                     </div>
                 </form>

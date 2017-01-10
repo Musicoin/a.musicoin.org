@@ -287,6 +287,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/ppp/:address', function(req, res) {
+    console.log("Got ppp request for " + req.params.address);
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
     const context = {contentType: "audio/mpeg"};

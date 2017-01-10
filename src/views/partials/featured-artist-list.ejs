@@ -1,7 +1,9 @@
-<% if (artists && artists.length > 0) { %>
+<%
+    var sizeAttr = typeof iconSize == "undefined" ? "large" : iconSize;
+    if (artists && artists.length > 0) {
+%>
 <style>
     .featured-artist-badge-name {
-        margin-left: 10px;
         color: white;
         display: flex;
         flex-direction: column;
@@ -30,16 +32,35 @@
         display: inline-flex;
         overflow: hidden;
     }
+    .featured-artist-image {
+        border-radius: 50%;
+        width: 220px;
+        height: 220px;
+    }
+    .featured-artist-name {
+        font-size: 24px;
+        max-width: 220px;
+    }
+
+    .featured-artist-image[small] {
+        width: 64px;
+        height: 64px;
+    }
+    .featured-artist-name[small] {
+        font-size: 12px;
+        max-width: 64px;
+    }
 </style>
 <div class="featured-section">
-    <% for (var i=0; i < artists.length; i++) {
-        var artist = artists[i];
+    <%
+        for (var i = 0; i < artists.length; i++) {
+            var artist = artists[i];
     %>
     <div class="featured-item">
         <a href="/artist/<%=artist.profileAddress%>"  class="featured-artist-info">
-            <img width="220" height="220" src="<%=artist.image%>">
+            <img class="featured-artist-image shadow" src="<%=artist.image%>" <%=sizeAttr%>>
             <div class="featured-artist-badge-name">
-                <h3 class="featured-artist-name text-center"><%=artist.artistName%></h3>
+                <div class="featured-artist-name text-center" <%=sizeAttr%> title="<%=artist.artistName%>"><%=artist.artistName%></div>
             </div>
         </a>
     </div>

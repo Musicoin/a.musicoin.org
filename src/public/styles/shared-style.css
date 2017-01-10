@@ -45,3 +45,26 @@ label {
 .subtle-text {
     color: #aaa
 }
+
+@media screen and (max-width: 500px) {
+    .big-screen-only {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 500px) {
+    .small-screen-only {
+        display: none !important;
+    }
+}
+
+.shadow {
+    box-shadow: 0 0 25px -4px black;
+}
+.shadow:hover {
+    box-shadow: 0 0 25px -4px white;
+}
+
+.text-justify {
+    text-align: justify;
+}
