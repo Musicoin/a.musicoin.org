@@ -31,12 +31,15 @@
         color: #aaa;
         cursor: pointer;
     }
+    .header-menu-item-personal {
+        color: #d4c39f
+    }
     .header-menu-item:hover {
         text-decoration: underline;
     }
     .header-nav {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         padding: 10px;
         padding-right: 20px;
     }
@@ -55,6 +58,14 @@
         bottom:0;
         z-index: -1;
     }
+    .header-separator {
+        border-right: 1px solid #aaa;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    .flex-row {
+        display: flex;
+    }
 </style>
 <div class="background-cover"></div>
 <div class="header">
@@ -65,7 +76,7 @@
         </a>
     </div>
 
-    <div>
+    <div class="flex-row">
         <% if (isAuthenticated) { %>
         <a href="/logout" class="btn btn-default btn-sm">logout</a>
         <% } else { %>
@@ -74,10 +85,16 @@
     </div>
 </div>
 <div class="header-nav">
-    <% if (isAuthenticated) { %>
-    <a href="/profile" class="header-menu-item">profile</a>
-    <%}%>
-    <a class="header-menu-item">songs</a>
-    <a class="header-menu-item">artists</a>
-    <a class="header-menu-item" href="/faq">faq</a>
+    <div class="flex-row">
+        <a class="header-menu-item">api</a>
+        <a class="header-menu-item" href="/faq">faq</a>
+    </div>
+    <div class="flex-row">
+        <% if (isAuthenticated) { %>
+        <a class="header-menu-item">browse</a>
+        <div class="header-separator"></div>
+        <a href="/profile" class="header-menu-item header-menu-item-personal">my profile</a>
+        <a href="/profile/history" class="header-menu-item header-menu-item-personal">history</a>
+        <%}%>
+    </div>
 </div>

@@ -8,6 +8,7 @@ import {MusicoinRestAPI} from "./rest-api/rest-api";
 const Invite = require('../app/models/invite');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
+const loginRedirect = "/";
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider) {
 
@@ -25,7 +26,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // HOME PAGE (with login links) ========
   // =====================================
-  app.get('/', function (req, res) {
+  app.get('/', isLoggedIn, function (req, res) {
     const rs = jsonAPI.getNewReleases(6);
     const as = jsonAPI.getNewArtists(12);
     const ps = Promise.resolve(jsonAPI.getRecentPlays(6));
@@ -43,8 +44,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render('not-found.ejs');
   });
 
+  app.get('/profile/history', isLoggedIn, function (req, res) {
+    doRender(req, res, 'history.ejs', {});
+  });
+
   app.get('/faq', function (req, res) {
     doRender(req, res, 'faq.ejs', {});
+  });
+
+  app.get('/info', function (req, res) {
+    doRender(req, res, 'info.ejs', {});
   });
 
   app.get('/invite', function (req, res) {
@@ -70,6 +79,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // LOGIN ===============================
   // =====================================
   // show the login form
+  /*
   app.get('/login', function (req, res) {
     // render the page and pass in any flash data if it exists
     res.render('login.ejs', {message: req.flash('loginMessage')});
@@ -78,7 +88,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // process the login form
   // process the login form
   app.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/profile', // redirect to the secure profile section
+    successRedirect : '/', // redirect to the secure profile section
     failureRedirect : '/login', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
@@ -95,19 +105,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   // process the signup form
   app.post('/signup', passport.authenticate('local-signup', {
-    successRedirect : '/profile', // redirect to the secure profile section
+    successRedirect : '/', // redirect to the secure profile section
     failureRedirect : '/signup', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
 
   // process the signup form
   // app.post('/signup', do all our passport stuff here);
-
+  */
 
   // =====================================
   // PUBLIC ARTIST PROFILE SECTION =====================
   // =====================================
-  app.get('/artist/:address', function (req, res, next) {
+  app.get('/artist/:address', isLoggedIn, function (req, res, next) {
     // find tracks for artist
     jsonAPI.getArtist(req.params.address, true, false)
       .then((output: ArtistProfile) => {
@@ -269,7 +279,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // the callback after google has authenticated the user
   app.get('/auth/google/callback',
     passport.authenticate('google', {
-      successRedirect : '/profile',
+      successRedirect : loginRedirect,
       failureRedirect : '/invite'
     }));
 
@@ -278,15 +288,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =============================================================================
 
   // locally --------------------------------
+  /*
   app.get('/connect/local', function(req, res) {
     res.render('connect-local.ejs', { message: req.flash('loginMessage') });
   });
 
   app.post('/connect/local', passport.authenticate('local-signup', {
-    successRedirect : '/profile', // redirect to the secure profile section
+    successRedirect : loginRedirect, // redirect to the secure profile section
     failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
+  */
 
   // send to google to do the authentication
   app.get('/connect/google', passport.authorize('google', { scope : ['profile', 'email'] }));
@@ -294,7 +306,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // the callback after google has authorized the user
   app.get('/connect/google/callback',
     passport.authorize('google', {
-      successRedirect : '/profile',
+      successRedirect : loginRedirect,
       failureRedirect : '/'
     }));
 
@@ -379,7 +391,7 @@ function isLoggedIn(req, res, next) {
     return next();
 
   // if they aren't redirect them to the home page
-  res.redirect('/');
+  res.redirect('/info');
 }
 
 function hasProfile(req, res, next) {

@@ -64,6 +64,15 @@
             padding-left: 10px;
             width: 100%;
         }
+        .balance {
+            font-size: 72px;
+            line-height: 0.9;
+            text-align: center;
+        }
+        .wallet-action-toggle {
+            text-align: right;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -188,8 +197,8 @@
                 <form action="/invite" method="post">
                     <table cellpadding="3">
                         <tr>
-                            <td>E-mail</td>
-                            <td><input name=email type="text" class="form-control" placeholder="email (google)"></td>
+                            <td class="text-nowrap">e-mail</td>
+                            <td width="99%"><input name=email type="text" class="form-control" placeholder="email (google)"></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -221,33 +230,37 @@
 
         <div class="col-sm-6">
             <div class="well">
-                <h3>Wallet</h3>
-                <p>
-                    Balance: <%= artist.balance %> mc
-                </p>
-                <p class="subtle-text">
-                    Send musicoins to a fiend or transfer to another wallet for safe keeping.
-                </p>
-                <form action="/send" method="post">
-                    <table cellpadding="3">
-                        <tr>
-                            <td>Recipient</td>
-                            <td><input name=recipient type="text" class="form-control" placeholder="address"></td>
-                        </tr>
-                        <tr>
-                            <td>Amount</td>
-                            <td><input name=amount type="number" class="form-control text-right" placeholder="0"></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <button type="submit" class="btn btn-warning">
-                                    Send
-                                </button>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
+                <h3>my wallet</h3>
+                <div>
+                    <div class="balance"><%=artist.balance%></div>
+                    <div class="text-center subtle-text">musicoins</div>
+                </div>
+                <div id=wallet-actions style="display: none">
+                    <p class="subtle-text">
+                        Send musicoins to a fiend or transfer to another wallet for safe keeping.
+                    </p>
+                    <form action="/send" method="post">
+                        <table cellpadding="3">
+                            <tr>
+                                <td>Recipient</td>
+                                <td><input name=recipient type="text" class="form-control" placeholder="address"></td>
+                            </tr>
+                            <tr>
+                                <td>Amount</td>
+                                <td><input name=amount type="number" class="form-control text-right" placeholder="0"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button type="submit" class="btn btn-warning">
+                                        Send
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div class="wallet-action-toggle subtle-text" onclick=showWalletActions()>show options</div>
             </div>
         </div>
 
@@ -348,12 +361,30 @@
     }
   }
 
+  function showWalletActions() {
+    var actions = $("#wallet-actions");
+    var toggle = $(".wallet-action-toggle");
+    var visible = actions.is(':visible');
+    actions.css("display", visible ? "none" : "block");
+    toggle.text(visible ? "show options" : "hide options");
+  }
+
   function updateImageDisplay(targetId, inputId) {
     readURL(targetId, $('#' + inputId)[0]);
   }
 
   function updateAudioLabel(targetId, inputId) {
-    $('#' + targetId)[0].innerText = $('#' + inputId)[0].files[0].name;
+    var fileInput = $('#' + inputId)[0];
+    var fileName = fileInput.files[0].name;
+    var display = $('#' + targetId)[0];
+    if (fileName.endsWith(".mp3") || fileName.endsWith(".mpg") || fileName.endsWith(".mpeg")) {
+      display.innerText = fileName;
+    }
+    else {
+      fileInput.value = "";
+      display.innerText = "Audio...";
+      alert("Currently, Musicoin only supports mp3 format");
+    }
   }
 
   function publishProfile() {

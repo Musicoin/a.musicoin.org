@@ -163,18 +163,21 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
               // set all of the relevant information
               newUser.google = asGoogleUser(profile);
 
-              // Check for an invite
-              Invite.findOne({email: newUser.google.email.toLowerCase()}).exec()
+              // Check for an invite (or @berry.ai e-mail address)
+              let email = newUser.google.email.toLowerCase();
+
+              const isBerryLabs = email.endsWith("@berry.ai");
+              Invite.findOne({email: email}).exec()
                 .then(function(record) {
-                  if (!record) {
-                    var query = {email: newUser.google.email},
+                  if (!record && !isBerryLabs) {
+                    var query = {email: email},
                       update = { expire: new Date() },
                       options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
                     // Find the document
                     InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
                       if (error) return;
-                      console.log("Created invite request for user: " + newUser.google.email);
+                      console.log("Created invite request for user: " + email);
                     });
                     return done(null, false, req.flash('loginMessage', 'An invite is required'));
                   }

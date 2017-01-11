@@ -68,3 +68,6 @@ label {
 .text-justify {
     text-align: justify;
 }
+.text-nowrap {
+    white-space: nowrap;
+}
