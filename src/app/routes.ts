@@ -45,7 +45,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/profile/history', isLoggedIn, function (req, res) {
-    doRender(req, res, 'history.ejs', {});
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start-length);
+    musicoinApi.getTransactionHistory(req.user.profileAddress, length, start)
+      .then(function(history) {
+        doRender(req, res, 'history.ejs', {
+          history: history,
+          navigation: {
+            description: `Showing ${start+1} to ${start+length}`,
+            start: previous > 0 ? `/profile/history?length=${length}` : null,
+            back: previous >= 0 && previous < start ? `/profile/history?length=${length}&start=${start-length}` : null,
+            next: `/profile/history?length=${length}&start=${start+length}`,
+          }
+        });
+      });
   });
 
   app.get('/faq', function (req, res) {

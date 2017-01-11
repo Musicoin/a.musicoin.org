@@ -10,6 +10,7 @@ interface MusicoinApiConfig {
   getProfile: string,
   getLicenseDetails: string,
   getTransactionStatus: string,
+  getTransactionHistory: string,
   clientID: string,
   clientSecret: string
 }
@@ -24,6 +25,13 @@ export class MusicoinAPI {
         if (response.err) throw response.err;
         return response;
       });
+  }
+
+  getTransactionHistory(address: string, length: number, start: number) {
+    return this.getJson(this.apiConfig.getTransactionHistory + "/" + address, {
+      length: length,
+      start: start
+    })
   }
 
   getTransactionStatus(tx: string) {

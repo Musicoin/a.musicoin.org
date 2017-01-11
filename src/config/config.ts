@@ -47,6 +47,7 @@ const config = {
     getLicenseDetails: `${keyValueConfig.musicoinApiEndpoint}/license/detail`,
     getKey: `${keyValueConfig.musicoinApiEndpoint}/license/ppp`,
     getTransactionStatus: `${keyValueConfig.musicoinApiEndpoint}/tx/status`,
+    getTransactionHistory: `${keyValueConfig.musicoinApiEndpoint}/tx/history`,
     publishProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
     sendFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/send`,
     releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,

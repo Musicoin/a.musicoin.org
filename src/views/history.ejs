@@ -15,6 +15,18 @@
         .faq-answer {
             font-size: x-large;
         }
+        .history {
+            padding: 3px;
+            min-width: 20px;
+        }
+        .history-nav {
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-nav-link {
+            margin-left: 10px;
+            font-size: 14pt;
+        }
     </style>
 </head>
 <body>
@@ -22,10 +34,46 @@
 <div class="container">
     <div class="page-header">
         <h1>Account History</h1>
+        <div class="subtle-text"><%=user.profileAddress%></div>
     </div>
     <div class="row">
         <div class="well">
-            Soon you will be able to a list of all the plays and tips associated with your account.
+            <div class="history-nav">
+                <div>
+                    <%=navigation.description%>
+                </div>
+                <div>
+                    <% if (navigation.start) { %>
+                        <a class="history-nav-link" href="<%=navigation.start%>">first</a>
+                    <%}%>
+                    <% if (navigation.back) { %>
+                        <a class="history-nav-link" href="<%=navigation.back%>">back</a>
+                    <%}%>
+                    <% if (navigation.next) { %>
+                        <a class="history-nav-link" href="<%=navigation.next%>">next</a>
+                    <%}%>
+                </div>
+            </div>
+            <table class="table table-sm table-responsive">
+                <tr>
+                    <th><div class="history">Type</div></th>
+                    <th><div class="history">Title</div></th>
+                    <th class="big-screen-only"><div class="history">From</div></th>
+                    <th><div class="history text-right">Musicoins</div></th>
+                    <th><div class="history">Time</div></th>
+                </tr>
+            <% for (var i=0; i < history.length; i++) {
+              var item = history[i];
+            %>
+                <tr>
+                    <td><div class="history"><%=item.eventType%></div></td>
+                    <td><div class="history"><%=item.title%></div></td>
+                    <td class="big-screen-only"><div class="history"><%=item.from%></div></td>
+                    <td><div class="history text-right"><%=item.musicoins%></div></td>
+                    <td><div class="history"><%=item.timestamp%></div></td>
+                </tr>
+            <%}%>
+            </table>
         </div>
     </div>
 </div>
