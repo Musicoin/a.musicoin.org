@@ -27,8 +27,6 @@ export class PendingTxDaemon {
   }
 
   updatePendingProfileStatus(musicoinApi: MusicoinAPI, p) {
-    console.log("Checking for pending profile updates...");
-
     const description = p.pendingTx;
     musicoinApi.getTransactionStatus(p.pendingTx)
       .then(function(result) {
@@ -69,7 +67,6 @@ export class PendingTxDaemon {
   }
 
   checkForPendingReleases(musicoinApi: MusicoinAPI) {
-    console.log("Checking for pending releases...");
     Release.find({state: 'pending'}, function(err, results) {
       if (err) console.log(`Failed to check for pending releases: ${err}`);
       else {

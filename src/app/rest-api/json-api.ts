@@ -62,7 +62,7 @@ export class MusicoinOrgJsonAPI {
 
   getNewArtists(limit: number) {
     // TODO: Sort
-    return User.find({profileAddress: {$ne: null}}).limit(limit).exec()
+    return User.find({profileAddress: {$ne: null}}).sort({joinDate: 'desc'}).limit(limit).exec()
       .then(records => records.map(r => this._convertDbRecordToArtist(r)))
       .then(promises => Promise.all(promises))
   }

@@ -3,6 +3,11 @@
     border: none;
 }
 
+.white-well {
+    color: #333;
+    background-color: #fcfcfc;
+}
+
 body {
     color: #eee;
     background: #333 url('/images/musician.jpg') no-repeat fixed;

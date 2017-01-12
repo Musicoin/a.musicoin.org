@@ -17,10 +17,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   let restAPI = new MusicoinRestAPI(jsonAPI);
   app.use('/json-api', restAPI.getRouter());
+  app.use('/', preProcessUser(mediaProvider));
 
   function doRender(req, res, view, context) {
     const defaultContext = {user: req.user, isAuthenticated: req.isAuthenticated()};
     res.render(view, Object.assign({}, defaultContext, context));
+  }
+
+  function _formatDate(timestamp) {
+    // TODO: Locale
+    var options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(timestamp*1000).toLocaleDateString('en-US', options);
   }
 
   // =====================================
@@ -50,6 +57,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const previous = Math.max(0, start-length);
     musicoinApi.getTransactionHistory(req.user.profileAddress, length, start)
       .then(function(history) {
+        history.forEach(h => h.formattedDate = _formatDate(h.timestamp))
         doRender(req, res, 'history.ejs', {
           history: history,
           navigation: {
@@ -62,17 +70,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.get('/faq', function (req, res) {
-    doRender(req, res, 'faq.ejs', {});
-  });
-
-  app.get('/info', function (req, res) {
-    doRender(req, res, 'info.ejs', {});
-  });
-
-  app.get('/invite', function (req, res) {
-    doRender(req, res, 'invite.ejs', {});
-  });
+  app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
+  app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
+  app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
+  app.get('/invite', (req, res) => doRender(req, res, 'invite.ejs', {}));
 
   app.post('/invite', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
@@ -145,7 +146,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
-  app.get('/profile', isLoggedIn, preProcessUser(mediaProvider), function (req, res) {
+  app.get('/profile', isLoggedIn, function (req, res) {
     jsonAPI.getArtist(req.user.profileAddress, true, true)
       .then((output: ArtistProfile) => {
         output['invited'] = {
@@ -392,9 +393,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 }
 
+function isAdmin(user) {
+  return (user.google && user.google.email && user.google.email.endsWith("@berry.ai"));
+}
 function canInvite(user) {
-  return user.canInvite ||
-    (user.google && user.google.email && user.google.email.endsWith("@berry.ai"));
+  return user.canInvite || isAdmin(user);
 }
 
 // route middleware to make sure a user is logged in
@@ -417,10 +420,15 @@ function hasProfile(req, res, next) {
 function preProcessUser(mediaProvider) {
   return function preProcessUser(req, res, next) {
     const user = req.user;
-    user.profile.image = user.profile.ipfsImageUrl
-      ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
-      : user.profile.image;
-    user.canInvite = canInvite(user);
+    if (user) {
+      if (user.profile) {
+        user.profile.image = user.profile.ipfsImageUrl
+          ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
+          : user.profile.image;
+      }
+      user.canInvite = canInvite(user);
+      user.isAdmin = isAdmin(user);
+    }
     next();
   }
 }

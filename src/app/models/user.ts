@@ -38,6 +38,10 @@ const userSchema = mongoose.Schema({
     social: Object,
     ipfsImageUrl: String
   },
+  joinDate: {
+    type: Date,
+    default: Date.now
+  },
   canInvite: Boolean
 });
 
