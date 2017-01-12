@@ -31,6 +31,14 @@ new PendingTxDaemon().start(musicoinApi, config.database.pendingReleaseIntervalM
 
 passportConfigurer.configure(passport, mediaProvider, config.auth);
 
+const get_ip = require('ipware')().get_ip;
+app.use(function(req, res, next) {
+  const ip_info = get_ip(req);
+  console.log(ip_info);
+  // { clientIp: '127.0.0.1', clientIpRoutable: false }
+  next();
+});
+
 app.use(function(req, res, next) {
   // if (!isDevEnvironment) {
   //   res.setHeader('Content-Security-Policy-Report-Only', "default-src https: style-src 'unsafe-inline'");
