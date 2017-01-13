@@ -59,7 +59,7 @@
         .profile-release-item {
             display:flex;
             flex-direction: column;
-            height:100px;
+            min-height:100px;
             justify-content: space-around;
             padding-left: 10px;
             width: 100%;
@@ -70,8 +70,18 @@
             text-align: center;
         }
         .wallet-action-toggle {
-            text-align: right;
+            text-align: left;
             cursor: pointer;
+        }
+        input.form-number {
+            max-width: 100px;
+        }
+
+        .profile-release-item > * {
+            margin-bottom: 10px;
+        }
+        .row-template {
+            display: none;
         }
     </style>
 </head>
@@ -124,6 +134,13 @@
                             <%}%>
                         </table>
                     </div>
+                    <% if (user.profileAddress) {%>
+                    <div class="text-center">
+                        View your public profile page here <a href="/artist/<%=user.profileAddress%>">here</a>
+                    </div>
+                    <% } else { %>
+                    <div class="text-center">By publishing your profile, you agree to our <a href="/terms">terms of use</a></div>
+                    <% } %>
                     <div style="display:flex; justify-content: flex-end">
                         <button type="submit" class="btn btn-warning btn-lg">
                             <%= (user.pendingTx || user.profileAddress) ? "Update" : "Publish" %>
@@ -134,11 +151,7 @@
                         Waiting for confirmation (<%=user.pendingTx%>)
                     </div>
                     <% }  %>
-                    <% if (user.profileAddress) {%>
-                    <div>
-                        View your public profile page here <a href="/artist/<%=user.profileAddress%>">here</a>
-                    </div>
-                    <% }  %>
+
                 </form>
 
             </div>
@@ -202,7 +215,7 @@
                         </tr>
                         <tr>
                             <td></td>
-                            <td>
+                            <td class="text-right">
                                 <button type="submit" class="btn btn-warning">
                                     Add
                                 </button>
@@ -232,26 +245,35 @@
             <div class="well">
                 <h3>my wallet</h3>
                 <div>
-                    <div class="balance"><%=artist.balance%></div>
+                    <div class="balance"><%=artist.formattedBalance%></div>
                     <div class="text-center subtle-text">musicoins</div>
                 </div>
                 <div id=wallet-actions style="display: none">
+                    <p>
+                    <div class="text-center subtle-text">my wallet address</div>
+                    <div class="text-center"><%=user.profileAddress%></div>
+                    </p>
+
                     <p class="subtle-text">
-                        Send musicoins to a fiend or transfer to another wallet for safe keeping.
+                        Send musicoins to a friend or transfer to another wallet for safe keeping.
                     </p>
                     <form action="/send" method="post">
                         <table cellpadding="3">
                             <tr>
                                 <td>Recipient</td>
-                                <td><input name=recipient type="text" class="form-control" placeholder="address"></td>
+                                <td width="99%"><input name=recipient type="text" class="form-control" placeholder="address"></td>
                             </tr>
                             <tr>
                                 <td>Amount</td>
-                                <td><input name=amount type="number" class="form-control text-right" placeholder="0"></td>
+                                <td>
+                                    <div class="flex-row">
+                                        <input name=amount type="number" class="form-control text-right form-number" placeholder="0">
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td></td>
-                                <td>
+                                <td class="text-right">
                                     <button type="submit" class="btn btn-warning">
                                         Send
                                     </button>
@@ -272,18 +294,28 @@
                         const rowId = `track${i}`;
                         const displayId = rowId + "_imageDisplay";
                     %>
-                    <div style="display: flex; padding: 10px;">
+                    <div class="flex-row">
                         <div class="flex-column clickable" onclick="<%=rowId%>_image.click()" >
                             <img src="<%=user.profile.image%>" id="<%=displayId%>" class="upload-image">
                             <div class="text-center small">
                                 (click to change)
                             </div>
-
                         </div>
 
                         <div class="profile-release-item">
-                            <input type="text" class="form-control" name="<%=rowId%>.title" placeholder="title">
-                            <label class="form-entry" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>
+                            <input class="no-submit form-control" type="text" name="<%=rowId%>.title" placeholder="title">
+                            <label class="no-submit form-entry" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>
+                            <table class="contributors">
+                                <tr class="row-template flex-row" style="display: none">
+                                    <td><input class="no-submit form-control"
+                                               onchange="javascript:console.log('changed')"
+                                                placeholder="email"></td>
+                                    <td><input class="no-submit form-control"
+                                               onchange="javascript:console.log('changed')"
+                                                placeholder="'3 shares' or '0.5 coins'"></td>
+                                </tr>
+                            </table>
+                            <!--<input type="button" onclick="addRow()" value="Add">-->
                             <input style="display: none" onchange="updateAudioLabel('<%=rowId%>_audioLabel', this.id)" id="<%=rowId%>_audio" type="file" name="<%=rowId%>.audio">
                             <input style="display: none" onchange="updateImageDisplay('<%=displayId%>', this.id)" id="<%=rowId%>_image" type="file" name="<%=rowId%>.image">
                         </div>
@@ -340,6 +372,17 @@
 <%- include partials/player.ejs %>
 </body>
 <script>
+  (function($) {
+
+    // prevent dynamically created input elements from submitting the form
+    $('.contributors').on('keydown', '.no-submit', function(e) {
+      if(e.keyCode == 13) {
+        console.log('No way it will still submit the form...');
+        return false;
+      }
+    });
+  })(jQuery);
+
   $( document ).ready(function() {
     $("#imageInput").change(function(){
       readURL('profileImage', this);
@@ -349,6 +392,15 @@
       $("#imageInput").click();
     })
   });
+
+  function addRow() {
+    console.log("Adding row");
+    var newItem = $(".row-template").clone();
+    newItem.removeClass("row-template");
+    newItem.css("display", "");
+    newItem.appendTo(".contributors");
+  }
+
   function readURL(targetId, input) {
     if (input.files && input.files[0]) {
       var reader = new FileReader();

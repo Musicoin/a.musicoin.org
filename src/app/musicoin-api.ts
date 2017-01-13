@@ -10,6 +10,7 @@ interface MusicoinApiConfig {
   getProfile: string,
   getLicenseDetails: string,
   getTransactionStatus: string,
+  getClientBalance: string,
   getTransactionHistory: string,
   clientID: string,
   clientSecret: string
@@ -32,6 +33,10 @@ export class MusicoinAPI {
       length: length,
       start: start
     })
+  }
+
+  getMusicoinAccountBalance() {
+    return this.getJson(this.apiConfig.getClientBalance);
   }
 
   getTransactionStatus(tx: string) {

@@ -14,11 +14,28 @@
         .home_icon {
             height: 80px;
         }
+        .free-play-count {
+            font-size: 72px;
+            line-height: 0.9;
+            text-align: center;
+            margin-top: 20px;
+            color: #e4aa17;
+        }
     </style>
 </head>
 <body>
     <%- include partials/header.ejs %>
-    <%- include partials/motivation.ejs %>
+
+    <div class="container">
+        <div class="col-sm-12">
+            <div class="well well-highlight">
+                <div class="text-center text-large lead">For a limited time, Musicoin.org is paying for <u>each and every play</u></div>
+                <div class="text-center text-large">Enjoy.</div>
+                <div class="free-play-count"><%= musicoinClientBalance.formattedMusicoins %></div>
+                <div class="text-center subtle-text">plays remaining</div>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="col-sm-12">
@@ -51,6 +68,7 @@
             </div>
         </div>
     </div>
+    <%- include partials/motivation.ejs %>
     <%- include partials/player.ejs %>
 
 </body>

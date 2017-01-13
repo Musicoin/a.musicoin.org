@@ -30,6 +30,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return new Date(timestamp*1000).toLocaleDateString('en-US', options);
   }
 
+  function _formatNumber(value) {
+    return parseInt(value).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+
   // =====================================
   // HOME PAGE (with login links) ========
   // =====================================
@@ -37,9 +41,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const rs = jsonAPI.getNewReleases(6);
     const as = jsonAPI.getNewArtists(12);
     const ps = Promise.resolve(jsonAPI.getRecentPlays(6));
-
-    Promise.join(rs, as, ps, function(releases, artists, recent) {
+    const b = musicoinApi.getMusicoinAccountBalance();
+    Promise.join(rs, as, ps, b, function(releases, artists, recent, balance) {
+      balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       doRender(req, res, "index.ejs", {
+        musicoinClientBalance: balance,
         releases: releases,
         artists: artists,
         featuredArtists: artists, // HACK, for now
@@ -70,11 +76,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   app.get('/invite', (req, res) => doRender(req, res, 'invite.ejs', {}));
+  app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
 
+  app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
       Invite.create({email: req.body.email.toLowerCase(), invitedBy: req.user._id}, function(err, record) {
@@ -153,6 +160,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           email: req.query.invited,
           success: req.query.success
         };
+        output.artist.formattedBalance = _formatNumber(output.artist.balance);
         doRender(req, res, "profile.ejs", output);
       });
   });
@@ -340,7 +348,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/ppp/:address', function(req, res) {
+  app.get('/ppp/:address', isLoggedIn, function(req, res) {
     console.log("Got ppp request for " + req.params.address);
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);

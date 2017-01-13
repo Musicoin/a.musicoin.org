@@ -36,6 +36,9 @@
         border-radius: 50%;
         width: 128px;
         height: 128px;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
     }
     .featured-artist-name {
         font-size: 24px;
@@ -58,7 +61,7 @@
     %>
     <div class="featured-item">
         <a href="/artist/<%=artist.profileAddress%>"  class="featured-artist-info">
-            <img class="featured-artist-image shadow" src="<%=artist.image%>" <%=sizeAttr%>>
+            <div class="featured-artist-image shadow" style="background-image: url('<%=artist.image%>')" <%=sizeAttr%>></div>
             <div class="featured-artist-badge-name">
                 <div class="featured-artist-name text-center" <%=sizeAttr%> title="<%=artist.artistName%>"><%=artist.artistName%></div>
             </div>

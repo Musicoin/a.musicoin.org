@@ -51,6 +51,7 @@ const config = {
     publishProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
     sendFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/send`,
     releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,
+    getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,
     clientID: keyValueConfig.musicoinApiClientId,
     clientSecret: keyValueConfig.musicoinApiClientSecret
   },
