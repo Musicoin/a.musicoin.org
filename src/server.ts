@@ -4,6 +4,7 @@ import * as bodyParser from 'body-parser';
 import * as logging  from './app/logging';
 import * as routes from "./app/routes";
 import * as session from 'express-session';
+const MongoStore = require('connect-mongo')(session);
 import * as cookieParser from 'cookie-parser';
 import * as mongoose from 'mongoose';
 import * as passport from 'passport';
@@ -55,7 +56,10 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ secret: config.sessionSecret }));
+app.use(session({
+  secret: config.sessionSecret,
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
