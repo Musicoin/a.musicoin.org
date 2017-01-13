@@ -1,0 +1,107 @@
+<style>
+    .license-container {
+        background-color: white;
+        color: black;
+        padding: 15px;
+        padding-top: 5px;
+        border-radius: 5px;
+    }
+
+    .parameter {
+        min-width: 10px;
+        min-height: 10px;
+        background-color: #ffffaa;
+        display: inline-block;
+        border-bottom: 1px solid black;
+    }
+
+    p {
+        display: inline;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    .logo {
+        height: 50px;
+    }
+</style>
+<div class="license-container">
+    This is a human-readable summary of the Pay Per Play license for
+    <span class="parameter"><%= license.title %></span> by <span class="parameter"><%= license.artistName %></span>.
+    <br><br>
+    By listening to this work, the listener agrees to:
+    <ul>
+        <li>Pay <span class="parameter"><%= license.coinsPerPlay %></span> musicoin to the owner of
+            this licensed work.
+        </li>
+    </ul>
+    <div class="license-section text-left">Plays</div>
+        <% if (license.royalties && license.royalties.length) { %>
+        Upon successful execution of the payment, the following accounts will receive payments
+        in the amount shown below:
+    <table class="table table-bordered table-condensed">
+        <tr><th>Address</th><th>Musicoins</th></tr>
+        <%
+        for (var r = 0; r < license.royalties.length; r++) {
+            var royalty = license.royalties[r];
+        %>
+        <tr>
+            <td><%= royalty.address %> </td>
+            <td class="text-right"><%= royalty.amount %></td></tr>
+        <% } %>
+    </table>
+    The remainder of the value
+    <span class="parameter">
+        (<%=formatNumber(license.coinsPerPlay - computeTotalRoyalties(license))%>
+    </span>
+    musicoins) will be divided into
+    <span class="parameter"><%=computeTotalShares(license)%></span>
+    total shares and distributed as follows:
+    <% } else { %>
+    Upon successful execution of the payment, the full amount will be divided into
+    <span class="parameter"><%=computeTotalShares(license)%></span>
+    total shares and distributed to the following accounts:
+    <% } %>
+    <table class="table table-bordered table-condensed">
+        <tr><th class="col-md-5">Address</th><th class="col-md-1">Shares</th></tr>
+        <% for (var c = 0; c < license.contributors.length; c++) {
+            var contributor = license.contributors[c];
+        %>
+        <tr><td><%= contributor.address %></td><td><%= contributor.shares %></td></tr>
+        <% } %>
+    </table>
+    <div class="license-section text-left">Tips</div>
+    Tips sent to the PPP license will be divided into
+    <span class="parameter"><%=computeTotalShares(license)%></span>
+    shares and distributed to the following accounts:
+    <table class="table table-bordered table-condensed">
+        <tr><th class="col-md-5">Address</th><th class="col-md-1">Shares</th></tr>
+        <% for (var c = 0; c < license.contributors.length; c++) {
+            var contributor = license.contributors[c];
+        %>
+        <tr><td><%= contributor.address %></td><td><%= contributor.shares %></td></tr>
+        <% } %>
+    </table>
+</div>
+
+<%
+function computeTotalShares(license) {
+  if (!license.contributors) return 0;
+  return license.contributors.map(c => parseInt(c.shares)).reduce((total, c) => {
+    return total + c;
+  }, 0);
+}
+
+function computeTotalRoyalties(license) {
+    if (!license.royalties) return 0;
+    return license.royalties.map(c => parseFloat(c.amount)).reduce((total, c) => {
+        return total + c;
+    }, 0);
+}
+
+function formatNumber(value) {
+    return parseFloat(value).toFixed(3).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+%>

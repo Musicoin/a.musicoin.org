@@ -51,7 +51,15 @@ export class MusicoinAPI {
     return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress);
   }
 
-  releaseTrack(profileAddress: string, title: string, imageUrl: string, metadataUrl: string, audioUrl: string, contentType: string, key: string): Promise<string> {
+  releaseTrack(profileAddress: string,
+               title: string,
+               imageUrl: string,
+               metadataUrl: string,
+               audioUrl: string,
+               contributors: any[],
+               royalties: any[],
+               contentType: string,
+               key: string): Promise<string> {
     console.log(`releasing track ${title}`);
     return this.postJson(this.apiConfig.releaseLicense, {
       profileAddress: profileAddress,
@@ -59,6 +67,8 @@ export class MusicoinAPI {
       imageUrl: imageUrl,
       metadataUrl: metadataUrl,
       audioUrl: audioUrl,
+      contributors: contributors,
+      royalties: royalties,
       contentType: contentType,
       encryptionKey: key
     }).then(body => body.tx);

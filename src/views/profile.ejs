@@ -83,11 +83,33 @@
         .row-template {
             display: none;
         }
+        .release-distribution {
+        }
+
+        #licensePreview {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 400px;
+            border-radius: 4px;
+            z-index: 2;
+            background-color: white;
+            display: none;
+            color: black;
+        }
+        .contributors {
+            margin-top: 20px;
+            margin-bottom: 0;
+        }
+        .wallet-actions {
+        }
     </style>
 </head>
 <body>
 <%- include partials/header.ejs %>
 <div class="container">
+
     <div>
         <div class="col-sm-6">
             <div class="well">
@@ -248,11 +270,11 @@
                     <div class="balance"><%=artist.formattedBalance%></div>
                     <div class="text-center subtle-text">musicoins</div>
                 </div>
-                <div id=wallet-actions style="display: none">
+                <div class=wallet-actions style="display: none">
                     <p>
                     <div class="text-center subtle-text">my wallet address</div>
                     <div class="text-center"><%=user.profileAddress%></div>
-                    </p>
+                    <p></p>
 
                     <p class="subtle-text">
                         Send musicoins to a friend or transfer to another wallet for safe keeping.
@@ -282,14 +304,18 @@
                         </table>
                     </form>
                 </div>
-                <div class="wallet-action-toggle subtle-text" onclick=showWalletActions()>show options</div>
+                <div class="wallet-action-toggle subtle-text"
+                     onclick='$(".wallet-actions").toggle()'>
+                        <div class="wallet-actions">show options</div>
+                        <div class="wallet-actions" style="display: none">hide options</div>
+                </div>
             </div>
         </div>
 
         <div class="col-sm-6">
             <div class="well">
                 <h3>Release</h3>
-                <form id=profileForm action="/tracks/release" enctype="multipart/form-data" method="post">
+                <form id=releaseForm action="/tracks/release" enctype="multipart/form-data" method="post">
                     <% for (let i=0; i < 1; i++) {
                         const rowId = `track${i}`;
                         const displayId = rowId + "_imageDisplay";
@@ -305,26 +331,61 @@
                         <div class="profile-release-item">
                             <input class="no-submit form-control" type="text" name="<%=rowId%>.title" placeholder="title">
                             <label class="no-submit form-entry" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>
-                            <table class="contributors">
-                                <tr class="row-template flex-row" style="display: none">
-                                    <td><input class="no-submit form-control"
-                                               onchange="javascript:console.log('changed')"
-                                                placeholder="email"></td>
-                                    <td><input class="no-submit form-control"
-                                               onchange="javascript:console.log('changed')"
-                                                placeholder="'3 shares' or '0.5 coins'"></td>
-                                </tr>
-                            </table>
-                            <!--<input type="button" onclick="addRow()" value="Add">-->
                             <input style="display: none" onchange="updateAudioLabel('<%=rowId%>_audioLabel', this.id)" id="<%=rowId%>_audio" type="file" name="<%=rowId%>.audio">
                             <input style="display: none" onchange="updateImageDisplay('<%=displayId%>', this.id)" id="<%=rowId%>_image" type="file" name="<%=rowId%>.image">
                         </div>
                     </div>
+
+                    <div class="release-distribution" style="display: none">
+                        <table class="table table-condensed table-responsive contributors">
+                            <tr>
+                                <th class="col-md-3">recipient</th>
+                                <th class="col-md-1">amount</th>
+                            </tr>
+                            <tr class="row-template" style="display: none">
+                                <td><input name="address"
+                                           class="no-submit form-control"
+                                           placeholder="wallet address"></td>
+                                <td><input name="value"
+                                           class="no-submit form-control"
+                                           placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td><label style="width: 100%"
+                                           class="form-entry">My profile</label>
+                                    <input style="display: none"
+                                           name="track0.recipient.address"
+                                           class="no-submit form-control"
+                                           placeholder="email or wallet address"
+                                           value="<%=user.profileAddress%>"></td>
+                                <td><input name="track0.recipient.value"
+                                           class="no-submit form-control"
+                                           value="1 share"
+                                           placeholder=""></td>
+                            </tr>
+                        </table>
+                        <div class="text-right">
+                            <div class="btn btn-sm btn-link" onclick="addRow()" >
+                            <span class="glyphicon glyphicon-plus" value="Add"></span>
+                             add another entry
+                            </div>
+                        </div>
+                        <div class="subtle-text">Amounts can be entered in units of <strong>shares</strong> or <strong>coins</strong>, e.g. <br>'3 shares' or '0.5 coins'</div>
+                    </div>
+                    <div id="licensePreview"></div>
                     <%}%>
+
+                    <button id=releaseButton style="display: none" type="submit"></button>
                     <div style="display:flex; justify-content: flex-end">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <span class="fa fa-arrow-circle-up"></span> Release
-                        </button>
+                        <div onclick='$( "#licensePreview" ).load( "/license", loadLicenseFields() ); $("#licensePreview").show()'
+                             class="btn btn-success">
+                            Preview
+                        </div>
+                    </div>
+                    <div class="wallet-action-toggle subtle-text"
+                         onclick='$(".release-distribution").toggle()'>
+                        <div class="release-distribution">show distribution options</div>
+                        <div class="release-distribution" style="display: none">hide distribution options</div>
                     </div>
                 </form>
             </div>
@@ -391,14 +452,36 @@
     $("#profileImage").click(function() {
       $("#imageInput").click();
     })
+
+    $.fn.serializeObject = function()
+    {
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function() {
+        if (o[this.name] !== undefined) {
+          if (!o[this.name].push) {
+            o[this.name] = [o[this.name]];
+          }
+          o[this.name].push(this.value || '');
+        } else {
+          o[this.name] = this.value || '';
+        }
+      });
+      return o;
+    };
+
   });
 
+  var counter = 0;
   function addRow() {
-    console.log("Adding row");
+    console.log("Adding row " + counter);
     var newItem = $(".row-template").clone();
     newItem.removeClass("row-template");
     newItem.css("display", "");
+    newItem.find("input[name=address]").attr("name", "track0.recipient" + counter + ".address");
+    newItem.find("input[name=value]").attr("name", "track0.recipient" + counter + ".value");
     newItem.appendTo(".contributors");
+    counter++;
   }
 
   function readURL(targetId, input) {
@@ -411,14 +494,6 @@
 
       reader.readAsDataURL(input.files[0]);
     }
-  }
-
-  function showWalletActions() {
-    var actions = $("#wallet-actions");
-    var toggle = $(".wallet-action-toggle");
-    var visible = actions.is(':visible');
-    actions.css("display", visible ? "none" : "block");
-    toggle.text(visible ? "show options" : "hide options");
   }
 
   function updateImageDisplay(targetId, inputId) {
@@ -439,10 +514,8 @@
     }
   }
 
-  function publishProfile() {
-    $.post("/profile/publish/", {}, function(data,status,xhr) {
-      alert("Publish initiated: " + data.tx);
-    }, "json")
+  function loadLicenseFields() {
+    return $("#releaseForm").serializeObject();
   }
 </script>
 </html>

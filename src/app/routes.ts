@@ -3,6 +3,7 @@ import {Promise} from 'bluebird';
 import * as Formidable from 'formidable';
 import * as crypto from 'crypto';
 import {MusicoinHelper} from "./musicoin-helper";
+import * as FormUtils from "./form-utils";
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 const Invite = require('../app/models/invite');
@@ -184,7 +185,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       console.log(`Files: ${JSON.stringify(files)}`);
 
       const prefix = "social.";
-      const socialData = groupByPrefix(fields, prefix);
+      const socialData = FormUtils.groupByPrefix(fields, prefix);
 
       const profile = req.user.draftProfile;
       const i = files.photo.size == 0 ? Promise.resolve(profile.ipfsImageUrl) : mediaProvider.upload(files.photo.path);
@@ -222,6 +223,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
+  app.post('/license', (req, res) => {
+    console.log("Getting license preview");
+    req.body.coinsPerPlay = 10;
+    doRender(req, res, 'license.ejs', {license: convertFormToLicense(req.user.draftProfile.artistName, req.body)})
+  });
+
+  function convertFormToLicense(artistName, fields) {
+    const trackFields = FormUtils.groupByPrefix(fields, `track0.`);
+    const recipients = FormUtils.extractRecipients(trackFields);
+    return {
+      coinsPerPlay: 1,
+      title: trackFields['title'],
+      artistName: artistName,
+      royalties: recipients.royalties,
+      contributors: recipients.contributors
+    }
+  }
 
   app.post('/tracks/release', isLoggedIn, hasProfile, function(req, res) {
     const form = new Formidable.IncomingForm();
@@ -230,7 +248,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       console.log(`Files: ${JSON.stringify(files)}`);
       let tracks = [];
       for (let i = 0; i < 5; i++) {
-        const trackData = Object.assign(groupByPrefix(fields, `track${i}.`), groupByPrefix(files, `track${i}.`));
+        const trackData = Object.assign(FormUtils.groupByPrefix(fields, `track${i}.`), FormUtils.groupByPrefix(files, `track${i}.`));
         if (Object.keys(trackData).length > 0) {
           tracks.push(trackData);
         }
@@ -243,6 +261,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         .filter(t => t.title)
         .filter(t => t.audio.size > 0)
         .map(track => {
+          const recipients = FormUtils.extractRecipients(track);
+          track.contributors = recipients.contributors;
+          track.royalties = recipients.royalties;
+          return track;
+        })
+        .map(track => {
           const key = crypto.randomBytes(16).toString('base64'); // 128-bits
           const a = mediaProvider.upload(track.audio.path, () => key); // encrypted
           const i = track.image && track.image.size > 0
@@ -251,7 +275,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           const m = mediaProvider.uploadText(JSON.stringify(metadata));
           return Promise.join(a, i, m, function(audioUrl, imageUrl, metadataUrl) {
             track.imageUrl = imageUrl;
-            return musicoinApi.releaseTrack(req.user.profileAddress, track.title, imageUrl, metadataUrl, audioUrl, track.audio.type, key);
+            return musicoinApi.releaseTrack(
+              req.user.profileAddress,
+              track.title,
+              imageUrl,
+              metadataUrl,
+              audioUrl,
+              track.contributors,
+              track.royalties,
+              track.audio.type,
+              key);
           })
       });
 
@@ -388,17 +421,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.send(err);
       });
   });
-
-  function groupByPrefix(fields: any, prefix: string) {
-    return Object.keys(fields)
-      .filter(f => f.length > prefix.length && f.substring(0, prefix.length) == prefix)
-      .filter(f => fields[f])
-      .map(f => f.substring(prefix.length))
-      .reduce((o, k) => {
-        o[k] = fields[prefix + k];
-        return o;
-      }, {});
-  }
 }
 
 function isAdmin(user) {

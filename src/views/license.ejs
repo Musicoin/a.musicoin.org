@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<body>
+<style>
+    .preview-container {
+        height: 100%;
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        border-radius: 4px;
+    }
+    .scroll-container {
+        overflow: auto;
+        height: 100%;
+    }
+    .button-bar {
+        padding: 5px;
+        background-color: whitesmoke;
+        box-shadow: 0 0 15px -4px black;
+    }
+    .license-section {
+        font-size: 24px;
+        margin-top: 10px;
+    }
+
+</style>
+<div class="preview-container">
+    <div>
+        <div class="license-section text-center">
+            <img class="logo" src="/images/logo.png">
+            <br>
+            Pay Per Play License
+        </div>
+    </div>
+    <div class="scroll-container">
+        <%- include partials/license-readable.ejs %>
+    </div>
+    <div class="button-bar text-right">
+        <div class="btn btn-success btn-sm" onclick='$("#licensePreview").hide();$("#releaseButton").click()'>Release</div>
+        <div class="btn btn-danger btn-sm" onclick='$("#licensePreview").hide();'>Cancel</div>
+    </div>
+</div>
+</body>
+</html>
+
