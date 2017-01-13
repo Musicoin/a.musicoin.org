@@ -96,9 +96,15 @@ export class MusicoinOrgJsonAPI {
       .bind(this)
       .then(function(license) {
         console.log("Getting license: " + contractAddress + " ... done");
+        console.log("Looking up artist: " + license.artistProfileAddress);
         return User.findOne({profileAddress: license.artistProfileAddress}).exec()
           .then(function(record) {
-            license.artistName = record.artistName;
+            if (record) {
+              license.artistName = record.artistName;
+            }
+            else {
+              license.artistName = "Not found";
+            }
             return license;
           })
       })
