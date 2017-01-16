@@ -6,6 +6,7 @@ import {MusicoinHelper} from "./musicoin-helper";
 import * as FormUtils from "./form-utils";
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
+import {AddressResolver} from "./address-resolver";
 const Invite = require('../app/models/invite');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
@@ -17,6 +18,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper);
 
   let restAPI = new MusicoinRestAPI(jsonAPI);
+  const addressResolver = new AddressResolver();
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider));
 
@@ -223,25 +225,44 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.post('/license', (req, res) => {
+  app.post('/license/preview', (req, res) => {
     console.log("Getting license preview");
     req.body.coinsPerPlay = 10;
-    doRender(req, res, 'license.ejs', {license: convertFormToLicense(req.user.draftProfile.artistName, req.body)})
+    convertFormToLicense(req.user.draftProfile.artistName, req.user.profileAddress, req.body)
+      .then(function(license) {
+        doRender(req, res, 'license.ejs', {license: license});
+      })
   });
 
-  function convertFormToLicense(artistName, fields) {
+  function convertFormToLicense(artistName, selfAddress, fields) {
     const trackFields = FormUtils.groupByPrefix(fields, `track0.`);
     const recipients = FormUtils.extractRecipients(trackFields);
-    return {
-      coinsPerPlay: 1,
-      title: trackFields['title'],
-      artistName: artistName,
-      royalties: recipients.royalties,
-      contributors: recipients.contributors
-    }
+    return Promise.join(
+      addressResolver.resolveAddresses(selfAddress, recipients.contributors),
+      addressResolver.resolveAddresses(selfAddress, recipients.royalties),
+      function(resolvedContributors, resolveRoyalties) {
+      const license = {
+        coinsPerPlay: 1,
+        title: trackFields['title'],
+        artistName: artistName,
+        royalties: resolveRoyalties,
+        contributors: resolvedContributors,
+        errors: []
+      }
+      license.errors = doValidation(license);
+      return license;
+    })
   }
 
-  app.post('/tracks/release', isLoggedIn, hasProfile, function(req, res) {
+  function doValidation(license): string[] {
+    const errors = [];
+    if (!license.royalties.every(r => !r.invalid)) errors.push("Invalid addresses");
+    if (!license.contributors.every(r => !r.invalid)) errors.push("Invalid addresses");
+    if (!(license.title && license.title.trim() != "")) errors.push("Title is required");
+    return errors;
+  }
+
+  app.post('/license/release', isLoggedIn, hasProfile, function(req, res) {
     const form = new Formidable.IncomingForm();
     form.parse(req, (err, fields:any, files:any) => {
       console.log(`Fields: ${JSON.stringify(fields)}`);
@@ -256,7 +277,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       console.log(`tracks: ${JSON.stringify(tracks)}`);
       const metadata = {}; // TODO: allow metadata
-
+      const selfAddress = req.user.profileAddress;
       const promises = tracks
         .filter(t => t.title)
         .filter(t => t.audio.size > 0)
@@ -273,16 +294,20 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             ? mediaProvider.upload(track.image.path) // unencrypted
             : Promise.resolve(req.user.draftProfile.ipfsImageUrl);
           const m = mediaProvider.uploadText(JSON.stringify(metadata));
-          return Promise.join(a, i, m, function(audioUrl, imageUrl, metadataUrl) {
+          const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
+          const r = addressResolver.resolveAddresses(selfAddress, track.royalties);
+
+          return Promise.join(a, i, m, c, r, function (audioUrl, imageUrl, metadataUrl, contributors, royalties) {
             track.imageUrl = imageUrl;
             return musicoinApi.releaseTrack(
               req.user.profileAddress,
+              req.user.draftProfile.artistName,
               track.title,
               imageUrl,
               metadataUrl,
               audioUrl,
-              track.contributors,
-              track.royalties,
+              contributors,
+              royalties,
               track.audio.type,
               key);
           })

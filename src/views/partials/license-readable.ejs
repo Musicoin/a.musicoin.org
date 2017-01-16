@@ -48,7 +48,11 @@
             var royalty = license.royalties[r];
         %>
         <tr>
-            <td><%= royalty.address %> </td>
+            <td class="<%=royalty.invalid ? 'danger' : ''%>"><%= royalty.address %>
+                <% if (royalty.alternateAddress) {%>
+                <div class="subtle-text">(<%=royalty.alternateAddress%>)</div>
+                <%}%>
+            </td>
             <td class="text-right"><%= royalty.amount %></td></tr>
         <% } %>
     </table>
@@ -69,7 +73,13 @@
         <% for (var c = 0; c < license.contributors.length; c++) {
             var contributor = license.contributors[c];
         %>
-        <tr><td><%= contributor.address %></td><td><%= contributor.shares %></td></tr>
+        <tr>
+            <td class="<%=contributor.invalid ? 'danger' : ''%>"><%= contributor.address %>
+                <% if (contributor.alternateAddress) {%>
+                <div class="subtle-text">(<%=contributor.alternateAddress%>)</div>
+                <%}%>
+            </td>
+            <td><%= contributor.shares %></td></tr>
         <% } %>
     </table>
     <div class="license-section text-left">Tips</div>
@@ -81,7 +91,13 @@
         <% for (var c = 0; c < license.contributors.length; c++) {
             var contributor = license.contributors[c];
         %>
-        <tr><td><%= contributor.address %></td><td><%= contributor.shares %></td></tr>
+        <tr>
+            <td class="<%=contributor.invalid ? 'danger' : ''%>"><%= contributor.address %>
+                <% if (contributor.alternateAddress) {%>
+                <div class="subtle-text">(<%=contributor.alternateAddress%>)</div>
+                <%}%>
+            </td>
+            <td><%= contributor.shares %></td></tr>
         <% } %>
     </table>
 </div>

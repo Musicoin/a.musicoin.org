@@ -15,6 +15,16 @@
         .faq-answer {
             font-size: x-large;
         }
+        :target {
+            background-color: rgba(255,255,255,0.1);
+        }
+        @keyframes highlight {
+            0% { background-color: rgba(255,255,255,0.1); }
+            100% { background-color: transparent; }
+        }
+        .question {
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -51,6 +61,7 @@
                     obtain music illegally.`)
                 },
                 {
+                  id: "GetAnInvite",
                   question: "How can I obtain an invite?",
                   answer: (`We want to make sure every musician and listener has a good experience
                   using musicoin, so we’re slowly ramping up the number of users.  If you are a musician
@@ -63,10 +74,12 @@
                 for (var q = 0; q < questions.length; q++) {
                     var question = questions[q].question;
                     var answer = questions[q].answer;
+                    var id = questions[q].id;
                 %>
-                <li class="faq-question"><%=question%></li>
-                <div class="subtle-text"><%=answer%></div>
-                <br><br>
+                <div id="<%=id%>" class="question">
+                    <li class="faq-question"><%=question%></li>
+                    <div class="subtle-text"><%=answer%></div>
+                </div>
                 <% } %>
             </ol>
         </div>

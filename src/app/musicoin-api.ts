@@ -52,6 +52,7 @@ export class MusicoinAPI {
   }
 
   releaseTrack(profileAddress: string,
+               artistName: string,
                title: string,
                imageUrl: string,
                metadataUrl: string,
@@ -63,6 +64,7 @@ export class MusicoinAPI {
     console.log(`releasing track ${title}`);
     return this.postJson(this.apiConfig.releaseLicense, {
       profileAddress: profileAddress,
+      artistName: artistName,
       title: title,
       imageUrl: imageUrl,
       metadataUrl: metadataUrl,

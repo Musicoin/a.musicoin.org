@@ -315,7 +315,7 @@
         <div class="col-sm-6">
             <div class="well">
                 <h3>Release</h3>
-                <form id=releaseForm action="/tracks/release" enctype="multipart/form-data" method="post">
+                <form id=releaseForm action="/license/release" enctype="multipart/form-data" method="post">
                     <% for (let i=0; i < 1; i++) {
                         const rowId = `track${i}`;
                         const displayId = rowId + "_imageDisplay";
@@ -352,7 +352,7 @@
                             </tr>
                             <tr>
                                 <td><label style="width: 100%"
-                                           class="form-entry">My profile</label>
+                                           class="form-entry">My wallet</label>
                                     <input style="display: none"
                                            name="track0.recipient.address"
                                            class="no-submit form-control"
@@ -377,14 +377,14 @@
 
                     <button id=releaseButton style="display: none" type="submit"></button>
                     <div style="display:flex; justify-content: flex-end">
-                        <div onclick='$( "#licensePreview" ).load( "/license", loadLicenseFields() ); $("#licensePreview").show()'
+                        <div onclick='$( "#licensePreview" ).load( "/license/preview", loadLicenseFields() ); $("#licensePreview").show()'
                              class="btn btn-success">
                             Preview
                         </div>
                     </div>
                     <div class="wallet-action-toggle subtle-text"
                          onclick='$(".release-distribution").toggle()'>
-                        <div class="release-distribution">show distribution options</div>
+                        <div class="release-distribution">not a solo act? show distribution options</div>
                         <div class="release-distribution" style="display: none">hide distribution options</div>
                     </div>
                 </form>
