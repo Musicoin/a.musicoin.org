@@ -25,9 +25,14 @@ export class AddressResolver {
             recipient.alternateAddress = user.draftProfile.artistName;
         }
         else if (contract) {
-          recipient.invalid = true;
-          recipient.address = "Cannot send to another contract (yet)";
-          recipient.alternateAddress = contract.title;
+          if (contract.canReceiveFunds) {
+            recipient.alternateAddress = contract.title;
+          }
+          else {
+            recipient.invalid = true;
+            recipient.address = "This license does not support direct payment (must be v0.7 or newer)";
+            recipient.alternateAddress = contract.title;
+          }
         }
         return recipient;
       });

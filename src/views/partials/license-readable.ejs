@@ -38,40 +38,14 @@
         </li>
     </ul>
     <div class="license-section text-left">Plays</div>
-        <% if (license.royalties && license.royalties.length) { %>
-        Upon successful execution of the payment, the following accounts will receive payments
-        in the amount shown below:
-    <table class="table table-bordered table-condensed">
-        <tr><th>Address</th><th>Musicoins</th></tr>
-        <%
-        for (var r = 0; r < license.royalties.length; r++) {
-            var royalty = license.royalties[r];
-        %>
-        <tr>
-            <td class="<%=royalty.invalid ? 'danger' : ''%>"><%= royalty.address %>
-                <% if (royalty.alternateAddress) {%>
-                <div class="subtle-text">(<%=royalty.alternateAddress%>)</div>
-                <%}%>
-            </td>
-            <td class="text-right"><%= royalty.amount %></td></tr>
-        <% } %>
-    </table>
-    The remainder of the value
-    <span class="parameter">
-        (<%=formatNumber(license.coinsPerPlay - computeTotalRoyalties(license))%>
-    </span>
-    musicoins) will be divided into
-    <span class="parameter"><%=computeTotalShares(license)%></span>
-    total shares and distributed as follows:
-    <% } else { %>
     Upon successful execution of the payment, the full amount will be divided into
     <span class="parameter"><%=computeTotalShares(license)%></span>
     total shares and distributed to the following accounts:
-    <% } %>
     <table class="table table-bordered table-condensed">
         <tr><th class="col-md-5">Address</th><th class="col-md-1">Shares</th></tr>
         <% for (var c = 0; c < license.contributors.length; c++) {
             var contributor = license.contributors[c];
+            var percentage = formatNumber(100*contributor.shares / computeTotalShares(license));
         %>
         <tr>
             <td class="<%=contributor.invalid ? 'danger' : ''%>"><%= contributor.address %>
@@ -79,27 +53,12 @@
                 <div class="subtle-text">(<%=contributor.alternateAddress%>)</div>
                 <%}%>
             </td>
-            <td><%= contributor.shares %></td></tr>
+            <td><%= contributor.shares %>
+                <div class="subtle-text"><%=percentage%>%</div></td></tr>
         <% } %>
     </table>
     <div class="license-section text-left">Tips</div>
-    Tips sent to the PPP license will be divided into
-    <span class="parameter"><%=computeTotalShares(license)%></span>
-    shares and distributed to the following accounts:
-    <table class="table table-bordered table-condensed">
-        <tr><th class="col-md-5">Address</th><th class="col-md-1">Shares</th></tr>
-        <% for (var c = 0; c < license.contributors.length; c++) {
-            var contributor = license.contributors[c];
-        %>
-        <tr>
-            <td class="<%=contributor.invalid ? 'danger' : ''%>"><%= contributor.address %>
-                <% if (contributor.alternateAddress) {%>
-                <div class="subtle-text">(<%=contributor.alternateAddress%>)</div>
-                <%}%>
-            </td>
-            <td><%= contributor.shares %></td></tr>
-        <% } %>
-    </table>
+    Tips sent to the PPP license will be divided in the same manner as above.
 </div>
 
 <%
@@ -108,13 +67,6 @@ function computeTotalShares(license) {
   return license.contributors.map(c => parseInt(c.shares)).reduce((total, c) => {
     return total + c;
   }, 0);
-}
-
-function computeTotalRoyalties(license) {
-    if (!license.royalties) return 0;
-    return license.royalties.map(c => parseFloat(c.amount)).reduce((total, c) => {
-        return total + c;
-    }, 0);
 }
 
 function formatNumber(value) {

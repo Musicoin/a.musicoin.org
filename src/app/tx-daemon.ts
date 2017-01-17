@@ -90,6 +90,7 @@ export class PendingTxDaemon {
           console.log("pending release complete: " + r.title);
           r.state = 'published';
           r.contractAddress = result.receipt.contractAddress;
+          r.canReceiveFunds = true;
         }
         else if (result.status == "error") {
           console.log(`pending release error: ${r.title}, api.musicoin.org returned error message.  Out of gas?`);

@@ -339,15 +339,15 @@
                     <div class="release-distribution" style="display: none">
                         <table class="table table-condensed table-responsive contributors">
                             <tr>
-                                <th class="col-md-3">recipient</th>
-                                <th class="col-md-1">amount</th>
+                                <th class="col-md-5">recipient <a href="/faq#WhatIsARecipient" target="help">(?)</a></th>
+                                <th class="col-md-1">shares <a href="/faq#WhatAreShares" target="help">(?)</a></th>
                             </tr>
                             <tr class="row-template" style="display: none">
                                 <td><input name="address"
                                            class="no-submit form-control"
-                                           placeholder="wallet address"></td>
+                                           placeholder="email, wallet, or license address"></td>
                                 <td><input name="value"
-                                           class="no-submit form-control"
+                                           class="no-submit form-control text-right"
                                            placeholder=""></td>
                             </tr>
                             <tr>
@@ -356,11 +356,10 @@
                                     <input style="display: none"
                                            name="track0.recipient.address"
                                            class="no-submit form-control"
-                                           placeholder="email or wallet address"
                                            value="<%=user.profileAddress%>"></td>
                                 <td><input name="track0.recipient.value"
-                                           class="no-submit form-control"
-                                           value="1 share"
+                                           class="no-submit form-control text-right"
+                                           value="1"
                                            placeholder=""></td>
                             </tr>
                         </table>
@@ -370,7 +369,6 @@
                              add another entry
                             </div>
                         </div>
-                        <div class="subtle-text">Amounts can be entered in units of <strong>shares</strong> or <strong>coins</strong>, e.g. <br>'3 shares' or '0.5 coins'</div>
                     </div>
                     <div id="licensePreview"></div>
                     <%}%>

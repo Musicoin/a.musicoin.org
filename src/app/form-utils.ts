@@ -49,7 +49,7 @@ export function convertToRoyaltyOrContributor(recipient) {
   let value = recipient.value;
   if (value) {
     value = value.toLowerCase().trim();
-    if (value.endsWith("shares") || value.endsWith("share")) {
+    try {
       return {
         valid: true,
         isFixedAmount: false,
@@ -57,18 +57,11 @@ export function convertToRoyaltyOrContributor(recipient) {
         shares: parseInt(value)
       }
     }
-    else if (value.endsWith("coin")
-      || value.endsWith("coins")
-      || value.endsWith("mc")
-      || value.endsWith("musicoin")
-      || value.endsWith("musicoins")
-      || value.endsWith("musicoins")
-    ) {
+    catch (e) {
       return {
-        valid: true,
-        isFixedAmount: true,
-        address: recipient.address,
-        amount: parseFloat(value)
+        isFixedAmount: false,
+        valid: false,
+        input: recipient
       }
     }
   }

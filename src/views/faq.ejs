@@ -4,24 +4,33 @@
     <title>FAQ - Musicoin</title>
     <%- include partials/page-head.ejs %>
     <style>
-        body        {
-            word-wrap:break-word;
+        body {
+            word-wrap: break-word;
             background-image: url('/images/musician.jpg');
             background-size: cover;
         }
+
         .faq-question {
             font-size: x-large;
         }
+
         .faq-answer {
             font-size: x-large;
         }
+
         :target {
-            background-color: rgba(255,255,255,0.1);
+            background-color: rgba(255, 255, 255, 0.1);
         }
+
         @keyframes highlight {
-            0% { background-color: rgba(255,255,255,0.1); }
-            100% { background-color: transparent; }
+            0% {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+            100% {
+                background-color: transparent;
+            }
         }
+
         .question {
             padding: 10px;
         }
@@ -61,11 +70,34 @@
                     obtain music illegally.`)
                 },
                 {
-                  id: "GetAnInvite",
-                  question: "How can I obtain an invite?",
-                  answer: (`We want to make sure every musician and listener has a good experience
-                  using musicoin, so we’re slowly ramping up the number of users.  If you are a musician
-                  or just interested in beta-testing, send an email to musicoin@musicoin.org.`)
+                    id: "GetAnInvite",
+                    question: "How can I obtain an invite?",
+                    answer: (`We want to make sure every musician and listener has a good experience
+                    using musicoin, so we’re slowly ramping up the number of users.  If you are a musician
+                    or just interested in beta-testing, send an email to musicoin@musicoin.org.`)
+                },
+                {
+                    id: "WhatAreShares",
+                    question: "What are shares?  Can I use percentages instead?",
+                    answer: (`Shares should be expressed in whole numbers.  If your shares add up to 100, they are the
+                    same as percentages.  However, sometimes it's easier to just express things in shares.  For instance,
+                    if there are three band members, and all of them should get an equal amount, instead of writing 33.333%
+                    for each, just give each member 1 share.  If you would rather express as percentages, you can.
+                    In fact, in the case above you can give everyone 33 shares.  It's ok that is only adds up to 99, since everyone will
+                    get 33 out if 99 shares (exactly 1/3rd).  Finally, the license Preview page will show the computed
+                    percentage.`)
+                },
+                {
+                    id: "WhatIsARecipient",
+                    question: "What should I enter in the 'recipient' field when creating a license?",
+                    answer: (`A recipient needs to be an address on the musicoin network.  You can find your address
+                    on the 'my profile' page by clicking the 'show options' link in the 'my wallet' section.  For
+                    convenience, you can enter an email address of a registered user.  If that user has created a profile,
+                    you will see their address in the preview page along with the email address you entered.  You can
+                    also enter the address of another license.  For example, if you have an agreement with another artist
+                    to pay them 10% of each play for sampling from their song, you can enter their song's license address
+                    in the recipient field.  Then, each time your song is played, it will send 10% to their license, and
+                    then their license will distribute the payment as it normally would for a play.`)
                 }
             ];
             %>
@@ -76,9 +108,9 @@
                     var answer = questions[q].answer;
                     var id = questions[q].id;
                 %>
-                <div id="<%=id%>" class="question">
-                    <li class="faq-question"><%=question%></li>
-                    <div class="subtle-text"><%=answer%></div>
+                <div id="<%= id %>" class="question">
+                    <li class="faq-question"><%= question %></li>
+                    <div class="subtle-text"><%= answer %></div>
                 </div>
                 <% } %>
             </ol>

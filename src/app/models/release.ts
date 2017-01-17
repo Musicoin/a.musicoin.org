@@ -15,6 +15,7 @@ module.exports = mongoose.model('Release', mongoose.Schema({
   artistAddress: String,
   title: String,
   imageUrl: String,
+  canReceiveFunds: Boolean,
   releaseDate: {
     type: Date,
     default: Date.now

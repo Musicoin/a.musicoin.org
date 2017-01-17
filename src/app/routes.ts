@@ -53,7 +53,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         artists: artists,
         featuredArtists: artists, // HACK, for now
         recent: recent});
-    });
+    })
+      .catch(function(err) {
+        console.log(err);
+        res.redirect('/error');
+      });
   });
 
   app.get('/not-found', function (req, res) {
@@ -83,6 +87,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   app.get('/invite', (req, res) => doRender(req, res, 'invite.ejs', {}));
   app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
+  app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
 
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function(req, res) {

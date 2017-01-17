@@ -132,6 +132,10 @@ export class MusicoinAPI {
           console.log(`Request failed with ${error}, url: ${url}, properties: ${JSON.stringify(properties)}`);
           return reject(error);
         }
+        else if (response.statusCode != 200) {
+          console.log(`Request failed with status code ${response.statusCode}, url: ${url}, properties: ${JSON.stringify(properties)}`);
+          return reject(error);
+        }
         resolve(result)
       })
     }.bind(this));
