@@ -207,7 +207,20 @@
   });
 
   var previous = null;
+  var previousTime = 0;
+  var minMillisBetweenPlays = 2000;
+  var nowPlayingUrl = null;
   function playItem(e, url, title, artist, img, playCount, tipCount) {
+    if (url == nowPlayingUrl) return;
+
+    var now = new Date().getTime();
+    if (now - previousTime < minMillisBetweenPlays) {
+      previousTime = now;
+      console.log("Too fast!");
+      return;
+    }
+    nowPlayingUrl = url;
+    previousTime = now;
     if (e) {
       if (previous) previous.classList.remove("selected-track")
       previous = e;
@@ -237,6 +250,10 @@
         $("#player-time-played")[0].innerText = formatTime(audioPlayer.currentTime);
         $("#player-time-left")[0].innerText = formatTime(audioPlayer.duration);
       });
+
+      audioPlayer.addEventListener('ended', function() {
+        nowPlayingUrl = null;
+      })
 
       audioPlayer.addEventListener('play', function() {
         $("#player-play-button")[0].src = "/images/player/pause.png";
