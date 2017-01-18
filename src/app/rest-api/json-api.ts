@@ -105,7 +105,7 @@ export class MusicoinOrgJsonAPI {
               license.artistName = record.artistName;
             }
             else {
-              license.artistName = "Not found";
+              license.artistName = "";
             }
             return license;
           })
