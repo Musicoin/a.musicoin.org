@@ -33,8 +33,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return new Date(timestamp*1000).toLocaleDateString('en-US', options);
   }
 
-  function _formatNumber(value) {
-    return parseInt(value).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  function _formatNumber(value:any, decimals?:number) {
+    var raw = parseFloat(value).toFixed(decimals ? decimals : 0);
+    var parts = raw.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
   }
 
   // =====================================
@@ -64,20 +67,29 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render('not-found.ejs');
   });
 
-  app.get('/profile/history', isLoggedIn, function (req, res) {
+  app.get('/tx/history/:address', isLoggedIn, function (req, res) {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start-length);
-    musicoinApi.getTransactionHistory(req.user.profileAddress, length, start)
-      .then(function(history) {
-        history.forEach(h => h.formattedDate = _formatDate(h.timestamp))
+    const url = `/tx/history/${req.params.address}`;
+
+    Promise.join(
+      musicoinApi.getTransactionHistory(req.params.address, length, start),
+      addressResolver.lookupAddress(req.user.profileAddress, req.params.address),
+      function(history, name){
+        history.forEach(h => {
+          h.formattedDate = _formatDate(h.timestamp);
+          h.musicoins = _formatNumber(h.musicoins, 5);
+        });
         doRender(req, res, 'history.ejs', {
+          address: req.params.address,
+          name: name ? name : "Transaction History",
           history: history,
           navigation: {
             description: `Showing ${start+1} to ${start+length}`,
-            start: previous > 0 ? `/profile/history?length=${length}` : null,
-            back: previous >= 0 && previous < start ? `/profile/history?length=${length}&start=${start-length}` : null,
-            next: `/profile/history?length=${length}&start=${start+length}`,
+            start: previous > 0 ? `${url}?length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}?length=${length}&start=${start-length}` : null,
+            next: `${url}?length=${length}&start=${start+length}`,
           }
         });
       });
@@ -230,12 +242,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.post('/license/preview', (req, res) => {
+  app.post('/license/preview/', (req, res) => {
     console.log("Getting license preview");
-    req.body.coinsPerPlay = 10;
     convertFormToLicense(req.user.draftProfile.artistName, req.user.profileAddress, req.body)
       .then(function(license) {
-        doRender(req, res, 'license.ejs', {license: license});
+        doRender(req, res, 'license.ejs', {showRelease: true, license: license});
+      })
+  });
+
+  app.post('/license/view/', (req, res) => {
+    jsonAPI.getLicense(req.body.address)
+      .then(function (license) {
+        return Promise.join(
+          addressResolver.resolveAddresses(req.user.profileAddress, license.contributors),
+          function(contributors) {
+            license.contributors = contributors;
+            doRender(req, res, 'license.ejs', {showRelease: false, license: license});
+          });
       })
   });
 
@@ -266,6 +289,35 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (!(license.title && license.title.trim() != "")) errors.push("Title is required");
     return errors;
   }
+
+  app.post('/license/delete', isLoggedIn, hasProfile, function(req, res) {
+    // mark release status as deleted
+    // remove from playbacks
+    const contractAddress = req.body.contractAddress;
+    Release.findOne({contractAddress: contractAddress}).exec()
+      .then(function(record) {
+        if (!record) {
+          console.log(`Failed to delete release: no record found with contractAddress: ${contractAddress}`);
+          throw new Error("Could not find record");
+        }
+        record.state = 'deleted';
+        record.save(function(err) {
+          if (err) {
+            console.log(`Failed to delete release: no record found with contractAddress: ${contractAddress}, error: ${err}`);
+            throw new Error("The database responded with an error");
+          }
+        })
+      })
+      .then(function() {
+        return Playback.find({contractAddress: contractAddress}).remove().exec();
+      })
+      .then(function() {
+        res.json({success: true});
+      })
+      .catch(function (err) {
+        res.json({success: false, message: err.message});
+      });
+  });
 
   app.post('/license/release', isLoggedIn, hasProfile, function(req, res) {
     const form = new Formidable.IncomingForm();
@@ -413,6 +465,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/ppp/:address', isLoggedIn, function(req, res) {
     console.log("Got ppp request for " + req.params.address);
+    // TODO: Only play items that are in our database?  e.g. Release.find({address, state=published}
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
     const context = {contentType: "audio/mpeg"};

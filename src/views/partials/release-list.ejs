@@ -1,0 +1,141 @@
+<% if (releases && releases.length > 0) { %>
+    <style>
+        .release-container {
+            position: relative;
+            padding: 10px;
+            margin-bottom: 5px;
+            display: flex;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .tracks-stat {
+            margin-right: 20px;
+        }
+        .track-title {
+
+        }
+        .track-artist {
+            color: #aaa;
+        }
+        .track-list {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .description {
+            max-width: 200px;
+            display: inline-flex;
+            white-space: nowrap;
+            overflow-x: hidden;
+        }
+        .track-image {
+            background-size: cover;
+            height: 100px;
+            width: 100px;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 4px;
+        }
+        .show-off {
+            width: 100px;
+            height: 114px;
+            position: absolute;
+            top: -10px;
+            left: -29px;
+            transform: rotate(10deg);
+            background: linear-gradient(0deg, rgba(255, 255, 255, 0)50%, rgba(255, 255, 255, 0.5)100%);
+        }
+        .show-off-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .release-actions {
+            align-items: flex-end;
+            display: none;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+        .release-address {
+        }
+
+        .release-container:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .release-container:hover .release-actions,
+        .release-container.hover .release-actions {
+            display: flex;
+        }
+    </style>
+    <div>
+
+    </div>
+    <div class="track-list">
+        <%
+        var max = typeof maxItems == "undefined" ? releases.length : maxItems;
+        var toShow = Math.min(max, releases.length);
+        for (var i=0; i < toShow; i++) {
+            var release = releases[i];
+            var releaseId = "release" + i;
+        %>
+        <div id="<%=releaseId%>" class="release-container flex-column">
+            <div class="flex-row">
+                <div class="audio-track track-image show-off-container shadow clickable"
+                     style="background-image: url('<%=release.image%>')"
+                     audioUrl='<%=release.audioUrl%>'
+                     trackTitle='<%=release.title%>'
+                     artistName='<%=release.artistName%>'
+                     image='<%=release.image%>'
+                     playCount='<%=release.playCount%>'
+                     tipCount='<%=release.tipCount%>'>
+                    <div class="show-off"></div>
+                </div>
+
+                <div class="flex-column pad10">
+                    <div class="description track-title" title="<%=release.title%>"><%=release.title%></div>
+                    <div class="description track-artist"><%=release.playCount%> plays</div>
+                    <div class="description track-artist"><%=release.tipCount%> tips</div>
+                    <div class="description track-artist"><%=release.totalEarnedCoins%> earned</div>
+                </div>
+
+                <div class="flex-column release-actions">
+                    <div class="flex-column">
+                        <a class="mb5 clickable subtle-text"
+                           onclick='$( "#licensePreview" ).load( "/license/view/", {address: "<%=release.address%>"} ); $("#licensePreview").show()'>show license</a>
+                        <a class="mb5 subtle-text" href="/tx/history/<%=release.address%>">show history</a>
+                    </div>
+                    <div class="flex-column">
+                        <a class="btn btn-sm btn-danger" onclick="promptDelete('<%=releaseId%>', '<%=release.address%>', '<%=release.title%>')">delete</a>
+                    </div>
+                </div>
+            </div>
+            <div class="release-address text-center subtle-text pad5">
+                <%=release.address%>
+            </div>
+        </div>
+        <%}%>
+
+    </div>
+<%}%>
+
+<script>
+
+    function promptDelete(elementId, address, name) {
+      if(prompt('Type `delete` to confirm that you want to delete `' + name + '`')=='delete') {
+        $.post('/license/delete', {contractAddress: address}, function(data) {
+          if (data.success) {
+            $('#' + elementId).remove();
+          }
+          else {
+            alert("Failed to delete: " + data.message);
+          }
+        })
+      }
+      else {
+        return false;
+      }
+    }
+
+    function doDelete(license) {
+
+    }
+</script>

@@ -104,6 +104,9 @@
         }
         .wallet-actions {
         }
+        .wallet-action-bar {
+            justify-content: space-between;
+        }
     </style>
 </head>
 <body>
@@ -306,10 +309,10 @@
                         </table>
                     </form>
                 </div>
-                <div class="wallet-action-toggle subtle-text"
-                     onclick='$(".wallet-actions").toggle()'>
-                        <div class="wallet-actions">show options</div>
-                        <div class="wallet-actions" style="display: none">hide options</div>
+                <div class="flex-row wallet-action-bar">
+                    <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions">show options</div>
+                    <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions" style="display: none">hide options</div>
+                    <a class="subtle-text" href="/tx/history/<%=user.profileAddress%>">show history</a>
                 </div>
             </div>
         </div>
@@ -407,7 +410,7 @@
         <div class="col-sm-6">
             <div class="well">
                 <h3>My Releases</h3>
-                <%- include partials/track-list.ejs %>
+                <%- include partials/release-list.ejs %>
             </div>
         </div>
         <%}%>

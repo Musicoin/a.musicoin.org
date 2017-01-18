@@ -7,7 +7,7 @@ module.exports = mongoose.model('Release', mongoose.Schema({
   state: {
     type: String,
 
-    enum: ['pending', 'published', 'error'],
+    enum: ['pending', 'published', 'error', 'deleted'],
     default: 'pending',
     index: true
   },

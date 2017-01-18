@@ -11,6 +11,22 @@ export class AddressResolver {
     return Promise.all(recipients.map(r => this.resolveAddress(selfAddress, r)));
   }
 
+  lookupAddress(selfAddress, address) {
+    if (address == selfAddress)
+      return Promise.resolve("my wallet");
+    const u = User.findOne({"profileAddress": address}).exec();
+    const c = Release.findOne({"contractAddress": address}).exec();
+    return Promise.join(u, c, function (user, contract) {
+      if (user && user.draftProfile && user.draftProfile.artistName) {
+        return user.draftProfile.artistName;
+      }
+      else if (contract && contract.title) {
+        return contract.title;
+      }
+      return null;
+    });
+  }
+
   resolveAddress(selfAddress, recipient) {
     if (recipient.address.startsWith("0x")) {
       if (recipient.address.trim() == selfAddress) {

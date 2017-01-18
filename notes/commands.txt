@@ -9,3 +9,8 @@ admin.addPeer("enode://ba2f6409f9894c12f5aad3471b9c4a2e7999b246af775c39f99d85b02
 
 cd C:\tmp\mc-mvp3\dependencies\win64\go-ipfs
 ipfs daemon
+
+# Start forever with authbind, so non-root grab the right ports
+# changing environment variables will require this to be re-run (forever stop <number>, then this command)
+cd /home/coiner/musicoin.org/src
+authbind --deep forever start server.js

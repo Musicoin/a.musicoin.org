@@ -35,6 +35,16 @@ label {
     flex-direction: column;
 }
 
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.pad5 {  padding: 5px;  }
+.pad10 {  padding: 10px;  }
+.pad20 {  padding: 20px;  }
+.mb5 {  margin-bottom: 5px;  }
+
 .clickable {
     cursor: pointer;
 }
@@ -51,13 +61,13 @@ label {
     color: #aaa
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 800px) {
     .big-screen-only {
         display: none !important;
     }
 }
 
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 800px) {
     .small-screen-only {
         display: none !important;
     }

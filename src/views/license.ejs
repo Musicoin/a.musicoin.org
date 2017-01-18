@@ -36,7 +36,7 @@
         <%- include partials/license-readable.ejs %>
     </div>
     <div class="button-bar text-right">
-        <% if (license.errors.length==0) {%>
+        <% if (showRelease && (!license.errors || license.errors.length==0)) {%>
         <div class="btn btn-success btn-sm" onclick='$("#licensePreview").hide();$("#releaseButton").click()'>Release</div>
         <%}%>
         <div class="btn btn-danger btn-sm" onclick='$("#licensePreview").hide();'>Cancel</div>

@@ -96,10 +96,12 @@ export class MusicoinOrgJsonAPI {
       .bind(this)
       .then(function(license) {
         console.log("Getting license: " + contractAddress + " ... done");
+        if (license.artistName) return license;
+
         console.log("Looking up artist: " + license.artistProfileAddress);
         return User.findOne({profileAddress: license.artistProfileAddress}).exec()
           .then(function(record) {
-            if (record) {
+            if (record && record.artistName) {
               license.artistName = record.artistName;
             }
             else {
