@@ -1,4 +1,17 @@
 import {Promise} from 'bluebird';
+const sharp = require('sharp');
+
+export function resizeImage(path: string, width: number, height?: number) {
+  const outputPath = path + ".resized.jpeg";
+  return sharp(path)
+    .resize(width, height)
+    .jpeg()
+    .toFile(path + ".resized.jpeg")
+    .then(function() {
+      console.log("Resized image: " + outputPath);
+      return outputPath;
+    });
+}
 
 export function groupByPrefix(fields: any, prefix: string) {
   return Object.keys(fields)

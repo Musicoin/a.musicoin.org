@@ -11,6 +11,7 @@ const Invite = require('../app/models/invite');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const loginRedirect = "/";
+const maxImageWidth = 400;
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider) {
 
@@ -206,7 +207,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const socialData = FormUtils.groupByPrefix(fields, prefix);
 
       const profile = req.user.draftProfile;
-      const i = files.photo.size == 0 ? Promise.resolve(profile.ipfsImageUrl) : mediaProvider.upload(files.photo.path);
+      const i = files.photo.size == 0
+        ? Promise.resolve(profile.ipfsImageUrl)
+        : FormUtils.resizeImage(files.photo.path, maxImageWidth)
+          .then((newPath) => mediaProvider.upload(newPath));
       const d = mediaProvider.uploadText(fields.description);
       const s = mediaProvider.uploadText(JSON.stringify(socialData));
       return Promise.join(i, d, s, function (imageUrl, descriptionUrl, socialUrl) {
@@ -347,7 +351,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           const key = crypto.randomBytes(16).toString('base64'); // 128-bits
           const a = mediaProvider.upload(track.audio.path, () => key); // encrypted
           const i = track.image && track.image.size > 0
-            ? mediaProvider.upload(track.image.path) // unencrypted
+            ? FormUtils.resizeImage(track.image.path, maxImageWidth)
+              .then((newPath) => mediaProvider.upload(newPath))
             : Promise.resolve(req.user.draftProfile.ipfsImageUrl);
           const m = mediaProvider.uploadText(JSON.stringify(metadata));
           const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
