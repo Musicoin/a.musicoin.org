@@ -121,17 +121,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // LOGIN ===============================
   // =====================================
   // show the login form
-  /*
-  app.get('/login', function (req, res) {
+  app.get('/admin/su', isLoggedIn, adminOnly, function (req, res) {
     // render the page and pass in any flash data if it exists
-    res.render('login.ejs', {message: req.flash('loginMessage')});
+    res.render('su.ejs', {message: req.flash('loginMessage')});
   });
 
   // process the login form
   // process the login form
-  app.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/', // redirect to the secure profile section
-    failureRedirect : '/login', // redirect back to the signup page if there is an error
+  app.post('/admin/su', isLoggedIn, adminOnly, passport.authenticate('local-su', {
+    successRedirect : '/profile', // redirect to the secure profile section
+    failureRedirect : '/admin/su', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
 
@@ -139,6 +138,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // SIGNUP ==============================
   // =====================================
   // show the signup form
+  /*
   app.get('/signup', function (req, res) {
 
     // render the page and pass in any flash data if it exists
@@ -155,7 +155,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // process the signup form
   // app.post('/signup', do all our passport stuff here);
   */
-
   // =====================================
   // PUBLIC ARTIST PROFILE SECTION =====================
   // =====================================
@@ -522,6 +521,16 @@ function isLoggedIn(req, res, next) {
 
   // if they aren't redirect them to the home page
   res.redirect('/info');
+}
+
+function adminOnly(req, res, next) {
+
+  // if user is authenticated in the session, carry on
+  if (isAdmin(req.user))
+    return next();
+
+  // if they aren't redirect them to the error page
+  res.redirect('/error');
 }
 
 function hasProfile(req, res, next) {

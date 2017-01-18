@@ -94,7 +94,11 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
   // we are using named strategies since we have one for login and one for signup
   // by default, if there was no name, it would just be called 'local'
 
-  passport.use('local-login', new LocalStrategy({
+  /**
+   * This route supports a switch user option for admin users.  It's a bit of a hack, but it can only be
+   * triggered by users that are logged in and considered admin users (gmail authenticated address ending in @berry.ai)
+   */
+  passport.use('local-su', new LocalStrategy({
       // by default, local strategy uses username and password, we will override with email
       usernameField: 'email',
       passwordField: 'password',
@@ -104,7 +108,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
       // find a user whose email is the same as the forms email
       // we are checking to see if the user trying to login already exists
-      User.findOne({'local.email': email}, function (err, user) {
+      User.findOne({'profileAddress': req.body.profileAddress}, function (err, user) {
         // if there are any errors, return the error before anything else
         if (err)
           return done(err);
@@ -114,7 +118,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
 
         // if the user is found but the password is wrong
-        if (!user.validPassword(password))
+        if (!req.user.isAdmin)
           return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
 
         // all is well, return successful user
