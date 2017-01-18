@@ -294,7 +294,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     // mark release status as deleted
     // remove from playbacks
     const contractAddress = req.body.contractAddress;
-    Release.findOne({contractAddress: contractAddress}).exec()
+    Release.findOne({contractAddress: contractAddress, artistAddress: req.user.profileAddress}).exec()
       .then(function(record) {
         if (!record) {
           console.log(`Failed to delete release: no record found with contractAddress: ${contractAddress}`);
