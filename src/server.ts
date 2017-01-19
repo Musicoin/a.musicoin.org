@@ -34,9 +34,7 @@ passportConfigurer.configure(passport, mediaProvider, config.auth);
 
 const get_ip = require('ipware')().get_ip;
 app.use(function(req, res, next) {
-  const ip_info = get_ip(req);
-  console.log(ip_info);
-  // { clientIp: '127.0.0.1', clientIpRoutable: false }
+  get_ip(req);
   next();
 });
 

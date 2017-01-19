@@ -86,3 +86,18 @@ label {
 .text-nowrap {
     white-space: nowrap;
 }
+
+.abs-top-right {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+}
+
+.show-on-well-hover {
+    display: none;
+}
+
+.well:hover .show-on-well-hover,
+.well.hover .show-on-well-hover {
+    display: flex;
+}

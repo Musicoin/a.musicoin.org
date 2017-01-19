@@ -16,6 +16,7 @@ module.exports = mongoose.model('Release', mongoose.Schema({
   title: String,
   imageUrl: String,
   canReceiveFunds: Boolean,
+  directPlayCount: Number,
   releaseDate: {
     type: Date,
     default: Date.now

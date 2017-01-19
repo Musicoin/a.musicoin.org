@@ -41,22 +41,72 @@
         <div class="col-sm-12">
             <div class="well">
                 <h3 class="section-header">featured artists</h3>
-                <%- include('partials/featured-artist-list.ejs', {artists: featuredArtists}) %>
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-featured-artists">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     id="de-featured-artists"
+                     de-refresh-period="30"
+                     de-refresh-offset="0"
+                     de-url="/elements/featured-artists">
+                    <%- include('partials/featured-artist-list.ejs', {artists: featuredArtists}) %>
+                </div>
             </div>
         </div>
     </div>
     <div class="container">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="well">
                 <h3 class="section-header">new releases</h3>
-                <%- include partials/track-list.ejs %>
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-new-releases">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     style="min-height: 180px"
+                     id="de-new-releases"
+                     de-refresh-period="60"
+                     de-refresh-offset="10"
+                     de-url="/elements/new-releases">
+                    <%- include partials/track-list.ejs %>
+                </div>
             </div>
         </div>
 
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="section-header">recently played</h3>
-                <%- include('partials/track-list.ejs', {releases: recent}) %>
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-recently-played">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     style="min-height: 180px"
+                     id="de-recently-played"
+                     de-refresh-period="60"
+                     de-refresh-offset="20"
+                     de-url="/elements/recently-played">
+                    <%- include('partials/track-list.ejs', {releases: recent}) %>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-header">top played</h3>
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-top-played">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     style="min-height: 180px"
+                     id="de-top-played"
+                     de-refresh-period="60"
+                     de-refresh-offset="30"
+                     de-url="/elements/top-played">
+                    <%- include('partials/track-list.ejs', {releases: topPlayed}) %>
+                </div>
             </div>
         </div>
     </div>
@@ -64,7 +114,19 @@
         <div class="col-sm-12">
             <div class="well">
                 <h3 class="section-header">new artists</h3>
-                <%- include('partials/featured-artist-list.ejs', {artists: featuredArtists, iconSize: "small"}) %>
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-new-artists">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     id="de-new-artists"
+                     de-refresh-period="60"
+                     de-refresh-offset="40"
+                     de-iconSize="small"
+                     de-url="/elements/new-artists">
+                    <%- include('partials/featured-artist-list.ejs', {artists: artists, iconSize: "small"}) %>
+                </div>
+
             </div>
         </div>
     </div>

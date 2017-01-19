@@ -52,29 +52,50 @@ export class MusicoinOrgJsonAPI {
     return this._getLicensesForEntries({state: 'published'}, limit);
   }
 
+  getTopPlayed(limit: number): Promise<any> {
+    return this._getLicensesForEntries({state: 'published'}, limit, {directPlayCount: 'desc'})
+      .then(function(licenses) {
+        // secondary sort based on plays recorded in the blockchain.  This is the number that will
+        // show on the screen, but it's too slow to pull all licenses and sort.  So, sort fast with
+        // our local db, then resort top results to it doesn't look stupid on the page.
+        return licenses.sort((a, b) => {
+          const v1 = a.playCount ? a.playCount : 0;
+          const v2 = b.playCount ? b.playCount : 0;
+          return v2 - v1; // descending
+        })
+      })
+  }
+
   getRecentPlays(limit: number): Promise<any> {
-    return Playback.find({}).sort({playbackDate: 'desc'}).limit(limit).exec()
+    // grab the top 2*n from the db to try to get a distinct list that is long enough.
+    return Playback.find({}).sort({playbackDate: 'desc'}).limit(2*limit).exec()
       .then(records => records.map(r => r.contractAddress))
       .then(addresses => Array.from(new Set(addresses))) // insertion order is preserved
+      .then(addresses => addresses.slice(0, Math.min(addresses.length, limit)))
       .then(addresses => addresses.map(address => this.getLicense(address)))
       .then(promises => Promise.all(promises))
   }
 
+  getFeaturedArtists(limit: number) {
+    // HACK
+    return this.getNewArtists(limit);
+  }
+
   getNewArtists(limit: number) {
-    // TODO: Sort
     return User.find({profileAddress: {$ne: null}}).sort({joinDate: 'desc'}).limit(limit).exec()
       .then(records => records.map(r => this._convertDbRecordToArtist(r)))
       .then(promises => Promise.all(promises))
   }
 
-  _getLicensesForEntries(condition: any, limit?: number) {
-    return this._getReleaseEntries(condition, limit)
+  _getLicensesForEntries(condition: any, limit?: number, sort?: any): Promise<any> {
+    return this._getReleaseEntries(condition, limit, sort)
       .then(items => items.map(item => this._convertDbRecordToLicense(item)))
       .then(promises => Promise.all(promises));
 }
 
-  _getReleaseEntries(condition: any, limit?: number) {
-    let query = Release.find(condition).sort({releaseDate: 'desc'});
+  _getReleaseEntries(condition: any, limit?: number, _sort?: any) {
+    let sort = _sort ? _sort : {releaseDate: 'desc'};
+    let query = Release.find(condition).sort(sort);
     if (limit) {
       query = query.limit(limit);
     }

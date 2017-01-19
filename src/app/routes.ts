@@ -46,21 +46,61 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   app.get('/', isLoggedIn, function (req, res) {
     const rs = jsonAPI.getNewReleases(6);
-    const as = jsonAPI.getNewArtists(12);
-    const ps = Promise.resolve(jsonAPI.getRecentPlays(6));
+    const na = jsonAPI.getNewArtists(12);
+    const fa = jsonAPI.getFeaturedArtists(12);
+    const ps = jsonAPI.getRecentPlays(6);
+    const tp = jsonAPI.getTopPlayed(6);
     const b = musicoinApi.getMusicoinAccountBalance();
-    Promise.join(rs, as, ps, b, function(releases, artists, recent, balance) {
+    Promise.join(rs, na, fa, ps, tp, b, function(releases, artists, featuredArtists, recent, topPlayed, balance) {
       balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       doRender(req, res, "index.ejs", {
         musicoinClientBalance: balance,
         releases: releases,
         artists: artists,
-        featuredArtists: artists, // HACK, for now
+        featuredArtists: featuredArtists,
+        topPlayed: topPlayed,
         recent: recent});
     })
       .catch(function(err) {
         console.log(err);
         res.redirect('/error');
+      });
+  });
+
+  app.post('/elements/featured-artists', function(req, res) {
+    const iconSize = req.body.iconSize ? req.body.iconSize : "large";
+    jsonAPI.getFeaturedArtists(12)
+      .then(function(artists) {
+        res.render('partials/featured-artist-list.ejs', {artists: artists, iconSize: iconSize});
+      });
+  });
+
+  app.post('/elements/new-artists', function(req, res) {
+    const iconSize = req.body.iconSize ? req.body.iconSize : "small";
+    jsonAPI.getNewArtists(12)
+      .then(function(artists) {
+        res.render('partials/featured-artist-list.ejs', {artists: artists, iconSize: iconSize});
+      });
+  });
+
+  app.post('/elements/new-releases', function(req, res) {
+    jsonAPI.getNewReleases(6)
+      .then(function(releases) {
+        res.render('partials/track-list.ejs', {releases: releases});
+      });
+  });
+
+  app.post('/elements/recently-played', function(req, res) {
+    jsonAPI.getRecentPlays(6)
+      .then(function(releases) {
+        res.render('partials/track-list.ejs', {releases: releases});
+      });
+  });
+
+  app.post('/elements/top-played', function(req, res) {
+    jsonAPI.getTopPlayed(6)
+      .then(function(releases) {
+        res.render('partials/track-list.ejs', {releases: releases});
       });
   });
 
@@ -469,18 +509,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/ppp/:address', isLoggedIn, function(req, res) {
     console.log("Got ppp request for " + req.params.address);
-    // TODO: Only play items that are in our database?  e.g. Release.find({address, state=published}
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
+    const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
     const context = {contentType: "audio/mpeg"};
-    Promise.join(k, l, function(keyResponse, license) {
+    Promise.join(k, l, r, function(keyResponse, license, release) {
+      if (!release) throw new Error("Could not find contract in database (maybe it was deleted)");
       context.contentType = license.contentType ? license.contentType : context.contentType;
-      return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key);
+      return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
+        .then(function(result) {
+          Playback.create({contractAddress: req.params.address}); // async, not checking result
+          release.directPlayCount = release.directPlayCount ? release.directPlayCount+1 : 1;
+          release.save(function(err) {
+            if (err) console.warn("Failed to update playcount: " + err);
+          });
+
+          return result;
+        });
     })
-      .then(function(result) {
-        Playback.create({contractAddress: req.params.address}); // async, not checking result
-        return result;
-      })
       .then(function(result) {
         result.headers['Content-Type'] = context.contentType;
         result.headers['Accept-Ranges'] = 'none';

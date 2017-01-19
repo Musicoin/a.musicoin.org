@@ -1,5 +1,4 @@
 <audio autoplay id="player"></audio>
-<script src="/js/jquery-3.1.1.js"></script>
 <style>
     .player {
         background-color: #333;
@@ -194,7 +193,7 @@
   $( document ).ready(function() {
     getAudioPlayer();
 
-    $(".audio-track").on('click', function() {
+    $(document).on('click', '.audio-track', function() {
       var item = $(this);
       playItem(this,
         item.attr("audioUrl"),
@@ -203,7 +202,7 @@
         item.attr("image"),
         item.attr("playCount"),
         item.attr("tipCount"))
-    })
+    });
   });
 
   var previous = null;
