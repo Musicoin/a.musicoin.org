@@ -27,6 +27,7 @@ if (typeof dynamic == "undefined") {
     getBasePeriod: function() { return 1000},
 
     isReady: function(element, periodIdx) {
+      if (element.attr("de-refresh-period") == "none") return false;
       var period = parseInt(element.attr("de-refresh-period"));
       var offset = parseInt(element.attr("de-refresh-offset"));
       if (!offset) offset = 0;
@@ -64,9 +65,12 @@ if (typeof dynamic == "undefined") {
     console.log("Setting up dynamic elements, with period: " + dynamic.getBasePeriod());
     window.setInterval(function() { dynamic.refreshAll();}, dynamic.getBasePeriod());
 
-    $(".de-refresh-button").on('click', function() {
+
+    $(document).on('click', '.de-refresh-button', function() {
       var item = $(this);
-      dynamic.refreshElement($("#" + item.attr('de-target-id')));
+      var targetId = item.attr('de-target-id');
+      var target = targetId ? $("#" + item.attr('de-target-id')) : item.parentsUntil(".dynamic-element").parent();
+      dynamic.refreshElement(target);
     })
   });
 }

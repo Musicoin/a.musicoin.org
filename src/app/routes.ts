@@ -68,14 +68,29 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/browse', isLoggedIn, function (req, res) {
-    const rs = jsonAPI.getNewReleasesByGenre(100, 8);
+    const maxGroupSize = 8;
+    const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize);
     Promise.join(rs, function(releases) {
       doRender(req, res, "browse.ejs", {
-        releases: releases, maxItemsPerGroup: 12});
+        releases: releases, maxItemsPerGroup: maxGroupSize});
     })
       .catch(function(err) {
         console.log(err);
         res.redirect('/error');
+      });
+  });
+
+  app.post('/elements/pending-releases', function(req, res) {
+    jsonAPI.getArtist(req.user.profileAddress, true, true)
+      .then(function(output) {
+        res.render('partials/pending-releases.ejs', output);
+      });
+  });
+
+  app.post('/elements/release-list', function(req, res) {
+    jsonAPI.getArtist(req.user.profileAddress, true, true)
+      .then(function(output) {
+        res.render('partials/release-list.ejs', output);
       });
   });
 
@@ -279,6 +294,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             console.log(`Transaction submitted! Profile tx : ${tx}`);
             req.user.pendingTx = tx;
             req.user.updatePending = true;
+            req.user.hideProfile = !!fields.hideProfile;
             console.log(`Saving updated profile to database...`);
             req.user.save(function (err) {
               if (err) {

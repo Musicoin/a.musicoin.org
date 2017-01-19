@@ -110,8 +110,8 @@ export class MusicoinOrgJsonAPI {
 
   getNewArtists(limit: number, genre?: string) {
     const filter = genre
-      ? {profileAddress: {$ne: null}, "draftProfile.genre": genre}
-      : {profileAddress: {$ne: null}};
+      ? {profileAddress: {$ne: null}, hideProfile: {$ne: true}, "draftProfile.genre": genre}
+      : {profileAddress: {$ne: null}, hideProfile: {$ne: true}};
     return User.find(filter).sort({joinDate: 'desc'}).limit(limit).exec()
       .then(records => records.map(r => this._convertDbRecordToArtist(r)))
       .then(promises => Promise.all(promises))

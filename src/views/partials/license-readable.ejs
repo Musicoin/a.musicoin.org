@@ -8,11 +8,14 @@
     }
 
     .parameter {
-        min-width: 10px;
-        min-height: 10px;
-        background-color: #ffffaa;
+        min-width: 30px;
+        min-height: 30px;
         display: inline-block;
+        border: 1px solid #eee;
         border-bottom: 1px solid black;
+        padding: 5px;
+        text-align: center;
+        color: darkblue;
     }
 
     p {
@@ -26,10 +29,15 @@
     .logo {
         height: 50px;
     }
+
+    .missing {
+        background-color: #fee;
+    }
+
 </style>
 <div class="license-container">
     This is a human-readable summary of the Pay Per Play license for
-    <span class="parameter"><%= license.title %></span> by <span class="parameter"><%= license.artistName %></span>.
+    <span class="<%= license.title ? "" : "missing"%> parameter"><%= license.title %>&nbsp;</span> by <span class="parameter"><%= license.artistName %></span>.
     <br><br>
     By listening to this work, the listener agrees to:
     <ul>

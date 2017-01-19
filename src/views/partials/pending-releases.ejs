@@ -1,0 +1,14 @@
+<% if (pendingReleases.length > 0) {%>
+    <div class="well pulse-bg">
+        <h3>Releasing...</h3>
+        <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover">
+            <i class="fa fa-refresh" aria-hidden="true"></i>
+        </div>
+        <div class="subtle-text">Your PPP contract is now being written to the blockchain and your
+            audio files are being encrypted and distributed on the peer-to-peer file sharing network.</div>
+        <br>
+        <% for (var i=0; i < pendingReleases.length; i++) {%>
+        <div><%=pendingReleases[i].title%></div>
+        <%}%>
+    </div>
+<%}%>

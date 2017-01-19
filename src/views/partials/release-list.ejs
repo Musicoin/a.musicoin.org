@@ -66,8 +66,11 @@
             display: flex;
         }
     </style>
-    <div>
 
+<div class="well">
+    <h3>My Releases</h3>
+    <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover">
+        <i class="fa fa-refresh" aria-hidden="true"></i>
     </div>
     <div class="track-list">
         <%
@@ -79,7 +82,7 @@
         %>
         <div id="<%=releaseId%>" class="release-container flex-column">
             <div class="flex-row">
-                <div class="audio-track track-image show-off-container shadow clickable"
+                <div class="track-image show-off-container"
                      style="background-image: url('<%=release.image%>')"
                      audioUrl='<%=release.audioUrl%>'
                      trackTitle='<%=release.title%>'
@@ -113,29 +116,25 @@
             </div>
         </div>
         <%}%>
-
     </div>
-<%}%>
+</div>
 
 <script>
-
-    function promptDelete(elementId, address, name) {
-      if(prompt('Type `delete` to confirm that you want to delete `' + name + '`')=='delete') {
-        $.post('/license/delete', {contractAddress: address}, function(data) {
-          if (data.success) {
-            $('#' + elementId).remove();
-          }
-          else {
-            alert("Failed to delete: " + data.message);
-          }
-        })
-      }
-      else {
-        return false;
-      }
+  function promptDelete(elementId, address, name) {
+    if(prompt('Type `delete` to confirm that you want to delete `' + name + '`')=='delete') {
+      $.post('/license/delete', {contractAddress: address}, function(data) {
+        if (data.success) {
+          $('#' + elementId).remove();
+        }
+        else {
+          alert("Failed to delete: " + data.message);
+        }
+      })
     }
-
-    function doDelete(license) {
-
+    else {
+      return false;
     }
+  }
 </script>
+<%}%>
+

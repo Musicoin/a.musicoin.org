@@ -39,6 +39,7 @@ const userSchema = mongoose.Schema({
     ipfsImageUrl: String,
     genres: [String]
   },
+  hideProfile: Boolean,
   joinDate: {
     type: Date,
     default: Date.now

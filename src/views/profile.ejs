@@ -90,8 +90,9 @@
             position: fixed;
             top: 50%;
             left: 50%;
+            width: 75%;
             transform: translate(-50%, -50%);
-            height: 400px;
+            height: 500px;
             border-radius: 4px;
             z-index: 2;
             background-color: white;
@@ -169,6 +170,11 @@
                     <div class="text-center">
                         View your public profile page here <a href="/artist/<%=user.profileAddress%>">here</a>
                     </div>
+                    <div class="text-center">
+                        <input type="checkbox" name="hideProfile" <%=user.hideProfile ? "checked" : ""%>>
+                        This is a wallet-only account <a href="/faq#WalletOnlyAccount" target="help">(?)</a>
+                    </div>
+                    <br><br>
                     <% } else { %>
                     <div class="text-center">By publishing your profile, you agree to our <a href="/terms">terms of use</a></div>
                     <% } %>
@@ -281,9 +287,11 @@
                 </div>
                 <div class=wallet-actions style="display: none">
                     <p>
+
+                    <br>
                     <div class="text-center subtle-text">my wallet address</div>
                     <div class="text-center"><%=user.profileAddress%></div>
-                    <p></p>
+                    <br>
 
                     <p class="subtle-text">
                         Send musicoins to a friend or transfer to another wallet for safe keeping.
@@ -321,6 +329,7 @@
             </div>
         </div>
 
+        <% if (!user.hideProfile) { %>
         <div class="col-sm-6">
             <div class="well">
                 <h3>Release</h3>
@@ -399,26 +408,42 @@
                 </form>
             </div>
         </div>
-
-        <% if (pendingReleases.length > 0) {%>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3>Pending</h3>
-                <% for (var i=0; i < pendingReleases.length; i++) {%>
-                    <div><%=pendingReleases[i].title%></div>
-                <%}%>
-
-            </div>
-        </div>
         <%}%>
 
-        <% if (releases.length > 0) {%>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3>My Releases</h3>
-                <%- include partials/release-list.ejs %>
-            </div>
+        <div class="dynamic-element col-sm-6"
+             id="de-pending-releases"
+             de-refresh-period="none"
+             de-url="/elements/pending-releases">
+            <%- include partials/pending-releases.ejs %>
         </div>
+
+        <div class="dynamic-element col-sm-6"
+             id="de-release-list"
+             de-refresh-period="none"
+             de-url="/elements/release-list">
+            <%- include partials/release-list.ejs %>
+        </div>
+
+        <%
+        // I don't want to have this page constantly refreshing the pending releases unless
+        // we have reason to believe there is likely to be a change.  When the user posts a
+        // new release, the page will refresh.  At which point, we should see an pending release.
+        // So, in those cases, set up two checks: 1min and 2mins from now.  After than, they user
+        // will have to user the manual refresh option on the widget, or refresh the page.
+        if (pendingReleases.length > 0) { %>
+        <script>
+          console.log("Setting up two auto-refreshes...");
+          window.setTimeout(function () {
+            console.log("auto-refreshes 1 ...");
+            dynamic.refreshElement($("#de-release-list"));
+            dynamic.refreshElement($("#de-pending-releases"));
+          }, 60 * 1000)
+          window.setTimeout(function () {
+            console.log("auto-refreshes 2 ...");
+            dynamic.refreshElement($("#de-release-list"));
+            dynamic.refreshElement($("#de-pending-releases"));
+          }, 120 * 1000)
+        </script>
         <%}%>
 
         <%} else {%>

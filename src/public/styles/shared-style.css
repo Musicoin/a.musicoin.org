@@ -101,3 +101,18 @@ label {
 .well.hover .show-on-well-hover {
     display: flex;
 }
+
+.pulse-bg {
+    animation: pulse 1s infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-out;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: rgba(255,255,255,0.2);
+    }
+    100% {
+        background-color: rgba(255,255,255,0.15);
+    }
+}
