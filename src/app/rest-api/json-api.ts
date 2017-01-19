@@ -124,7 +124,7 @@ export class MusicoinOrgJsonAPI {
 
   getNewReleasesByGenre(limit: number, maxGroupSize: number): Promise<any> {
     const flatten = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
-    return Release.find({ state: "published" }).sort({releaseDate: 'desc'}).limit(limit).exec()
+    return Release.find({ state: "published" }).sort([["directPlayCount", 'desc'], ["releaseDate", 'desc']]).limit(limit).exec()
       .then(items => {
         const genreOrder = [];
         const genreItems = {};
