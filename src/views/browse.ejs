@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <%- include partials/page-head.ejs %>
+    <title>Musicoin.org</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #eee;
+            background-image: url('/images/musician.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .home_icon {
+            height: 80px;
+        }
+        .free-play-count {
+            font-size: 72px;
+            line-height: 0.9;
+            text-align: center;
+            margin-top: 20px;
+            color: #e4aa17;
+        }
+    </style>
+</head>
+<body>
+    <%- include partials/header.ejs %>
+    <%
+    var groups = {};
+    for (var g=0; g < releases.length; g++) {
+        var release = releases[g];
+        if (!groups[release.genres])
+            groups[release.genres] = [];
+        groups[release.genres].push(release)
+    }
+
+    for (var genre in groups) {
+      var items = groups[genre];
+      items = items.slice(0, Math.min(maxItemsPerGroup, items.length));
+ %>
+    <div class="container">
+        <div class="col-sm-12">
+            <div class="well">
+                <h3 class="section-header"><%=genre%></h3>
+                <%- include('partials/track-list.ejs', {releases: items}) %>
+            </div>
+        </div>
+    </div>
+    <%}%>
+    <%- include partials/player.ejs %>
+</body>
+</html>

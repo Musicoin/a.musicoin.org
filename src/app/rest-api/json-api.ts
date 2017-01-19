@@ -5,6 +5,36 @@ const User = require('../../app/models/user');
 const Release = require('../../app/models/release');
 const Playback = require('../../app/models/playback');
 
+const knownGenres = [
+  "Alternative Rock",
+  "Ambient",
+  "Classical",
+  "Country",
+  "Dance & EDM",
+  "Dancehall",
+  "Deep House",
+  "Disco",
+  "Drum & Bass",
+  "Electronic",
+  "Folk & Singer-Songwriter",
+  "Hip-hop & Rap",
+  "House",
+  "Indie",
+  "Jazz & Blues",
+  "Latin",
+  "Metal",
+  "Piano",
+  "Pop",
+  "R&B & Soul",
+  "Reggae",
+  "Reggaeton",
+  "Rock",
+  "Soundtrack",
+  "Techno",
+  "Trance",
+  "World"
+];
+
 export interface ArtistProfile {
   artist: any,
   releases: any[],
@@ -48,12 +78,9 @@ export class MusicoinOrgJsonAPI {
     });
   }
 
-  getNewReleases(limit: number): Promise<any> {
-    return this._getLicensesForEntries({state: 'published'}, limit);
-  }
-
-  getTopPlayed(limit: number): Promise<any> {
-    return this._getLicensesForEntries({state: 'published'}, limit, {directPlayCount: 'desc'})
+  getTopPlayed(limit: number, genre?: string): Promise<any> {
+    const filter = genre ? {state: 'published', genres: genre} : {state: 'published'};
+    return this._getLicensesForEntries(filter, limit, {directPlayCount: 'desc'})
       .then(function(licenses) {
         // secondary sort based on plays recorded in the blockchain.  This is the number that will
         // show on the screen, but it's too slow to pull all licenses and sort.  So, sort fast with
@@ -81,10 +108,48 @@ export class MusicoinOrgJsonAPI {
     return this.getNewArtists(limit);
   }
 
-  getNewArtists(limit: number) {
-    return User.find({profileAddress: {$ne: null}}).sort({joinDate: 'desc'}).limit(limit).exec()
+  getNewArtists(limit: number, genre?: string) {
+    const filter = genre
+      ? {profileAddress: {$ne: null}, "draftProfile.genre": genre}
+      : {profileAddress: {$ne: null}};
+    return User.find(filter).sort({joinDate: 'desc'}).limit(limit).exec()
       .then(records => records.map(r => this._convertDbRecordToArtist(r)))
       .then(promises => Promise.all(promises))
+  }
+
+  getNewReleases(limit: number, genre?: string): Promise<any> {
+    const filter = genre ? {state: 'published', genres: genre} : {state: 'published'};
+    return this._getLicensesForEntries(filter, limit);
+  }
+
+  getNewReleasesByGenre(limit: number, maxGroupSize: number): Promise<any> {
+    const flatten = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+    return Release.find({ state: "published" }).sort({releaseDate: 'desc'}).limit(limit).exec()
+      .then(items => {
+        const genreOrder = [];
+        const genreItems = {};
+        for (let i=0; i < items.length; i++) {
+          const item = items[i];
+          for (let g=0; g < item.genres.length; g++) {
+            const genre = item.genres[g];
+            if (knownGenres.indexOf(genre) == -1) continue;
+            if (genreOrder.indexOf(genre) == -1) {
+              genreOrder.push(genre);
+              genreItems[genre] = [];
+            }
+            if (genreItems[genre].length < maxGroupSize) {
+              item.genres = genre;
+              genreItems[genre].push(item);
+              break;
+            }
+          }
+        }
+
+        var arr = genreOrder.map(g => genreItems[g]);
+        return flatten(arr);
+      })
+      .then(items => items.map(item => this._convertDbRecordToLicense(item)))
+      .then(promises => Promise.all(promises));
   }
 
   _getLicensesForEntries(condition: any, limit?: number, sort?: any): Promise<any> {
@@ -137,7 +202,9 @@ export class MusicoinOrgJsonAPI {
     return this.mcHelper.getLicense(record.contractAddress)
       .bind(this)
       .then(function(license) {
-        license.artistName = record.artistName;
+        if (!license.artistName)
+          license.artistName = record.artistName;
+        license.genres = record.genres;
         return license;
       })
   }

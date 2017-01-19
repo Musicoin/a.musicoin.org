@@ -36,7 +36,8 @@ const userSchema = mongoose.Schema({
     artistName: String,
     description: String,
     social: Object,
-    ipfsImageUrl: String
+    ipfsImageUrl: String,
+    genres: [String]
   },
   joinDate: {
     type: Date,

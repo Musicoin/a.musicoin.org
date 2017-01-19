@@ -15,6 +15,8 @@ module.exports = mongoose.model('Release', mongoose.Schema({
   artistAddress: String,
   title: String,
   imageUrl: String,
+  genres: [String],
+
   canReceiveFunds: Boolean,
   directPlayCount: Number,
   releaseDate: {

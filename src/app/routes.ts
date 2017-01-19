@@ -67,6 +67,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/browse', isLoggedIn, function (req, res) {
+    const rs = jsonAPI.getNewReleasesByGenre(100, 8);
+    Promise.join(rs, function(releases) {
+      doRender(req, res, "browse.ejs", {
+        releases: releases, maxItemsPerGroup: 12});
+    })
+      .catch(function(err) {
+        console.log(err);
+        res.redirect('/error');
+      });
+  });
+
   app.post('/elements/featured-artists', function(req, res) {
     const iconSize = req.body.iconSize ? req.body.iconSize : "large";
     jsonAPI.getFeaturedArtists(12)
@@ -258,7 +270,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           artistName: fields.artistName,
           description: fields.description,
           social: socialData,
-          ipfsImageUrl: imageUrl
+          ipfsImageUrl: imageUrl,
+          genres: fields.genres.split(",").map(s => s.trim()).filter(s => s)
         };
         console.log(`Sending updated profile to blockchain...`);
         musicoinApi.publishProfile(req.user.profileAddress, fields.artistName, descriptionUrl, imageUrl, socialUrl)
@@ -425,6 +438,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               imageUrl: tracks[i].imageUrl,
               artistName: req.user.draftProfile.artistName,
               artistAddress: req.user.profileAddress,
+              genres: tracks[i].genres.split(",").map(s => s.trim()).filter(s => s)
             });
           }
 
