@@ -16,6 +16,9 @@ const keyValueConfig = {
   googleClientId: process.env.GOOGLE_CLIENT_ID || "yourClientId",
   googleClientSecret: process.env.GOOGLE_SECRET || "yourClientSecret",
 
+  twitterClientId: process.env.TWITTER_CLIENT_ID || "yourClientId",
+  twitterClientSecret: process.env.TWITTER_SECRET || "yourClientSecret",
+
 };
 
 
@@ -60,6 +63,11 @@ const config = {
       'clientID'      : keyValueConfig.googleClientId,
       'clientSecret'  : keyValueConfig.googleClientSecret,
       'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/google/callback`
+    },
+    'twitterAuth' : {
+      'consumerKey'   : keyValueConfig.twitterClientId,
+      'consumerSecret': keyValueConfig.twitterClientSecret,
+      'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/twitter/callback`
     }
   }
 };

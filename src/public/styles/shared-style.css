@@ -43,6 +43,11 @@ label {
 .pad10 {  padding: 10px;  }
 .pad20 {  padding: 20px;  }
 .mb5 {  margin-bottom: 5px;  }
+.mr5 {  margin-right: 5px;  }
+.text-middle {
+    display: flex;
+    align-items: center;
+}
 
 .clickable {
     cursor: pointer;

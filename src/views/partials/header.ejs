@@ -78,9 +78,11 @@
 
     <div class="flex-row">
         <% if (isAuthenticated) { %>
-        <a href="/logout" class="btn btn-default btn-sm">logout</a>
+        <a href="/logout" target="_top" class="btn btn-default btn-sm">logout</a>
         <% } else { %>
-        <a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span> sign in</a>
+        <div class="mr5 text-middle">Sign in</div>
+        <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>
+        <div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>
         <% } %>
     </div>
 </div>

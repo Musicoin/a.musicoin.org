@@ -503,6 +503,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       failureRedirect : '/invite'
     }));
 
+  app.get('/auth/twitter', passport.authenticate('twitter', { scope : 'email' }));
+
+  // handle the callback after twitter has authenticated the user
+  app.get('/auth/twitter/callback',
+    passport.authenticate('twitter', {
+      successRedirect : '/',
+      failureRedirect : '/invite'
+    }));
+
   // =============================================================================
   // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
   // =============================================================================
