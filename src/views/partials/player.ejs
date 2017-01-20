@@ -233,15 +233,10 @@
     var thisPlay = playbackId;
     var messageArea = $("#player-message");
     messageArea.show();
-    messageArea.text("Initiating transaction...");
+    messageArea.text("musicoin.org is sending 1 coin to '" + title + "'...");
     window.setTimeout(() => {
       if (thisPlay == playbackId) {
-        messageArea.text("Sending payment to '" + title + "' contract...");
-      }
-    }, 5000);
-    window.setTimeout(() => {
-      if (thisPlay == playbackId) {
-        messageArea.text("thanks!");
+        messageArea.text("musicoin.org sent 1 coin to '" + title + "'");
       }
     }, 20000);
     window.setTimeout(() => {
