@@ -36,7 +36,11 @@ export class MusicoinAPI {
   }
 
   getMusicoinAccountBalance() {
-    return this.getJson(this.apiConfig.getClientBalance);
+    return this.getJson(this.apiConfig.getClientBalance)
+      .then(function(balance) {
+        balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return balance;
+      });
   }
 
   getTransactionStatus(tx: string) {

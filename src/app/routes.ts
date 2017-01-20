@@ -60,7 +60,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const tp = jsonAPI.getTopPlayed(6);
     const b = musicoinApi.getMusicoinAccountBalance();
     Promise.join(rs, na, fa, ps, tp, b, function(releases, artists, featuredArtists, recent, topPlayed, balance) {
-      balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       doRender(req, res, "index.ejs", {
         musicoinClientBalance: balance,
         releases: releases,
@@ -88,6 +87,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.post('/elements/musicoin-balance', function(req, res) {
+    musicoinApi.getMusicoinAccountBalance()
+      .then(function(balance) {
+        res.render('partials/musicoin-balance.ejs', {musicoinClientBalance: balance});
+      });
+  });
   app.post('/elements/pending-releases', function(req, res) {
     jsonAPI.getArtist(req.user.profileAddress, true, true)
       .then(function(output) {

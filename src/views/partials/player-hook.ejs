@@ -2,7 +2,7 @@
   $( document ).ready(function() {
     $(document).on('click', '.audio-track', function() {
       var item = $(this);
-      parent.document.getElementById("playerFrame").contentWindow.playItem(this,
+      parent.document.getElementById("playerFrame").contentWindow.audioPlayer.playItem(this,
         item.attr("audioUrl"),
         item.attr("trackTitle"),
         item.attr("artistName"),
