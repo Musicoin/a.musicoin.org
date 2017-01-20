@@ -1,6 +1,10 @@
 import {Promise} from 'bluebird';
 import * as request from 'request';
+import * as os from 'os';
 import ReadableStream = NodeJS.ReadableStream;
+const cachedRequest = require('cached-request')(request);
+cachedRequest.setCacheDirectory(os.tmpdir() + "/request-cache");
+cachedRequest.setValue('ttl', 30000);
 
 interface MusicoinApiConfig {
   sendFromProfile: string,
@@ -29,14 +33,14 @@ export class MusicoinAPI {
   }
 
   getTransactionHistory(address: string, length: number, start: number) {
-    return this.getJson(this.apiConfig.getTransactionHistory + "/" + address, {
+    return this.getJson(this.apiConfig.getTransactionHistory + "/" + address, 5000, {
       length: length,
       start: start
     })
   }
 
   getMusicoinAccountBalance() {
-    return this.getJson(this.apiConfig.getClientBalance)
+    return this.getJson(this.apiConfig.getClientBalance, 5000)
       .then(function(balance) {
         balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         return balance;
@@ -48,11 +52,11 @@ export class MusicoinAPI {
   }
 
   getProfile(profileAddress: string) {
-    return this.getJson(this.apiConfig.getProfile + '/' + profileAddress);
+    return this.getJson(this.apiConfig.getProfile + '/' + profileAddress, 60*1000);
   }
 
   getLicenseDetails(licenseAddress: string) {
-    return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress);
+    return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60*1000);
   }
 
   releaseTrack(profileAddress: string,
@@ -121,12 +125,14 @@ export class MusicoinAPI {
     }.bind(this));
   }
 
-  getJson(url: string, properties?: any): Promise<any> {
+  getJson(url: string, cacheTTL?: number, properties?: any): Promise<any> {
+    var requestImpl = cacheTTL ? cachedRequest : request;
     return new Promise(function(resolve, reject) {
-      request({
+      requestImpl({
         url: url,
         qs: properties,
         json: true,
+        ttl: cacheTTL ? cacheTTL : null,
         headers: {
           clientID: this.apiConfig.clientID,
           clientSecret: this.apiConfig.clientSecret
