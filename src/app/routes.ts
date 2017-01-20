@@ -41,10 +41,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return parts.join(".");
   }
 
+  app.get('/', isLoggedIn, function (req, res) {
+    res.render('index-frames.ejs');
+  });
+
+  app.get('/player', isLoggedIn, (req, res) => {
+    res.render('player-frame.ejs');
+  });
+
   // =====================================
   // HOME PAGE (with login links) ========
   // =====================================
-  app.get('/', isLoggedIn, function (req, res) {
+  app.get('/main', isLoggedIn, function (req, res) {
     const rs = jsonAPI.getNewReleases(6);
     const na = jsonAPI.getNewArtists(12);
     const fa = jsonAPI.getFeaturedArtists(12);

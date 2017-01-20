@@ -97,7 +97,7 @@
         background-color: white;
     }
 
-    @media screen and (max-width: 500px) {
+    @media screen and (max-width: 800px) {
         .big-screen-only {
             display: none !important;
         }
@@ -188,6 +188,14 @@
     .selected-track {
         background-color: rgba(255,255,255,0.1);
     }
+
+    #player-message {
+        display: none;
+    }
+
+    .player-time-field {
+        min-width: 50px;
+    }
 </style>
 <script>
   $( document ).ready(function() {
@@ -195,7 +203,8 @@
 
     $(document).on('click', '.audio-track', function() {
       var item = $(this);
-      playItem(this,
+
+      parent.document.getElementById("playerFrame").contentWindow.playItem(this,
         item.attr("audioUrl"),
         item.attr("trackTitle"),
         item.attr("artistName"),
@@ -209,6 +218,7 @@
   var previousTime = 0;
   var minMillisBetweenPlays = 2000;
   var nowPlayingUrl = null;
+  var playbackId = 0;
   function playItem(e, url, title, artist, img, playCount, tipCount) {
     if (url == nowPlayingUrl) return;
 
@@ -218,6 +228,28 @@
       console.log("Too fast!");
       return;
     }
+    playbackId++;
+    console.log("Current playbackId: " + playbackId);
+    var thisPlay = playbackId;
+    var messageArea = $("#player-message");
+    messageArea.show();
+    messageArea.text("Initiating transaction...");
+    window.setTimeout(() => {
+      if (thisPlay == playbackId) {
+        messageArea.text("Sending payment to '" + title + "' contract...");
+      }
+    }, 5000);
+    window.setTimeout(() => {
+      if (thisPlay == playbackId) {
+        messageArea.text("thanks!");
+      }
+    }, 20000);
+    window.setTimeout(() => {
+      if (thisPlay == playbackId) {
+        messageArea.hide();
+      }
+    }, 22000);
+
     nowPlayingUrl = url;
     previousTime = now;
     if (e) {
@@ -225,7 +257,8 @@
       previous = e;
       e.classList.add("selected-track");
     }
-    $(".show-on-play").css("display", "block");
+    $(".show-on-play", window.parent.document).css("display", "flex");
+    $(".show-on-play").css("display", "flex");
     $("#player-title")[0].innerHTML = title;
     $("#player-artist")[0].innerHTML = artist;
     $("#player")[0].src = url + "?" + new Date().getTime();
@@ -241,6 +274,11 @@
       audioPlayer = $('#player')[0];
       audioPlayer.style.display = "block";
       audioPlayer.addEventListener('error', function(e) {
+        if (nowPlayingUrl == null) return;
+        $("#player-message").text("Playback failed!");
+        console.log("Old playbackId: " + playbackId);
+        playbackId++;
+        console.log("New playbackId: " + playbackId);
         alert("Playback failed: " + audioPlayer.error.code);
       });
       audioPlayer.addEventListener('timeupdate', function() {
@@ -252,6 +290,7 @@
 
       audioPlayer.addEventListener('ended', function() {
         nowPlayingUrl = null;
+        $("#player")[0].src = null;
       })
 
       audioPlayer.addEventListener('play', function() {
@@ -317,8 +356,9 @@
                 <div id="player-progress-div" class="progress-bar progress-foreground"></div>
             </div>
             <div class="player-time-area">
-                <div id="player-time-played">00:00</div>
-                <div id="player-time-left"></div>
+                <div id="player-time-played" class="player-time-field">00:00</div>
+                <div id="player-message" class="pulse-text">This is a test message</div>
+                <div id="player-time-left" class="player-time-field"></div>
             </div>
         </div>
     </div>

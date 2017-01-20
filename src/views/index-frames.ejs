@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+    <title>Musicoin.org</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #333;
+            color: #eee;
+            /*background-image: url('/images/musician.jpg');*/
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        iframe {
+            min-height: 100%;
+            width: 100%;
+            height: 100%;
+            flex-grow: 1;
+        }
+
+        #mainSection {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        #playerSection {
+            display: none;
+            flex-direction: column;
+            min-height: 125px;
+        }
+
+        #outer {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        #playerFrame {
+            height: 125px;
+        }
+    </style>
+</head>
+<div id="outer">
+    <div id=mainSection>
+        <iframe id=mainFrame src="/main" frameborder="0"></iframe>
+    </div>
+    <div id=playerSection class="show-on-play">
+        <iframe id=playerFrame src="/player" frameborder="0"></iframe>
+    </div>
+</div>
+
+</body>
+</html>

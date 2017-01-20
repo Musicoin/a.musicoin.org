@@ -10,7 +10,6 @@
 
 body {
     color: #eee;
-    background: #333 url('/images/musician.jpg') no-repeat fixed;
 }
 
 label {
@@ -106,6 +105,21 @@ label {
     animation: pulse 1s infinite;
     animation-direction: alternate;
     animation-timing-function: ease-out;
+}
+
+.pulse-text {
+    animation: pulse-fg 1s infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-out;
+}
+
+@keyframes pulse-fg {
+    0% {
+        color: rgba(255,255,255,1);
+    }
+    100% {
+        color: rgba(255,255,255,0.5);
+    }
 }
 
 @keyframes pulse {
