@@ -14,6 +14,7 @@ export class MusicoinHelper {
           profile.image = this.mediaProvider.resolveIpfsUrl(profile.imageUrl);
           profile.social = social;
           profile.description = description;
+          profile.profileAddress = profileAddress;
           return profile;
         }.bind(this))
       });

@@ -144,7 +144,8 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           id: profile.id,
           token: token,
           name: profile.displayName,
-          email: profile.emails[0].value
+          email: profile.emails[0].value,
+          picture: profile._json.picture
         };
       };
 
@@ -246,6 +247,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                 user.twitter.token       = token;
                 user.twitter.username    = profile.username;
                 user.twitter.displayName = profile.displayName;
+                user.twitter.picture     = profile._json.profile_image_url_https;
 
                 user.save(function(err) {
                   if (err)
@@ -264,6 +266,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
               newUser.twitter.token       = token;
               newUser.twitter.username    = profile.username;
               newUser.twitter.displayName = profile.displayName;
+              newUser.twitter.picture     = profile._json.profile_image_url_https;
 
               // if there is no user, create them
               Invite.findOne({email: "@" + profile.username}).exec()
@@ -302,6 +305,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           user.twitter.token       = token;
           user.twitter.username    = profile.username;
           user.twitter.displayName = profile.displayName;
+          user.twitter.picture     = profile._json.profile_image_url_https;
 
           user.save(function(err) {
             if (err)
