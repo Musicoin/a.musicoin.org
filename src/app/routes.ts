@@ -580,9 +580,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         });
     })
       .then(function(result) {
-        result.headers['Content-Type'] = context.contentType;
-        result.headers['Accept-Ranges'] = 'none';
-        res.writeHead(200, result.headers);
+        const headers = {};
+        headers['Content-Type'] = context.contentType;
+        headers['Accept-Ranges'] = 'none';
+        headers['content-length'] = result.headers['content-length'];
+        res.writeHead(200, headers);
         result.stream.pipe(res);
       })
       .catch(function(err) {

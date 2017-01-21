@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+    <%- include partials/page-head.ejs %>
     <title>Musicoin.org</title>
     <style>
         html, body {
@@ -14,7 +15,7 @@
             background-attachment: fixed;
         }
 
-        iframe {
+        #mainFrame {
             min-height: 100%;
             width: 100%;
             height: 100%;
@@ -27,12 +28,6 @@
             flex-grow: 1;
         }
 
-        #playerSection {
-            display: none;
-            flex-direction: column;
-            min-height: 125px;
-        }
-
         #outer {
             min-height: 100%;
             display: flex;
@@ -42,16 +37,19 @@
 
         #playerFrame {
             height: 125px;
+            position: fixed;
+            bottom:0;
+            left:0;
+            width: 100%;
         }
     </style>
 </head>
+<body>
 <div id="outer">
     <div id=mainSection>
         <iframe id=mainFrame src="/main" frameborder="0"></iframe>
     </div>
-    <div id=playerSection class="show-on-play">
-        <iframe id=playerFrame src="/player" frameborder="0"></iframe>
-    </div>
+    <iframe id=playerFrame src="/player" frameborder="0" class="show-on-play"></iframe>
 </div>
 
 </body>

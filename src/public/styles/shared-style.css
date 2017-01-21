@@ -101,6 +101,10 @@ label {
     display: none;
 }
 
+.show-on-play {
+    display: none;
+}
+
 .well:hover .show-on-well-hover,
 .well.hover .show-on-well-hover {
     display: flex;
