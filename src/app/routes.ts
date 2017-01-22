@@ -566,8 +566,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/test/proxy', function(req, res) {
-    console.log("Got ppp request for " + req.params.address);
     req.params.address = "0x9b05a9fa9bd6a2849784fb2f6a5a122ead79593d";
+    console.log("Got ppp request for " + req.params.address);
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
     const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
@@ -591,10 +591,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const headers = {};
         console.log(`Responding with content type ${context.contentType}`);
         headers['Content-Type'] = context.contentType;
-        headers['Accept-Ranges'] = 'none';
-        headers['content-length'] = result.headers['content-length'];
-        // res.writeHead(200, headers);
-        res.writeHead(200, {"Content-Type": "audio/mp3"});
+        // headers['Accept-Ranges'] = 'none';
+        // headers['Content-Length'] = result.headers['content-length'];
+        res.writeHead(200, headers);
+        // res.writeHead(200, {"Content-Type": "audio/mp3"});
         result.stream.pipe(res);
       })
       .catch(function(err) {
@@ -629,7 +629,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const headers = {};
         console.log(`Responding with content type ${context.contentType}`);
         headers['Content-Type'] = context.contentType;
-        headers['Accept-Ranges'] = 'none';
+        // headers['Accept-Ranges'] = 'none';
         headers['content-length'] = result.headers['content-length'];
         res.writeHead(200, headers);
         result.stream.pipe(res);
