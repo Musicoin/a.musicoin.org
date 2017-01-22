@@ -672,10 +672,13 @@ function canInvite(user) {
 function isLoggedIn(req, res, next) {
 
   // if (true) return next();
+  console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}`);
 
   // if user is authenticated in the session, carry on
   if (req.isAuthenticated())
     return next();
+
+  console.log(`User is not logged in, redirecting`);
 
   // if they aren't redirect them to the home page
   res.redirect('/info');
