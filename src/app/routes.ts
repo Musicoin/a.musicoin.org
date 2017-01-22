@@ -183,8 +183,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
   app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
 
-  app.get('/audio-test', (req, res) => doRender(req, res, 'audio-test.ejs', {}));
-
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
@@ -562,55 +560,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/test/file', isLoggedIn, function(req, res) {
-    res.writeHead(200, {"Content-Type": "audio/mp3"});
-    fs.createReadStream("../src/public/example.mp3").pipe(res);
-  });
-
-  app.get('/test/file-noauth', function(req, res) {
-    res.writeHead(200, {"Content-Type": "audio/mp3"});
-    fs.createReadStream("../src/public/example.mp3").pipe(res);
-  });
-
-  app.get('/test/proxy', function(req, res) {
-    req.params.address = "0x9b05a9fa9bd6a2849784fb2f6a5a122ead79593d";
-    console.log("Got ppp request for " + req.params.address);
-    const k = musicoinApi.getKey(req.params.address);
-    const l = musicoinApi.getLicenseDetails(req.params.address);
-    const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
-    const context = {contentType: "audio/mpeg"};
-    Promise.join(k, l, r, function(keyResponse, license, release) {
-      if (!release) throw new Error("Could not find contract in database (maybe it was deleted)");
-      console.log("Content type from license: " + license.contentType);
-      // context.contentType = license.contentType && !license.contentType.startsWith("0x") ? license.contentType : context.contentType;
-      return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
-        .then(function(result) {
-          Playback.create({contractAddress: req.params.address}); // async, not checking result
-          release.directPlayCount = release.directPlayCount ? release.directPlayCount+1 : 1;
-          release.save(function(err) {
-            if (err) console.warn("Failed to update playcount: " + err);
-          });
-
-          return result;
-        });
-    })
-      .then(function(result) {
-        const headers = {};
-        console.log(`Responding with content type ${context.contentType}`);
-        headers['Content-Type'] = context.contentType;
-        // headers['Accept-Ranges'] = 'none';
-        // headers['Content-Length'] = result.headers['content-length'];
-        res.writeHead(200, headers);
-        // res.writeHead(200, {"Content-Type": "audio/mp3"});
-        result.stream.pipe(res);
-      })
-      .catch(function(err) {
-        console.error(err.stack);
-        res.status(500);
-        res.send(err);
-      });
-  });
-
   app.get('/ppp/:address', (req, res, next) => {
     console.log("(pre login check): Got ppp request for " + req.params.address);
     next();
@@ -640,9 +589,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log(`Responding with content type ${context.contentType}`);
         headers['Content-Type'] = context.contentType;
         headers['Accept-Ranges'] = 'none';
-        headers['content-length'] = result.headers['content-length'];
+        headers['Content-Length'] = result.headers['content-length'];
         res.writeHead(200, headers);
-        // res.writeHead(200, {"Content-Type": "audio/mp3"});
         result.stream.pipe(res);
       })
       .catch(function(err) {

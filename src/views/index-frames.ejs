@@ -42,14 +42,20 @@
             left:0;
             width: 100%;
         }
+
+        #playerFill {
+            min-height: 125px;
+        }
     </style>
 </head>
 <body>
+<iframe id=playerFrame src="/player" frameborder="0" class="show-on-play"></iframe>
+
 <div id="outer">
     <div id=mainSection>
         <iframe id=mainFrame src="/main" frameborder="0"></iframe>
     </div>
-    <iframe id=playerFrame src="/player" frameborder="0" class="show-on-play"></iframe>
+    <div id=playerFill class="show-on-play"></div>
 </div>
 
 </body>
