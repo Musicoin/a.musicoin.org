@@ -672,7 +672,7 @@ function canInvite(user) {
 function isLoggedIn(req, res, next) {
 
   // if (true) return next();
-  console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionId}`);
+  console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionID}`);
 
   // if user is authenticated in the session, carry on
   if (req.isAuthenticated())
