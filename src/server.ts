@@ -20,6 +20,7 @@ const musicoinApi = new MusicoinAPI(config.musicoinApi);
 const MediaProvider = require('./media/media-provider');
 const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
 const isDevEnvironment = app.get('env') === 'development';
+const ONE_YEAR = 1000*60*60*24*365;
 
 app.set('port', config.port);
 app.set('views', path.join(__dirname, 'views'));
@@ -57,7 +58,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: config.sessionSecret,
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  cookie: { maxAge: 60000 } // TESTING to see if this solves the iOS playback issue
+  cookie: { maxAge: ONE_YEAR } // TESTING to see if this solves the iOS playback issue
 }));
 app.use(passport.initialize());
 app.use(passport.session());
