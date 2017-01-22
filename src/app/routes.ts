@@ -568,7 +568,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     Promise.join(k, l, r, function(keyResponse, license, release) {
       if (!release) throw new Error("Could not find contract in database (maybe it was deleted)");
       console.log("Content type from license: " + license.contentType);
-      context.contentType = license.contentType && !license.contentType.startsWith("0x") ? license.contentType : context.contentType;
+      // context.contentType = license.contentType && !license.contentType.startsWith("0x") ? license.contentType : context.contentType;
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
         .then(function(result) {
           Playback.create({contractAddress: req.params.address}); // async, not checking result
@@ -582,6 +582,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     })
       .then(function(result) {
         const headers = {};
+        console.log(`Responding with content type ${context.contentType}`);
         headers['Content-Type'] = context.contentType;
         headers['Accept-Ranges'] = 'none';
         headers['content-length'] = result.headers['content-length'];
