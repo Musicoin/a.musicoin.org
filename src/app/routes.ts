@@ -604,7 +604,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.get('/ppp/:address', isLoggedIn, function(req, res) {
+  app.get('/ppp/:address', (req, res, next) => {
+    console.log("(pre login check): Got ppp request for " + req.params.address);
+    next();
+  }, isLoggedIn, function(req, res) {
     console.log("Got ppp request for " + req.params.address);
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
@@ -631,7 +634,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         headers['Content-Type'] = context.contentType;
         // headers['Accept-Ranges'] = 'none';
         headers['content-length'] = result.headers['content-length'];
-        res.writeHead(200, headers);
+        // res.writeHead(200, headers);
+        res.writeHead(200, {"Content-Type": "audio/mp3"});
         result.stream.pipe(res);
       })
       .catch(function(err) {
