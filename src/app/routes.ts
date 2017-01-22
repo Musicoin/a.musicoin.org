@@ -567,6 +567,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const context = {contentType: "audio/mpeg"};
     Promise.join(k, l, r, function(keyResponse, license, release) {
       if (!release) throw new Error("Could not find contract in database (maybe it was deleted)");
+      console.log("Content type from license: " + license.contentType);
       context.contentType = license.contentType && !license.contentType.startsWith("0x") ? license.contentType : context.contentType;
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
         .then(function(result) {
