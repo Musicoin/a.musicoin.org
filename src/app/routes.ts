@@ -4,6 +4,7 @@ import * as Formidable from 'formidable';
 import * as crypto from 'crypto';
 import {MusicoinHelper} from "./musicoin-helper";
 import * as FormUtils from "./form-utils";
+import * as fs from 'fs';
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 import {AddressResolver} from "./address-resolver";
@@ -557,6 +558,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     user.save(function(err) {
       res.redirect('/profile');
     });
+  });
+
+  app.get('/test/example', function(req, res) {
+    res.writeHead(200, {"Content-Type": "audio/mp3"});
+    fs.createReadStream("../src/public/example.mp3").pipe(res);
   });
 
   app.get('/ppp/:address', isLoggedIn, function(req, res) {
