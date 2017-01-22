@@ -261,7 +261,7 @@
           console.log("Old playbackId: " + audioPlayer.playbackId);
           audioPlayer.playbackId++;
           console.log("New playbackId: " + audioPlayer.playbackId);
-          alert("Playback failed: " + audioPlayer.audioElement.error.code);
+          alert("Playback failed: " + audioPlayer.audioElement.error.code + ", " + audioPlayer.audioElement.src);
         });
         audioPlayer.audioElement.addEventListener('timeupdate', function () {
           var progress_percent = audioPlayer.audioElement.currentTime / audioPlayer.audioElement.duration * 100;
