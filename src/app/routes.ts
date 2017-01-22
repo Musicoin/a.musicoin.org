@@ -639,7 +639,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const headers = {};
         console.log(`Responding with content type ${context.contentType}`);
         headers['Content-Type'] = context.contentType;
-        // headers['Accept-Ranges'] = 'none';
+        headers['Accept-Ranges'] = 'none';
         headers['content-length'] = result.headers['content-length'];
         // res.writeHead(200, headers);
         res.writeHead(200, {"Content-Type": "audio/mp3"});
