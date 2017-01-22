@@ -565,7 +565,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     fs.createReadStream("../src/public/example.mp3").pipe(res);
   });
 
-  app.get('/test/proxy', isLoggedIn, function(req, res) {
+  app.get('/test/proxy', function(req, res) {
     console.log("Got ppp request for " + req.params.address);
     req.params.address = "0x9b05a9fa9bd6a2849784fb2f6a5a122ead79593d";
     const k = musicoinApi.getKey(req.params.address);
@@ -666,6 +666,8 @@ function canInvite(user) {
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
+
+  // if (true) return next();
 
   // if user is authenticated in the session, carry on
   if (req.isAuthenticated())
