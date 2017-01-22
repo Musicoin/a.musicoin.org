@@ -56,7 +56,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: config.sessionSecret,
-  store: new MongoStore({ mongooseConnection: mongoose.connection })
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  cookie: { maxAge: 60000 } // TESTING to see if this solves the iOS playback issue
 }));
 app.use(passport.initialize());
 app.use(passport.session());
