@@ -183,6 +183,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
   app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
 
+  app.get('/audio-test', isLoggedIn, (req, res) => doRender(req, res, 'audio-test.ejs', {}));
+
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
@@ -560,7 +562,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/test/file', function(req, res) {
+  app.get('/test/file', isLoggedIn, function(req, res) {
     res.writeHead(200, {"Content-Type": "audio/mp3"});
     fs.createReadStream("../src/public/example.mp3").pipe(res);
   });
