@@ -641,8 +641,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         headers['Content-Type'] = context.contentType;
         headers['Accept-Ranges'] = 'none';
         headers['content-length'] = result.headers['content-length'];
-        // res.writeHead(200, headers);
-        res.writeHead(200, {"Content-Type": "audio/mp3"});
+        res.writeHead(200, headers);
+        // res.writeHead(200, {"Content-Type": "audio/mp3"});
         result.stream.pipe(res);
       })
       .catch(function(err) {
