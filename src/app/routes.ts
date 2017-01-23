@@ -75,9 +75,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.get('/browse', isLoggedIn, function (req, res) {
+  function handleBrowseRequest(req, res, search) {
     const maxGroupSize = 8;
-    const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize);
+    const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize, search);
     Promise.join(rs, function(releases) {
       doRender(req, res, "browse.ejs", {
         releases: releases, maxItemsPerGroup: maxGroupSize});
@@ -86,6 +86,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log(err);
         res.redirect('/error');
       });
+  }
+
+  app.post('/browse', isLoggedIn, function (req, res) {
+    handleBrowseRequest(req, res, req.body.search);
+  });
+
+  app.get('/browse', isLoggedIn, function (req, res) {
+    handleBrowseRequest(req, res, req.query.search);
   });
 
   app.post('/elements/musicoin-balance', function(req, res) {

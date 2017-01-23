@@ -17,6 +17,17 @@ label {
     text-transform: lowercase;
 }
 
+input.form-control {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    border: none;
+}
+textarea.form-control {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    border: none;
+}
+
 .social-link {
     color: #aaa;
 }
@@ -43,10 +54,14 @@ label {
 .pad10 {  padding: 10px;  }
 .pad20 {  padding: 20px;  }
 .mb5 {  margin-bottom: 5px;  }
+.mb20 {  margin-bottom: 20px;  }
 .mr5 {  margin-right: 5px;  }
 .text-middle {
     display: flex;
     align-items: center;
+}
+.text-large {
+    font-size: 1.5em;
 }
 
 .clickable {
@@ -109,6 +124,9 @@ label {
 .well.hover .show-on-well-hover {
     display: flex;
 }
+
+
+
 
 .pulse-bg {
     animation: pulse 1s infinite;

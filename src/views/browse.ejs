@@ -22,10 +22,25 @@
             margin-top: 20px;
             color: #e4aa17;
         }
+
+        .search-area {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            font: 2em;
+        }
+
     </style>
 </head>
 <body>
     <%- include partials/header.ejs %>
+    <div class="search-area mb20">
+        <div class="col-sm-6">
+            <form action="/browse" method="post">
+                <input class="form-control text-large" name="search" value="" placeholder="Search">
+            </form>
+        </div>
+    </div>
     <%
     var groups = {};
     for (var g=0; g < releases.length; g++) {

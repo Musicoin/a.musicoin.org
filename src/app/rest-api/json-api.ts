@@ -122,34 +122,53 @@ export class MusicoinOrgJsonAPI {
     return this._getLicensesForEntries(filter, limit);
   }
 
-  getNewReleasesByGenre(limit: number, maxGroupSize: number): Promise<any> {
+  getNewReleasesByGenre(limit: number, maxGroupSize: number, _search?: string): Promise<any> {
+    const search = _search ? _search.replace(/[^a-zA-Z0-9]/g, '') : _search;
     const flatten = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
-    return Release.find({ state: "published" }).sort([["directPlayCount", 'desc'], ["releaseDate", 'desc']]).limit(limit).exec()
-      .then(items => {
-        const genreOrder = [];
-        const genreItems = {};
-        for (let i=0; i < items.length; i++) {
-          const item = items[i];
-          for (let g=0; g < item.genres.length; g++) {
-            const genre = item.genres[g];
-            if (knownGenres.indexOf(genre) == -1) continue;
-            if (genreOrder.indexOf(genre) == -1) {
-              genreOrder.push(genre);
-              genreItems[genre] = [];
-            }
-            if (genreItems[genre].length < maxGroupSize) {
-              item.genres = genre;
-              genreItems[genre].push(item);
-              break;
-            }
-          }
-        }
+    const artistList = search
+      ? User.find({"draftProfile.artistName": {"$regex": search, "$options": "i"}}).exec()
+        .then(records => records.map(r => r.profileAddress))
+      : Promise.resolve([]);
 
-        var arr = genreOrder.map(g => genreItems[g]);
-        return flatten(arr);
+    return artistList
+      .then(profiles => {
+        const condition = search
+          ? {
+            state: "published", $or: [
+              {artistAddress: {$in: profiles}},
+              {title: {"$regex": search, "$options": "i"}}]
+          }
+          : {state: "published"}
+        return Release.find(condition)
+          .sort([["directPlayCount", 'desc'], ["releaseDate", 'desc']])
+          .limit(limit)
+          .exec()
+          .then(items => {
+            const genreOrder = [];
+            const genreItems = {};
+            for (let i=0; i < items.length; i++) {
+              const item = items[i];
+              for (let g=0; g < item.genres.length; g++) {
+                const genre = item.genres[g];
+                if (knownGenres.indexOf(genre) == -1) continue;
+                if (genreOrder.indexOf(genre) == -1) {
+                  genreOrder.push(genre);
+                  genreItems[genre] = [];
+                }
+                if (genreItems[genre].length < maxGroupSize) {
+                  item.genres = genre;
+                  genreItems[genre].push(item);
+                  break;
+                }
+              }
+            }
+
+            var arr = genreOrder.map(g => genreItems[g]);
+            return flatten(arr);
+          })
+          .then(items => items.map(item => this._convertDbRecordToLicense(item)))
+          .then(promises => Promise.all(promises));
       })
-      .then(items => items.map(item => this._convertDbRecordToLicense(item)))
-      .then(promises => Promise.all(promises));
   }
 
   _getLicensesForEntries(condition: any, limit?: number, sort?: any): Promise<any> {
