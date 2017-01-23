@@ -2,15 +2,18 @@ import {Promise} from 'bluebird';
 export class JsonPromiseRouter {
   promiseHandler: any;
   constructor(public router: any, public name: string){
-    this.promiseHandler = function handleJsonPromise(p, res) {
+    this.promiseHandler = function handleJsonPromise(p, res, next) {
       p.then(function (output) {
-        if (!output) return res.write(404).send("Not found");
+        if (!output)     {
+          res.status(404);
+          res.end();
+          return;
+        }
         res.json(output);
       })
         .catch(function (err) {
-          console.log(`Request failed in ${name}: ${err}`);
           res.status(500);
-          res.send(err);
+          res.end();
         });
     };
   }

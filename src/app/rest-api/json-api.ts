@@ -171,6 +171,10 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getTransactionHistory(address: string, length: number, start: number): Promise<any> {
+    return this.musicoinAPI.getTransactionHistory(address, length, start);
+  }
+
   _getLicensesForEntries(condition: any, limit?: number, sort?: any): Promise<any> {
     return this._getReleaseEntries(condition, limit, sort)
       .then(items => items.map(item => this._convertDbRecordToLicense(item)))

@@ -4,7 +4,6 @@ import * as Formidable from 'formidable';
 import * as crypto from 'crypto';
 import {MusicoinHelper} from "./musicoin-helper";
 import * as FormUtils from "./form-utils";
-import * as fs from 'fs';
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 import {AddressResolver} from "./address-resolver";
@@ -190,6 +189,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/invite', (req, res) => doRender(req, res, 'invite.ejs', {}));
   app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
   app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
+  app.get('/json-api/demo', isLoggedIn, (req, res) => doRender(req, res, 'api-demo.ejs', {}));
 
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function(req, res) {
