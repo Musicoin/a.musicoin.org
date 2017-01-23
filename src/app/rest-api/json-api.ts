@@ -108,9 +108,9 @@ export class MusicoinOrgJsonAPI {
     return this.getNewArtists(limit);
   }
 
-  getNewArtists(limit: number, genre?: string) {
-    const filter = genre
-      ? {profileAddress: {$ne: null}, hideProfile: {$ne: true}, "draftProfile.genre": genre}
+  getNewArtists(limit: number, search?: string) {
+    const filter = search
+      ? {profileAddress: {$ne: null}, hideProfile: {$ne: true}, "draftProfile.artistName": {"$regex": search, "$options": "i"}}
       : {profileAddress: {$ne: null}, hideProfile: {$ne: true}};
     return User.find(filter).sort({joinDate: 'desc'}).limit(limit).exec()
       .then(records => records.map(r => this._convertDbRecordToArtist(r)))
