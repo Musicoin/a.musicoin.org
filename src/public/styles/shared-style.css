@@ -28,16 +28,33 @@ textarea.form-control {
     border: none;
 }
 
+.search-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .social-link {
     color: #aaa;
 }
 
-.section-header {
+.section-header-center {
     color: #aaa;
     font-weight: lighter;
     font-family: monospace;
     text-transform: lowercase;
     text-align: center;
+}
+
+.section-header {
+    text-align: left;
+    font-size: 4em;
+    margin-top: 0;
+    margin-bottom: 0;
+    top: -10px;
+    position: relative;
+    color: rgba(255,255,255,0.25);
+    text-transform: lowercase;
 }
 
 .flex-column {
@@ -53,6 +70,8 @@ textarea.form-control {
 .pad5 {  padding: 5px;  }
 .pad10 {  padding: 10px;  }
 .pad20 {  padding: 20px;  }
+.pl25 {  padding-left: 25px;  }
+.shift-r20 { left: 20px; position: relative }
 .mb5 {  margin-bottom: 5px;  }
 .mb20 {  margin-bottom: 20px;  }
 .mr5 {  margin-right: 5px;  }

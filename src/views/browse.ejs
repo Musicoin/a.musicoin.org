@@ -22,23 +22,23 @@
             margin-top: 20px;
             color: #e4aa17;
         }
-
-        .search-area {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            font: 2em;
-        }
-
     </style>
 </head>
 <body>
     <%- include partials/header.ejs %>
-    <div class="search-area mb20">
-        <div class="col-sm-6">
-            <form action="/browse" method="post">
-                <input class="form-control text-large" name="search" value="<%=searchTerm%>" placeholder="Search">
-            </form>
+    <div class="container">
+        <div class="search-area mb20">
+            <div class="col-sm-5">
+                <form action="/browse?genre=<%=genreFilter%>" method="post">
+                    <div class="flex-row">
+                        <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
+                        <input class="form-control text-large pl25"
+                               name="search"
+                               value="<%= searchTerm %>" placeholder=""
+                               autofocus onfocus="this.value = this.value;">
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -66,6 +66,7 @@
     for (var genre in groups) {
       var items = groups[genre];
       items = items.slice(0, Math.min(maxItemsPerGroup, items.length));
+      var showMore = genre && genre != "Other" && items.length >= maxItemsPerGroup && !genreFilter;
  %>
     <div class="container">
         <div class="col-sm-12">
@@ -73,9 +74,17 @@
                 <h3 class="section-header"><%=genre%></h3>
                 <%- include('partials/track-list.ejs', {releases: items}) %>
             </div>
+
+            <% if (showMore) {%>
+            <div class="abs-top-right subtle-text clickable"
+                 de-target-id="de-featured-artists">
+                <a class="subtle-text" href="/browse?genre=<%=genre%>&search=<%=searchTerm%>&maxGroupSize=20">more</a>
+            </div>
+            <% } %>
         </div>
     </div>
     <%}%>
     <%- include partials/player-hook.ejs %>
+    <%- include partials/connect-with-us.ejs %>
 </body>
 </html>

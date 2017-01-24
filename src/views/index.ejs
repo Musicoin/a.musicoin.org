@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="well">
                 <h3 class="section-header">recently played</h3>
                 <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
@@ -90,7 +90,6 @@
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </div>
                 <div class="dynamic-element"
-                     style="min-height: 180px"
                      id="de-recently-played"
                      de-refresh-period="60"
                      de-refresh-offset="20"
@@ -100,7 +99,7 @@
             </div>
         </div>
 
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="well">
                 <h3 class="section-header">top played</h3>
                 <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
@@ -141,6 +140,6 @@
     </div>
     <%- include partials/motivation.ejs %>
     <%- include partials/player-hook.ejs %>
-
+    <%- include partials/connect-with-us.ejs %>
 </body>
 </html>

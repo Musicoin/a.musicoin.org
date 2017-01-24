@@ -32,7 +32,8 @@ const knownGenres = [
   "Soundtrack",
   "Techno",
   "Trance",
-  "World"
+  "World",
+  "Other"
 ];
 
 export interface ArtistProfile {
@@ -108,11 +109,22 @@ export class MusicoinOrgJsonAPI {
     return this.getNewArtists(limit);
   }
 
-  getNewArtists(limit: number, search?: string) {
-    const filter = search
-      ? {profileAddress: {$ne: null}, hideProfile: {$ne: true}, "draftProfile.artistName": {"$regex": search, "$options": "i"}}
-      : {profileAddress: {$ne: null}, hideProfile: {$ne: true}};
-    return User.find(filter).sort({joinDate: 'desc'}).limit(limit).exec()
+  getNewArtists(limit: number, _search?: string, _genre?: string) {
+    const search = this._sanitize(_search);
+    const genre = this._sanitize(_genre);
+
+    let query = User.find({profileAddress: {$ne: null}})
+      .where({hideProfile: {$ne: true}});
+
+    if (search) {
+      query = query.where({"draftProfile.artistName": {"$regex": search, "$options": "i"}})
+    }
+
+    if (genre) {
+      query = query.where({"draftProfile.genres": genre});
+    }
+
+    return query.limit(limit).exec()
       .then(records => records.map(r => this._convertDbRecordToArtist(r)))
       .then(promises => Promise.all(promises))
   }
@@ -122,8 +134,9 @@ export class MusicoinOrgJsonAPI {
     return this._getLicensesForEntries(filter, limit);
   }
 
-  getNewReleasesByGenre(limit: number, maxGroupSize: number, _search?: string): Promise<any> {
-    const search = _search ? _search.replace(/[^a-zA-Z0-9]/g, '') : _search;
+  getNewReleasesByGenre(limit: number, maxGroupSize: number, _search?: string, _genre?:string): Promise<any> {
+    const search = this._sanitize(_search);
+    const genre = this._sanitize(_genre);
     const flatten = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
     const artistList = search
       ? User.find({"draftProfile.artistName": {"$regex": search, "$options": "i"}}).exec()
@@ -132,14 +145,17 @@ export class MusicoinOrgJsonAPI {
 
     return artistList
       .then(profiles => {
-        const condition = search
-          ? {
-            state: "published", $or: [
-              {artistAddress: {$in: profiles}},
-              {title: {"$regex": search, "$options": "i"}}]
-          }
-          : {state: "published"}
-        return Release.find(condition)
+        let releaseQuery = Release.find({state: "published"});
+        if (search) {
+          releaseQuery = releaseQuery.where({$or: [
+            {artistAddress: {$in: profiles}},
+            {title: {"$regex": search, "$options": "i"}}]})
+        }
+        if (genre) {
+          releaseQuery = releaseQuery.where({"genres": genre})
+        }
+
+        return releaseQuery
           .sort([["directPlayCount", 'desc'], ["releaseDate", 'desc']])
           .limit(limit)
           .exec()
@@ -148,8 +164,10 @@ export class MusicoinOrgJsonAPI {
             const genreItems = {};
             for (let i=0; i < items.length; i++) {
               const item = items[i];
-              for (let g=0; g < item.genres.length; g++) {
-                const genre = item.genres[g];
+              const itemGenres = item.genres.slice(0);
+              itemGenres.push("Other");
+              for (let g=0; g < itemGenres.length; g++) {
+                const genre = itemGenres[g];
                 if (knownGenres.indexOf(genre) == -1) continue;
                 if (genreOrder.indexOf(genre) == -1) {
                   genreOrder.push(genre);
@@ -162,9 +180,7 @@ export class MusicoinOrgJsonAPI {
                 }
               }
             }
-
-            var arr = genreOrder.map(g => genreItems[g]);
-            return flatten(arr);
+            return flatten(genreOrder.map(g => genreItems[g]));
           })
           .then(items => items.map(item => this._convertDbRecordToLicense(item)))
           .then(promises => Promise.all(promises));
@@ -230,5 +246,9 @@ export class MusicoinOrgJsonAPI {
         license.genres = record.genres;
         return license;
       })
+  }
+
+  _sanitize(s: string) {
+    return s ? s.replace(/[^a-zA-Z0-9]/g, ' ').trim() : s;
   }
 }
