@@ -216,7 +216,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // LOGIN ===============================
   // =====================================
-  // show the login form
   app.get('/admin/su', isLoggedIn, adminOnly, function (req, res) {
     // render the page and pass in any flash data if it exists
     res.render('su.ejs', {message: req.flash('loginMessage')});
@@ -229,6 +228,22 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     failureRedirect : '/admin/su', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
+
+  app.get('/admin/licenses/dump', isLoggedIn, adminOnly, function (req, res) {
+    // render the page and pass in any flash data if it exists
+    jsonAPI.getAllContracts()
+      .then(function(all) {
+        res.json(all);
+      })
+  });
+
+  app.get('/admin/artists/dump', isLoggedIn, adminOnly, function (req, res) {
+    // render the page and pass in any flash data if it exists
+    jsonAPI.getAllArtists()
+      .then(function(all) {
+        res.json(all);
+      })
+  });
 
   // =====================================
   // SIGNUP ==============================

@@ -109,6 +109,13 @@ export class MusicoinOrgJsonAPI {
     return this.getNewArtists(limit);
   }
 
+  getAllArtists() {
+    let query = User.find({profileAddress: {$ne: null}});
+    return query.sort({joinDate: 'desc'}).exec()
+      .then(records => records.map(r => this._convertDbRecordToArtist(r)))
+      .then(promises => Promise.all(promises))
+  }
+
   getNewArtists(limit: number, _search?: string, _genre?: string) {
     const search = this._sanitize(_search);
     const genre = this._sanitize(_genre);
@@ -132,6 +139,11 @@ export class MusicoinOrgJsonAPI {
   getNewReleases(limit: number, genre?: string): Promise<any> {
     const filter = genre ? {state: 'published', genres: genre} : {state: 'published'};
     return this._getLicensesForEntries(filter, limit);
+  }
+
+  getAllContracts() {
+    const filter = {state: 'published'};
+    return this._getLicensesForEntries(filter, 99999999);
   }
 
   getNewReleasesByGenre(limit: number, maxGroupSize: number, _search?: string, _genre?:string): Promise<any> {
