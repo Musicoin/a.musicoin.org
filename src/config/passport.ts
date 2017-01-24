@@ -270,7 +270,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
               newUser.twitter.picture     = profile._json.profile_image_url_https;
 
               // if there is no user, create them
-              Invite.findOne({email: "@" + profile.username}).exec()
+              Invite.findOne({email: "@" + profile.username.toLowerCase()}).exec()
                 .then(function(record) {
                   if (!record) {
                     var query = {email: profile.username},
