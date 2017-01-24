@@ -198,13 +198,14 @@
     audioElement: null,
 
     nowPlayingUrl: null,
+    nowPlayingArtistProfile: null,
     playbackId: 0,
     previousTime: 0,
     minMillisBetweenPlays: 2000,
 
     previouslySelectedTrack: null,
 
-    playItem: function (e, url, title, artist, img, playCount, tipCount) {
+    playItem: function (e, url, title, artist, img, playCount, tipCount, artistProfileAddress) {
       if (url == audioPlayer.nowPlayingUrl) return;
 
       var now = new Date().getTime();
@@ -232,6 +233,7 @@
 
       audioPlayer.nowPlayingUrl = url;
       audioPlayer.previousTime = now;
+      audioPlayer.nowPlayingArtistProfile = artistProfileAddress;
       if (e) {
         if (audioPlayer.previouslySelectedTrack) audioPlayer.previouslySelectedTrack.classList.remove("selected-track")
         audioPlayer.previouslySelectedTrack = e;
@@ -282,6 +284,11 @@
         audioPlayer.audioElement.addEventListener('pause', function () {
           $("#player-play-button")[0].src = "/images/player/play.png";
         })
+
+        $("#player-artist").on('click', function() {
+          if (audioPlayer.nowPlayingArtistProfile)
+            parent.document.getElementById("mainFrame").src = "/artist/" + audioPlayer.nowPlayingArtistProfile;
+        })
       }
       return audioPlayer.audioElement;
     },
@@ -317,7 +324,7 @@
                 <img id="player-badge-image" src="" class="song-badge-image">
                 <div class="song-badge-info">
                     <div id="player-title" class="player-song-name"></div>
-                    <div id="player-artist" class="player-artist-name"></div>
+                    <div id="player-artist" class="player-artist-name clickable"></div>
                 </div>
             </div>
             <div class="player-controls-area">

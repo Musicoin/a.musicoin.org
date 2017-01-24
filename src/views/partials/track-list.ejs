@@ -11,7 +11,6 @@
         .track-container {
             padding: 10px;
             margin-bottom: 5px;
-            cursor: pointer;
             display: flex;
             border-radius: 4px;
         }
@@ -63,19 +62,25 @@
         for (var i=0; i < toShow; i++) {
             var release = releases[i];
         %>
-        <div class="audio-track track-container tracks-flex-col"
-             audioUrl='<%=release.audioUrl%>'
-             trackTitle='<%=release.title%>'
-             artistName='<%=release.artistName%>'
-             image='<%=release.image%>'
-             playCount='<%=release.playCount%>'
-             tipCount='<%=release.tipCount%>'>
-            <div class="track-image show-off-container shadow" style="background-image: url('<%=release.image%>')">
+        <div class="track-container tracks-flex-col">
+            <div class="audio-track track-image show-off-container shadow clickable"
+                 audioUrl='<%=release.audioUrl%>'
+                 trackTitle='<%=release.title%>'
+                 artistName='<%=release.artistName%>'
+                 image='<%=release.image%>'
+                 playCount='<%=release.playCount%>'
+                 tipCount='<%=release.tipCount%>'
+                 artistProfileAddress='<%=release.artistProfileAddress%>'
+                 style="background-image: url('<%=release.image%>')">
                 <div class="show-off"></div>
             </div>
 
             <div class="description track-title" title="<%=release.title%>"><%=release.title%></div>
-            <div class="description track-artist"><%=release.artistName%></div>
+            <div class="description track-artist">
+                <a href="/artist/<%=release.artistProfileAddress%>" class="subtle-text">
+                    <%=release.artistName%>
+                </a>
+            </div>
             <div class="description track-artist"><%=release.playCount%> plays</div>
         </div>
         <%}%>
