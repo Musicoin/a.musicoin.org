@@ -124,7 +124,7 @@ export class MusicoinOrgJsonAPI {
       query = query.where({"draftProfile.genres": genre});
     }
 
-    return query.limit(limit).exec()
+    return query.sort({joinDate: 'desc'}).limit(limit).exec()
       .then(records => records.map(r => this._convertDbRecordToArtist(r)))
       .then(promises => Promise.all(promises))
   }
