@@ -1,4 +1,36 @@
+<div class="container big-screen-only">
+    <div class="col-sm-12">
+        <div class="well white-well">
+            <div class="text-center">
+                <img src="images/flow.png" style="width: 75%">
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
+    <div class="col-sm-6">
+        <div class="well white-well">
+            <div class="text-center">
+                <img src="images/headphones.jpg" height="96px">
+            </div>
+            <h3 class="section-header-center">music lovers
+            </h3>
+            <p>
+                Support your favorite musicians directly, just by listening. Whenever you listen to
+                a song, a small payment is sent <strong>directly from you to the artist</strong>, instantly. Unlike the
+                old model, where the artist receives only a small percentage (eventually), artists
+                can instantly see the impact of their music.
+            </p>
+            <% if (!isAuthenticated) { %>
+            <BR>
+            <h4 class="text-center">Join the movement.</h4>
+            <p class="text-center">
+                <a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span> join</a>
+            </p>
+            <% } %>
+        </div>
+    </div>
+
     <div class="col-sm-6">
         <div class="well white-well">
             <div class="text-center">
@@ -16,29 +48,6 @@
             <% if (!isAuthenticated) { %>
             <BR>
             <h4 class="text-center">Ready to change the world?</h4>
-            <p class="text-center">
-                <a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span> join</a>
-            </p>
-            <% } %>
-        </div>
-    </div>
-
-    <div class="col-sm-6">
-        <div class="well white-well">
-            <div class="text-center">
-                <img src="images/headphones.jpg" height="96px">
-            </div>
-            <h3 class="section-header-center">music lovers
-            </h3>
-            <p>
-                Support your favorite musicians directly, just by listening. Whenever you listen to
-                a song, a small payment is sent <strong>directly from you to the artist</strong>, instantly. Unlike the
-                old model, where the artist receives only a small percentage (eventually), artists
-                can instantly see the impact of their music.
-            </p>
-            <% if (!isAuthenticated) { %>
-            <BR>
-            <h4 class="text-center">Join the movement.</h4>
             <p class="text-center">
                 <a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span> join</a>
             </p>

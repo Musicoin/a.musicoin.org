@@ -48,15 +48,36 @@
         }
     </style>
 </head>
-<body>
+<body onload="setupPopWatch()">
 <iframe id=playerFrame src="/player" frameborder="0" class="show-on-play"></iframe>
 
 <div id="outer">
     <div id=mainSection>
-        <iframe id=mainFrame src="/main" frameborder="0"></iframe>
+        <iframe id=mainFrame src="<%=mainFrameLocation%>" frameborder="0" onload="mainFrameLocationChange()"></iframe>
     </div>
     <div id=playerFill class="show-on-play"></div>
 </div>
 
+<script>
+    function setupPopWatch() {
+      var mainFrame = document.getElementById("mainFrame");
+      window.onpopstate = function(e){
+        if (window.location.pathname.startsWith("/nav")) {
+          mainFrame.src =  window.location.pathname.substr(4);
+        }
+      };
+    }
+
+    function mainFrameLocationChange() {
+      var mainFrame = document.getElementById("mainFrame");
+      window.history.pushState({
+        "html":mainFrame.contentWindow.html,
+        "pageTitle":mainFrame.contentWindow.title
+      },
+        "",
+        "/nav" + mainFrame.contentWindow.location.pathname);
+    }
+</script>
 </body>
+
 </html>

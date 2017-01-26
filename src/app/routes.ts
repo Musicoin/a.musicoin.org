@@ -42,11 +42,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 
   app.get('/', isLoggedIn, function (req, res) {
-    res.render('index-frames.ejs');
+    res.render('index-frames.ejs', {mainFrameLocation: "/main"});
   });
 
   app.get('/player', isLoggedIn, (req, res) => {
     res.render('player-frame.ejs');
+  });
+
+  // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
+  // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
+  app.get('/nav/*', isLoggedIn, (req, res) => {
+    res.render('index-frames.ejs', {mainFrameLocation: req.originalUrl.substr(4)});
   });
 
   // =====================================
@@ -233,8 +239,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     // render the page and pass in any flash data if it exists
     jsonAPI.getAllContracts()
       .then(function(all) {
-        res.json(all);
+        return Promise.all(all.map(contract => {
+          const k = musicoinApi.getKey(contract.address)
+            .catch(err => "Unknown: " + err);
+          return k.then(function (key) {
+            contract.key = key;
+            return contract;
+          })
+        }));
       })
+      .then(all => res.json(all));
   });
 
   app.get('/admin/artists/dump', isLoggedIn, adminOnly, function (req, res) {
