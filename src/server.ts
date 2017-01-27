@@ -95,7 +95,7 @@ else {
     server: 'https://acme-v01.api.letsencrypt.org/directory',
     email: 'musicoin@berry.ai',
     agreeTos: true,
-    approveDomains: ['join.musicoin.org']
+    approveDomains: config.certificate.approveDomains
   });
 
   require('http').createServer(lex.middleware(require('redirect-https')())).listen(80, function () {

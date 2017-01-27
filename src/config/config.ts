@@ -19,6 +19,8 @@ const keyValueConfig = {
   twitterClientId: process.env.TWITTER_CLIENT_ID || "yourClientId",
   twitterClientSecret: process.env.TWITTER_SECRET || "yourClientSecret",
 
+  domains: process.env.CERTIFICATE_DOMAINS || "join.musicoin.org,alpha.musicoin.org"
+
 };
 
 
@@ -68,6 +70,11 @@ const config = {
       'consumerKey'   : keyValueConfig.twitterClientId,
       'consumerSecret': keyValueConfig.twitterClientSecret,
       'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/twitter/callback`
+    }
+  },
+  config: {
+    certificate: {
+      approveDomains: keyValueConfig.domains.split(',').map(s => s.trim()).filter(s => s)
     }
   }
 };
