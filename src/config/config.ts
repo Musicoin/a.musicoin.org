@@ -72,10 +72,8 @@ const config = {
       'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/twitter/callback`
     }
   },
-  config: {
-    certificate: {
-      approveDomains: keyValueConfig.domains.split(',').map(s => s.trim()).filter(s => s)
-    }
+  certificate: {
+    approveDomains: keyValueConfig.domains.split(',').map(s => s.trim()).filter(s => s)
   }
 };
 module.exports = config;
