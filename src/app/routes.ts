@@ -10,6 +10,7 @@ import {AddressResolver} from "./address-resolver";
 const Invite = require('../app/models/invite');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
+const User = require('../app/models/user');
 const loginRedirect = "/";
 const maxImageWidth = 400;
 
@@ -206,13 +207,45 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
-      Invite.create({email: req.body.email.toLowerCase(), invitedBy: req.user._id}, function(err, record) {
-        if (err) {
+      const id = req.body.email || req.body.twitter;
+      if (!id) {
+        console.log(`No email or twitter handle provided`);
+        return res.redirect('profile?invited=&success=false');
+      }
+
+      const conditions = [];
+      if (req.body.email) conditions.push({"google.email": {"$regex": req.body.email, "$options": "i"}});
+      if (req.body.twitter) {
+        if (req.body.twitter.startsWith("@"))
+          req.body.twitter = req.body.twitter.substring(1);
+        conditions.push({"twitter.username": {"$regex": req.body.twitter, "$options": "i"}});
+      }
+
+      User.findOne({$or: conditions})
+        .exec()
+        .then(function(user) {
+          if (!user) {
+            const newUser = new User();
+            newUser.google = req.body.email ? {email: req.body.email} : newUser.google;
+            newUser.twitter = req.body.twitter ? {username: req.body.twitter} : newUser.twitter;
+            newUser.save(function(err, record) {
+              if (err) {
+                console.log(err);
+                return res.redirect('profile?invited=' + id + "&success=false");
+              }
+              return res.redirect('profile?invited=' + id + "&success=true");
+
+            });
+          }
+          else {
+            console.log(`User already exists: ${id}`);
+            return res.redirect('profile?invited=' + id + "&success=false");
+          }
+        })
+        .catch(function(err) {
           console.log(err);
-          res.redirect('profile?invited=' + req.body.email + "&success=false");
-        }
-        res.redirect('profile?invited=' + req.body.email + "&success=true");
-      });
+          res.redirect('profile?invited=' + id + "&success=false");
+        });
     }
     else {
       throw new Error("Not authorized");
@@ -462,7 +495,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       }
 
       console.log(`tracks: ${JSON.stringify(tracks)}`);
-      const metadata = {}; // TODO: allow metadata
       const selfAddress = req.user.profileAddress;
       const promises = tracks
         .filter(t => t.title)
@@ -480,6 +512,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             ? FormUtils.resizeImage(track.image.path, maxImageWidth)
               .then((newPath) => mediaProvider.upload(newPath))
             : Promise.resolve(req.user.draftProfile.ipfsImageUrl);
+          var genreArray = track.genres.split(",").map(s => s.trim()).filter(s => s);
+          const metadata = {
+            genres: genreArray
+          };
           const m = mediaProvider.uploadText(JSON.stringify(metadata));
           const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
           const r = addressResolver.resolveAddresses(selfAddress, track.royalties);
@@ -505,13 +541,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           console.log("Got transactions: " + JSON.stringify(txs));
           const releases = [];
           for (let i=0; i < txs.length; i++) {
+            var genreArray = tracks[i].genres.split(",").map(s => s.trim()).filter(s => s);
             releases.push({
               tx: txs[i],
               title: tracks[i].title,
               imageUrl: tracks[i].imageUrl,
               artistName: req.user.draftProfile.artistName,
               artistAddress: req.user.profileAddress,
-              genres: tracks[i].genres.split(",").map(s => s.trim()).filter(s => s)
+              genres: genreArray
             });
           }
 

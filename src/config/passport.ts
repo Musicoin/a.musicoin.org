@@ -33,7 +33,9 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
     console.log("deserialize user: " + id);
     User.findById(id, function (err, user) {
       if (err) return done(err, null);
-      user.profile = Object.assign({}, defaultProfile, user.draftProfile);
+      if (user) {
+        user.profile = Object.assign({}, defaultProfile, user.draftProfile);
+      }
       done(null, user);
     });
   });
@@ -108,9 +110,21 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
     },
     function (req, email, password, done) { // callback with email and password from our form
 
+      const condition = req.body.profileAddress
+        ? {'profileAddress': req.body.profileAddress}
+        : req.body.gmailAddress
+          ? {'google.email': req.body.gmailAddress.toLowerCase()}
+          : req.body.twitterHandle
+            ? {'twitter.username': req.body.twitterHandle.toLowerCase().replace("@", "")}
+            : null;
+
+      if (!condition) {
+        return done(null, false, req.flash('loginMessage', 'You must provide a profileAddress, a gmail address, or a twitter handle')); // create the loginMessage and save it to session as flashdata
+      }
+
       // find a user whose email is the same as the forms email
       // we are checking to see if the user trying to login already exists
-      User.findOne({'profileAddress': req.body.profileAddress}, function (err, user) {
+      User.findOne(condition, function (err, user) {
         // if there are any errors, return the error before anything else
         if (err)
           return done(err);
@@ -154,51 +168,59 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       // User.findOne won't fire until we have all our data back from Google
       process.nextTick(function () {
         // try to find the user based on their google id
+        const googleInfo = asGoogleUser(profile);
         if (!req.user) {
-          User.findOne({'google.id': profile.id}, function (err, user) {
+          const condition = {$or: [{'google.id': googleInfo.id}, {'google.email': googleInfo.email}]};
+          User.findOne(condition, function (err, user) {
             if (err)
               return done(err);
 
             if (user) {
+              // allow the user to claim this account by logging in to an account that was pre-created
+              // with their gmail address
+              if (!user.google.id) {
+                user.google = googleInfo;
+                // save the user
+                user.save(function (err) {
+                  if (err)
+                    throw err;
+                  return done(null, user);
+                });
+              }
+              else{
+                // if a user is found, log them in
+                return done(null, user);
+              }
+            }
 
-              // if a user is found, log them in
-              return done(null, user);
-            } else {
+            // allow berry.ai users to create an account on login
+            else if (googleInfo.email.toLowerCase().endsWith("@berry.ai")) {
               // if the user isnt in our database, create a new user
               const newUser = new User();
 
               // set all of the relevant information
-              newUser.google = asGoogleUser(profile);
+              newUser.google = googleInfo;
 
-              // Check for an invite (or @berry.ai e-mail address)
-              let email = newUser.google.email.toLowerCase();
-
-              const isBerryLabs = email.endsWith("@berry.ai");
-              Invite.findOne({email: email}).exec()
-                .then(function(record) {
-                  if (!record && !isBerryLabs) {
-                    var query = {email: email},
-                      update = { expire: new Date() },
-                      options = { upsert: true, new: true, setDefaultsOnInsert: true };
-
-                    // Find the document
-                    InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
-                      if (error) return;
-                      console.log("Created invite request for user: " + email);
-                    });
-                    return done(null, false, req.flash('loginMessage', 'An invite is required'));
-                  }
-                  // save the user
-                  newUser.save(function (err) {
-                    if (err)
-                      throw err;
-                    return done(null, newUser);
-                  });
-                })
-                .catch(function(err) {
-                  console.log(`Failed checking for user invite: ${err}`);
+              // save the user
+              newUser.save(function (err) {
+                if (err)
                   throw err;
-                });
+                return done(null, newUser);
+              });
+            }
+
+            // record the attempted log in as an invite request
+            else {
+              var query = {email: googleInfo.email},
+                update = { expire: new Date() },
+                options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+              // Find the document
+              InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
+                if (error) return;
+                console.log("Created invite request for user: " + googleInfo.email);
+              });
+              return done(null, false, req.flash('loginMessage', 'An invite is required'));
             }
           });
         }
@@ -207,7 +229,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           const user = req.user; // pull the user out of the session
 
           // update the current users google credentials
-          user.google = asGoogleUser(profile);
+          user.google = googleInfo;
 
           // save the user
           user.save(function (err) {
@@ -237,8 +259,11 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
         // check if the user is already logged in
         if (!req.user) {
-
-          User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
+          const conditions = [
+            { 'twitter.id' : profile.id },
+            { 'twitter.username' : profile.username }
+          ];
+          User.findOne({ $or : conditions }, function(err, user) {
             if (err)
               return done(err);
 

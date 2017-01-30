@@ -163,13 +163,13 @@
                             <%}%>
                         </table>
                     </div>
-                    <% if (user.profileAddress) {%>
-                    <div class="text-center">
-                        View your public profile page here <a href="/artist/<%=user.profileAddress%>">here</a>
-                    </div>
                     <div class="text-center">
                         <input type="checkbox" name="hideProfile" <%=user.hideProfile ? "checked" : ""%>>
                         This is a wallet-only account <a href="/faq#WalletOnlyAccount" target="help">(?)</a>
+                    </div>
+                    <% if (user.profileAddress) {%>
+                    <div class="text-center">
+                        View your public profile page here <a href="/artist/<%=user.profileAddress%>">here</a>
                     </div>
                     <br><br>
                     <% } else { %>
@@ -235,8 +235,9 @@
             <div class="well">
                 <h3>Alpha Testers</h3>
                 <p class="subtle-text">
-                    Add an email address to the whitelist. Note that is must be a google address, and they must
-                    use that address when signing in.
+                    Add a new user.  You can include a gmail and/or a twitter handle.  Including both at the same
+                    time will create a single account that the user can log into with either their twitter handle
+                    or their gmail account.
                 </p>
                 <p class="subtle-text">
                     After you add them to the list, be sure to let them know!  (This form will not send an email)
@@ -245,7 +246,11 @@
                     <table cellpadding="3">
                         <tr>
                             <td class="text-nowrap">e-mail</td>
-                            <td width="99%"><input name=email type="text" class="form-control" placeholder="gmail (xyz@gmail.oom), or twitter (@someuser)"></td>
+                            <td width="99%"><input name=email type="text" class="form-control" placeholder="gmail (xyz@gmail.com)"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-nowrap">twitter</td>
+                            <td width="99%"><input name=twitter type="text" class="form-control" placeholder="twitter (@someuser)"></td>
                         </tr>
                         <tr>
                             <td></td>
