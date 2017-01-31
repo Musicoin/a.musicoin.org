@@ -1,4 +1,4 @@
-ssh jenkins@104.199.112.49 <<EOF
+ssh jenkins@104.198.6.5 <<EOF
   touch /home/jenkins/monitor
   exit
 EOF
