@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting ipfs... "
+echo "Starting ipfs..."
 cd /
 /go-ipfs/ipfs daemon --init=true --migrate=true >> ipfs.log 2>&1 &
 
