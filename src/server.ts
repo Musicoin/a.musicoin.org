@@ -109,7 +109,7 @@ else {
   });
 }
 
-// production error handler.
+// production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   console.log("ERROR: " + err);
