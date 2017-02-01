@@ -105,8 +105,14 @@ export class MusicoinOrgJsonAPI {
   }
 
   getFeaturedArtists(limit: number) {
-    // HACK
-    return this.getNewArtists(limit);
+    // find recently joined artists that have at least one release
+    let query = User.find({profileAddress: {$ne: null}})
+      .where({hideProfile: {$ne: true}})
+      .where({mostRecentReleaseDate: {$ne: null}});
+
+    return query.sort({joinDate: 'desc'}).limit(limit).exec()
+      .then(records => records.map(r => this._convertDbRecordToArtist(r)))
+      .then(promises => Promise.all(promises))
   }
 
   getAllArtists() {

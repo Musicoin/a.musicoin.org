@@ -556,6 +556,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           return Release.create(releases);
         })
         .then(function(records) {
+          // async, fire and forget.  Just log an error if the update doesn't work.
+          User.findOne({profileAddress: selfAddress}).exec()
+            .then(function(artist) {
+              artist.mostRecentReleaseDate = new Date();
+              return artist.save();
+            })
+            .catch(function(err) {
+              console.log("Failed to update artist with new release date: " + err);
+            });
+
+          return records;
+        })
+        .then(function(records) {
           console.log(`Saved releases txs to database!`);
           res.redirect("/profile");
         })
