@@ -4,9 +4,10 @@
 %>
 <style>
     .featured-artist-badge-name {
-        color: white;
         display: flex;
         flex-direction: column;
+        color: #333;
+        height: 55px;
     }
     .featured-section {
         display: flex;
@@ -21,7 +22,10 @@
         display: flex;
         flex-direction: column;
         text-decoration: none;
-        max-width: 128px;
+        max-width: 138px;
+        padding: 5px;
+        background-color: whitesmoke;
+        border-radius: 4px;
     }
     .featured-artist-info:hover {
         text-decoration: none;
@@ -55,6 +59,12 @@
         font-size: 12px;
         max-width: 64px;
     }
+    .featured-artist-badge-name[small] {
+        display: flex;
+        flex-direction: column;
+        color: #333;
+        height: 35px;
+    }
 </style>
 <div class="featured-section">
     <%
@@ -64,7 +74,7 @@
     <div class="featured-item">
         <a href="/artist/<%=artist.profileAddress%>"  class="featured-artist-info">
             <div class="featured-artist-image shadow" style="background-image: url('<%=artist.image%>')" <%=sizeAttr%>></div>
-            <div class="featured-artist-badge-name">
+            <div class="featured-artist-badge-name" <%=sizeAttr%>>
                 <div class="featured-artist-name text-center" <%=sizeAttr%> title="<%=artist.artistName%>"><%=artist.artistName%></div>
             </div>
         </a>
