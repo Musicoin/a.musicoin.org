@@ -19,7 +19,7 @@ const keyValueConfig = {
   twitterClientId: process.env.TWITTER_CLIENT_ID || "yourClientId",
   twitterClientSecret: process.env.TWITTER_SECRET || "yourClientSecret",
 
-  domains: process.env.CERTIFICATE_DOMAINS || "alpha.musicoin.org"
+  domains: process.env.CERTIFICATE_DOMAINS || "alpha.musicoin.org,musicoin.org,orbiter.musicoin.org"
 
 };
 
