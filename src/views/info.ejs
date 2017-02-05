@@ -48,8 +48,13 @@
             font-style: normal;
             font-size: 21px;
             line-height: 1.58;
-            text-align: justify;
             margin-top: 20px;
+        }
+
+        @media screen and (min-width: 800px) {
+            .info-text {
+                text-align: justify;
+            }
         }
 
         .info-footer {
@@ -89,6 +94,7 @@
         .text-hightlight {
             /*background-color: rgba(255, 255, 255, 0.1);*/
             font-weight: bold;
+            color: rgb(227, 193, 113);
         }
 
     </style>
@@ -134,7 +140,7 @@
             the "Pay per Play" contract is executed by the system, resulting in a payment from the listener to the
             musician.  <span class="text-hightlight">The musician controls how each payment is divided</span>.
         </p>
-        <div class="text-center" style="background-color: white">
+        <div class="text-center" style="background-color: white; border-radius: 4px">
             <img src="images/flow.png" style="width: 75%">
         </div>
         <div class="text-center caption" style="background-color: transparent">An example PPP contract.  Musician allocations are for illustrative purposes and
@@ -155,7 +161,7 @@
         </p>
         <p class="info-text">
             For musicians interested in publishing music and listeners interested in checking our service,
-            we are currently running an alpha test.  Contact us on <a href="https://twitter.com/musicoins">twitter</a> or join our <a href="https://slack.musicoin.org/">slack channel</a> for more information.
+            please contact us on <a target="_blank" href="https://twitter.com/musicoins">twitter</a> or join our <a target="_blank" href="http://slack.musicoin.org/">slack channel</a> for more information.
         </p>
         <div class="info-header">Will there be an ICO or bounty program?</div>
         <p class="info-text">
