@@ -60,12 +60,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // HOME PAGE (with login links) ========
   // =====================================
   app.get('/main', isLoggedIn, function (req, res) {
-    const rs = jsonAPI.getNewReleases(6);
-    const na = jsonAPI.getNewArtists(12);
-    const fa = jsonAPI.getFeaturedArtists(12);
-    const ps = jsonAPI.getRecentPlays(6);
-    const tp = jsonAPI.getTopPlayed(6);
-    const b = musicoinApi.getMusicoinAccountBalance();
+    const rs = jsonAPI.getNewReleases(6).catchReturn([]);
+    const na = jsonAPI.getNewArtists(12).catchReturn([]);
+    const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
+    const ps = jsonAPI.getRecentPlays(6).catchReturn([]);
+    const tp = jsonAPI.getTopPlayed(6).catchReturn([]);
+    const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
     Promise.join(rs, na, fa, ps, tp, b, function(releases, artists, featuredArtists, recent, topPlayed, balance) {
       doRender(req, res, "index.ejs", {
         musicoinClientBalance: balance,
@@ -83,8 +83,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   function handleBrowseRequest(req, res, search, genre) {
     const maxGroupSize = req.query.maxGroupSize ? parseInt(req.query.maxGroupSize) : 8;
-    const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize, search, genre);
-    const as = jsonAPI.getNewArtists(maxGroupSize, search, genre);
+    const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize, search, genre).catchReturn([]);
+    const as = jsonAPI.getNewArtists(maxGroupSize, search, genre).catchReturn([]);
     Promise.join(rs, as, function(releases, artists) {
       doRender(req, res, "browse.ejs", {
         searchTerm: search,
@@ -337,6 +337,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           email: req.query.invited,
           success: req.query.success
         };
+        output['profileUpdateError'] = req.query.profileUpdateError;
+        output['releaseError'] = req.query.releaseError;
+        output['sendResult'] = {};
+
+        if (typeof req.query.sendError != "undefined") {
+          output['sendResult'] = {
+            error: req.query.sendError
+          };
+        }
         output.artist.formattedBalance = _formatNumber(output.artist.balance);
         doRender(req, res, "profile.ejs", output);
       });
@@ -346,11 +355,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
       .then(function(tx) {
         console.log(`Payment submitted! tx : ${tx}`);
-        res.redirect("/profile");
+        res.redirect("/profile?sendError=false");
       })
       .catch(function(err) {
         console.log(err);
-        throw err;
+        res.redirect("/profile?sendError=true");
       })
   });
 
@@ -399,6 +408,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           })
           .catch(function(err) {
             console.log("Something went wrong: " + err);
+            res.redirect("/profile?profileUpdateError=true");
           })
       }.bind(this));
     });
@@ -574,7 +584,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         })
         .catch(function (err) {
           console.log(`Saving releases to database failed! ${err}`);
-          res.send(500);
+          res.redirect("/profile?releaseError=true");
         });
     });
   });

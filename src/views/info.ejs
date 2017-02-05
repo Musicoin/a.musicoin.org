@@ -6,11 +6,14 @@
     <style>
         body        {
             word-wrap:break-word;
-            background-image: url('/images/musician.jpg');
-            background-size: cover;
+            background-color: whitesmoke;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
+            color: rgba(0,0,0,0.8);
         }
         .info-title {
-            font-size: 32px;
+            font-size: 3em;
         }
         .info-subtitle {
             font-size: 24px;
@@ -18,7 +21,7 @@
         .info-area {
             display: flex;
             flex-direction: column;
-            min-height: 320px;
+            min-height: 500px;
             justify-content: flex-end;
             background-image: url(images/concert.jpg);
             background-position-y: bottom;
@@ -27,19 +30,180 @@
             color: white;
             text-shadow: 1px 2px rgba(0,0,0,0.5);
         }
+        .first-letter {
+            font-size: 2em;
+            font-weight: bold;
+            color: rgb(228,170,23);
+        }
+        .info-text {
+            --x-height-multiplier: 0.35;
+            --baseline-multiplier: 0.179;
+            font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
+            letter-spacing: .01rem;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 21px;
+            line-height: 1.58;
+            text-align: justify;
+            margin-top: 20px;
+        }
+
+        .info-footer {
+            background-image: url(images/concert.jpg);
+            background-position-y: bottom;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .blockquote {
+            max-width: 600px;
+        }
+
+        .quote-area {
+            display: flex;
+            justify-content: center;
+        }
+
+        .info-pi {
+            font-size: 24em;
+            color: rgba(255,255,255,0.8)
+        }
+        .animation-area {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .info-header {
+            font-size: 3em;
+            margin-bottom: 0;
+            margin-top: 40px;
+        }
+
+        .text-hightlight {
+            background-color: rgba(0, 255, 0, 0.2);
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-<%- include partials/header.ejs %>
-<div class="container">
-    <div class="col-sm-12">
-        <div class="well info-area">
-            <div class="text-center info-title">Every playback counts</div>
-            <div class="text-center info-subtitle">Pay per Play</div>
+<%- include partials/info-header.ejs %>
+<style>
+    .background-cover {
+        background-color: white;
+    }
+</style>
+<!--<div class="animation-area">-->
+    <!--<iframe src="https://www.openprocessing.org/sketch/174460/embed/" width="100%" height="100%"></iframe>-->
+<!--</div>-->
+<div xclass="container">
+    <div xclass="col-sm-12">
+        <div class="info-area">
+            <div class="text-center info-pi">&pi;</div>
+            <div id="countdown" class="text-center info-title"></div>
         </div>
     </div>
 </div>
-<%- include partials/motivation.ejs %>
+<div class="container">
+    <div class="col-sm-12">
+        <div class="info-text text-center pad20 quote-area">
+            <div class="blockquote">
+                “Musicoin will bring a level of transparency and fairness to the music industry that has never been seen before! It has the potential to completely change the way we consume music.”
+                <div class="text-right pad20">
+                    - <b>Alan Cross</b>,  <a target="_blank" href="http://ajournalofmusicalthings.com/">A Journal Of Musical Things</a>
+                </div>
+            </div>
+        </div>
+        <p class="info-text">
+            <span class="first-letter">M</span>usicoin is a decentralized system for the <span class="text-hightlight">publication and
+                consumption of music</span>, which combines a
+            cutting-edge cryptocurrency with a peer-to-peer file sharing network.
+        </p>
+        <div class="info-header">How does it work?</div>
+        <p class="info-text">
+            Musicoin allows musicians to license their content as a “coded contract” directly to a decentralized
+            database called a “blockchain”.  These contracts <span class="text-hightlight">automate the collection and distribution of royalty
+            payments</span> and remain in the control of the artists themselves.  Each time a track is played,
+            the "Pay per Play" contract is executed by the system, resulting in a payment from the listener to the
+            musician.  <span class="text-hightlight">The musician controls how each payment is divided</span>.
+        </p>
+        <div class="text-center">
+            <img src="images/flow.png" style="width: 75%">
+            <div class="text-center">An example PPP contract.  Musician allocations are for illustrative purposes and
+                can be configured differently for each track.</div>
+        </div>
+        <p class="info-text">
+            Listeners can access a global catalog of music stored on a
+            peer-to-peer network and pay artists directly using digital currency, based on their usage.
+        </p>
+        <p class="info-text">
+            Ease-of-use tools can be designed to allow a seamless experience for both listeners and musicians,
+            and an open protocol will allow third-parties to build a rich ecosystem of value-added software
+            and services.
+        </p>
+        <div class="info-header">Can I try it out?</div>
+        <p class="info-text">
+            Users interested in mining Musicoins will be able to <span class="text-hightlight">start mining on the
+            network on February 10th, 2017</span>.
+        </p>
+        <p class="info-text">
+            For musicians interested in publishing music and listeners interested in checking our service,
+            we are currently running an alpha test.  Contact us on <a href="https://twitter.com/musicoins">twitter</a> or join our <a href="https://slack.musicoin.org/">slack channel</a> for more information.
+        </p>
+        <div class="info-header">Will there be an ICO or bounty program?</div>
+        <p class="info-text">
+            No.  There will be no pre-allocation of any kind, not even to the founders.  Additionally, no
+            coins will be mined until February 10th, 2017.
+        </p>
+        <div class="info-header">Why?</div>
+        <p class="info-text">
+            By providing a distributed and highly transparent platform that connects musicians
+            and listeners directly, Musicoin lays the groundwork for a new age of music that is sustainable,
+            borderless, and fair to all stakeholders.
+        </p>
+        <p class="text-center text-large">
+            <a target=_blank href="https://medium.com/@musicoin/musicoin-free-creations-while-rewarding-creators-2832f7d2bd33#.lhs5n6ir1">
+                read more
+            </a>
+        </p>
+    </div>
+</div>
+<script>
+    var TimeUnits = {
+      second: 1000,
+      minute: 60*1000,
+      hour: 60*60*1000,
+      day: 24*60*60*1000
+    }
+  var countdownController = {
+      end: new Date(1486684800000),
+      showRemaining: function() {
+        var now = new Date();
+        var distance = this.end - now;
+        if (distance < 0) {
+
+          clearInterval(timer);
+          document.getElementById('countdown').innerHTML = 'Musicoin Blockchain is live!';
+
+          return;
+        }
+        var days = Math.floor(distance / TimeUnits.day);
+        var hours = Math.floor((distance % TimeUnits.day) / TimeUnits.hour);
+        var minutes = Math.floor((distance % TimeUnits.hour) / TimeUnits.minute);
+        var seconds = Math.floor((distance % TimeUnits.minute) / TimeUnits.second);
+
+        document.getElementById('countdown').innerHTML = days + ' days ';
+        document.getElementById('countdown').innerHTML += hours + ' hrs ';
+        document.getElementById('countdown').innerHTML += minutes + ' mins ';
+        document.getElementById('countdown').innerHTML += seconds + ' secs';
+      }
+  }
+
+  setInterval(function() {
+    countdownController.showRemaining();
+  }, 1000);
+</script>
 <%- include partials/connect-with-us.ejs %>
 </body>
 </html>

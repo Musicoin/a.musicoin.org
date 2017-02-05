@@ -28,6 +28,13 @@ export class PendingTxDaemon {
 
   updatePendingProfileStatus(musicoinApi: MusicoinAPI, p) {
     const description = p.pendingTx;
+
+    // don't keep checking malformed records.
+    if (!p.pendingTx) {
+      p.updatePending = false;
+      p.save();
+      return;
+    }
     musicoinApi.getTransactionStatus(p.pendingTx)
       .then(function(result) {
         if (result.status == "pending") {

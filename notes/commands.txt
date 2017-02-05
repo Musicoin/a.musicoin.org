@@ -6,6 +6,9 @@ cd C:\tmp\geth-build\bin
 geth --identity Musicoin --networkid 55313717 --datadir C:/Users/Dan/.musicoin/chain --rpc --rpcapi=db,eth,net,web3,personal,miner --rpcport 8545 --rpcaddr 127.0.0.1 --rpccorsdomain localhost console
 admin.addPeer("enode://ba2f6409f9894c12f5aad3471b9c4a2e7999b246af775c39f99d85b020cfc95d0b0dc6dd0985895bb2c4149cb45e4a3c17f7585be326cec293176bf81802a987@104.196.160.105:30303")
 
+cd C:\tmp\gmc-build
+gmc-windows-4.0-amd64.exe --datadir C:/Users/Dan/.musicoin-pi/chain --rpc --rpcapi=db,eth,net,web3,personal,miner --rpcport 8545 --rpcaddr 127.0.0.1 --rpccorsdomain localhost console
+admin.addPeer("enode://a08097bd3db876d9c30011d90f41f584897fe8e4f7045c096db37c58e277e8e9573ec5c3999fd0054dfc2c5ff152e11223c9cf97ab40fe24924fe8386da9f6f9@104.154.70.167:30303")
 
 cd C:\tmp\mc-mvp3\dependencies\win64\go-ipfs
 ipfs daemon
@@ -14,3 +17,6 @@ ipfs daemon
 # changing environment variables will require this to be re-run (forever stop <number>, then this command)
 cd /home/coiner/musicoin.org/src
 authbind --deep forever start server.js
+
+
+gmc-windows-4.0-386-im.exe --datadir C:/Users/Dan/.musicoin-pi/chain --rpc --rpcapi=db,eth,net,web3,personal,miner --rpcport 8545 --rpcaddr 127.0.0.1 --rpccorsdomain localhost console

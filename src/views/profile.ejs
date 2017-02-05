@@ -180,6 +180,12 @@
                             <%= (user.pendingTx || user.profileAddress) ? "Update" : "Publish" %>
                         </button>
                     </div>
+                    <% if (typeof profileUpdateError != "undefined" && profileUpdateError) {%>
+                    <div class="text-center text-danger">
+                        Update failed!  Please try again later.
+                    </div>
+                    <% }  %>
+
                     <% if (user.pendingTx) {%>
                     <div>
                         Waiting for confirmation (<%=user.pendingTx%>)
@@ -328,6 +334,18 @@
                     <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions" style="display: none">hide options</div>
                     <a class="subtle-text" href="/tx/history/<%=user.profileAddress%>">show history</a>
                 </div>
+                <% if (typeof sendResult != "undefined") {%>
+                    <% if (sendResult.sendError) {%>
+                    <div class="text-center text-danger">
+                        Send failed!
+                    </div>
+                    <% } else {%>
+                    <div class="text-center text-danger">
+                        Payment sent!
+                    </div>
+                    <% }%>
+                </div>
+                <%}%>
             </div>
         </div>
 
@@ -409,6 +427,12 @@
                     </div>
                 </form>
             </div>
+
+            <% if (typeof releaseError != "undefined" && releaseError) {%>
+            <div class="text-center text-danger">
+                Release failed!  Please try again later.
+            </div>
+            <%}%>
         </div>
         <%}%>
 

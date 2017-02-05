@@ -27,12 +27,9 @@
         margin-left: 10px;
         margin-right: 10px;
         font-size: 1.5em;
-        font-family: monospace;
-        color: #aaa;
         cursor: pointer;
     }
     .header-menu-item-personal {
-        color: #d4c39f
     }
     .header-menu-item:hover {
         text-decoration: underline;
@@ -40,14 +37,12 @@
     .header-nav {
         display: flex;
         justify-content: space-between;
-        padding: 10px;
         padding-right: 20px;
     }
     .brand-logo {
         font-size: 2em;
-        font-family: monospace;
-        color: #aaa;
         margin-right: 20px;
+        color: black;
     }
     .background-cover {
         background-color: rgba(0,0,0,0.9);
@@ -82,7 +77,7 @@
     <div>
         <a id="logo-container" href="/main" class="brand-logo mont"><img src="/images/icon.png" width="48px" height="48px"></a>
         <a id="logo-container" href="/main" class="brand-logo mont big-screen-only">
-            musicoin.org (alpha)
+            alpha.musicoin.org
         </a>
     </div>
 
@@ -108,7 +103,7 @@
 <div class="header-nav">
     <div class="flex-row">
         <!--<a class="header-menu-item" href="/api">api</a>-->
-        <a class="header-menu-item" href="/faq">faq</a>
+        <!--<a class="header-menu-item" href="/faq">faq</a>-->
     </div>
     <div class="flex-row">
         <% if (isAuthenticated) { %>

@@ -120,6 +120,10 @@ export class MusicoinAPI {
           console.log(err);
           return reject(err);
         }
+        else if (res.statusCode != 200) {
+          console.log(`Request failed with status code ${res.statusCode}, url: ${url}`);
+          return reject(new Error(`Request failed with status code ${res.statusCode}, url: ${url}`));
+        }
         resolve(body);
       });
     }.bind(this));
@@ -144,7 +148,7 @@ export class MusicoinAPI {
         }
         else if (response.statusCode != 200) {
           console.log(`Request failed with status code ${response.statusCode}, url: ${url}, properties: ${JSON.stringify(properties)}`);
-          return reject(error);
+          return reject(new Error(`Request failed with status code ${response.statusCode}, url: ${url}, properties: ${JSON.stringify(properties)}`));
         }
         resolve(result)
       })
