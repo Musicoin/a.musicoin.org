@@ -93,6 +93,11 @@
             font-weight: bold;
             color: rgb(227, 193, 113);
         }
+
+        #countdown {
+            min-height: 45px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -185,7 +190,7 @@
     var canvas = document.getElementById("particle_canvas");
     canvas.width = pCtxWidth = document.body.clientWidth; //document.width is obsolete
     canvas.height = pCtxHeight = document.body.clientHeight; //document.height is obsolete
-
+    mousePosX = pCtxWidth/2;
     initParticleAnimation();
     window.onresize = function() {
       canvas.width = pCtxWidth = document.body.clientWidth; //document.width is obsolete

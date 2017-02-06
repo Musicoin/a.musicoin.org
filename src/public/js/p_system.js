@@ -56,7 +56,7 @@ PARTICLE_COLOR = COLOR_VAL_FIRE;
 
 // constantly update mouse positions (for fire animations)
 var mousePosX = 0;
-var mousePosY = 0;
+var mousePosY = 200;
 
 // if enabled, animate "fire" effect (spark each frame)
 var fire = true;
