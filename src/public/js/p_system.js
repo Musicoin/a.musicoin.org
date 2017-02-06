@@ -82,6 +82,7 @@ function initParticleAnimation() {
   // click listener (starts sparks at click location on canvas)
   $("#particle_canvas").click(function(e){
     RANGE_OF_ANGLE = 360;
+    hasUserInteracted = true;
     // create a spark if fire is not animating
     if(!fire){
       var x = e.pageX - $("#particle_canvas").offset().left;

@@ -37,6 +37,7 @@ THE SOFTWARE.
  *	lifespan indicates the duration that this particle should
  *		live.
  */
+var hasUserInteracted = false;
 function Particle(x, y, xVelocity, yVelocity, lifespan, color){
 	// set initial position and velocity
 	this.x = x;
@@ -54,9 +55,17 @@ function Particle(x, y, xVelocity, yVelocity, lifespan, color){
 	// updates the particle's position by its velocity each frame,
 	//	and adjust's the alpha value
 	this.update = function(){
+
 		this.x += this.xVelocity;
 		this.y -= this.yVelocity;
 		this.alpha -= this.dAlpha;
+
+		if (!hasUserInteracted) {
+      this.yVelocity -= 0.2;
+      if (this.y > 230)
+        this.yVelocity = -this.yVelocity/2;
+		}
+
 		if(this.alpha < 0)
 			this.alpha = 0;
 	}
