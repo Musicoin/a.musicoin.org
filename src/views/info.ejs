@@ -182,22 +182,15 @@
 <script>
 
   $( document ).ready(function() {
-    canvas = document.getElementById("particle_canvas");
-    canvas.width = document.body.clientWidth; //document.width is obsolete
-    canvas.height = document.body.clientHeight; //document.height is obsolete
-    canvasW = canvas.width;
-    canvasH = canvas.height;
+    var canvas = document.getElementById("particle_canvas");
+    canvas.width = pCtxWidth = document.body.clientWidth; //document.width is obsolete
+    canvas.height = pCtxHeight = document.body.clientHeight; //document.height is obsolete
 
-    RANGE_OF_ANGLE = 360;
-
-    pCtx = particle_canvas.getContext("2d");
-    pCtxWidth = $("#particle_canvas").width();
-    pCtxHeight = $("#particle_canvas").height();
-
+    initParticleAnimation();
     window.onresize = function() {
+      canvas.width = pCtxWidth = document.body.clientWidth; //document.width is obsolete
+      canvas.height = pCtxHeight = document.body.clientHeight; //document.height is obsolete
       pCtx = particle_canvas.getContext("2d");
-      pCtxWidth = $("#particle_canvas").width();
-      pCtxHeight = $("#particle_canvas").height();
     }
   });
 

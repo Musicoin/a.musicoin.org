@@ -37,7 +37,7 @@ COLOR_VAL_BLUE = 4;
 ANGLE = 90;
 
 // maximum speed of the particles
-SPEED = 8;
+SPEED = 4;
 
 // size (in radius, by pixel) of each particle
 PARTICLE_SIZE = 1;
@@ -64,51 +64,59 @@ var fire = true;
 // if enabled, fire will follow the mouse (if animating fire)
 var follow = false;
 
-var particle_canvas = document.getElementById("particle_canvas");
-var pCtx = particle_canvas.getContext("2d");
-var pCtxWidth = $("#particle_canvas").width();
-var pCtxHeight = $("#particle_canvas").height();
-
-// click listener (starts sparks at click location on canvas)
-$("#particle_canvas").click(function(e){
-	// create a spark if fire is not animating
-	if(!fire){
-		var x = e.pageX - $("#particle_canvas").offset().left;
-		var y = e.pageY - $("#particle_canvas").offset().top;
-		spark(x, y, ANGLE);
-	}
-	// otherwise, toggle follow mouse on or off
-	else{
-		follow = !follow;
-		if(follow){ // if follow is re-enabled, update the mouse position
-			var x = e.pageX - $("#particle_canvas").offset().left;
-			var y = e.pageY - $("#particle_canvas").offset().top;
-			mousePosX = x;
-			mousePosY = y;
-		}
-	}
-});
-
-// disable double-click events
-$("#particle_canvas").dblclick(function(e){
-	e.preventDefault();
-});
-
-// listen to mouse movement events for positioning
-$("#particle_canvas").mousemove(function(e){
-	if(follow){ // if flame is following the mouse
-		// calculate the mouse position on the canvas
-		var x = e.pageX - $("#particle_canvas").offset().left;
-		var y = e.pageY - $("#particle_canvas").offset().top;
-		mousePosX = x;
-		mousePosY = y;
-	}
-});
-
-
 // list of particles
 var particles = new Array();
 
+var particle_canvas;
+var pCtx;
+var pCtxWidth;
+var pCtxHeight;
+
+function initParticleAnimation() {
+	console.log("Initializing...")
+  particle_canvas = document.getElementById("particle_canvas");
+  pCtx = particle_canvas.getContext("2d");
+  pCtxWidth = $("#particle_canvas").width();
+  pCtxHeight = $("#particle_canvas").height();
+
+  // click listener (starts sparks at click location on canvas)
+  $("#particle_canvas").click(function(e){
+    // create a spark if fire is not animating
+    if(!fire){
+      var x = e.pageX - $("#particle_canvas").offset().left;
+      var y = e.pageY - $("#particle_canvas").offset().top;
+      spark(x, y, ANGLE);
+    }
+    // otherwise, toggle follow mouse on or off
+    else{
+      follow = !follow;
+      if(follow){ // if follow is re-enabled, update the mouse position
+        var x = e.pageX - $("#particle_canvas").offset().left;
+        var y = e.pageY - $("#particle_canvas").offset().top;
+        mousePosX = x;
+        mousePosY = y;
+      }
+    }
+  });
+
+// disable double-click events
+  $("#particle_canvas").dblclick(function(e){
+    e.preventDefault();
+  });
+
+// listen to mouse movement events for positioning
+  $("#particle_canvas").mousemove(function(e){
+    if(follow){ // if flame is following the mouse
+      // calculate the mouse position on the canvas
+      var x = e.pageX - $("#particle_canvas").offset().left;
+      var y = e.pageY - $("#particle_canvas").offset().top;
+      mousePosX = x;
+      mousePosY = y;
+    }
+  });
+
+  setTimeout("animationUpdate()", 1);
+}
 
 // draw a new series of spark particles
 function spark(x, y, angle){
@@ -148,7 +156,6 @@ function animationUpdate(){
 	// await next frame
 	setTimeout("animationUpdate()", 30);
 }
-setTimeout("animationUpdate()", 1);
 
 // set color by string
 function setColor(colorVal){
