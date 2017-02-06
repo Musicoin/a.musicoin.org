@@ -34,7 +34,7 @@ COLOR_VAL_BLUE = 4;
 
 
 // angle of impact (which direction the particles shoot)
-ANGLE = 90;
+ANGLE = 0;
 
 // maximum speed of the particles
 SPEED = 4;
@@ -46,7 +46,7 @@ PARTICLE_SIZE = 1;
 NUMBER_OF_PARTICLES = 60;
 
 // how spread out (in degrees) the particles are from point of origin
-RANGE_OF_ANGLE = 360;
+RANGE_OF_ANGLE = 200;
 
 // the average lifespan of each particle
 PARTICLE_LIFESPAN = 50;
@@ -81,6 +81,7 @@ function initParticleAnimation() {
 
   // click listener (starts sparks at click location on canvas)
   $("#particle_canvas").click(function(e){
+    RANGE_OF_ANGLE = 360;
     // create a spark if fire is not animating
     if(!fire){
       var x = e.pageX - $("#particle_canvas").offset().left;

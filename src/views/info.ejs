@@ -118,7 +118,7 @@
         </div>
     </div>
 </div>
-<div class="container" style="pointer-events:none;">
+<div class="container">
     <div class="col-sm-12">
         <div class="info-text text-center pad20 quote-area">
             <div class="blockquote">
@@ -190,13 +190,15 @@
     var canvas = document.getElementById("particle_canvas");
     canvas.width = pCtxWidth = document.body.clientWidth; //document.width is obsolete
     canvas.height = pCtxHeight = document.body.clientHeight; //document.height is obsolete
-    mousePosX = pCtxWidth/2;
     initParticleAnimation();
     window.onresize = function() {
       canvas.width = pCtxWidth = document.body.clientWidth; //document.width is obsolete
       canvas.height = pCtxHeight = document.body.clientHeight; //document.height is obsolete
       pCtx = particle_canvas.getContext("2d");
+      mousePosX = pCtxWidth/2 + 85;
+      mousePosY = 175;
     }
+    window.onresize();
   });
 
     var TimeUnits = {
