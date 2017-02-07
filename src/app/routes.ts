@@ -7,18 +7,19 @@ import * as FormUtils from "./form-utils";
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 import {AddressResolver} from "./address-resolver";
-const Invite = require('../app/models/invite');
+import {MailSender} from "./mail-sender";
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const User = require('../app/models/user');
 const loginRedirect = "/";
 const maxImageWidth = 400;
+const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 
-export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider) {
+export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, serverEndpoint: string) {
 
   let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider);
   let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper);
-
+  const mailSender = new MailSender();
   let restAPI = new MusicoinRestAPI(jsonAPI);
   const addressResolver = new AddressResolver();
   app.use('/json-api', restAPI.getRouter());
@@ -44,6 +45,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/', isLoggedIn, function (req, res) {
     res.render('index-frames.ejs', {mainFrameLocation: "/main"});
+  });
+
+  app.get('/accept/:code', (req, res) => {
+    req.session.inviteCode = req.params.code;
+    res.redirect("/info");
   });
 
   app.get('/player', isLoggedIn, (req, res) => {
@@ -207,44 +213,51 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
-      const id = req.body.email || req.body.twitter;
-      if (!id) {
-        console.log(`No email or twitter handle provided`);
-        return res.redirect('profile?invited=&success=false');
+      const id = req.body.email;
+      if (!id || !FormUtils.validateEmail(id)) {
+        console.log(`Invalid email address provided: ${id}`);
+        return res.redirect(`profile?invited=${id}&success=false&reason=invalid`);
       }
 
       const conditions = [];
-      if (req.body.email) conditions.push({"google.email": {"$regex": req.body.email, "$options": "i"}});
-      if (req.body.twitter) {
-        if (req.body.twitter.startsWith("@"))
-          req.body.twitter = req.body.twitter.substring(1);
-        conditions.push({"twitter.username": {"$regex": req.body.twitter, "$options": "i"}});
-      }
+      conditions.push({"invite.invitedAs": {"$regex": req.body.email, "$options": "i"}});
+      conditions.push({"google.email": {"$regex": req.body.email, "$options": "i"}});
 
       User.findOne({$or: conditions})
         .exec()
         .then(function(user) {
           if (!user) {
             const newUser = new User();
-            newUser.google = req.body.email ? {email: req.body.email} : newUser.google;
-            newUser.twitter = req.body.twitter ? {username: req.body.twitter} : newUser.twitter;
+            const inviteCode = crypto.randomBytes(4).toString('hex');
+            newUser.invite = {
+              invitedBy: req.user._id,
+              invitedAs: id,
+              inviteCode: inviteCode,
+              claimed: false
+            };
             newUser.save(function(err, record) {
               if (err) {
                 console.log(err);
-                return res.redirect('profile?invited=' + id + "&success=false");
+                return res.redirect('profile?invited=' + id + "&success=false&reason=error");
               }
-              return res.redirect('profile?invited=' + id + "&success=true");
+
+              // fire and forget update to invite count
+              req.user.invitesRemaining--;
+              req.user.save();
+
+              mailSender.sendInvite(req.user.draftProfile.artistName, id, serverEndpoint + "/accept/" + inviteCode);
+              return res.redirect('profile?invited=' + id + "&success=true&inviteCode=" + inviteCode);
 
             });
           }
           else {
             console.log(`User already exists: ${id}`);
-            return res.redirect('profile?invited=' + id + "&success=false");
+            return res.redirect('profile?invited=' + id + "&success=false&reason=exists");
           }
         })
         .catch(function(err) {
           console.log(err);
-          res.redirect('profile?invited=' + id + "&success=false");
+          res.redirect('profile?invited=' + id + "&success=false&reason=error");
         });
     }
     else {
@@ -335,11 +348,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then((output: ArtistProfile) => {
         output['invited'] = {
           email: req.query.invited,
-          success: req.query.success
+          success: req.query.success == "true",
+          reason: req.query.reason,
+          inviteUrl: req.query.inviteCode ? serverEndpoint + "/accept/" + req.query.inviteCode : "",
         };
         output['profileUpdateError'] = req.query.profileUpdateError;
         output['releaseError'] = req.query.releaseError;
-        output['sendResult'] = {};
 
         if (typeof req.query.sendError != "undefined") {
           output['sendResult'] = {
@@ -374,7 +388,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       const profile = req.user.draftProfile;
       const i = files.photo.size == 0
-        ? Promise.resolve(profile.ipfsImageUrl)
+        ? (profile.ipfsImageUrl && profile.ipfsImageUrl.trim().length > 0)
+          ? Promise.resolve(profile.ipfsImageUrl)
+          : Promise.resolve(defaultProfileIPFSImage)
         : FormUtils.resizeImage(files.photo.path, maxImageWidth)
           .then((newPath) => mediaProvider.upload(newPath));
       const d = mediaProvider.uploadText(fields.description);
@@ -617,7 +633,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // handle the callback after twitter has authenticated the user
   app.get('/auth/twitter/callback',
     passport.authenticate('twitter', {
-      successRedirect : '/',
+      successRedirect : loginRedirect,
       failureRedirect : '/invite'
     }));
 
@@ -723,7 +739,7 @@ function isAdmin(user) {
   return (user.google && user.google.email && user.google.email.endsWith("@berry.ai"));
 }
 function canInvite(user) {
-  return user.canInvite || isAdmin(user);
+  return user.invitesRemaining > 0 || isAdmin(user);
 }
 
 // route middleware to make sure a user is logged in

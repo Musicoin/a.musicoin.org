@@ -25,6 +25,7 @@
     "passport-local": "~0.1.6",
     "passport-twitter": "~1.0.2",
     "request": "^2.75.0",
+    "sendgrid": "^4.7.1",
     "serve-favicon": "~2.3.0",
     "sharp": "^0.17.1",
     "tmp": "0.0.31"

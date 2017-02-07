@@ -239,30 +239,28 @@
         <% if (user.canInvite) {%>
         <div class="col-sm-6">
             <div class="well">
-                <h3>Alpha Testers</h3>
+                <h3>Invites</h3>
+                <div>
+                    <div class="balance"><%=user.invitesRemaining%></div>
+                    <div class="text-center subtle-text">invites left</div>
+                </div>
+                <br>
                 <p class="subtle-text">
-                    Add a new user.  You can include a gmail and/or a twitter handle.  Including both at the same
-                    time will create a single account that the user can log into with either their twitter handle
-                    or their gmail account.
-                </p>
-                <p class="subtle-text">
-                    After you add them to the list, be sure to let them know!  (This form will not send an email)
+                    Enter an address below and we'll send an invite to that address.  You can
+                    also copy and paste the generated link and send it separately via social media.
+                    However, each invite link can only be used once.
                 </p>
                 <form action="/invite" method="post">
                     <table cellpadding="3">
                         <tr>
                             <td class="text-nowrap">e-mail</td>
-                            <td width="99%"><input name=email type="text" class="form-control" placeholder="gmail (xyz@gmail.com)"></td>
-                        </tr>
-                        <tr>
-                            <td class="text-nowrap">twitter</td>
-                            <td width="99%"><input name=twitter type="text" class="form-control" placeholder="twitter (@someuser)"></td>
+                            <td width="99%"><input name=email type="text" class="form-control" placeholder="email address"></td>
                         </tr>
                         <tr>
                             <td></td>
                             <td class="text-right">
                                 <button type="submit" class="btn btn-warning">
-                                    Add
+                                    Send Invite
                                 </button>
                             </td>
                         </tr>
@@ -271,9 +269,14 @@
                             <td></td>
                             <td>
                             <% if (invited.success) {%>
-                                <%=invited.email%> was added to the whitelist.
+                                <%=invited.email%> was invited.  You can also send them this link:
+                                <div class="text-center"><%=invited.inviteUrl%></div>
+                            <%} else if (invited.reason == "exists"){%>
+                                <div class="text-warning"><%=invited.email%> already has an invite.</div>
+                            <%} else if (invited.reason == "invalid"){%>
+                                <div class="text-danger"><%=invited.email%> is not a valid email address.</div>
                             <%} else {%>
-                                Failed to invite <%=invited.email%>
+                                <div class="text-danger">Failed to invite <%=invited.email%>, try again later</div>
                             <%}%>
                             </td>
                         </tr>
@@ -340,7 +343,7 @@
                         Send failed!
                     </div>
                     <% } else {%>
-                    <div class="text-center text-danger">
+                    <div class="text-center">
                         Payment sent!
                     </div>
                     <% }%>

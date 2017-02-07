@@ -47,7 +47,26 @@ const userSchema = mongoose.Schema({
     default: Date.now
   },
   mostRecentReleaseDate: Date,
-  canInvite: Boolean
+  invitesRemaining: {
+    type: Number,
+    default: 10
+  },
+  invite: {
+    invitedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    invitedAs: String,
+    invitedOn: {
+      type: Date,
+      default: Date.now
+    },
+    inviteCode: String,
+    claimed: {
+      type: Boolean,
+      default: false
+    }
+  }
 });
 
 // methods ======================

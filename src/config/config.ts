@@ -27,6 +27,7 @@ const keyValueConfig = {
 const config = {
   port: keyValueConfig.port,
   sessionSecret: keyValueConfig.sessionSecret,
+  serverEndpoint: keyValueConfig.authCallbackEndpoint,
   loggingConfig: {
     logDirectory: 'logs',
     logFileName: 'musicoin.log',

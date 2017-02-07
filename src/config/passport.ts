@@ -11,7 +11,7 @@ const defaultProfile = {
   artistName: "",
   description: "Say something interesting about yourself",
   social: {google:"something"},
-  image: "/images/default-profile.jpeg"
+  image: "/images/default-profile.png"
 };
 
 // expose this function to our app using module.exports
@@ -170,73 +170,57 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         // try to find the user based on their google id
         const googleInfo = asGoogleUser(profile);
         if (!req.user) {
-          const condition = {$or: [{'google.id': googleInfo.id}, {'google.email': googleInfo.email}]};
-          User.findOne(condition, function (err, user) {
-            if (err)
-              return done(err);
+          const conditions = [
+            { 'google.id' : googleInfo.id },
+            { 'google.email' : googleInfo.email }
+          ];
 
-            if (user) {
-              // allow the user to claim this account by logging in to an account that was pre-created
-              // with their gmail address
-              if (!user.google.id) {
-                user.google = googleInfo;
-                // save the user
-                user.save(function (err) {
-                  if (err)
-                    throw err;
-                  return done(null, user);
+          // first, check if this user already exists
+          User.findOne({ $or : conditions }).exec()
+            .then(function(user) {
+              if (user) return user;
+              if (!req.session || !req.session.inviteCode) return null;
+
+              // if not, look for an unclaimed invite
+              return User.findOne({$and: [
+                {'invite.inviteCode': req.session.inviteCode},
+                {'invite.claimed': false},
+              ]}).exec()
+            })
+            .then(function (user) {
+              if (user) {
+                // if there is a user id already but no token (user was linked at one point and then removed)
+                if (!user.google.token || !user.invite.claimed) {
+                  user.invite.claimed = true;
+                  user.google = googleInfo;
+
+                  return user.save(function (err) {
+                    if (err)
+                      return done(err);
+
+                    return done(null, user);
+                  });
+                }
+
+                return done(null, user); // user found, return that user
+              }
+              else {
+                var query = {email: profile.username},
+                  update = { expire: new Date() },
+                  options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+                // Find the document
+                InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
+                  if (error) return;
+                  console.log("Created invite request for user: " + profile.email);
                 });
+                return done(null, false, req.flash('loginMessage', 'An invite is required'));
               }
-              else{
-                // if a user is found, log them in
-                return done(null, user);
-              }
-            }
-
-            // allow berry.ai users to create an account on login
-            else if (googleInfo.email.toLowerCase().endsWith("@berry.ai")) {
-              // if the user isnt in our database, create a new user
-              const newUser = new User();
-
-              // set all of the relevant information
-              newUser.google = googleInfo;
-
-              // save the user
-              newUser.save(function (err) {
-                if (err)
-                  throw err;
-                return done(null, newUser);
-              });
-            }
-
-            // record the attempted log in as an invite request
-            else {
-              var query = {email: googleInfo.email},
-                update = { expire: new Date() },
-                options = { upsert: true, new: true, setDefaultsOnInsert: true };
-
-              // Find the document
-              InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
-                if (error) return;
-                console.log("Created invite request for user: " + googleInfo.email);
-              });
-              return done(null, false, req.flash('loginMessage', 'An invite is required'));
-            }
-          });
-        }
-        else {
-          // user already exists and is logged in, we have to link accounts
-          const user = req.user; // pull the user out of the session
-
-          // update the current users google credentials
-          user.google = googleInfo;
-
-          // save the user
-          user.save(function (err) {
-            if (err)
-              throw err;
-            return done(null, user);
-          });
+            })
+            .catch(function(err) {
+              console.log(`Failed while trying to login with google: ${err}`);
+              done(err);
+            });
         }
       });
     }));
@@ -263,82 +247,56 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
             { 'twitter.id' : profile.id },
             { 'twitter.username' : profile.username }
           ];
-          User.findOne({ $or : conditions }, function(err, user) {
-            if (err)
-              return done(err);
 
-            if (user) {
-              // if there is a user id already but no token (user was linked at one point and then removed)
-              if (!user.twitter.token) {
-                user.twitter.token       = token;
-                user.twitter.username    = profile.username;
-                user.twitter.displayName = profile.displayName;
-                user.twitter.picture     = profile._json.profile_image_url_https;
+          // first, check if this user already exists
+          User.findOne({ $or : conditions }).exec()
+            .then(function(user) {
+              if (user) return user;
+              if (!req.session || !req.session.inviteCode) return null;
 
-                user.save(function(err) {
-                  if (err)
-                    return done(err);
+              // if not, look for an unclaimed invite
+              return User.findOne({$and: [
+                {'invite.inviteCode': req.session.inviteCode},
+                {'invite.claimed': false},
+              ]}).exec()
+            })
+            .then(function (user) {
+              if (user) {
+                // if there is a user id already but no token (user was linked at one point and then removed)
+                if (!user.twitter.token || !user.invite.claimed) {
+                  user.invite.claimed = true;
+                  user.twitter.token = token;
+                  user.twitter.username = profile.username;
+                  user.twitter.displayName = profile.displayName;
+                  user.twitter.picture = profile._json.profile_image_url_https;
 
-                  return done(null, user);
-                });
-              }
-
-              return done(null, user); // user found, return that user
-            } else {
-
-              var newUser                 = new User();
-
-              newUser.twitter.id          = profile.id;
-              newUser.twitter.token       = token;
-              newUser.twitter.username    = profile.username;
-              newUser.twitter.displayName = profile.displayName;
-              newUser.twitter.picture     = profile._json.profile_image_url_https;
-
-              // if there is no user, create them
-              Invite.findOne({email: "@" + profile.username.toLowerCase()}).exec()
-                .then(function(record) {
-                  if (!record) {
-                    var query = {email: profile.username},
-                      update = { expire: new Date() },
-                      options = { upsert: true, new: true, setDefaultsOnInsert: true };
-
-                    // Find the document
-                    InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
-                      if (error) return;
-                      console.log("Created invite request for user: " + profile.username);
-                    });
-                    return done(null, false, req.flash('loginMessage', 'An invite is required'));
-                  }
-                  // save the user
-                  newUser.save(function (err) {
+                  return user.save(function (err) {
                     if (err)
-                      throw err;
-                    return done(null, newUser);
+                      return done(err);
+
+                    return done(null, user);
                   });
-                })
-                .catch(function(err) {
-                  console.log(`Failed checking for user invite: ${err}`);
-                  throw err;
+                }
+
+                return done(null, user); // user found, return that user
+              }
+              else {
+                var query = {email: profile.username},
+                  update = { expire: new Date() },
+                  options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+                // Find the document
+                InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
+                  if (error) return;
+                  console.log("Created invite request for user: " + profile.username);
                 });
-            }
-          });
-
-        } else {
-          // user already exists and is logged in, we have to link accounts
-          var user                 = req.user; // pull the user out of the session
-
-          user.twitter.id          = profile.id;
-          user.twitter.token       = token;
-          user.twitter.username    = profile.username;
-          user.twitter.displayName = profile.displayName;
-          user.twitter.picture     = profile._json.profile_image_url_https;
-
-          user.save(function(err) {
-            if (err)
-              return done(err);
-
-            return done(null, user);
-          });
+                return done(null, false, req.flash('loginMessage', 'An invite is required'));
+              }
+            })
+            .catch(function(err) {
+              console.log(`Failed while trying to login with twitter: ${err}`);
+              done(err);
+            });
         }
       });
     }));

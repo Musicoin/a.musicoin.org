@@ -1,0 +1,96 @@
+import {mail as helper} from 'sendgrid';
+
+export class MailSender {
+  constructor() {
+  }
+
+  sendInvite(invitedBy: string, recipient: string, url: string) {
+    const from_email = new helper.Email("musicoin@musicoin.org");
+    const to_email = new helper.Email(recipient);
+    const subject = `${invitedBy} wants to you join Musicoin!`;
+    const html = this.renderHTML(invitedBy, url);
+    const content = new helper.Content("text/html", html);
+    const mail = new helper.Mail(from_email, subject, to_email, content);
+
+    const sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+    const request = sg.emptyRequest({
+      method: 'POST',
+      path: '/v3/mail/send',
+      body: mail.toJSON()
+    });
+
+    sg.API(request, function (error, response) {
+      console.log(response.statusCode);
+      console.log(response.body);
+      console.log(response.headers);
+    })
+  }
+
+  /* SendGrid documentation on templates sucks */
+  private renderHTML(invitedBy: string, url: string) {
+    return (`
+<html pmbx_context="3AAAE56C-526E-4AB9-A84F-427CEB5328D4">
+<head>
+  <title></title>
+  <style type="text/css">body {
+    word-wrap: break-word;
+    backgrond-color: white;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+    color: rgba(0,0,0,0.8);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .text-large {
+    font-size: 22px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  p {
+    margin-left: 20px;
+    margin-right: 20px;
+    color: rgba(0,0,0,0.8);
+  }
+
+  .button {
+    margin-top: 15px;
+    padding: 10px;
+    color: white;
+    border-radius: 4px;
+    background-color: #55AA55;
+  }
+
+  .emphasis {
+    font-weight: bold;
+  }
+  </style>
+</head>
+<body>
+<div class="text-center"><span class="sg-image text-center" data-imagelibrary="%7B%22width%22%3A%2264%22%2C%22height%22%3A%2263%22%2C%22alignment%22%3A%22center%22%2C%22src%22%3A%22https%3A//marketing-image-production.s3.amazonaws.com/uploads/fd101f8e53b0fd0718118a98b6d109f76509da8007e528d4d86c41f946f49e524115cdfe40c1a3c92c730fb08239347994b6e9bef05d4cf7382f120d5af8bf8b.png%22%2C%22alt_text%22%3A%22Musicoin.org%22%2C%22link%22%3A%22https%3A//musicoin.org%22%2C%22classes%22%3A%7B%22sg-image%22%3A1%7D%7D" style="float: none; display: block; text-align: center;">
+<a href="${url}">
+<img alt="Musicoin.org" height="63" src="https://marketing-image-production.s3.amazonaws.com/uploads/fd101f8e53b0fd0718118a98b6d109f76509da8007e528d4d86c41f946f49e524115cdfe40c1a3c92c730fb08239347994b6e9bef05d4cf7382f120d5af8bf8b.png" style="width: 64px; height: 63px;" width="64" /> </a> </span></div>
+
+<div class="text-center text-large">${invitedBy} invited you to Musicoin!</div>
+
+<p>Musicoin is the world&#39;s first blockchain designed specifically for licensing and consuming music. We are working to build a global community of musicians and listeners that is both transparent and fair.</p>
+
+<p><span class="emphasis">Get paid for every play, instantly.</span> Our Pay-per-Play model give you complete control
+  over how each payment should be distributed.  Come join our community and start sharing your music in a whole new way.</p>
+
+<div style="margin-top: 40px; text-align: center">
+<span class="button">
+<a href="${url}" style="color: white">Click Here To Get Started!</a> 
+</span></div>
+</body>
+</html>
+`);
+  }
+}

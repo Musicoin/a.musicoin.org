@@ -2,11 +2,11 @@ import {Promise} from 'bluebird';
 const sharp = require('sharp');
 
 export function resizeImage(path: string, width: number, height?: number) {
-  const outputPath = path + ".resized.jpeg";
+  const outputPath = path + ".resized.png";
   return sharp(path)
     .resize(width, height)
-    .jpeg()
-    .toFile(path + ".resized.jpeg")
+    .png()
+    .toFile(outputPath)
     .then(function() {
       console.log("Resized image: " + outputPath);
       return outputPath;
@@ -83,4 +83,9 @@ export function convertToRoyaltyOrContributor(recipient) {
     valid: false,
     input: recipient
   };
+}
+
+export function validateEmail(email) {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
 }

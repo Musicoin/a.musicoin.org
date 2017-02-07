@@ -27,12 +27,10 @@
         margin-left: 10px;
         margin-right: 10px;
         font-size: 1.5em;
-        font-family: monospace;
         color: #aaa;
         cursor: pointer;
     }
     .header-menu-item-personal {
-        color: #d4c39f
     }
     .header-menu-item:hover {
         text-decoration: underline;
@@ -40,14 +38,13 @@
     .header-nav {
         display: flex;
         justify-content: space-between;
-        padding: 10px;
         padding-right: 20px;
+        margin-bottom: 20px;
     }
     .brand-logo {
         font-size: 2em;
-        font-family: monospace;
-        color: #aaa;
         margin-right: 20px;
+        color: inherit;
     }
     .background-cover {
         background-color: rgba(0,0,0,0.9);
@@ -88,7 +85,9 @@
 
     <div class="flex-row">
         <% if (isAuthenticated) { %>
-
+            <a href="/faq" class="header-menu-item"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+            <a href="/browse" class="header-menu-item"><i class="fa fa-search" aria-hidden="true"></i></a>
+            <div style="width:20px"></div>
             <%  if (user.profile.image) { %>
             <a href="/profile">
                 <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
@@ -99,22 +98,15 @@
                 <a href="/logout" target="_top" class="btn btn-default btn-sm">logout</a>
             </div>
         <% } else { %>
-        <div class="mr5 text-middle">Sign in</div>
-        <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>
-        <div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>
+        <!--<div class="mr5 text-middle">Request an Invite</div>-->
+        <!--<div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>-->
+        <!--<div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>-->
         <% } %>
     </div>
 </div>
 <div class="header-nav">
     <div class="flex-row">
-        <!--<a class="header-menu-item" href="/api">api</a>-->
-        <a class="header-menu-item" href="/faq">faq</a>
     </div>
     <div class="flex-row">
-        <% if (isAuthenticated) { %>
-        <a href="/browse" class="header-menu-item">browse</a>
-        <div class="header-separator"></div>
-        <a href="/profile" class="header-menu-item header-menu-item-personal">my profile</a>
-        <%}%>
     </div>
 </div>
