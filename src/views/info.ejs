@@ -128,6 +128,28 @@
                 </div>
             </div>
         </div>
+
+        <% if(hasInvite && !inviteClaimed) { %>
+        <div class="well white-well">
+            <div class="text-large flex-row center-text">
+                <div>Claim your invite by signing in below</div>
+            </div>
+            <div class="flex-row center-text">
+                <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"> Sign in with Google</span></a></div>
+                <div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"> Sign in with Twitter</span></a></div>
+            </div>
+        </div>
+        <% } %>
+
+        <% if(inviteClaimed) { %>
+        <div class="well white-well">
+            <div class="text-large flex-row center-text">
+                <div>This invite code has already been claimed. :(</div>
+            </div>
+        </div>
+        <% } %>
+
+
         <p class="info-text">
             <span class="first-letter">M</span>usicoin is a decentralized system for the <span class="text-hightlight">publication and
                 consumption of music</span>, which combines a

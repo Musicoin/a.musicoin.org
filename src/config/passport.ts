@@ -188,6 +188,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
               ]}).exec()
             })
             .then(function (user) {
+              delete req.session.inviteCode;
               if (user) {
                 // if there is a user id already but no token (user was linked at one point and then removed)
                 if (!user.google.token || !user.invite.claimed) {
@@ -261,6 +262,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
               ]}).exec()
             })
             .then(function (user) {
+              delete req.session.inviteCode;
               if (user) {
                 // if there is a user id already but no token (user was linked at one point and then removed)
                 if (!user.twitter.token || !user.invite.claimed) {

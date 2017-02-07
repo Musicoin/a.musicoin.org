@@ -26,7 +26,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/', preProcessUser(mediaProvider));
 
   function doRender(req, res, view, context) {
-    const defaultContext = {user: req.user, isAuthenticated: req.isAuthenticated()};
+    const defaultContext = {
+      user: req.user,
+      isAuthenticated: req.isAuthenticated(),
+      hasInvite: !req.isAuthenticated()
+            && req.session
+            && req.session.inviteCode
+            && req.session.inviteCode.trim().length > 0,
+      inviteClaimed: req.query.inviteClaimed == "true"
+    };
     res.render(view, Object.assign({}, defaultContext, context));
   }
 
@@ -48,8 +56,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/accept/:code', (req, res) => {
-    req.session.inviteCode = req.params.code;
-    res.redirect("/info");
+    User.findOne({"invite.inviteCode": req.params.code}).exec()
+      .then((record) => {
+        delete req.session.inviteCode;
+        let inviteClaimed = false;
+        if (record) {
+          inviteClaimed = record.invite.claimed;
+          if (!inviteClaimed) {
+            req.session.inviteCode = req.params.code;
+          }
+        }
+        res.redirect("/info?inviteClaimed=" + inviteClaimed);
+      });
   });
 
   app.get('/player', isLoggedIn, (req, res) => {
