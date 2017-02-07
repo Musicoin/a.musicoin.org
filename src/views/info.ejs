@@ -118,6 +118,27 @@
         </div>
     </div>
 </div>
+
+<% if(hasInvite && !inviteClaimed) { %>
+<div class="inset-shadow white-well" style="position: relative">
+    <div class="text-large flex-row center-text">
+        <div>Claim your invite by signing in below</div>
+    </div>
+    <div class="flex-row center-text">
+        <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"> Sign in with Google</span></a></div>
+        <div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"> Sign in with Twitter</span></a></div>
+    </div>
+</div>
+<% } %>
+
+<% if(inviteClaimed) { %>
+<div class="inset-shadow white-well" style="position: relative">
+    <div class="text-large flex-row center-text">
+        <div>This invite code has already been claimed. :(</div>
+    </div>
+</div>
+<% } %>
+
 <div class="container">
     <div class="col-sm-12">
         <div class="info-text text-center pad20 quote-area">
@@ -128,28 +149,11 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <% if(hasInvite && !inviteClaimed) { %>
-        <div class="well white-well">
-            <div class="text-large flex-row center-text">
-                <div>Claim your invite by signing in below</div>
-            </div>
-            <div class="flex-row center-text">
-                <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"> Sign in with Google</span></a></div>
-                <div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"> Sign in with Twitter</span></a></div>
-            </div>
-        </div>
-        <% } %>
-
-        <% if(inviteClaimed) { %>
-        <div class="well white-well">
-            <div class="text-large flex-row center-text">
-                <div>This invite code has already been claimed. :(</div>
-            </div>
-        </div>
-        <% } %>
-
-
+<div class="container">
+    <div class="col-sm-12">
         <p class="info-text">
             <span class="first-letter">M</span>usicoin is a decentralized system for the <span class="text-hightlight">publication and
                 consumption of music</span>, which combines a
@@ -163,11 +167,17 @@
             the "Pay per Play" contract is executed by the system, resulting in a payment from the listener to the
             musician.  <span class="text-hightlight">The musician controls how each payment is divided</span>.
         </p>
-        <div class="text-center" style="background-color: white; border-radius: 4px">
-            <img src="images/flow.png" style="width: 75%">
-        </div>
-        <div class="text-center caption" style="background-color: transparent">An example PPP contract.  Musician allocations are for illustrative purposes and
-            can be configured differently for each track.</div>
+    </div>
+</div>
+
+<div class="text-center inset-shadow white-well" style="position: relative">
+    <img src="images/flow.png" style="width: 75%">
+</div>
+<div class="text-center caption" style="background-color: transparent">An example PPP contract.  Musician allocations are for illustrative purposes and
+    can be configured differently for each track.</div>
+
+<div class="container">
+    <div class="col-sm-12">
         <p class="info-text">
             Listeners can access a global catalog of music stored on a
             peer-to-peer network and pay artists directly using digital currency, based on their usage.
