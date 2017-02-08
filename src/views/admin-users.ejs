@@ -87,6 +87,7 @@
                     <th class="text-center">Linked Twitter</th>
                     <th class="text-center">Profile<br>Created</th>
                     <th class="text-center">Music<br>Released</th>
+                    <th class="text-center">Invites<br>Left</th>
                 </tr>
 
                 <% for (var ivt=0; ivt < users.length; ivt++) {
@@ -121,6 +122,7 @@
                         <% } %>
                     </td>
                     <td class="text-center middle"><%-user.mostRecentReleaseDate ? checked : unchecked%></td>
+                    <td class="text-center middle"><%=user.invitesRemaining%></td>
                 </tr>
                 <%}%>
             </table>
