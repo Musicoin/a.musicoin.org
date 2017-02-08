@@ -10,6 +10,7 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-size: cover;
+            background-position: center;
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
             font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
@@ -101,7 +102,7 @@
     </style>
 </head>
 <body>
-<%- include partials/info-header.ejs %>
+<%- include partials/header.ejs %>
 <style>
     .background-cover {
         background-color: rgba(0,0,0,0.5);
@@ -263,6 +264,7 @@
       }
   }
 
+  countdownController.showRemaining()
   setInterval(function() {
     countdownController.showRemaining();
   }, 1000);

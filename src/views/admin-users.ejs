@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+    <title>Users - Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body        {
+            word-wrap:break-word;
+            background-image: url('/images/musician.jpg');
+            background-size: cover;
+        }
+        .faq-question {
+            font-size: x-large;
+        }
+        .faq-answer {
+            font-size: x-large;
+        }
+        .history {
+            padding: 3px;
+            min-width: 20px;
+        }
+        .history-nav {
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-nav-link {
+            margin-left: 10px;
+            font-size: 14pt;
+        }
+
+        tr.claimed {
+            background-color: rgba(0,200,0,0.1);
+        }
+
+        tr.profile {
+            background-color: rgba(0,200,0,0.2);
+        }
+
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<div class="container">
+    <div class="search-area mb20">
+        <div class="col-sm-5">
+            <form action="/admin/users" method="get">
+                <div class="flex-row">
+                    <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
+                    <input class="form-control text-large pl25"
+                           name="search"
+                           value="<%= search %>" placeholder="search users"
+                           autofocus onfocus="this.value = this.value;">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="well white-well">
+            <div class="history-nav">
+                <div>
+                    <%=navigation.description%>
+                </div>
+                <div>
+                    <% if (navigation.start) { %>
+                    <a class="history-nav-link" href="<%=navigation.start%>">first</a>
+                    <%}%>
+                    <% if (navigation.back) { %>
+                    <a class="history-nav-link" href="<%=navigation.back%>">back</a>
+                    <%}%>
+                    <% if (navigation.next) { %>
+                    <a class="history-nav-link" href="<%=navigation.next%>">next</a>
+                    <%}%>
+                </div>
+            </div>
+            <table class="table table-responsive" width="100%">
+                <tr>
+                    <th class="text-center">Invited As</th>
+                    <th class="text-center">Invited By</th>
+                    <th class="text-center">Invite Code</th>
+                    <th class="text-center">Invite<br>Accepted</th>
+                    <th class="text-center">Linked Google</th>
+                    <th class="text-center">Linked Twitter</th>
+                    <th class="text-center">Profile<br>Created</th>
+                    <th class="text-center">Music<br>Released</th>
+                </tr>
+
+                <% for (var ivt=0; ivt < users.length; ivt++) {
+                    var user = users[ivt];
+                    var checked = '<i class="fa fa-check-square-o" aria-hidden="true"></i>';
+                    var unchecked = '<i class="fa fa-square-o" aria-hidden="true"></i>';
+                    var invite = user.invite ? user.invite : {};
+                    var invitedBy = invite.invitedBy || {};
+                    var state = invite.claimed
+                        ? (user.profileAddress && user.draftProfile.artistName) ? "profile" : "claimed"
+                        : "";
+                %>
+                <tr class="<%=state%>">
+                    <td class="text-center middle"><%=invite.invitedAs%></td>
+                    <td class="text-center middle">
+                        <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
+                        <a target="_blank" href="/artist/<%=invitedBy.profileAddress%>"><%=invitedBy.draftProfile.artistName%></a>
+                        <% } %>
+                    </td>
+                    <td class="text-center middle"><%=invite.inviteCode%></td>
+                    <td class="text-center middle"><%-invite.claimed ? checked : unchecked %></td>
+                    <td class="text-center middle">
+                        <%-!!user.google.token ? user.google.name : unchecked %><BR>
+                        <%-!!user.google.token ? user.google.email : "" %>
+                    </td>
+                    <td class="text-center middle"><%-!!user.twitter.token ? user.twitter.username : unchecked %></td>
+                    <td class="text-center middle">
+                        <% if(user.profileAddress && user.draftProfile.artistName) { %>
+                        <a target="_blank" href="/artist/<%=user.profileAddress%>"><%=user.draftProfile.artistName%></a>
+                        <% } else { %>
+                        <i class="fa fa-square-o" aria-hidden="true"></i>
+                        <% } %>
+                    </td>
+                    <td class="text-center middle"><%-user.mostRecentReleaseDate ? checked : unchecked%></td>
+                </tr>
+                <%}%>
+            </table>
+        </div>
+    </div>
+</div>
+<%- include partials/connect-with-us.ejs %>
+</body>
+</html>

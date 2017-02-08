@@ -47,7 +47,7 @@
         }
 
         h3 {
-            font-family: monospace;
+            /*font-family: monospace;*/
             text-transform: lowercase;
             text-align: center;
             margin-top: 10px;
@@ -236,59 +236,7 @@
             <!--</div>-->
         <!--</div>-->
 
-        <% if (user.canInvite) {%>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3>Invites</h3>
-                <div>
-                    <div class="balance"><%=user.invitesRemaining%></div>
-                    <div class="text-center subtle-text">invites left</div>
-                </div>
-                <br>
-                <p class="subtle-text">
-                    Enter an address below and we'll send an invite to that address.  You can
-                    also copy and paste the generated link and send it separately via social media.
-                    However, each invite link can only be used once.
-                </p>
-                <form action="/invite" method="post">
-                    <table cellpadding="3">
-                        <tr>
-                            <td class="text-nowrap">e-mail</td>
-                            <td width="99%"><input name=email type="text" class="form-control" placeholder="email address"></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td class="text-right">
-                                <button type="submit" class="btn btn-warning">
-                                    Send Invite
-                                </button>
-                            </td>
-                        </tr>
-                        <% if (invited.email) { %>
-                        <tr>
-                            <td></td>
-                            <td>
-                            <% if (invited.success) {%>
-                                <%=invited.email%> was invited.  You can also send them this link:
-                                <div class="text-center"><%=invited.inviteUrl%></div>
-                            <%} else if (invited.reason == "exists"){%>
-                                <div class="text-warning"><%=invited.email%> already has an invite.</div>
-                            <%} else if (invited.reason == "invalid"){%>
-                                <div class="text-danger"><%=invited.email%> is not a valid email address.</div>
-                            <%} else {%>
-                                <div class="text-danger">Failed to invite <%=invited.email%>, try again later</div>
-                            <%}%>
-                            </td>
-                        </tr>
-                        <% } %>
-                    </table>
-                </form>
-            </div>
-        </div>
-        <%}%>
-
         <% if (user.profileAddress) {%>
-
         <div class="col-sm-6">
             <div class="well">
                 <h3>my wallet</h3>
@@ -335,7 +283,7 @@
                 <div class="flex-row wallet-action-bar">
                     <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions">show options</div>
                     <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions" style="display: none">hide options</div>
-                    <a class="subtle-text" href="/tx/history/<%=user.profileAddress%>">show history</a>
+                    <a class="subtle-text" href="/tx/history/<%=user.profileAddress%>"><i title="transaction history" class="fa fa-list-ul" aria-hidden="true"></i></a>
                 </div>
                 <% if (typeof sendResult != "undefined") {%>
                     <% if (sendResult.sendError) {%>
@@ -351,6 +299,71 @@
                 <%}%>
             </div>
         </div>
+
+        <% if (user.canInvite) {%>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3>Invites</h3>
+                <div>
+                    <div class="balance"><%=user.invitesRemaining%></div>
+                    <div class="text-center subtle-text">invites left</div>
+                </div>
+                <div class="invite-options" style="<%= invited.email ? "" : "display: none"%>">
+                    <br>
+                    <p class="subtle-text">
+                        Enter an address below and we'll send an invite to that address.  You can
+                        also copy and paste the generated link and send it separately via social media.
+                        However, each invite link can only be used once.
+                    </p>
+                    <form action="/invite" method="post">
+                        <table cellpadding="3">
+                            <tr>
+                                <td class="text-nowrap">e-mail</td>
+                                <td width="99%"><input name=email type="text" class="form-control" placeholder="email address"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="text-right">
+                                    <button type="submit" class="btn btn-warning">
+                                        Send Invite
+                                    </button>
+                                </td>
+                            </tr>
+                            <% if (invited.email) { %>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <% if (invited.success) {%>
+                                    <div class="text-center">
+                                        <%=invited.email%> was invited.  <br>
+                                        You can also send this link via social media: <br>
+                                        <%=invited.inviteUrl%>
+                                    </div>
+                                    <%} else if (invited.reason == "exists"){%>
+                                    <div class="text-warning"><%=invited.email%> already has an invite.</div>
+                                    <%} else if (invited.reason == "invalid"){%>
+                                    <div class="text-danger"><%=invited.email%> is not a valid email address.</div>
+                                    <%} else {%>
+                                    <div class="text-danger">Failed to invite <%=invited.email%>, try again later</div>
+                                    <%}%>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </table>
+                    </form>
+
+                </div>
+                <div class="flex-row wallet-action-bar">
+                    <div class="wallet-action-toggle subtle-text"
+                         onclick='$(".invite-options").toggle()'>
+                        <div class="invite-options">send an invite</div>
+                        <div class="invite-options" style="display: none">hide</div>
+                    </div>
+                    <a class="subtle-text" href="/invite-history"><i title="invite history" class="fa fa-list-ul" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+        <%}%>
 
         <% if (!user.hideProfile) { %>
         <div class="col-sm-6">

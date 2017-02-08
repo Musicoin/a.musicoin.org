@@ -24,11 +24,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   const addressResolver = new AddressResolver();
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider));
+  app.use('/admin/*', isLoggedIn, adminOnly);
 
   function doRender(req, res, view, context) {
     const defaultContext = {
       user: req.user,
       isAuthenticated: req.isAuthenticated(),
+      isAdmin: isAdmin(req.user),
       hasInvite: !req.isAuthenticated()
             && req.session
             && req.session.inviteCode
@@ -38,17 +40,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render(view, Object.assign({}, defaultContext, context));
   }
 
-  function _formatDate(timestamp) {
-    // TODO: Locale
-    var options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(timestamp*1000).toLocaleDateString('en-US', options);
-  }
-
   function _formatNumber(value:any, decimals?:number) {
     var raw = parseFloat(value).toFixed(decimals ? decimals : 0);
     var parts = raw.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join(".");
+  }
+
+  function _formatDate(timestamp) {
+    // TODO: Locale
+    var options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(timestamp*1000).toLocaleDateString('en-US', options);
   }
 
   app.get('/', isLoggedIn, function (req, res) {
@@ -251,6 +253,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               invitedBy: req.user._id,
               invitedAs: id,
               inviteCode: inviteCode,
+              invitedOn: Date.now(),
               claimed: false
             };
             newUser.save(function(err, record) {
@@ -323,6 +326,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.get('/admin/users', (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start-length);
+    const url = '/admin/users';
+    jsonAPI.getAllUsers(req.query.search, start, length)
+      .then(users => {
+        doRender(req, res, 'admin-users.ejs', {
+          search: req.query.search,
+          users: users,
+          navigation: {
+            description: `Showing ${start+1} to ${start+users.length}`,
+            start: previous > 0 ? `${url}?length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}?length=${length}&start=${start-length}` : null,
+            next: users.length >= length ? `${url}?length=${length}&start=${start+length}` : null
+          }
+        });
+      });
+  });
+
   // =====================================
   // SIGNUP ==============================
   // =====================================
@@ -356,31 +379,60 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.get('/invite-history', isLoggedIn, (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start-length);
+    const url = `/invite-history`;
+    jsonAPI.getInvitedBy(req.user._id, start, length)
+      .then(invites => {
+        const output = invites.map(i => {
+          return {
+            invitedAs: i.invitedAs,
+            invitedOn: _formatDate(i.invitedOn.getTime()/1000),
+            claimed: i.claimed,
+            inviteCode: i.inviteCode,
+            inviteUrl: serverEndpoint + "/accept/" + i.inviteCode,
+            profileAddress: i.profileAddress,
+            artistName: i.artistName,
+            hasReleased: i.hasReleased
+          };
+        });
+        doRender(req, res, 'invite-history.ejs', {
+          invites: output,
+          navigation: {
+            description: `Showing ${start+1} to ${start+output.length}`,
+            start: previous > 0 ? `${url}?length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}?length=${length}&start=${start-length}` : null,
+            next: output.length >= length ? `${url}?length=${length}&start=${start+length}` : null
+          }
+        });
+      });
+  });
+
   // =====================================
   // PROFILE SECTION =====================
   // =====================================
   // we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
   app.get('/profile', isLoggedIn, function (req, res) {
-    jsonAPI.getArtist(req.user.profileAddress, true, true)
-      .then((output: ArtistProfile) => {
-        output['invited'] = {
-          email: req.query.invited,
-          success: req.query.success == "true",
-          reason: req.query.reason,
-          inviteUrl: req.query.inviteCode ? serverEndpoint + "/accept/" + req.query.inviteCode : "",
+    jsonAPI.getArtist(req.user.profileAddress, true, true).then((output) => {
+      output['invited'] = {
+        email: req.query.invited,
+        success: req.query.success == "true",
+        reason: req.query.reason,
+        inviteUrl: req.query.inviteCode ? serverEndpoint + "/accept/" + req.query.inviteCode : "",
+      };
+      output['profileUpdateError'] = req.query.profileUpdateError;
+      output['releaseError'] = req.query.releaseError;
+      if (typeof req.query.sendError != "undefined") {
+        output['sendResult'] = {
+          error: req.query.sendError
         };
-        output['profileUpdateError'] = req.query.profileUpdateError;
-        output['releaseError'] = req.query.releaseError;
-
-        if (typeof req.query.sendError != "undefined") {
-          output['sendResult'] = {
-            error: req.query.sendError
-          };
-        }
-        output.artist.formattedBalance = _formatNumber(output.artist.balance);
-        doRender(req, res, "profile.ejs", output);
-      });
+      }
+      output.artist.formattedBalance = _formatNumber(output.artist.balance);
+      doRender(req, res, "profile.ejs", output);
+    })
   });
 
   app.post('/send', isLoggedIn, function (req, res) {
@@ -754,7 +806,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 }
 
 function isAdmin(user) {
-  return (user.google && user.google.email && user.google.email.endsWith("@berry.ai"));
+  return (user && user.google && user.google.email && user.google.email.endsWith("@berry.ai"));
 }
 function canInvite(user) {
   return user.invitesRemaining > 0 || isAdmin(user);

@@ -79,6 +79,44 @@ export class MusicoinOrgJsonAPI {
     });
   }
 
+  getAllUsers(_search: string, start: number, length: number): Promise<any> {
+    const search = this._sanitize(_search);
+    let filter = {};
+    if (search) {
+      filter = {$or: [
+        {"draftProfile.artistName": {"$regex": search, "$options": "i"}},
+        {"invite.invitedAs": {"$regex": search, "$options": "i"}},
+        {"google.email": {"$regex": search, "$options": "i"}},
+        {"google.name": {"$regex": search, "$options": "i"}},
+        {"twitter.username": {"$regex": search, "$options": "i"}},
+        {"twitter.displayName": {"$regex": search, "$options": "i"}},
+      ]};
+    }
+    return User.find(filter)
+      .sort({"invite.invitedOn": 'desc'})
+      .skip(start)
+      .limit(length)
+      .populate("invite.invitedBy")
+      .exec();
+  }
+
+  getInvitedBy(userId: string, start: number, length: number): Promise<any> {
+    return User.find({"invite.invitedBy": userId})
+      .sort({"invite.invitedOn": 'desc'})
+      .skip(start)
+      .limit(length)
+      .exec()
+      .then(records => {
+        return records.map(u => {
+          const invite = u.invite;
+          invite.profileAddress = u.profileAddress;
+          invite.artistName = u.draftProfile ? u.draftProfile.artistName : "";
+          invite.hasReleased = !!u.mostRecentReleaseDate;
+          return invite;
+        })
+      });
+  }
+
   getTopPlayed(limit: number, genre?: string): Promise<any> {
     const filter = genre ? {state: 'published', genres: genre} : {state: 'published'};
     return this._getLicensesForEntries(filter, limit, {directPlayCount: 'desc'})
@@ -107,7 +145,6 @@ export class MusicoinOrgJsonAPI {
   getFeaturedArtists(limit: number) {
     // find recently joined artists that have at least one release
     let query = User.find({profileAddress: {$ne: null}})
-      .where({hideProfile: {$ne: true}})
       .where({mostRecentReleaseDate: {$ne: null}});
 
     return query.sort({joinDate: 'desc'}).limit(limit).exec()
@@ -127,7 +164,7 @@ export class MusicoinOrgJsonAPI {
     const genre = this._sanitize(_genre);
 
     let query = User.find({profileAddress: {$ne: null}})
-      .where({hideProfile: {$ne: true}});
+      .where({mostRecentReleaseDate: {$ne: null}});
 
     if (search) {
       query = query.where({"draftProfile.artistName": {"$regex": search, "$options": "i"}})
@@ -157,7 +194,9 @@ export class MusicoinOrgJsonAPI {
     const genre = this._sanitize(_genre);
     const flatten = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
     const artistList = search
-      ? User.find({"draftProfile.artistName": {"$regex": search, "$options": "i"}}).exec()
+      ? User.find({"draftProfile.artistName": {"$regex": search, "$options": "i"}})
+        .where({mostRecentReleaseDate: {$ne: null}})
+        .exec()
         .then(records => records.map(r => r.profileAddress))
       : Promise.resolve([]);
 

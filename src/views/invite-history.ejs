@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+    <title>History - Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body        {
+            word-wrap:break-word;
+            background-image: url('/images/musician.jpg');
+            background-size: cover;
+        }
+        .faq-question {
+            font-size: x-large;
+        }
+        .faq-answer {
+            font-size: x-large;
+        }
+        .history {
+            padding: 3px;
+            min-width: 20px;
+        }
+        .history-nav {
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-nav-link {
+            margin-left: 10px;
+            font-size: 14pt;
+        }
+
+        tr.claimed {
+            background-color: rgba(0,200,0,0.1);
+        }
+
+        tr.profile {
+            background-color: rgba(0,200,0,0.2);
+        }
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<div class="container">
+    <div class="row">
+        <div class="well white-well">
+            <div class="history-nav">
+                <div>
+                    <%=navigation.description%>
+                </div>
+                <div>
+                    <% if (navigation.start) { %>
+                    <a class="history-nav-link" href="<%=navigation.start%>">first</a>
+                    <%}%>
+                    <% if (navigation.back) { %>
+                    <a class="history-nav-link" href="<%=navigation.back%>">back</a>
+                    <%}%>
+                    <% if (navigation.next) { %>
+                    <a class="history-nav-link" href="<%=navigation.next%>">next</a>
+                    <%}%>
+                </div>
+            </div>
+            <table class="table table-responsive" width="100%">
+                <tr>
+                    <th class="text-center">Email</th>
+                    <th class="text-center">Sent</th>
+                    <th class="text-center big-screen-only">Link</th>
+                    <th class="text-center">Invite<br>Accepted</th>
+                    <th class="text-center">Profile<br>Created</th>
+                    <th class="text-center">Music<br>Released</th>
+                </tr>
+
+                <% for (var ivt=0; ivt < invites.length; ivt++) {
+                    var invite = invites[ivt];
+                    var state = invite.claimed
+                        ? (invite.profileAddress && invite.artistName) ? "profile" : "claimed"
+                        : "";
+                %>
+                <tr class="<%=state%>">
+                    <td class="text-center"><%=invite.invitedAs%></td>
+                    <td class="text-center"><%=invite.invitedOn%></td>
+                    <td class="text-center big-screen-only"><%=invite.inviteUrl%></td>
+                    <td class="text-center">
+                        <% if (invite.claimed) {%>
+                        <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                        <%} else {%>
+                        <i class="fa fa-square-o" aria-hidden="true"></i>
+                        <%} %>
+                    </td>
+                    <td class="text-center">
+                        <% if(invite.profileAddress && invite.artistName) { %>
+                        <a href="/artist/<%=invite.profileAddress%>"><%=invite.artistName%></a>
+                        <% } else { %>
+                        <i class="fa fa-square-o" aria-hidden="true"></i>
+                        <% } %>
+                    </td>
+                    <td class="text-center">
+                        <% if(invite.hasReleased) { %>
+                        <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                        <% } else { %>
+                        <i class="fa fa-square-o" aria-hidden="true"></i>
+                        <% } %>
+                    </td>
+                </tr>
+                <%}%>
+            </table>
+        </div>
+    </div>
+</div>
+<%- include partials/connect-with-us.ejs %>
+</body>
+</html>
