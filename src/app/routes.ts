@@ -68,7 +68,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             req.session.inviteCode = req.params.code;
           }
         }
-        res.redirect("/info?inviteClaimed=" + inviteClaimed);
+        res.redirect("/welcome?inviteClaimed=" + inviteClaimed);
       });
   });
 
@@ -225,6 +225,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
+  app.get('/welcome', (req, res) => doRender(req, res, 'welcome.ejs', {}));
   app.get('/invite', (req, res) => doRender(req, res, 'invite.ejs', {}));
   app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
   app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));

@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+    <title>FAQ - Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body {
+            word-wrap:break-word;
+            background-image: url(images/concert.jpg);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .info-text {
+            --x-height-multiplier: 0.35;
+            --baseline-multiplier: 0.179;
+            font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
+            letter-spacing: .01rem;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 21px;
+            line-height: 1.58;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<style>
+    .background-cover {
+        background-color: rgba(0,0,0,0.5);
+    }
+</style>
+
+<% if(hasInvite && !inviteClaimed) { %>
+<div class="container well white-well" style="position: relative">
+    <div class="text-large flex-column center-text">
+        <img src="/images/logo.png" width="300px">
+        <div>Welcome!</div>
+    </div>
+
+    <p class="info-text">
+        Congratulations, you're nearly ready to start releasing music on the world's
+        first blockchain designed specifically for licensing and consuming music.
+
+    <p class="info-text">
+    If you're not familiar with "blockchains" don't worry, we'll take care of everything.  All you
+    need to do is provide the soundtrack!  And, once you do, you'll be paid instantly
+    for each and every play, no matter when or where in the world in happens.
+
+    <p class="info-text center-text">
+        Claim your invite by signing in below
+
+    <div class="flex-row center-text">
+        <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"> Sign in with Google</span></a></div>
+        <div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"> Sign in with Twitter</span></a></div>
+    </div>
+    <p class="subtle-text center-text">Make sure you use the same method each time.
+</div>
+<%}%>
+
+<% if(inviteClaimed) { %>
+<div class="container well white-well" style="position: relative">
+    <div class="text-large flex-column center-text">
+        <img src="/images/logo.png" width="300px">
+        <div>:(</div>
+    </div>
+
+    <p class="info-text">
+        Uh oh.  We'd love to have you join our community, but it looks like the invite
+        link you clicked was already accepted by someone else.  Here are some things you
+        can try:
+
+    <ul class="info-text">
+        <li>If you think you already have an account, try signing in below</li>
+        <li>Asking the person who sent the invite to make sure they sent you your own link</li>
+        <li>Join our <a target="_blank" href="http://slack.musicoin.org/">slack channel</a> and maybe you'll find a new friend with an invite left!</li>
+    </ul>
+    <p class="info-text">
+        If you think you might already have an account, you can try signing in below.  If that doesn't work, ask the person who sent you
+        the invite to make sure they gave you the right one.
+
+    <div class="flex-row center-text">
+        <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"> Sign in with Google</span></a></div>
+        <div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"> Sign in with Twitter</span></a></div>
+    </div>
+
+    <p class="subtle-text center-text">Make sure you use the same method each time.
+</div>
+<% } %>
+
+<%- include partials/connect-with-us.ejs %>
+</body>
+</html>
