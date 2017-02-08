@@ -4,7 +4,7 @@ export class MailSender {
   constructor() {
   }
 
-  sendInvite(invitedBy: string, recipient: string, url: string) {
+  sendInvite(invitedBy: string, recipient: string, url: string): Promise<any> {
     const from_email = new helper.Email("musicoin@musicoin.org");
     const to_email = new helper.Email(recipient);
     const subject = `${invitedBy} wants to you join Musicoin!`;
@@ -19,11 +19,13 @@ export class MailSender {
       body: mail.toJSON()
     });
 
-    sg.API(request, function (error, response) {
-      console.log(response.statusCode);
-      console.log(response.body);
-      console.log(response.headers);
-    })
+    return sg.API(request)
+      .then(response => {
+        if (response.statusCode < 300) {
+          return response;
+        }
+        throw new Error("Failed to send e-mail, server returned status code: " + response.statusCode);
+      });
   }
 
   /* SendGrid documentation on templates sucks */

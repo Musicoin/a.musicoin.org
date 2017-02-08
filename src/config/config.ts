@@ -56,10 +56,15 @@ const config = {
     getTransactionHistory: `${keyValueConfig.musicoinApiEndpoint}/tx/history`,
     publishProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
     sendFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/send`,
+    sendReward: `${keyValueConfig.musicoinApiEndpoint}/reward`,
     releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,
     getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,
     clientID: keyValueConfig.musicoinApiClientId,
     clientSecret: keyValueConfig.musicoinApiClientSecret
+  },
+  rewards: {
+    sentInvite: 10,
+    inviteAccepted: 100
   },
   auth: {
     'googleAuth' : {

@@ -64,7 +64,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-routes.configure(app, passport, musicoinApi, mediaProvider, config.serverEndpoint);
+routes.configure(app, passport, musicoinApi, mediaProvider, config);
 
 // let angular catch them
 app.use(function(req, res) {

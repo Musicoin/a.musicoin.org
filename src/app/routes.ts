@@ -15,13 +15,15 @@ const loginRedirect = "/";
 const maxImageWidth = 400;
 const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 
-export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, serverEndpoint: string) {
+export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
   let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider);
   let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper);
   const mailSender = new MailSender();
   let restAPI = new MusicoinRestAPI(jsonAPI);
   const addressResolver = new AddressResolver();
+  const serverEndpoint = config.serverEndpoint;
+
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider));
   app.use('/admin/*', isLoggedIn, adminOnly);
@@ -257,20 +259,32 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               invitedOn: Date.now(),
               claimed: false
             };
-            newUser.save(function(err, record) {
-              if (err) {
+            newUser.save()
+              .then(() => {
+                return mailSender.sendInvite(req.user.draftProfile.artistName, id, serverEndpoint + "/accept/" + inviteCode);
+              })
+              .then(() => {
+                console.log("MailSender successfully sent invite");
+                // try to send the reward.  For now, don't fail if the reward doesn't send.
+                // TODO: Fail here after we are confident that this new API should work
+                return musicoinApi.sendReward(req.user.profileAddress, config.rewards.sentInvite)
+                  .catch((err) => {
+                    console.log("Failed to send reward for invite: " + err);
+                    return null;
+                  })
+              })
+              .then((tx) => {
+                console.log("Sent reward for invite: " + tx);
+                req.user.invitesRemaining--;
+                return req.user.save();
+              })
+              .then(() => {
+                return res.redirect('profile?invited=' + id + "&success=true&inviteCode=" + inviteCode);
+              })
+              .catch(function(err) {
                 console.log(err);
-                return res.redirect('profile?invited=' + id + "&success=false&reason=error");
-              }
-
-              // fire and forget update to invite count
-              req.user.invitesRemaining--;
-              req.user.save();
-
-              mailSender.sendInvite(req.user.draftProfile.artistName, id, serverEndpoint + "/accept/" + inviteCode);
-              return res.redirect('profile?invited=' + id + "&success=true&inviteCode=" + inviteCode);
-
-            });
+                res.redirect('profile?invited=' + id + "&success=false&reason=error");
+              });
           }
           else {
             console.log(`User already exists: ${id}`);

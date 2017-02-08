@@ -8,6 +8,7 @@ cachedRequest.setValue('ttl', 30000);
 
 interface MusicoinApiConfig {
   sendFromProfile: string,
+  sendReward: string,
   publishProfile: string,
   releaseLicense: string,
   getKey: string,
@@ -88,6 +89,13 @@ export class MusicoinAPI {
     return this.postJson(this.apiConfig.sendFromProfile, {
       profileAddress: profileAddress,
       recipientAddress: recipientAddress,
+      musicoins: musicoins
+    }).then(body => body.tx);
+  }
+
+  sendReward(recipient: string, musicoins: number): Promise<string> {
+    return this.postJson(this.apiConfig.sendReward, {
+      recipient: recipient,
       musicoins: musicoins
     }).then(body => body.tx);
   }
