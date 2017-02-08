@@ -125,8 +125,14 @@
                     <td class="text-center middle">
                         <% if(user.profileAddress && user.draftProfile.artistName) { %>
                         <a target="_blank" href="/artist/<%=user.profileAddress%>"><%=user.draftProfile.artistName%></a>
+                        <% } else if (user.draftProfile && user.draftProfile.artistName) { %>
+                        draft
                         <% } else { %>
                         <%=unchecked%>
+                        <% } %>
+
+                        <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") {%>
+                        (v<%=user.draftProfile.version%>)
                         <% } %>
                     </td>
                     <td class="text-center middle"><%-user.mostRecentReleaseDate ? checked : unchecked%></td>

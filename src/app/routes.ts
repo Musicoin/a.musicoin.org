@@ -456,7 +456,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const prefix = "social.";
       const socialData = FormUtils.groupByPrefix(fields, prefix);
 
-      const profile = req.user.draftProfile;
+      const profile = req.user.draftProfile || {};
       const i = files.photo.size == 0
         ? (profile.ipfsImageUrl && profile.ipfsImageUrl.trim().length > 0)
           ? Promise.resolve(profile.ipfsImageUrl)
@@ -465,13 +465,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           .then((newPath) => mediaProvider.upload(newPath));
       const d = mediaProvider.uploadText(fields.description);
       const s = mediaProvider.uploadText(JSON.stringify(socialData));
+      const version = profile.version ? profile.version : 1;
       return Promise.join(i, d, s, function (imageUrl, descriptionUrl, socialUrl) {
         req.user.draftProfile = {
           artistName: fields.artistName,
           description: fields.description,
           social: socialData,
           ipfsImageUrl: imageUrl,
-          genres: fields.genres.split(",").map(s => s.trim()).filter(s => s)
+          genres: fields.genres.split(",").map(s => s.trim()).filter(s => s),
+          version: version+1
         };
         console.log(`Saving updated profile to database...`);
         req.user.save(function (err) {

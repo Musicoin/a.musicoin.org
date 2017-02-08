@@ -39,7 +39,8 @@ const userSchema = mongoose.Schema({
     description: String,
     social: Object,
     ipfsImageUrl: String,
-    genres: [String]
+    genres: [String],
+    version: Number
   },
   hideProfile: Boolean,
   joinDate: {
