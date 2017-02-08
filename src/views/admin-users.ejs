@@ -28,6 +28,12 @@
             font-size: 14pt;
         }
 
+        .history-nav-link-disabled {
+            margin-left: 10px;
+            font-size: 14pt;
+            color: #aaa
+        }
+
         tr.claimed {
             background-color: rgba(0,200,0,0.1);
         }
@@ -74,6 +80,8 @@
                     <%}%>
                     <% if (navigation.next) { %>
                     <a class="history-nav-link" href="<%=navigation.next%>">next</a>
+                    <%} else {%>
+                    <span class="history-nav-link-disabled">next</span>
                     <%}%>
                 </div>
             </div>
@@ -85,15 +93,15 @@
                     <th class="text-center">Invite<br>Accepted</th>
                     <th class="text-center">Linked Google</th>
                     <th class="text-center">Linked Twitter</th>
-                    <th class="text-center">Profile<br>Created</th>
+                    <th class="text-center">Profile</th>
                     <th class="text-center">Music<br>Released</th>
                     <th class="text-center">Invites<br>Left</th>
                 </tr>
 
                 <% for (var ivt=0; ivt < users.length; ivt++) {
                     var user = users[ivt];
-                    var checked = '<i class="fa fa-check-square-o" aria-hidden="true"></i>';
-                    var unchecked = '<i class="fa fa-square-o" aria-hidden="true"></i>';
+                    var checked = 'yes';
+                    var unchecked = '-';
                     var invite = user.invite ? user.invite : {};
                     var invitedBy = invite.invitedBy || {};
                     var state = invite.claimed
@@ -118,7 +126,7 @@
                         <% if(user.profileAddress && user.draftProfile.artistName) { %>
                         <a target="_blank" href="/artist/<%=user.profileAddress%>"><%=user.draftProfile.artistName%></a>
                         <% } else { %>
-                        <i class="fa fa-square-o" aria-hidden="true"></i>
+                        <%=unchecked%>
                         <% } %>
                     </td>
                     <td class="text-center middle"><%-user.mostRecentReleaseDate ? checked : unchecked%></td>

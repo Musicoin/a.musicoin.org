@@ -20,3 +20,9 @@ authbind --deep forever start server.js
 
 
 gmc-windows-4.0-386-im.exe --datadir C:/Users/Dan/.musicoin-pi/chain --rpc --rpcapi=db,eth,net,web3,personal,miner --rpcport 8545 --rpcaddr 127.0.0.1 --rpccorsdomain localhost console
+
+
+# importing users
+mongorestore -d musicoin-org --nsInclude musicoin-org.users /user-import
+mongorestore --collection users --db musicoin-org /user-import/users.bson
+db.users.update({}, {$unset: {profileAddress: null}}, {multi: true})

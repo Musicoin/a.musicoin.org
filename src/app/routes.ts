@@ -327,10 +327,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/admin/users', (req, res) => {
-    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start-length);
-    const url = '/admin/users';
+    const url = '/admin/users?search=' + req.query.search;
     jsonAPI.getAllUsers(req.query.search, start, length)
       .then(users => {
         doRender(req, res, 'admin-users.ejs', {
@@ -338,9 +338,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           users: users,
           navigation: {
             description: `Showing ${start+1} to ${start+users.length}`,
-            start: previous > 0 ? `${url}?length=${length}` : null,
-            back: previous >= 0 && previous < start ? `${url}?length=${length}&start=${start-length}` : null,
-            next: users.length >= length ? `${url}?length=${length}&start=${start+length}` : null
+            start: previous > 0 ? `${url}&length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start-length}` : null,
+            next: users.length >= length ? `${url}&length=${length}&start=${start+length}` : null
           }
         });
       });
@@ -448,6 +448,47 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/profile/save', isLoggedIn, function(req, res) {
+    const form = new Formidable.IncomingForm();
+    form.parse(req, (err, fields:any, files:any) => {
+      console.log(`Fields: ${JSON.stringify(fields)}`);
+      console.log(`Files: ${JSON.stringify(files)}`);
+
+      const prefix = "social.";
+      const socialData = FormUtils.groupByPrefix(fields, prefix);
+
+      const profile = req.user.draftProfile;
+      const i = files.photo.size == 0
+        ? (profile.ipfsImageUrl && profile.ipfsImageUrl.trim().length > 0)
+          ? Promise.resolve(profile.ipfsImageUrl)
+          : Promise.resolve(defaultProfileIPFSImage)
+        : FormUtils.resizeImage(files.photo.path, maxImageWidth)
+          .then((newPath) => mediaProvider.upload(newPath));
+      const d = mediaProvider.uploadText(fields.description);
+      const s = mediaProvider.uploadText(JSON.stringify(socialData));
+      return Promise.join(i, d, s, function (imageUrl, descriptionUrl, socialUrl) {
+        req.user.draftProfile = {
+          artistName: fields.artistName,
+          description: fields.description,
+          social: socialData,
+          ipfsImageUrl: imageUrl,
+          genres: fields.genres.split(",").map(s => s.trim()).filter(s => s)
+        };
+        console.log(`Saving updated profile to database...`);
+        req.user.save(function (err) {
+          if (err) {
+            console.log(`Saving profile to database failed! ${err}`);
+            res.send(500);
+          }
+          else {
+            console.log(`Saving profile to database ok!`);
+            res.redirect("/profile");
+          }
+        });
+      }.bind(this));
+    });
+  });
+
+  app.post('/profile/publish', isLoggedIn, function(req, res) {
     const form = new Formidable.IncomingForm();
     form.parse(req, (err, fields:any, files:any) => {
       console.log(`Fields: ${JSON.stringify(fields)}`);

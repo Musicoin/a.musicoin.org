@@ -163,10 +163,10 @@
                             <%}%>
                         </table>
                     </div>
-                    <div class="text-center">
-                        <input type="checkbox" name="hideProfile" <%=user.hideProfile ? "checked" : ""%>>
-                        This is a wallet-only account <a href="/faq#WalletOnlyAccount" target="help">(?)</a>
-                    </div>
+                    <!--<div class="text-center">-->
+                        <!--<input type="checkbox" name="hideProfile" <%=user.hideProfile ? "checked" : ""%>>-->
+                        <!--This is a wallet-only account <a href="/faq#WalletOnlyAccount" target="help">(?)</a>-->
+                    <!--</div>-->
                     <% if (user.profileAddress) {%>
                     <div class="text-center">
                         View your public profile page here <a href="/artist/<%=user.profileAddress%>">here</a>
@@ -176,8 +176,8 @@
                     <div class="text-center">By publishing your profile, you agree to our <a href="/terms">terms of use</a></div>
                     <% } %>
                     <div style="display:flex; justify-content: flex-end">
-                        <button type="submit" class="btn btn-warning btn-lg">
-                            <%= (user.pendingTx || user.profileAddress) ? "Update" : "Publish" %>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <%= (user.pendingTx || user.profileAddress) ? "Update" : "Save" %>
                         </button>
                     </div>
                     <% if (typeof profileUpdateError != "undefined" && profileUpdateError) {%>
@@ -493,6 +493,13 @@
             <div class="well">
                 <h3>wallet</h3>
                 Once you publish a profile, you can check your balance here and send coins to other users.
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well">
+                <h3>invite</h3>
+                Once you publish a profile, you can invite other users to join here.
             </div>
         </div>
 
