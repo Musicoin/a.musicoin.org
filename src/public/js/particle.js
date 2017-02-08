@@ -37,7 +37,8 @@ THE SOFTWARE.
  *	lifespan indicates the duration that this particle should
  *		live.
  */
-var hasUserInteracted = false;
+var gravity = true;
+var bounceY = 230;
 function Particle(x, y, xVelocity, yVelocity, lifespan, color){
 	// set initial position and velocity
 	this.x = x;
@@ -60,9 +61,9 @@ function Particle(x, y, xVelocity, yVelocity, lifespan, color){
 		this.y -= this.yVelocity;
 		this.alpha -= this.dAlpha;
 
-		if (!hasUserInteracted) {
+		if (gravity) {
       this.yVelocity -= 0.2;
-      if (this.y > 230)
+      if (bounceY > 0 && this.y > 230)
         this.yVelocity = -this.yVelocity/2;
 		}
 

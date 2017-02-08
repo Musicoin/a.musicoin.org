@@ -457,16 +457,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const socialData = FormUtils.groupByPrefix(fields, prefix);
 
       const profile = req.user.draftProfile || {};
-      const i = files.photo.size == 0
+
+      // if a new image was selected, upload it to ipfs.
+      // otherwise, use the existing IPFS url
+      const uploadImage = files.photo.size == 0
         ? (profile.ipfsImageUrl && profile.ipfsImageUrl.trim().length > 0)
           ? Promise.resolve(profile.ipfsImageUrl)
           : Promise.resolve(defaultProfileIPFSImage)
         : FormUtils.resizeImage(files.photo.path, maxImageWidth)
           .then((newPath) => mediaProvider.upload(newPath));
-      const d = mediaProvider.uploadText(fields.description);
-      const s = mediaProvider.uploadText(JSON.stringify(socialData));
+
       const version = profile.version ? profile.version : 1;
-      return Promise.join(i, d, s, function (imageUrl, descriptionUrl, socialUrl) {
+      uploadImage.then((imageUrl) => {
         req.user.draftProfile = {
           artistName: fields.artistName,
           description: fields.description,
@@ -476,17 +478,36 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           version: version+1
         };
         console.log(`Saving updated profile to database...`);
-        req.user.save(function (err) {
-          if (err) {
-            console.log(`Saving profile to database failed! ${err}`);
-            res.send(500);
-          }
-          else {
-            console.log(`Saving profile to database ok!`);
-            res.redirect("/profile");
-          }
-        });
-      }.bind(this));
+        return req.user.save();
+      })
+        .then((result) => {
+          const d = mediaProvider.uploadText(fields.description);
+          const s = mediaProvider.uploadText(JSON.stringify(socialData));
+          return Promise.join(d, s, (descriptionUrl, socialUrl) => {
+            return musicoinApi.publishProfile(req.user.profileAddress, fields.artistName, descriptionUrl, profile.ipfsImageUrl, socialUrl)
+              .then((tx) => {
+                console.log(`Transaction submitted! Profile tx : ${tx}`);
+                req.user.pendingTx = tx;
+                req.user.updatePending = true;
+                req.user.hideProfile = !!fields.hideProfile;
+                console.log(`Saving profile tx info to the database...`);
+                req.user.save(function (err) {
+                  if (err) {
+                    console.log(`Saving profile to database failed! ${err}`);
+                    res.send(500);
+                  }
+                  else {
+                    console.log(`Saving profile to database ok!`);
+                    res.redirect("/profile");
+                  }
+                });
+              })
+          })
+        })
+        .catch((err) => {
+          console.log("Failed to update user profile: " + err);
+          res.redirect("/profile?profileUpdateError=true");
+      })
     });
   });
 

@@ -73,6 +73,7 @@ textarea.form-control {
 .pl25 {  padding-left: 25px;  }
 .shift-r20 { left: 20px; position: relative }
 .mb5 {  margin-bottom: 5px;  }
+.mt10 {  margin-top: 10px;  }
 .mb20 {  margin-bottom: 20px;  }
 .mr5 {  margin-right: 5px;  }
 .text-middle {
@@ -134,6 +135,10 @@ textarea.form-control {
 }
 .text-nowrap {
     white-space: nowrap;
+}
+
+.text-small {
+    font-size: 10px;
 }
 
 .abs-top-right {

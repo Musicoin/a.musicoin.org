@@ -60,6 +60,7 @@ var mousePosY = 200;
 
 // if enabled, animate "fire" effect (spark each frame)
 var fire = true;
+var fireworks = false;
 
 // if enabled, fire will follow the mouse (if animating fire)
 var follow = false;
@@ -82,7 +83,8 @@ function initParticleAnimation() {
   // click listener (starts sparks at click location on canvas)
   $("#particle_canvas").click(function(e){
     RANGE_OF_ANGLE = 360;
-    hasUserInteracted = true;
+    gravity = false;
+    bounceY = 0;
     // create a spark if fire is not animating
     if(!fire){
       var x = e.pageX - $("#particle_canvas").offset().left;
@@ -136,13 +138,34 @@ function spark(x, y, angle){
 	}
 }
 
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 // animation update function (updates all particles)
 //	if fire is on, create a "spark" in the current mouse position
 function animationUpdate(){
 	// if fire is active, animate a fire
-	if(fire)
-		spark(mousePosX, mousePosY, ANGLE);
+	if(fire) {
+		if (fireworks) {
+      var seconds = Math.floor(new Date().getTime() / 500);
+      if (seconds % getRandomIntInclusive(1, 10) == 0) {
+        var offset = Math.round(RANGE_OF_ANGLE*Math.random()) - RANGE_OF_ANGLE/2;
+        var scaleX = Math.round(SPEED*Math.random())*50 + 1;
+        var scaleY = Math.round(SPEED*Math.random())*50 + 1;
+        var rootX = Math.cos((360+offset) * Math.PI / 180) * scaleX + mousePosX;
+        var rootY = Math.sin((360+offset) * Math.PI / 180) * scaleY + mousePosY;
+        PARTICLE_COLOR = getRandomIntInclusive(0, 4);
+        SPEED = getRandomIntInclusive(4, 10);
+        spark(rootX, rootY, 360);
+      }
+		}
+    else {
+      spark(mousePosX, mousePosY, ANGLE);
+		}
+	}
 	// update and draw particles
 	pCtx.clearRect(0, 0, pCtxWidth, pCtxHeight);
 	for(var i=0; i<particles.length; i++){
@@ -169,6 +192,17 @@ function setColor(colorVal){
 		case "blue":	PARTICLE_COLOR = COLOR_VAL_BLUE;	break;
 		default:		PARTICLE_COLOR = COLOR_VAL_FIRE;	break;
 	}
+}
+
+function showFireworks(x, y){
+  mousePosX = x;
+  mousePosY = y;
+	fireworks = true;
+	follow = false;
+	gravity = true;
+	bounceY = 0;
+  RANGE_OF_ANGLE = 360;
+  ANGLE = 360;
 }
 
 // trigger fire on/off

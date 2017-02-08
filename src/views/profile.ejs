@@ -187,8 +187,9 @@
                     <% }  %>
 
                     <% if (user.pendingTx) {%>
-                    <div>
-                        Waiting for confirmation (<%=user.pendingTx%>)
+                    <div class="text-center subtle-text mt10">
+                        Your updates were sent to the network and we're just waiting for confirmation.<BR>
+                        <span class="subtle-text text-small"><%=user.pendingTx%></span>
                     </div>
                     <% }  %>
 
