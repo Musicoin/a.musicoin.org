@@ -126,7 +126,7 @@
                         <% if(user.profileAddress && user.draftProfile.artistName) { %>
                         <a target="_blank" href="/artist/<%=user.profileAddress%>"><%=user.draftProfile.artistName%></a>
                         <% } else if (user.draftProfile && user.draftProfile.artistName) { %>
-                        draft
+                        <%=user.draftProfile.artistName%>
                         <% } else { %>
                         <%=unchecked%>
                         <% } %>

@@ -113,9 +113,9 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       const condition = req.body.profileAddress
         ? {'profileAddress': req.body.profileAddress}
         : req.body.gmailAddress
-          ? {'google.email': req.body.gmailAddress.toLowerCase()}
+          ? {'google.email': req.body.gmailAddress}
           : req.body.twitterHandle
-            ? {'twitter.username': req.body.twitterHandle.toLowerCase().replace("@", "")}
+            ? {'twitter.username': req.body.twitterHandle.replace("@", "")}
             : null;
 
       if (!condition) {
