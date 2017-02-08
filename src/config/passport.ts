@@ -167,6 +167,10 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       // make the code asynchronous
       // User.findOne won't fire until we have all our data back from Google
       process.nextTick(function () {
+        if (req.user) {
+          return done(null, req.user);
+        }
+
         // try to find the user based on their google id
         const googleInfo = asGoogleUser(profile);
         if (!req.user) {
@@ -241,7 +245,9 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
       // asynchronous
       process.nextTick(function() {
-
+        if (req.user) {
+          return done(null, req.user);
+        }
         // check if the user is already logged in
         if (!req.user) {
           const conditions = [
