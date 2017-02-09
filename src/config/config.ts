@@ -83,7 +83,7 @@ const config = {
     'soundcloudAuth' : {
       'clientID'   : keyValueConfig.soundcloudClientId,
       'clientSecret': keyValueConfig.soundcloudClientSecret,
-      'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/soundcloud/callback`
+      'callbackURL'   : `https://alpha.musicoin.org/auth/soundcloud/callback`
     }
   },
   certificate: {
