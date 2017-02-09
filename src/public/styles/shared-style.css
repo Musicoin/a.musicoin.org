@@ -192,3 +192,18 @@ textarea.form-control {
         background-color: rgba(255,255,255,0.15);
     }
 }
+
+.btn-soundcloud {
+    color: #ffffff;
+    background-color: #fc710e;
+    border-color: #d1660e;
+}
+
+.btn-soundcloud:hover,
+.btn-soundcloud:focus,
+.btn-soundcloud:active,
+.btn-soundcloud.active {
+    color: #ffffff;
+    background-color: #f06e0e;
+    border-color: #c7640e;
+}

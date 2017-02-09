@@ -85,8 +85,9 @@
                     <th class="text-center">Invited By</th>
                     <th class="text-center">Invite Code</th>
                     <th class="text-center">Invite<br>Accepted</th>
-                    <th class="text-center">Linked Google</th>
-                    <th class="text-center">Linked Twitter</th>
+                    <th class="text-center">Linked<br>Google</th>
+                    <th class="text-center">Linked<br>Twitter</th>
+                    <th class="text-center">Linked<br>Soundcloud</th>
                     <th class="text-center">Profile</th>
                     <th class="text-center">Music<br>Released</th>
                     <th class="text-center">Invites<br>Left</th>
@@ -116,6 +117,7 @@
                         <%-!!user.google.token ? user.google.email : "" %>
                     </td>
                     <td class="text-center middle"><%-!!user.twitter.token ? user.twitter.username : unchecked %></td>
+                    <td class="text-center middle"><%-!!user.soundcloud.token ? user.soundcloud.username : unchecked %></td>
                     <td class="text-center middle">
                         <% if(user.profileAddress && user.draftProfile.artistName) { %>
                         <a target="_blank" href="/artist/<%=user.profileAddress%>"><%=user.draftProfile.artistName%></a>

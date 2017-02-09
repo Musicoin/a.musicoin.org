@@ -777,6 +777,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       failureRedirect : '/invite'
     }));
 
+  app.get('/auth/soundcloud', passport.authenticate('soundcloud'));
+
+  // the callback after google has authenticated the user
+  app.get('/auth/soundcloud/callback',
+    passport.authenticate('soundcloud', {
+      successRedirect : loginRedirect,
+      failureRedirect : '/invite'
+    }));
+
   app.get('/auth/twitter', passport.authenticate('twitter', { scope : 'email' }));
 
   // handle the callback after twitter has authenticated the user

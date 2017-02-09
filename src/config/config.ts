@@ -19,6 +19,9 @@ const keyValueConfig = {
   twitterClientId: process.env.TWITTER_CLIENT_ID || "yourClientId",
   twitterClientSecret: process.env.TWITTER_SECRET || "yourClientSecret",
 
+  soundcloudClientId: process.env.SOUNDCLOUD_CLIENT_ID || "yourClientId",
+  soundcloudClientSecret: process.env.SOUNDCLOUD_SECRET || "yourClientSecret",
+
   domains: process.env.CERTIFICATE_DOMAINS || "alpha.musicoin.org,musicoin.org,orbiter.musicoin.org"
 
 };
@@ -76,6 +79,11 @@ const config = {
       'consumerKey'   : keyValueConfig.twitterClientId,
       'consumerSecret': keyValueConfig.twitterClientSecret,
       'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/twitter/callback`
+    },
+    'soundcloudAuth' : {
+      'clientID'   : keyValueConfig.soundcloudClientId,
+      'clientSecret': keyValueConfig.soundcloudClientSecret,
+      'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/soundcloud/callback`
     }
   },
   certificate: {

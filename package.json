@@ -23,6 +23,7 @@
     "passport-facebook": "~1.0.2",
     "passport-google-oauth": "~0.1.5",
     "passport-local": "~0.1.6",
+    "passport-soundcloud": "^0.2.0",
     "passport-twitter": "~1.0.2",
     "request": "^2.75.0",
     "sendgrid": "^4.7.1",

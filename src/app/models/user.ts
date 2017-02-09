@@ -34,6 +34,13 @@ const userSchema = mongoose.Schema({
     name: String,
     picture: String
   },
+  soundcloud: {
+    id: String,
+    token: String,
+    name: String,
+    username: String,
+    picture: String
+  },
   draftProfile: {
     artistName: String,
     description: String,

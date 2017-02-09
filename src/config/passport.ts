@@ -2,10 +2,10 @@ import {Passport} from "passport";
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
+const SoundCloudStrategy = require('passport-soundcloud').Strategy;
 
 // load up the user model
 const User = require('../app/models/user');
-const Invite = require('../app/models/invite');
 const InviteRequest = require('../app/models/invite-request');
 const defaultProfile = {
   artistName: "",
@@ -116,7 +116,9 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           ? {'google.email': req.body.gmailAddress}
           : req.body.twitterHandle
             ? {'twitter.username': req.body.twitterHandle.replace("@", "")}
-            : null;
+            : req.body.soundcloudUsername
+              ? {'soundcloud.username': req.body.soundcloudUsername}
+              : null;
 
       if (!condition) {
         return done(null, false, req.flash('loginMessage', 'You must provide a profileAddress, a gmail address, or a twitter handle')); // create the loginMessage and save it to session as flashdata
@@ -308,4 +310,103 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         }
       });
     }));
+
+  // =========================================================================
+  // SOUNDCLOUD =================================================================
+  // =========================================================================
+  passport.use(new SoundCloudStrategy({
+
+      clientID     : configAuth.soundcloudAuth.clientID,
+      clientSecret : configAuth.soundcloudAuth.clientSecret,
+      callbackURL  : configAuth.soundcloudAuth.callbackURL,
+      passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+
+    },
+    function(req, token, tokenSecret, profile, done) {
+
+      // asynchronous
+      process.nextTick(function() {
+        if (req.user) {
+          return done(null, req.user);
+        }
+
+        const localProfile = {
+          id: profile.id,
+          token: token,
+          username: profile._json.permalink,
+          name: profile._json.full_name,
+          picture: profile._json.avatar_url
+        }
+
+        const conditions = { $or : [
+          { 'soundcloud.id' : localProfile.id },
+          { 'soundcloud.username' : localProfile.username }
+        ]};
+
+        doStandardLogin("soundcloud",
+          req,
+          profile,
+          localProfile,
+          User.findOne(conditions),
+          done);
+      });
+    }));
+
+   function doStandardLogin(key: string,
+                            req,
+                            externalProfile,
+                            localProfile,
+                            existingUserQuery,
+                            done) {
+    // check if the user is already logged in
+    // first, check if this user already exists
+    existingUserQuery.exec()
+      .then(function (user) {
+        if (user) return user;
+        if (!req.session || !req.session.inviteCode) return null;
+
+        // if not, look for an unclaimed invite
+        return User.findOne({
+          $and: [
+            {'invite.inviteCode': req.session.inviteCode},
+            {'invite.claimed': false},
+          ]
+        }).exec()
+      })
+      .then(function (user) {
+        delete req.session.inviteCode;
+        if (user) {
+          // if there is a user id already but no token (user was linked at one point and then removed)
+          if (!user[key].token || !user.invite.claimed) {
+            user.invite.claimed = true;
+            user[key] = localProfile;
+
+            return user.save(function (err) {
+              if (err)
+                return done(err);
+
+              return done(null, user);
+            });
+          }
+
+          return done(null, user); // user found, return that user
+        }
+        else {
+          var query = {email: externalProfile.username},
+            update = {expire: new Date()},
+            options = {upsert: true, new: true, setDefaultsOnInsert: true};
+
+          // Find the document
+          InviteRequest.findOneAndUpdate(query, update, options, function (error, result) {
+            if (error) return;
+            console.log("Created invite request for user: " + externalProfile.username);
+          });
+          return done(null, false, req.flash('loginMessage', 'An invite is required'));
+        }
+      })
+      .catch(function (err) {
+        console.log(`Failed while trying to login with ${key}: ${err}`);
+        done(err);
+      });
+  };
 }
