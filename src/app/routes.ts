@@ -665,6 +665,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       for (let i = 0; i < 5; i++) {
         const trackData = Object.assign(FormUtils.groupByPrefix(fields, `track${i}.`), FormUtils.groupByPrefix(files, `track${i}.`));
         if (Object.keys(trackData).length > 0) {
+          if (!trackData['genres']) trackData['genres'] = "";
           tracks.push(trackData);
         }
       }
@@ -687,9 +688,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             ? FormUtils.resizeImage(track.image.path, maxImageWidth)
               .then((newPath) => mediaProvider.upload(newPath))
             : Promise.resolve(req.user.draftProfile.ipfsImageUrl);
-          var genreArray = track.genres.split(",").map(s => s.trim()).filter(s => s);
+          track.genreArray = track.genres.split(",").map(s => s.trim()).filter(s => s);
           const metadata = {
-            genres: genreArray
+            genres: track.genreArray
           };
           const m = mediaProvider.uploadText(JSON.stringify(metadata));
           const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
@@ -716,14 +717,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           console.log("Got transactions: " + JSON.stringify(txs));
           const releases = [];
           for (let i=0; i < txs.length; i++) {
-            var genreArray = tracks[i].genres.split(",").map(s => s.trim()).filter(s => s);
             releases.push({
               tx: txs[i],
               title: tracks[i].title,
               imageUrl: tracks[i].imageUrl,
               artistName: req.user.draftProfile.artistName,
               artistAddress: req.user.profileAddress,
-              genres: genreArray
+              genres: tracks[i].genreArray
             });
           }
 

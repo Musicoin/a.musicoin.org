@@ -163,8 +163,7 @@ export class MusicoinOrgJsonAPI {
     const search = this._sanitize(_search);
     const genre = this._sanitize(_genre);
 
-    let query = User.find({profileAddress: {$ne: null}})
-      .where({mostRecentReleaseDate: {$ne: null}});
+    let query = User.find({profileAddress: {$ne: null}});
 
     if (search) {
       query = query.where({"draftProfile.artistName": {"$regex": search, "$options": "i"}})
