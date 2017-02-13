@@ -21,7 +21,7 @@ const keyValueConfig = {
 
   soundcloudClientId: process.env.SOUNDCLOUD_CLIENT_ID || "yourClientId",
   soundcloudClientSecret: process.env.SOUNDCLOUD_SECRET || "yourClientSecret",
-  soundcloudCallbackEndpoint: process.env.SOUNDCLOUD_CALLBACK_ENDPOINT || `https://alpha.musicoin.org/auth/soundcloud/callback`,
+  soundcloudCallbackEndpoint: process.env.SOUNDCLOUD_CALLBACK_ENDPOINT || `alpha.musicoin.org/auth/soundcloud/callback`,
 
   domains: process.env.CERTIFICATE_DOMAINS || "alpha.musicoin.org,musicoin.org,orbiter.musicoin.org"
 
