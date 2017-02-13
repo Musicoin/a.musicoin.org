@@ -345,6 +345,33 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.get('/admin/invite-requests', (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start - length);
+    const url = '/admin/invite-requests?search=' + (req.query.search ? req.query.search : '');
+    var options = {year: 'numeric', month: 'short', day: 'numeric'};
+    jsonAPI.getAllInviteRequests(req.query.search, start, length)
+      .then(requests => {
+        requests.forEach(r => {
+          r.requestDateDisplay = r.requestDate.toLocaleDateString('en-US', options);
+        });
+        return requests;
+      })
+      .then(requests => {
+        doRender(req, res, 'admin-invite-requests.ejs', {
+          search: req.query.search,
+          requests: requests,
+          navigation: {
+            description: `Showing ${start + 1} to ${start + requests.length}`,
+            start: previous > 0 ? `${url}&length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+            next: requests.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+          }
+        });
+      });
+  });
+
   app.get('/admin/users', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;

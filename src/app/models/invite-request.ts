@@ -3,7 +3,8 @@ import * as mongoose from 'mongoose';
 
 // create the model for users and expose it to our app
 module.exports = mongoose.model('InviteRequest', mongoose.Schema({
-  email: String,
+  username: String,
+  source: String,
   requestDate: {
     type: Date,
     default: Date.now

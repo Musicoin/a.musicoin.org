@@ -167,6 +167,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           token: token,
           name: profile.displayName,
           email: profile.emails[0].value,
+          username: profile.emails[0].value,
           picture: profile._json.picture
         };
 
@@ -266,7 +267,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       });
     }));
 
-   function doStandardLogin(key: string,
+   function doStandardLogin(authProvider: string,
                             req,
                             externalProfile,
                             localProfile,
@@ -291,9 +292,9 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         delete req.session.inviteCode;
         if (user) {
           // if there is a user id already but no token (user was linked at one point and then removed)
-          if (!user[key].token || !user.invite.claimed) {
+          if (!user[authProvider].token || !user.invite.claimed) {
             user.invite.claimed = true;
-            user[key] = localProfile;
+            user[authProvider] = localProfile;
 
             return user.save(function (err) {
               if (err)
@@ -306,7 +307,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           return done(null, user); // user found, return that user
         }
         else {
-          var query = {email: externalProfile.username},
+          var query = {username: localProfile.username, source: authProvider},
             update = {expire: new Date()},
             options = {upsert: true, new: true, setDefaultsOnInsert: true};
 
@@ -319,7 +320,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         }
       })
       .catch(function (err) {
-        console.log(`Failed while trying to login with ${key}: ${err}`);
+        console.log(`Failed while trying to login with ${authProvider}: ${err}`);
         done(err);
       });
   };

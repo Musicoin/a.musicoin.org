@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+    <title>Users - Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body        {
+            word-wrap:break-word;
+            background-image: url('/images/musician.jpg');
+            background-size: cover;
+        }
+        .history {
+            padding: 3px;
+            min-width: 20px;
+        }
+        .history-nav {
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-nav-link {
+            margin-left: 10px;
+            font-size: 14pt;
+        }
+
+        .history-nav-link-disabled {
+            margin-left: 10px;
+            font-size: 14pt;
+            color: #aaa
+        }
+
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<div class="container">
+    <div class="search-area mb20">
+        <div class="col-sm-5">
+            <form action="/admin/invite-requests" method="get">
+                <div class="flex-row">
+                    <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
+                    <input class="form-control text-large pl25"
+                           name="search"
+                           value="<%= search %>" placeholder="search users"
+                           autofocus onfocus="this.value = this.value;">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    Users that have attempted to login using social media, but did not have an invite
+    <div class="row">
+        <div class="well white-well">
+            <div class="history-nav">
+                <div>
+                    <%=navigation.description%>
+                </div>
+                <div>
+                    <% if (navigation.start) { %>
+                    <a class="history-nav-link" href="<%=navigation.start%>">first</a>
+                    <%}%>
+                    <% if (navigation.back) { %>
+                    <a class="history-nav-link" href="<%=navigation.back%>">back</a>
+                    <%}%>
+                    <% if (navigation.next) { %>
+                    <a class="history-nav-link" href="<%=navigation.next%>">next</a>
+                    <%} else {%>
+                    <span class="history-nav-link-disabled">next</span>
+                    <%}%>
+                </div>
+            </div>
+            <table class="table table-responsive" width="100%">
+                <tr>
+                    <th class="text-center">Request Date</th>
+                    <th class="text-center">Username</th>
+                    <th class="text-center">Source</th>
+                </tr>
+
+                <% for (var ivt=0; ivt < requests.length; ivt++) {
+                    var req = requests[ivt];
+                %>
+                <tr>
+                    <td class="text-center middle"><%=req.requestDateDisplay%></td>
+                    <td class="text-center middle"><%=req.username%></td>
+                    <td class="text-center middle"><%=req.source%></td>
+                </tr>
+                <%}%>
+            </table>
+        </div>
+    </div>
+</div>
+<%- include partials/connect-with-us.ejs %>
+</body>
+</html>

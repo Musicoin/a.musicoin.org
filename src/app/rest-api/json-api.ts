@@ -4,6 +4,7 @@ import {MusicoinAPI} from "../musicoin-api";
 const User = require('../../app/models/user');
 const Release = require('../../app/models/release');
 const Playback = require('../../app/models/playback');
+const InviteRequest = require('../../app/models/invite-request');
 
 const knownGenres = [
   "Alternative Rock",
@@ -77,6 +78,22 @@ export class MusicoinOrgJsonAPI {
         pendingReleases: pendingReleases
       }
     });
+  }
+
+  getAllInviteRequests(_search: string, start: number, length: number): Promise<any> {
+    const search = this._sanitize(_search);
+    let filter = {};
+    if (search) {
+      filter = {$or: [
+        {"username": {"$regex": search, "$options": "i"}},
+        {"source": {"$regex": search, "$options": "i"}}
+      ]};
+    }
+    return InviteRequest.find(filter)
+      .sort({"requestDate": 'asc'})
+      .skip(start)
+      .limit(length)
+      .exec();
   }
 
   getAllUsers(_search: string, start: number, length: number): Promise<any> {
