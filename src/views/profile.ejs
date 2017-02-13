@@ -309,7 +309,7 @@
                     <div class="balance"><%=user.invitesRemaining%></div>
                     <div class="text-center subtle-text">invites left</div>
                 </div>
-                <div class="invite-options" style="<%= invited.email ? "" : "display: none"%>">
+                <div class="invite-options" style="<%= invited.inviteUrl ? "" : "display: none"%>">
                     <br>
                     <p class="subtle-text">
                         Enter an address below and we'll send an invite to that address.  You can
@@ -320,24 +320,24 @@
                         <table cellpadding="3">
                             <tr>
                                 <td class="text-nowrap">e-mail</td>
-                                <td width="99%"><input name=email type="text" class="form-control" placeholder="email address"></td>
+                                <td width="99%"><input id=inviteEmail name=email type="text" class="form-control" placeholder="email address"></td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td class="text-right">
-                                    <button type="submit" class="btn btn-warning">
-                                        Send Invite
+                                    <button id=btnInvite type="submit" class="btn btn-success">
+                                        Create invite link
                                     </button>
                                 </td>
                             </tr>
-                            <% if (invited.email) { %>
+                            <% if (invited.inviteUrl) { %>
                             <tr>
                                 <td></td>
                                 <td>
                                     <% if (invited.success) {%>
                                     <div class="text-center">
-                                        <%=invited.email%> was invited.  <br>
-                                        You can also send this link via social media: <br>
+                                        <%=invited.email ? "An invite was sent to " + invited.email: ""%><br>
+                                        You can send this link via social media: <br>
                                         <%=invited.inviteUrl%>
                                     </div>
                                     <%} else if (invited.reason == "exists"){%>
@@ -536,6 +536,21 @@
 
     $("#profileImage").click(function() {
       $("#imageInput").click();
+    })
+
+    var inviteEmail = $("#inviteEmail");
+    var btnInvite = $("#btnInvite");
+    $("#inviteEmail").keyup(function() {
+      if (inviteEmail.val() && inviteEmail.val().trim().length > 0) {
+        btnInvite.text("Send invite");
+        btnInvite.addClass("btn-warn");
+        btnInvite.removeClass("btn-success");
+      }
+      else {
+        btnInvite.text("Create invite link");
+        btnInvite.removeClass("btn-warn");
+        btnInvite.addClass("btn-success");
+      }
     })
 
     function split( val ) {
