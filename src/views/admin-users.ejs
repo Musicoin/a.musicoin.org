@@ -84,7 +84,7 @@
                     <th class="text-center">Invited As</th>
                     <th class="text-center">Invited By</th>
                     <th class="text-center">Invite Code</th>
-                    <th class="text-center">Invite<br>Accepted</th>
+                    <th class="text-center">Invite<br>Clicked</th>
                     <th class="text-center">Linked<br>Google</th>
                     <th class="text-center">Linked<br>Twitter</th>
                     <th class="text-center">Linked<br>Soundcloud</th>
@@ -111,7 +111,7 @@
                         <% } %>
                     </td>
                     <td class="text-center middle"><%=invite.inviteCode%></td>
-                    <td class="text-center middle"><%-invite.claimed ? checked : unchecked %></td>
+                    <td class="text-center middle"><%-invite.clicked ? checked : unchecked %></td>
                     <td class="text-center middle">
                         <%-!!user.google.token ? user.google.name : unchecked %><BR>
                         <%-!!user.google.token ? user.google.email : "" %>

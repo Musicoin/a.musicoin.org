@@ -73,6 +73,10 @@ const userSchema = mongoose.Schema({
     claimed: {
       type: Boolean,
       default: false
+    },
+    clicked: {
+      type: Boolean,
+      default: false
     }
   }
 });

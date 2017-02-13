@@ -65,6 +65,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         delete req.session.inviteCode;
         let inviteClaimed = false;
         if (record) {
+          record.invite.clicked = true;
+          record.save();
           req.session.inviteCode = req.params.code;
           res.redirect("/welcome?inviteClaimed=" + record.invite.claimed);
         }
