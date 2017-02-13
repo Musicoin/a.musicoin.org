@@ -65,12 +65,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         delete req.session.inviteCode;
         let inviteClaimed = false;
         if (record) {
-          inviteClaimed = record.invite.claimed;
-          if (!inviteClaimed) {
-            req.session.inviteCode = req.params.code;
-          }
+          req.session.inviteCode = req.params.code;
+          res.redirect("/welcome?inviteClaimed=" + record.invite.claimed);
         }
-        res.redirect("/welcome?inviteClaimed=" + inviteClaimed);
+        else {
+          res.redirect("/info");
+        }
       });
   });
 

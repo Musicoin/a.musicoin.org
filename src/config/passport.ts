@@ -154,81 +154,33 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       callbackURL: configAuth.googleAuth.callbackURL,
       passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
     },
-    function (req, token, refreshToken, profile, done) {
+    function(req, token, tokenSecret, profile, done) {
 
-      const asGoogleUser = function(profile) {
-        return {
+      // asynchronous
+      process.nextTick(function() {
+        if (req.user) {
+          return done(null, req.user);
+        }
+
+        const localProfile = {
           id: profile.id,
           token: token,
           name: profile.displayName,
           email: profile.emails[0].value,
           picture: profile._json.picture
         };
-      };
 
-      // make the code asynchronous
-      // User.findOne won't fire until we have all our data back from Google
-      process.nextTick(function () {
-        if (req.user) {
-          return done(null, req.user);
-        }
+        const conditions = { $or : [
+          { 'google.id' : localProfile.id },
+          { 'google.email' : localProfile.email }
+        ]};
 
-        // try to find the user based on their google id
-        const googleInfo = asGoogleUser(profile);
-        if (!req.user) {
-          const conditions = [
-            { 'google.id' : googleInfo.id },
-            { 'google.email' : googleInfo.email }
-          ];
-
-          // first, check if this user already exists
-          User.findOne({ $or : conditions }).exec()
-            .then(function(user) {
-              if (user) return user;
-              if (!req.session || !req.session.inviteCode) return null;
-
-              // if not, look for an unclaimed invite
-              return User.findOne({$and: [
-                {'invite.inviteCode': req.session.inviteCode},
-                {'invite.claimed': false},
-              ]}).exec()
-            })
-            .then(function (user) {
-              delete req.session.inviteCode;
-              if (user) {
-                // if there is a user id already but no token (user was linked at one point and then removed)
-                if (!user.google.token || !user.invite.claimed) {
-                  user.invite.claimed = true;
-                  user.google = googleInfo;
-
-                  return user.save(function (err) {
-                    if (err)
-                      return done(err);
-
-                    return done(null, user);
-                  });
-                }
-
-                return done(null, user); // user found, return that user
-              }
-              else {
-                var query = {email: profile.username},
-                  update = { expire: new Date() },
-                  options = { upsert: true, new: true, setDefaultsOnInsert: true };
-
-                // Find the document
-                InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
-                  if (error) return;
-                  console.log("Created invite request for user: " + profile.email);
-                });
-                return done(null, false, req.flash('loginMessage', 'An invite is required'));
-              }
-            })
-            .catch(function(err) {
-              console.log(`Failed while trying to login with google: ${err}`);
-              done(err);
-            });
-        }
+        doStandardLogin("google",
+          req,
+          profile,
+          localProfile,
+          User.findOne(conditions),
+          done);
       });
     }));
 
@@ -250,64 +202,26 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         if (req.user) {
           return done(null, req.user);
         }
-        // check if the user is already logged in
-        if (!req.user) {
-          const conditions = [
-            { 'twitter.id' : profile.id },
-            { 'twitter.username' : profile.username }
-          ];
 
-          // first, check if this user already exists
-          User.findOne({ $or : conditions }).exec()
-            .then(function(user) {
-              if (user) return user;
-              if (!req.session || !req.session.inviteCode) return null;
+        const localProfile = {
+          id: profile.id,
+          token: token,
+          username: profile.username,
+          displayName: profile.displayName,
+          picture: profile._json.profile_image_url_https
+        };
 
-              // if not, look for an unclaimed invite
-              return User.findOne({$and: [
-                {'invite.inviteCode': req.session.inviteCode},
-                {'invite.claimed': false},
-              ]}).exec()
-            })
-            .then(function (user) {
-              delete req.session.inviteCode;
-              if (user) {
-                // if there is a user id already but no token (user was linked at one point and then removed)
-                if (!user.twitter.token || !user.invite.claimed) {
-                  user.invite.claimed = true;
-                  user.twitter.token = token;
-                  user.twitter.username = profile.username;
-                  user.twitter.displayName = profile.displayName;
-                  user.twitter.picture = profile._json.profile_image_url_https;
+        const conditions = { $or : [
+          { 'twitter.id' : localProfile.id },
+          { 'twitter.username' : localProfile.username }
+        ]};
 
-                  return user.save(function (err) {
-                    if (err)
-                      return done(err);
-
-                    return done(null, user);
-                  });
-                }
-
-                return done(null, user); // user found, return that user
-              }
-              else {
-                var query = {email: profile.username},
-                  update = { expire: new Date() },
-                  options = { upsert: true, new: true, setDefaultsOnInsert: true };
-
-                // Find the document
-                InviteRequest.findOneAndUpdate(query, update, options, function(error, result) {
-                  if (error) return;
-                  console.log("Created invite request for user: " + profile.username);
-                });
-                return done(null, false, req.flash('loginMessage', 'An invite is required'));
-              }
-            })
-            .catch(function(err) {
-              console.log(`Failed while trying to login with twitter: ${err}`);
-              done(err);
-            });
-        }
+        doStandardLogin("twitter",
+          req,
+          profile,
+          localProfile,
+          User.findOne(conditions),
+          done);
       });
     }));
 

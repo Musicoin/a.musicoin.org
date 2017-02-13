@@ -57,7 +57,7 @@ const userSchema = mongoose.Schema({
   mostRecentReleaseDate: Date,
   invitesRemaining: {
     type: Number,
-    default: 10
+    default: 5
   },
   invite: {
     invitedBy: {

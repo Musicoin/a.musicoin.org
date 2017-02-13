@@ -38,7 +38,7 @@
     }
 </style>
 
-<% if(hasInvite && !inviteClaimed) { %>
+<% if (hasInvite && !inviteClaimed) { %>
 <div class="container well white-well" style="position: relative">
     <div class="text-large flex-column center-text">
         <img src="/images/logo.png" width="300px">
@@ -64,34 +64,21 @@
     </div>
     <p class="subtle-text center-text">Make sure you use the same method each time.
 </div>
-<%}%>
-
-<% if(inviteClaimed) { %>
+<% } else { %>
 <div class="container well white-well" style="position: relative">
     <div class="text-large flex-column center-text">
         <img src="/images/logo.png" width="300px">
-        <div>:(</div>
+        <div>Welcome!</div>
     </div>
 
-    <p class="info-text">
-        Uh oh.  We'd love to have you join our community, but it looks like the invite
-        link you clicked was already accepted by someone else.  Here are some things you
-        can try:
-
-    <ul class="info-text">
-        <li>If you think you already have an account, try signing in below</li>
-        <li>Asking the person who sent the invite to make sure they sent you your own link</li>
-        <li>Join our <a target="_blank" href="http://slack.musicoin.org/">slack channel</a> and maybe you'll find a new friend with an invite left!</li>
-    </ul>
-    <p class="info-text">
-        If you think you might already have an account, you can try signing in below.  If that doesn't work, ask the person who sent you
-        the invite to make sure they gave you the right one.
+    <p class="info-text center-text">
+        Please sign in
 
     <div class="flex-row center-text">
-        <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"> Sign in with Google</span></a></div>
-        <div><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"> Sign in with Twitter</span></a></div>
+        <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"> Google</span></a></div>
+        <div class="mr5"><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"> Twitter</span></a></div>
+        <div><a href="/auth/soundcloud" class="btn btn-soundcloud btn-sm"><span class="fa fa-soundcloud text-large"> Soundcloud</span></a></div>
     </div>
-
     <p class="subtle-text center-text">Make sure you use the same method each time.
 </div>
 <% } %>
