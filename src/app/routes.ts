@@ -347,6 +347,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.get('/admin/overview', isLoggedIn, adminOnly, function (req, res) {
+    // render the page and pass in any flash data if it exists
+    musicoinApi.getAccountBalances(config.trackingAccounts.map(ta => ta.address))
+      .then(function (balances) {
+        const output = [];
+        balances.forEach((balance, index) => {
+          const accountDetails = config.trackingAccounts[index];
+          output.push({
+            balance: balance.musicoins,
+            formattedBalance: balance.formattedMusicoins,
+            name: accountDetails.name,
+            address: accountDetails.address,
+          })
+        })
+        return doRender(req, res, 'admin-overview.ejs', {accounts: output});
+      })
+  });
+
   app.get('/admin/invite-requests', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
@@ -481,6 +499,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       output.artist.formattedBalance = _formatNumber(output.artist.balance);
       doRender(req, res, "profile.ejs", output);
     })
+  });
+
+  app.post('/tip', isLoggedIn, hasProfile, function (req, res) {
+    musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
+      .then(function (tx) {
+        console.log(`Payment submitted! tx : ${tx}`);
+        res.json({success: true, tx: tx});
+      })
+      .catch(function (err) {
+        console.log(err);
+        res.json({success: false});
+      })
   });
 
   app.post('/send', isLoggedIn, function (req, res) {

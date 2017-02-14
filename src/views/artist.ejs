@@ -39,7 +39,17 @@
 <%- include partials/header.ejs %>
 <div class="container">
     <div class="page-header">
-        <h1><%=artist.artistName%></h1>
+        <h1><%=artist.artistName%>
+            <div id="player-tip-button"
+                 class="tip-button btn btn-success tip-button btn-xs"
+                 recipient="<%=artist.profileAddress%>"
+                 amount="1"
+                 text-success="Thanks! :)"
+                 text-fail=":("
+                 text-default="Tip Artist (1 $MC)">
+                Tip Artist (1 $MC)
+            </div>
+        </h1>
         <div class="subtle-text">profile address: <%=artist.profileAddress%></div>
         <div class="subtle-text pad10 text-justify">
         <%

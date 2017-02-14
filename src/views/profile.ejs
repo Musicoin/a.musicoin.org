@@ -189,7 +189,7 @@
                     <% if (user.pendingTx) {%>
                     <div class="text-center subtle-text mt10">
                         Your updates were sent to the network and we're just waiting for confirmation.<BR>
-                        <span class="subtle-text text-small"><%=user.pendingTx%></span>
+                        <span class="subtle-text"><a target="_blank" href="http://orbiter.musicoin.org/tx/<%=user.pendingTx%>">view transaction</a></span>
                     </div>
                     <% }  %>
 
@@ -543,12 +543,12 @@
     $("#inviteEmail").keyup(function() {
       if (inviteEmail.val() && inviteEmail.val().trim().length > 0) {
         btnInvite.text("Send invite");
-        btnInvite.addClass("btn-warn");
+        btnInvite.addClass("btn-warning");
         btnInvite.removeClass("btn-success");
       }
       else {
         btnInvite.text("Create invite link");
-        btnInvite.removeClass("btn-warn");
+        btnInvite.removeClass("btn-warning");
         btnInvite.addClass("btn-success");
       }
     })

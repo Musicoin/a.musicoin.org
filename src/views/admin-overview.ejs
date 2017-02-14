@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+    <title>Admin - Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body        {
+            word-wrap:break-word;
+            background-size: cover;
+        }
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<div class="container">
+    <div class="row">
+        <div class="well white-well">
+            <h3>Musicoin account balances</h3>
+            <table class="table table-responsive table-striped table-condensed">
+                <tr>
+                    <th class="text-center">Account</th>
+                    <th class="text-center">Address</th>
+                    <th class="text-center">Balance</th>
+                </tr>
+
+                <% for (var ivt=0; ivt < accounts.length; ivt++) {
+                    var account = accounts[ivt];
+                %>
+                <tr>
+                    <td class="text-center middle"><%=account.name%></td>
+                    <td class="text-center middle"><a target="_blank" href="http://orbiter.musicoin.org/addr/<%=account.address%>"><%=account.address%></a></td>
+                    <td class="text-center middle"><%=account.formattedBalance%></td>
+                </tr>
+                <%}%>
+            </table>
+        </div>
+    </div>
+</div>
+<%- include partials/connect-with-us.ejs %>
+</body>
+</html>

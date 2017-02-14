@@ -63,6 +63,7 @@ const config = {
     sendReward: `${keyValueConfig.musicoinApiEndpoint}/reward`,
     releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,
     getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,
+    getAccountBalance: `${keyValueConfig.musicoinApiEndpoint}/balance`,
     clientID: keyValueConfig.musicoinApiClientId,
     clientSecret: keyValueConfig.musicoinApiClientSecret
   },
@@ -70,6 +71,16 @@ const config = {
     sentInvite: 10,
     inviteAccepted: 100
   },
+  trackingAccounts: [
+    {name: "Miner-1 (Dev Fund)", address: "0x13559ecbdbf8c32d6a86c5a277fd1efbc8409b5b"},
+    {name: "Miner-2", address: "0x55a00bc3b44e84728091d0a8c80400a08bcb6a43"},
+    {name: "Miner-3", address: "0x25025d5299df92bea6256f35758275c606156253"},
+    {name: "Miner-4 (im)", address: "0xf9ef1d523a204ea9e8f695dbd83513cd27791502"},
+    {name: "Miner-5 (dp)", address: "0x473ac76523d7ae51b77b2f25542eb5c4c63950c9"},
+    {name: "Miner-6 (bb)", address: "0x7ef7dc5f996b21588fa6cb726a29a8296b28bf08"},
+    {name: "Hot wallet (PPP)", address: "0xfef55843244453abc7e183d13139a528bdfbcbed"},
+    {name: "Publisher", address: "0x6e1d33f195e7fadcc6da8ca9e36d6d4d717cf504"},
+  ],
   auth: {
     'googleAuth' : {
       'clientID'      : keyValueConfig.googleClientId,

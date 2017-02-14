@@ -16,6 +16,7 @@ interface MusicoinApiConfig {
   getLicenseDetails: string,
   getTransactionStatus: string,
   getClientBalance: string,
+  getAccountBalance: string,
   getTransactionHistory: string,
   clientID: string,
   clientSecret: string
@@ -38,6 +39,19 @@ export class MusicoinAPI {
       length: length,
       start: start
     })
+  }
+
+  getAccountBalances(addresses: string[]) {
+    return Promise.all(addresses.map(a => this.getAccountBalance(a)));
+  }
+
+  getAccountBalance(address: string) {
+    return this.getJson(`${this.apiConfig.getAccountBalance}/${address}`, 5000)
+      .then((balance) => {
+          balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          return balance;
+        }
+      )
   }
 
   getMusicoinAccountBalance() {
