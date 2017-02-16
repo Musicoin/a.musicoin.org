@@ -290,11 +290,15 @@ export class MusicoinOrgJsonAPI {
   }
 
   postLicenseMessages(contractAddress: string, senderId: string, message: string): Promise<any[]> {
-    return TrackMessage.create({
-      contractAddress: contractAddress,
-      sender: senderId,
-      message: message
-    });
+    return Release.findOne({contractAddress: contractAddress}).exec()
+      .then(record => {
+        return TrackMessage.create({
+          artistAddress: record.artistAddress,
+          contractAddress: contractAddress,
+          sender: senderId,
+          message: message
+        });
+      })
   }
 
   getLicenseMessages(contractAddress: string, limit: number): Promise<any[]> {
@@ -319,6 +323,8 @@ export class MusicoinOrgJsonAPI {
         })
       })
   }
+
+
 
   getLicense(contractAddress: string): Promise<any> {
     console.log("Getting license: " + contractAddress);

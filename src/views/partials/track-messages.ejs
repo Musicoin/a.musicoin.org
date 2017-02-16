@@ -12,7 +12,9 @@
         var textClass = message.tips > 0 ? "text-warning" : "subtle-text";
     %>
     <div class="chat-message">
-        <a href="/artist/<%=message.sender.profileAddress%>"><img src="<%=message.sender.image%>" class="sender-image"></img></a>
+        <a href="/artist/<%=message.sender.profileAddress%>">
+            <div class="sender-image" style="background-image: url('<%=message.sender.image%>') "></div>
+        </a>
         <div class="chat-message-area">
             <div class="chat-message-sender"><a href="/artist/<%=message.sender.profileAddress%>"><%=message.sender.name%></a> <span class="message-time big-screen-only"><%=message.time%></span></div>
             <div class="chat-message-body"><%=message.body%></div>

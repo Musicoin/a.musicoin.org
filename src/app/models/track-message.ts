@@ -3,6 +3,10 @@ import * as mongoose from 'mongoose';
 
 // create the model for users and expose it to our app
 module.exports = mongoose.model('TrackMessage', mongoose.Schema({
+  artistAddress: {
+    type: String,
+    index: true,
+  },
   contractAddress: {
     type: String,
     index: true,
