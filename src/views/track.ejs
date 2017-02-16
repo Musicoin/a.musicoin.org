@@ -17,10 +17,12 @@
         }
 
         .track-image {
+            background-size: cover;
             width: 128px;
             height: 128px;
-            background-color: blue;
-            margin-bottom: 5px;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 4px;
         }
 
         .track-name {
@@ -38,8 +40,8 @@
         .chat-messages {
             height: 100%;
             display: flex;
-            flex-direction: column-reverse;
-            align-content: flex-end;
+            flex-direction: column;
+            align-content: flex-start;
             color: black;
             padding-bottom: 10px;
             padding-right: 10px;
@@ -53,6 +55,8 @@
         .chat-input-area {
             height: 40px;
             margin-top: 5px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 5px;
         }
 
         .chat-input {
@@ -97,7 +101,6 @@
 
         .message-scroller {
             height: 100%;
-            max-height: 300px;
             min-height: 180px;
             overflow-y: auto;
         }
@@ -109,14 +112,16 @@
         blockquote {
             background-color: #eee;
         }
-        .track-image {
-            background-size: cover;
-            height: 100px;
-            width: 100px;
-            background-position: center;
-            background-repeat: no-repeat;
-            border-radius: 4px;
+
+        .private-view {
+            padding: 5px;
+            margin-top: 10px;
         }
+
+        .message-tip {
+            font-size: 14pt;
+        }
+
     </style>
 </head>
 <body>
@@ -126,49 +131,64 @@
         <%=license.title%>
     </h1>
     <div class="row">
-        <div class="col-sm-3 flex-column mb20">
-            <div class="audio-track track-image show-off-container shadow clickable"
-                 audioUrl='<%=license.audioUrl%>'
-                 trackTitle='<%=license.title%>'
-                 artistName='<%=license.artistName%>'
-                 image='<%=license.image%>'
-                 playCount='<%=license.playCount%>'
-                 tipCount='<%=license.tipCount%>'
-                 artistProfileAddress='<%=license.artistProfileAddress%>'
-                 licenseAddress='<%=license.address%>'
-                 style="background-image: url('<%=license.image%>')">
-                <div class="show-off"></div>
-            </div>
-            <div class="track-artist mb10"><%=license.artistName%></div>
-            <div>
-                <div id="player-tip-button"
-                     class="tip-button btn btn-success tip-button btn-xs"
-                     recipient="<%=license.artistProfileAddress%>"
-                     amount="1"
-                     text-success="Thanks! :)"
-                     text-fail=":("
-                     text-default="Tip Artist (1 $MC)">
-                    Tip Artist (1 $MC)
+        <div class="col-sm-4 flex-column mb20">
+            <div class="m5 well white-well">
+                <div class="flex-column center-text">
+                    <div class="audio-track track-image show-off-container shadow clickable"
+                         style="background-image: url('<%=license.image%>')">
+                    </div>
+                    <div class="audio-track clickable m10 text-large"
+                            audioUrl='<%=license.audioUrl%>'
+                            trackTitle='<%=license.title%>'
+                            artistName='<%=license.artistName%>'
+                            image='<%=license.image%>'
+                            playCount='<%=license.playCount%>'
+                            tipCount='<%=license.tipCount%>'
+                            artistProfileAddress='<%=license.artistProfileAddress%>'
+                            licenseAddress='<%=license.address%>'>
+                        <i class="fa fa-play-circle" aria-hidden="true"></i> Play
+                    </div>
+                    <div class="track-artist mb10">Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a></div>
+                    <div>
+                        <div id="player-tip-button"
+                             class="tip-button btn btn-success tip-button btn-xs"
+                             recipient="<%=license.artistProfileAddress%>"
+                             amount="1"
+                             text-success="Thanks! :)"
+                             text-fail=":("
+                             text-default="Tip Artist (1 $MC)">
+                            Tip Artist (1 $MC)
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-column mb20 <%= isArtist ? "private-view" : ""%>">
+                    <% if (isArtist) { %>
+                    <div class="track-description-header mb10">Only you (the artist) can edit this area.  If you want, say something about the track.</div>
+                    <textarea id=trackDescription class="mb10" placeholder="Say something about '<%=license.title%>'"><%=description%></textarea>
+                    <div class="button-bar">
+                        <div id=btnSave class="btn btn-warning" onclick=saveTrackDescription()>Save</div>
+                    </div>
+                    <%} else if (description) {%>
+                    <p></p>
+                    <blockquote class="track-description-header">
+                        <%=description%>
+                        <div class="button-bar">
+                            - <%=license.artistName%>
+                        </div>
+                    </blockquote>
+                    <%}%>
                 </div>
             </div>
         </div>
         <div class="col-sm-8 chat-area">
-            <div class="flex-column mb20">
-                <% if (isArtist) { %>
-                <div class="track-description-header mb10">Only you (the artist) can edit this area.  If you want, say something about the track.</div>
-                <textarea id=trackDescription class="mb10" placeholder="Say something about '<%=license.title%>'"><%=description%></textarea>
-                <div class="button-bar">
-                    <div id=btnSave class="btn btn-warning" onclick=saveTrackDescription()>Save</div>
+            <div class="chat-input-area">
+                <% if (user.profileAddress) {%>
+                <div class="chat-input">
+                    <input id="chat-input" maxlength="1000" placeholder="Say something about '<%=license.title%>' by '<%=license.artistName%>'">
                 </div>
-                <%} else if (description) {%>
-                <h3 class="track-description-header mb10">About this track</h3>
-                <blockquote class="track-description-header">
-                    <%=description%>
-                    <div class="button-bar">
-                        - <%=license.artistName%>
-                    </div>
-                </blockquote>
-                <%}%>
+                <% } else { %>
+                <div class="text-warning text-center">You can join the conversation after you save your <a href="/profile">profile</a></div>
+                <% } %>
             </div>
             <div class="dynamic-element message-scroller"
                  style="min-height: 180px"
@@ -176,18 +196,8 @@
                  de-refresh-period="10"
                  de-refresh-offset="10"
                  de-address="<%=license.address%>"
-                 de-url="/elements/track-messages"
-                 de-auto-scroll="true">
+                 de-url="/elements/track-messages">
                 <%- include('partials/track-messages.ejs', {messages: messages}) %>
-            </div>
-            <div class="chat-input-area">
-                <% if (user.profileAddress) {%>
-                <div class="chat-input">
-                    <input id="chat-input" placeholder="Say something about '<%=license.title%>' by '<%=license.artistName%>'">
-                </div>
-                <% } else { %>
-                <div class="text-warning text-center">You can join the conversation after you save your <a href="/profile">profile</a></div>
-                <% } %>
             </div>
         </div>
     </div>
@@ -198,7 +208,6 @@
   $( document ).ready(function() {
     const messages = $("#de-track-messages");
     const input = $("#chat-input");
-    messages.scrollTop(messages[0].scrollHeight);
     input.on('keydown', function(e) {
       if(e.keyCode == 13) {
         var message = input.val();

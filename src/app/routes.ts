@@ -15,6 +15,7 @@ const User = require('../app/models/user');
 const loginRedirect = "/";
 const maxImageWidth = 400;
 const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
+const MAX_MESSAGE_LENGTH = 1000;
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
@@ -200,7 +201,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/elements/track-messages', isLoggedIn, function (req, res) {
-    const post = (req.body.message && req.user.profileAddress)
+    const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
       ? jsonAPI.postLicenseMessages(req.body.address, req.user._id, req.body.message)
       : Promise.resolve(null);
     post.then(() => jsonAPI.getLicenseMessages(req.body.address, 20))
