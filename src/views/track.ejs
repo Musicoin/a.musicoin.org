@@ -158,7 +158,7 @@
                 <div class="track-description-header mb10">Only you (the artist) can edit this area.  If you want, say something about the track.</div>
                 <textarea id=trackDescription class="mb10" placeholder="Say something about '<%=license.title%>'"><%=description%></textarea>
                 <div class="button-bar">
-                    <div class="btn btn-warning" onclick=saveTrackDescription()>Save</div>
+                    <div id=btnSave class="btn btn-warning" onclick=saveTrackDescription()>Save</div>
                 </div>
                 <%} else if (description) {%>
                 <h3 class="track-description-header mb10">About this track</h3>
@@ -209,11 +209,14 @@
   });
 
   function saveTrackDescription() {
+    $("#btnSave").text("Saving...");
     $.post('/track/description', {
       contractAddress: trackId,
       description: $("#trackDescription").val(),
     }, function (data) {
       console.log("Saved");
+      $("#btnSave").text("Saved!");
+      window.setTimeout(() => $("#btnSave").text("Save"), 3000);
     })
   }
 
