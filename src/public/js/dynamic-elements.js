@@ -47,8 +47,8 @@ if (typeof dynamic == "undefined") {
       })
     },
 
-    refreshElement: function(element) {
-      var params = {};
+    refreshElement: function(element, extraParams) {
+      var params = extraParams || {};
       var prefix = dynamic.getPrefix();
       element.attr().forEach(function(param) {
         if (param.name.startsWith(prefix)) {
@@ -57,7 +57,11 @@ if (typeof dynamic == "undefined") {
       });
 
       console.log("Refreshing element with " + JSON.stringify(params));
-      element.load( params.url, params )
+      element.load( params.url, params, function() {
+        if (!!params["auto-scroll"]) {
+          element.scrollTop(element[0].scrollHeight);
+        }
+      })
     }
   };
 

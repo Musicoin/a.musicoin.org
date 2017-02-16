@@ -71,11 +71,16 @@
                  playCount='<%=release.playCount%>'
                  tipCount='<%=release.tipCount%>'
                  artistProfileAddress='<%=release.artistProfileAddress%>'
+                 licenseAddress='<%=release.address%>'
                  style="background-image: url('<%=release.image%>')">
                 <div class="show-off"></div>
             </div>
 
-            <div class="description track-title" title="<%=release.title%>"><%=release.title%></div>
+            <div class="description track-title clickable" title="<%=release.title%>">
+                <a href="/track/<%=release.address%>" class="subtle-text">
+                    <%=release.title%>
+                </a>
+            </div>
             <div class="description track-artist">
                 <a href="/artist/<%=release.artistProfileAddress%>" class="subtle-text">
                     <%=release.artistName%>

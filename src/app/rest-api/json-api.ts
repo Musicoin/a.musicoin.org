@@ -5,6 +5,7 @@ const User = require('../../app/models/user');
 const Release = require('../../app/models/release');
 const Playback = require('../../app/models/playback');
 const InviteRequest = require('../../app/models/invite-request');
+const TrackMessage = require('../../app/models/track-message');
 
 const knownGenres = [
   "Alternative Rock",
@@ -44,7 +45,7 @@ export interface ArtistProfile {
 }
 
 export class MusicoinOrgJsonAPI {
-  constructor(private musicoinAPI: MusicoinAPI, private mcHelper: MusicoinHelper) {
+  constructor(private musicoinAPI: MusicoinAPI, private mcHelper: MusicoinHelper, private mediaProvider) {
   }
 
   getArtist(address: string, includeReleases: boolean, includePending: boolean): Promise<ArtistProfile> {
@@ -288,6 +289,37 @@ export class MusicoinOrgJsonAPI {
       });
   }
 
+  postLicenseMessages(contractAddress: string, senderId: string, message: string): Promise<any[]> {
+    return TrackMessage.create({
+      contractAddress: contractAddress,
+      sender: senderId,
+      message: message
+    });
+  }
+
+  getLicenseMessages(contractAddress: string, limit: number): Promise<any[]> {
+    return TrackMessage.find({contractAddress: contractAddress})
+      .limit(limit)
+      .sort({"timestamp": 'desc'})
+      .populate("sender")
+      .exec()
+      .then(records => {
+        return records.map(m => {
+          return {
+            id: m._id,
+            sender: {
+              name: m.sender.draftProfile.artistName,
+              image: this.mediaProvider.resolveIpfsUrl(m.sender.draftProfile.ipfsImageUrl),
+              profileAddress: m.sender.profileAddress
+            },
+            body: m.message,
+            time: this._timeSince(m.timestamp.getTime()),
+            tips: m.tips
+          }
+        })
+      })
+  }
+
   getLicense(contractAddress: string): Promise<any> {
     console.log("Getting license: " + contractAddress);
     return this.mcHelper.getLicense(contractAddress)
@@ -323,5 +355,41 @@ export class MusicoinOrgJsonAPI {
 
   _sanitize(s: string) {
     return s ? s.replace(/[^a-zA-Z0-9]/g, ' ').trim() : s;
+  }
+
+  _timeSince(date) {
+
+    const seconds = Math.floor((Date.now() - date) / 1000);
+
+    const intervals = [
+      {value: 60, unit: "min"},
+      {value: 60, unit: "hour"},
+      {value: 24, unit: "day"},
+      {value: 30, unit: "month"},
+      {value: 12, unit: "year"},
+    ]
+
+    let unit = "second";
+    let value = seconds;
+    for (let i=0; i < intervals.length; i++) {
+      const interval = intervals[i];
+      if (value > interval.value) {
+        unit = interval.unit;
+        value = value / interval.value;
+      }
+      else {
+        break;
+      }
+    }
+
+    if (unit == "second") {
+      return "";
+    }
+
+    const rounded = Math.round(value);
+    if (rounded != 1) {
+      unit += "s";
+    }
+    return `${rounded} ${unit} ago`;
   }
 }

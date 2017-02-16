@@ -10,6 +10,7 @@ import {AddressResolver} from "./address-resolver";
 import {MailSender} from "./mail-sender";
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
+const TrackMessage = require('../app/models/track-message');
 const User = require('../app/models/user');
 const loginRedirect = "/";
 const maxImageWidth = 400;
@@ -18,7 +19,7 @@ const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D3
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
   let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider);
-  let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper);
+  let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider);
   const mailSender = new MailSender();
   let restAPI = new MusicoinRestAPI(jsonAPI);
   const addressResolver = new AddressResolver();
@@ -90,6 +91,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // HOME PAGE (with login links) ========
   // =====================================
   app.get('/main', isLoggedIn, function (req, res) {
+    // TODO: Redirect if req.session.newUser = true to a simple "Enter a username" page
+    // then create the profile with just a user name.
     const rs = jsonAPI.getNewReleases(6).catchReturn([]);
     const na = jsonAPI.getNewArtists(12).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
@@ -194,6 +197,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(function (releases) {
         res.render('partials/track-list.ejs', {releases: releases});
       });
+  });
+
+  app.post('/elements/track-messages', isLoggedIn, hasProfile, function (req, res) {
+    const post = req.body.message
+      ? jsonAPI.postLicenseMessages(req.body.address, req.user._id, req.body.message)
+      : Promise.resolve(null);
+    post.then(() => jsonAPI.getLicenseMessages(req.body.address, 20))
+      .then(messages => {
+        doRender(req, res, "partials/track-messages.ejs", {messages: messages});
+      })
   });
 
   app.get('/not-found', function (req, res) {
@@ -445,6 +458,41 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.post('/track/description', isLoggedIn, function (req, res, next) {
+    Release.findOne({
+      contractAddress: req.body.contractAddress,
+      artistAddress: req.user.profileAddress
+    }).
+      then((record) => {
+        record.description = req.body.description;
+        return record.save();
+    })
+      .then(() => {
+        console.log("Save track description: " + req.body.contractAddress);
+        res.json({success: true})
+      })
+      .catch((err) => {
+        console.log("Failed to save track description: " + req.body.contractAddress + ": " + err);
+        res.json({success: false})
+      })
+  });
+
+  //0xa0f17e527d50b5973bc0d029006f0f55ace16819
+  app.get('/track/:address', isLoggedIn, function (req, res, next) {
+    const ms = jsonAPI.getLicenseMessages(req.params.address, 20);
+    const l = jsonAPI.getLicense(req.params.address);
+    const r = Release.findOne({contractAddress: req.params.address});
+
+    Promise.join(l, ms, r, (license, messages, release) => {
+        doRender(req, res, "track.ejs", {
+          license: license,
+          description: release.description,
+          messages: messages,
+          isArtist: req.user.profileAddress == license.artistProfileAddress
+        });
+      })
+  });
+
   app.get('/invite-history', isLoggedIn, (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
@@ -506,6 +554,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(function (tx) {
         console.log(`Payment submitted! tx : ${tx}`);
         res.json({success: true, tx: tx});
+        if (req.body.contextType == "TrackMessage") {
+          TrackMessage.findById(req.body.contextId)
+            .then(record => {
+              record.tips++;
+              return record.save();
+            })
+            .then(r => {
+              console.log("Updated tip count on track message: " + r.tips);
+            })
+        }
       })
       .catch(function (err) {
         console.log(err);

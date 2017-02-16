@@ -67,15 +67,21 @@ textarea.form-control {
     flex-direction: row;
 }
 
+.middle {
+    align-items: center;
+}
+
 .pad5 {  padding: 5px;  }
 .pad10 {  padding: 10px;  }
 .pad20 {  padding: 20px;  }
 .pl25 {  padding-left: 25px;  }
 .shift-r20 { left: 20px; position: relative }
 .mb5 {  margin-bottom: 5px;  }
+.mb10 {  margin-bottom: 10px;  }
 .mt10 {  margin-top: 10px;  }
 .mb20 {  margin-bottom: 20px;  }
 .mr5 {  margin-right: 5px;  }
+.mr10 {  margin-right: 10px;  }
 .text-middle {
     display: flex;
     align-items: center;
@@ -191,6 +197,11 @@ textarea.form-control {
     100% {
         background-color: rgba(255,255,255,0.15);
     }
+}
+
+.button-bar {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .btn-soundcloud {

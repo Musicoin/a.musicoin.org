@@ -202,6 +202,7 @@
     audioElement: null,
 
     nowPlayingUrl: null,
+    nowPlayingLicenseAddress: null,
     nowPlayingArtistProfile: null,
     playbackId: 0,
     previousTime: 0,
@@ -209,7 +210,7 @@
 
     previouslySelectedTrack: null,
 
-    playItem: function (e, url, title, artist, img, playCount, tipCount, artistProfileAddress) {
+    playItem: function (e, url, title, artist, img, playCount, tipCount, artistProfileAddress, licenseAddress) {
       if (url == audioPlayer.nowPlayingUrl) return;
 
       var now = new Date().getTime();
@@ -237,6 +238,7 @@
 
       audioPlayer.nowPlayingUrl = url;
       audioPlayer.previousTime = now;
+      audioPlayer.nowPlayingLicenseAddress = licenseAddress;
       audioPlayer.nowPlayingArtistProfile = artistProfileAddress;
       if (e) {
         if (audioPlayer.previouslySelectedTrack) audioPlayer.previouslySelectedTrack.classList.remove("selected-track")
@@ -294,6 +296,11 @@
           if (audioPlayer.nowPlayingArtistProfile)
             parent.document.getElementById("mainFrame").src = "/artist/" + audioPlayer.nowPlayingArtistProfile;
         })
+
+        $("#player-title-area").on('click', function() {
+          if (audioPlayer.nowPlayingLicenseAddress)
+            parent.document.getElementById("mainFrame").src = "/track/" + audioPlayer.nowPlayingLicenseAddress;
+        })
       }
       return audioPlayer.audioElement;
     },
@@ -328,7 +335,10 @@
             <div class="song-badge player-bookend">
                 <img id="player-badge-image" src="" class="song-badge-image">
                 <div class="song-badge-info">
-                    <div id="player-title" class="player-song-name"></div>
+                    <div id=player-title-area  class="flex-row middle clickable">
+                        <div id="player-title" class="player-song-name mr10"></div>
+                        <img width=24 height=24 src="/images/chat.png">
+                    </div>
                     <div id="player-artist" class="player-artist-name clickable"></div>
                 </div>
             </div>
@@ -349,7 +359,7 @@
                     </div>
                 </div>
                 <div id="player-tip-button"
-                     class="tip-button btn btn-success tip-button btn-xs"
+                     class="big-screen-only tip-button btn btn-success tip-button btn-xs"
                      recipient=""
                      amount="1"
                      text-success="Thanks! :)"

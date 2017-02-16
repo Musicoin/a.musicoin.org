@@ -13,6 +13,7 @@ module.exports = mongoose.model('Release', mongoose.Schema({
   },
   artistName: String,
   artistAddress: String,
+  description: String,
   title: String,
   imageUrl: String,
   genres: [String],
