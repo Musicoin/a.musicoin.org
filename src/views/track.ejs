@@ -160,7 +160,7 @@
                 <div class="button-bar">
                     <div class="btn btn-warning" onclick=saveTrackDescription()>Save</div>
                 </div>
-                <%} else {%>
+                <%} else if (description) {%>
                 <h3 class="track-description-header mb10">About this track</h3>
                 <blockquote class="track-description-header">
                     <%=description%>
