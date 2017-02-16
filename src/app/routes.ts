@@ -207,6 +207,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(messages => {
         doRender(req, res, "partials/track-messages.ejs", {messages: messages});
       })
+      .catch(err => {
+        console.log("Failed to load track messages: " + err);
+        doRender(req, res, "partials/track-messages.ejs", {messages: []});
+      })
   });
 
   app.get('/not-found', function (req, res) {
