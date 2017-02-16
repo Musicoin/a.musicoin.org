@@ -200,6 +200,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/elements/track-messages', isLoggedIn, hasProfile, function (req, res) {
+    doRender(req, res, "partials/track-messages.ejs", {messages: []});
+    /*
     const post = req.body.message
       ? jsonAPI.postLicenseMessages(req.body.address, req.user._id, req.body.message)
       : Promise.resolve(null);
@@ -211,6 +213,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log("Failed to load track messages: " + err);
         doRender(req, res, "partials/track-messages.ejs", {messages: []});
       })
+      */
   });
 
   app.get('/not-found', function (req, res) {
