@@ -19,6 +19,12 @@
     %>
     <div class="chat-message">
         <div class="center-text">
+            <% if (showThisTrack) { %>
+            <div class="audio-track clickable m10 text-xlarge" licenseAddress='<%=track.contractAddress%>'>
+                <i class="fa fa-play-circle" aria-hidden="true"></i>
+            </div>
+            <% } %>
+
             <a href="/artist/<%=message.sender.profileAddress%>"><div style="background-image: url('<%=message.sender.image%>')" class="sender-image"></div></a>
             <% if (showThisTrack) { %>
             <i class="fa fa-long-arrow-right subtle-text big-screen-only" aria-hidden="true"></i>&nbsp;

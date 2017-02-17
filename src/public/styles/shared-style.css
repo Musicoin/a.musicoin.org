@@ -91,6 +91,10 @@ textarea.form-control {
     font-size: 1.5em;
 }
 
+.text-xlarge {
+    font-size: 2em;
+}
+
 .clickable {
     cursor: pointer;
 }

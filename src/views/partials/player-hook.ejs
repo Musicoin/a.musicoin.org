@@ -2,16 +2,20 @@
   $( document ).ready(function() {
     $(document).on('click', '.audio-track', function() {
       var item = $(this);
-      parent.document.getElementById("playerFrame").contentWindow.audioPlayer.playItem(this,
-        item.attr("audioUrl"),
-        item.attr("trackTitle"),
-        item.attr("artistName"),
-        item.attr("image"),
-        item.attr("playCount"),
-        item.attr("tipCount"),
-        item.attr("artistProfileAddress"),
-        item.attr("licenseAddress")
-      )
+      var that = this;
+      console.log("Getting details for " + item.attr("licenseAddress"))
+      $.get( "/json-api/track/" + item.attr("licenseAddress"), function( data ) {
+        parent.document.getElementById("playerFrame").contentWindow.audioPlayer.playItem(that,
+          data.audioUrl,
+          data.title,
+          data.artistName,
+          data.image,
+          data.playCount,
+          data.tipCount,
+          data.artistProfileAddress,
+          data.address
+        )
+      });
     });
   });
 </script>

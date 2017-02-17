@@ -254,7 +254,11 @@
       $("#player-badge-image")[0].src = img;
       $("#player-plays")[0].innerHTML = playCount;
 //      $("#player-tips")[0].innerHTML = tipCount;
-      $("#player-tip-button").attr("recipient", licenseAddress);
+
+      // update the tip button with the new address and reset the icon
+      var tipButton = $("#player-tip-button");
+      tipButton.attr("recipient", licenseAddress);
+      tipButton.html('<i class="fa fa-heart-o message-tip" aria-hidden="true"></i>');
 
       audioPlayer.audioElement.play();
     },
