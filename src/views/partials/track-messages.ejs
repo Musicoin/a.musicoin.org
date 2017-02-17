@@ -1,4 +1,7 @@
 <div class="chat-messages">
+    <%
+        var _showTrack = typeof showTrack != "undefined" ? showTrack : false;
+    %>
     <% if (messages.length == 0) { %>
     <div class="center-text subtle-text pad20">
         Be the first to comment
@@ -10,13 +13,25 @@
                 ? '<i class="fa fa-star message-tip" aria-hidden="true"></i>'
                 : '<i class="fa fa-star-o  message-tip" aria-hidden="true"></i>'
         var textClass = message.tips > 0 ? "text-warning" : "subtle-text";
+        var track = message.release;
     %>
     <div class="chat-message">
-        <a href="/artist/<%=message.sender.profileAddress%>">
-            <div class="sender-image" style="background-image: url('<%=message.sender.image%>') "></div>
-        </a>
+        <div class="center-text">
+            <a href="/artist/<%=message.sender.profileAddress%>"><img src="<%=message.sender.image%>" class="sender-image"></img></a>
+            <% if (_showTrack) { %>
+            <i class="fa fa-long-arrow-right subtle-text big-screen-only" aria-hidden="true"></i>&nbsp;
+            <a href="/track/<%=track.contractAddress%>" class="big-screen-only"><img src="<%=track.image%>" class="sender-image"></img></a>
+            <% } %>
+        </div>
         <div class="chat-message-area">
-            <div class="chat-message-sender"><a href="/artist/<%=message.sender.profileAddress%>"><%=message.sender.name%></a> <span class="message-time big-screen-only"><%=message.time%></span></div>
+            <div class="chat-message-sender">
+                <a href="/artist/<%=message.sender.profileAddress%>"><%=message.sender.name%></a>
+                <% if (_showTrack) { %>
+                on
+                <a href="/track/<%=track.contractAddress%>"><%=track.title%></a>
+                <% } %>
+                <span class="message-time big-screen-only"><%=message.time%></span>
+            </div>
             <div class="chat-message-body"><%=message.body%></div>
         </div>
         <div class="action-area">

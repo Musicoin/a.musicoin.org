@@ -289,12 +289,13 @@ export class MusicoinOrgJsonAPI {
       });
   }
 
-  postLicenseMessages(contractAddress: string, senderId: string, message: string): Promise<any[]> {
+  postLicenseMessages(contractAddress: string, releaseid: string, senderId: string, message: string): Promise<any[]> {
     return Release.findOne({contractAddress: contractAddress}).exec()
       .then(record => {
         return TrackMessage.create({
           artistAddress: record.artistAddress,
           contractAddress: contractAddress,
+          release: releaseid,
           sender: senderId,
           message: message
         });
@@ -302,10 +303,14 @@ export class MusicoinOrgJsonAPI {
   }
 
   getLicenseMessages(contractAddress: string, limit: number): Promise<any[]> {
-    return TrackMessage.find({contractAddress: contractAddress})
+    const condition = contractAddress && contractAddress.trim().length > 0
+      ? {contractAddress: contractAddress}
+      : {};
+    return TrackMessage.find(condition)
       .limit(limit)
       .sort({"timestamp": 'desc'})
       .populate("sender")
+      .populate("release")
       .exec()
       .then(records => {
         return records.map(m => {
@@ -316,6 +321,11 @@ export class MusicoinOrgJsonAPI {
               image: this.mediaProvider.resolveIpfsUrl(m.sender.draftProfile.ipfsImageUrl),
               profileAddress: m.sender.profileAddress
             },
+            release: {
+              title: m.release.title,
+              image: this.mediaProvider.resolveIpfsUrl(m.release.imageUrl),
+              contractAddress: m.release.contractAddress
+            },
             body: m.message,
             time: this._timeSince(m.timestamp.getTime()),
             tips: m.tips
@@ -323,7 +333,6 @@ export class MusicoinOrgJsonAPI {
         })
       })
   }
-
 
 
   getLicense(contractAddress: string): Promise<any> {
