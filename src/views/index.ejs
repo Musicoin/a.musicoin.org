@@ -23,7 +23,6 @@
             color: #e4aa17;
         }
     </style>
-    <link rel="stylesheet" href="/styles/track-message.css">
 </head>
 <body>
     <%- include partials/header.ejs %>
@@ -31,7 +30,8 @@
     <div class="container">
         <div class="col-sm-12">
             <div class="well well-highlight">
-                <div class="text-center text-large lead">For a limited time, <br>Musicoin.org is paying for <u>each and every play</u></div>
+                <div class="text-center text-large lead">For a limited time, Musicoin.org is paying for <u>each and every play</u></div>
+                <div class="text-center text-large">Enjoy.</div>
                 <div class="dynamic-element free-play-count"
                      id="de-musicoin-balance"
                      de-refresh-period="10"
@@ -40,22 +40,6 @@
                     <%- include partials/musicoin-balance.ejs %>
                 </div>
                 <div class="text-center subtle-text">plays remaining</div>
-            </div>
-        </div>
-
-        <div class="col-sm-12">
-            <div class="well white-well">
-                <div class="center-text"><img width=24 height=24 src="/images/chat.png"></div>
-                <div class="dynamic-element message-scroller"
-                     style="min-height: 180px"
-                     id="de-track-messages"
-                     de-refresh-period="10"
-                     de-refresh-offset="10"
-                     de-showtrack="true"
-                     de-limit=5
-                     de-url="/elements/track-messages">
-                    <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true}) %>
-                </div>
             </div>
         </div>
     </div>

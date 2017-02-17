@@ -16,7 +16,6 @@ const loginRedirect = "/";
 const maxImageWidth = 400;
 const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 const MAX_MESSAGE_LENGTH = 1000;
-const MAX_MESSAGES = 20;
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
@@ -101,16 +100,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const ps = jsonAPI.getRecentPlays(6).catchReturn([]);
     const tp = jsonAPI.getTopPlayed(6).catchReturn([]);
     const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
-    const m = jsonAPI.getLicenseMessages("", 5);
-    Promise.join(rs, na, fa, ps, tp, b, m, function (releases, artists, featuredArtists, recent, topPlayed, balance, messages) {
+    Promise.join(rs, na, fa, ps, tp, b, function (releases, artists, featuredArtists, recent, topPlayed, balance) {
       doRender(req, res, "index.ejs", {
         musicoinClientBalance: balance,
         releases: releases,
         artists: artists,
         featuredArtists: featuredArtists,
         topPlayed: topPlayed,
-        recent: recent,
-        messages: messages
+        recent: recent
       });
     })
       .catch(function (err) {
@@ -205,13 +202,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.post('/elements/track-messages', isLoggedIn, function (req, res) {
     const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, req.body.releaseid, req.user._id, req.body.message)
+      ? jsonAPI.postLicenseMessages(req.body.address, req.user._id, req.body.message)
       : Promise.resolve(null);
-    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
-    const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
-    post.then(() => jsonAPI.getLicenseMessages(req.body.address, limit))
+    post.then(() => jsonAPI.getLicenseMessages(req.body.address, 20))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
+        doRender(req, res, "partials/track-messages.ejs", {messages: messages});
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
@@ -496,7 +491,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     Promise.join(l, ms, r, (license, messages, release) => {
         doRender(req, res, "track.ejs", {
           license: license,
-          releaseId: release._id,
           description: release.description,
           messages: messages,
           isArtist: req.user.profileAddress == license.artistProfileAddress
