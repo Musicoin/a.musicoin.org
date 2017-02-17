@@ -15,6 +15,10 @@ module.exports = mongoose.model('TrackMessage', mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  release: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Release'
+  },
   message: String,
   tips: {
     type: Number,
