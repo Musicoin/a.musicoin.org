@@ -4,8 +4,9 @@
       var item = $(this);
       var that = this;
       console.log("Getting details for " + item.attr("licenseAddress"))
+      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
       $.get( "/json-api/track/" + item.attr("licenseAddress"), function( data ) {
-        parent.document.getElementById("playerFrame").contentWindow.audioPlayer.playItem(that,
+        _audioPlayer.playItem(that,
           data.audioUrl,
           data.title,
           data.artistName,
