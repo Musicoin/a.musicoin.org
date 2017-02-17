@@ -1,15 +1,3 @@
-body {
-    word-wrap:break-word;
-    background-size: cover;
-    margin-left: 5px;
-    margin-right: 5px;
-    background-image: url('<%=license.image%>');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-    font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
-}
-
 .track-image {
     background-size: cover;
     width: 128px;
@@ -64,6 +52,11 @@ body {
 .chat-message {
     display: flex;
     flex-shrink: 0;
+    padding: 5px;
+}
+
+.chat-message:hover {
+    background-color: rgba(0,0,0,0.02);
 }
 
 .sender-image {

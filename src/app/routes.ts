@@ -93,8 +93,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // HOME PAGE (with login links) ========
   // =====================================
   app.get('/main', isLoggedIn, function (req, res) {
-    // TODO: Redirect if req.session.newUser = true to a simple "Enter a username" page
-    // then create the profile with just a user name.
+    if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
+      return res.redirect("/new-user");
+    }
     const rs = jsonAPI.getNewReleases(6).catchReturn([]);
     const na = jsonAPI.getNewArtists(12).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
@@ -203,7 +204,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.post('/elements/track-messages', isLoggedIn, function (req, res) {
+  app.post('/elements/track-messages', function (req, res) {
+    // don't redirect if they aren't logged in, this is just page section
+    if (!req.isAuthenticated()) {
+      return doRender(req, res, "partials/track-messages.ejs", {messages: []});
+    }
+
     const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
       ? jsonAPI.postLicenseMessages(req.body.address, req.body.releaseid, req.user._id, req.body.message)
       : Promise.resolve(null);
@@ -255,6 +261,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   app.get('/welcome', (req, res) => doRender(req, res, 'welcome.ejs', {}));
   app.get('/invite', (req, res) => doRender(req, res, 'invite.ejs', {}));
+  app.get('/new-user', (req, res) => {
+    if (req.user.draftProfile && req.user.draftProfile.artistName) {
+      return res.redirect("/profile");
+    }
+    doRender(req, res, 'new-user.ejs', {})
+  });
   app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
   app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
   app.get('/json-api/demo', isLoggedIn, (req, res) => doRender(req, res, 'api-demo.ejs', {}));
@@ -600,6 +612,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       console.log(`Fields: ${JSON.stringify(fields)}`);
       console.log(`Files: ${JSON.stringify(files)}`);
 
+      // if somehow the user when to the new user page, but already has a profile,
+      // just skip this step
+      if (req.user.profileAddress) {
+        console.log("Not saving from new user page, since the user already has a profile");
+        return res.redirect("/profile");
+      }
+
       const prefix = "social.";
       const socialData = FormUtils.groupByPrefix(fields, prefix);
 
@@ -607,7 +626,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       // if a new image was selected, upload it to ipfs.
       // otherwise, use the existing IPFS url
-      const uploadImage = files.photo.size == 0
+      const uploadImage = (!files.photo || files.photo.size == 0)
         ? (profile.ipfsImageUrl && profile.ipfsImageUrl.trim().length > 0)
           ? Promise.resolve(profile.ipfsImageUrl)
           : Promise.resolve(defaultProfileIPFSImage)
@@ -615,13 +634,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           .then((newPath) => mediaProvider.upload(newPath));
 
       const version = profile.version ? profile.version : 1;
+      const genres = fields.genres || "";
       uploadImage.then((imageUrl) => {
         req.user.draftProfile = {
           artistName: fields.artistName,
           description: fields.description,
           social: socialData,
           ipfsImageUrl: imageUrl,
-          genres: fields.genres.split(",").map(s => s.trim()).filter(s => s),
+          genres: genres.split(",").map(s => s.trim()).filter(s => s),
           version: version + 1
         };
         console.log(`Saving updated profile to database...`);
@@ -655,59 +675,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           console.log("Failed to update user profile: " + err);
           res.redirect("/profile?profileUpdateError=true");
         })
-    });
-  });
-
-  app.post('/profile/publish', isLoggedIn, function (req, res) {
-    const form = new Formidable.IncomingForm();
-    form.parse(req, (err, fields: any, files: any) => {
-      console.log(`Fields: ${JSON.stringify(fields)}`);
-      console.log(`Files: ${JSON.stringify(files)}`);
-
-      const prefix = "social.";
-      const socialData = FormUtils.groupByPrefix(fields, prefix);
-
-      const profile = req.user.draftProfile;
-      const i = files.photo.size == 0
-        ? (profile.ipfsImageUrl && profile.ipfsImageUrl.trim().length > 0)
-          ? Promise.resolve(profile.ipfsImageUrl)
-          : Promise.resolve(defaultProfileIPFSImage)
-        : FormUtils.resizeImage(files.photo.path, maxImageWidth)
-          .then((newPath) => mediaProvider.upload(newPath));
-      const d = mediaProvider.uploadText(fields.description);
-      const s = mediaProvider.uploadText(JSON.stringify(socialData));
-      return Promise.join(i, d, s, function (imageUrl, descriptionUrl, socialUrl) {
-        req.user.draftProfile = {
-          artistName: fields.artistName,
-          description: fields.description,
-          social: socialData,
-          ipfsImageUrl: imageUrl,
-          genres: fields.genres.split(",").map(s => s.trim()).filter(s => s)
-        };
-        console.log(`Sending updated profile to blockchain...`);
-        musicoinApi.publishProfile(req.user.profileAddress, fields.artistName, descriptionUrl, imageUrl, socialUrl)
-          .then(function (tx) {
-            console.log(`Transaction submitted! Profile tx : ${tx}`);
-            req.user.pendingTx = tx;
-            req.user.updatePending = true;
-            req.user.hideProfile = !!fields.hideProfile;
-            console.log(`Saving updated profile to database...`);
-            req.user.save(function (err) {
-              if (err) {
-                console.log(`Saving profile to database failed! ${err}`);
-                res.send(500);
-              }
-              else {
-                console.log(`Saving profile to database ok!`);
-                res.redirect("/profile");
-              }
-            });
-          })
-          .catch(function (err) {
-            console.log("Something went wrong: " + err);
-            res.redirect("/profile?profileUpdateError=true");
-          })
-      }.bind(this));
     });
   });
 

@@ -294,7 +294,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           // if there is a user id already but no token (user was linked at one point and then removed)
           if (!user[authProvider].token || !user.invite.claimed) {
             user.invite.claimed = true;
-            req.session.newUser = true;
             user[authProvider] = localProfile;
 
             return user.save(function (err) {
