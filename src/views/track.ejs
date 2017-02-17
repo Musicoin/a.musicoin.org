@@ -30,9 +30,9 @@
                         <i class="fa fa-play-circle" aria-hidden="true"></i> Play
                     </div>
                     <div class="track-artist mb10">Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a></div>
-                    <div>
+                    <div class="center-text">
                         <div id="player-tip-button"
-                             class="tip-button btn btn-success tip-button btn-xs"
+                             class="tip-button btn btn-success tip-button btn-xs mr10"
                              recipient="<%=license.address%>"
                              amount="1"
                              text-success="Thanks! :)"
@@ -40,6 +40,14 @@
                              text-default="Tip (1 $MC)">
                             Tip (1 $MC)
                         </div>
+                        <a href="https://twitter.com/share"
+                           class="twitter-share-button"
+                           data-text="Check out '<%=license.title%>' by <%=license.artistName%> on Musicoin"
+                           data-url="https://musicoin.org/track/<%=license.address%>"
+                           data-via="@musicoins"
+                           data-hashtags="musicoin"
+                           data-show-count="true">Tweet</a>
+                        <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
                     </div>
                 </div>
                 <div class="flex-column mb20 <%= isArtist ? "private-view" : ""%>">
