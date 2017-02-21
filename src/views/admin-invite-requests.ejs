@@ -77,6 +77,7 @@
                     <th class="text-center">Request Date</th>
                     <th class="text-center">Username</th>
                     <th class="text-center">Source</th>
+                    <th class="text-center">Musician</th>
                 </tr>
 
                 <% for (var ivt=0; ivt < requests.length; ivt++) {
@@ -86,6 +87,7 @@
                     <td class="text-center middle"><%=req.requestDateDisplay%></td>
                     <td class="text-center middle"><%=req.username%></td>
                     <td class="text-center middle"><%=req.source%></td>
+                    <td class="text-center middle"><%=req.musician ? "Yes" : "No"%></td>
                 </tr>
                 <%}%>
             </table>
