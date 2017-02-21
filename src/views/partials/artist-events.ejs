@@ -1,0 +1,19 @@
+
+<div class="chat-messages">
+    <% for (var i=0; i < artists.length; i++) {
+        var artist = artists[i];
+    %>
+    <div class="chat-message event">
+        <div class="top-center-text">
+            <a href="/artist/<%=artist.profileAddress%>"><div style="background-image: url('<%=artist.image%>'); border-radius: 50%" class="sender-image"></div></a>
+        </div>
+        <div class="chat-message-area">
+            <div class="chat-message-sender">
+                <a href="/artist/<%=artist.profileAddress%>"><%=artist.artistName%></a>
+                <span class="message-time big-screen-only"><%=artist.timeSince%></span>
+            </div>
+            <div class="chat-message-body chat-message-preview"><%=artist.description%></div>
+        </div>
+    </div>
+    <%}%>
+</div>

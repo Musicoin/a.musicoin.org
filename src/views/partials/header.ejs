@@ -2,7 +2,6 @@
     .header {
         display: flex;
         flex-direction: row;
-        padding: 10px;
         padding-left: 50px;
         padding-right: 50px;
         justify-content: space-between;
@@ -11,7 +10,7 @@
         /*background-color: rgba(255,255,255,0.1);*/
     }
     .logo_image {
-        height: 50px;
+        height: 32px;
         vertical-align: middle;
         margin-top: -6px;
     }
@@ -66,19 +65,52 @@
     }
     .user-badge-image {
         border-radius: 50%;
-        width: 48px;
-        height: 48px;
+        width: 32px;
+        height: 32px;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         margin: 5px;
     }
+
+    .trigger {
+    }
+    .popoverContentContainer {
+        position:relative;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+    }
+    #optionMenu,
+    .optionView {
+        display: flex;
+        flex-direction: column;
+    }
+    #optionMenu button,
+    #optionMenu a {
+        width:100%;
+        margin:5px 0;
+    }
+    .optionView button {
+        float:left;
+    }
+    .popover {
+        width:400px;
+    }
+    .popover-inner {
+        position:relative;
+    }
+    .popover-title {
+        text-align:center;
+        color:#555;
+    }
+
 </style>
 <div class="background-cover"></div>
 <div class="header">
     <div>
-        <a id="logo-container" href="/main" class="brand-logo mont"><img src="/images/icon.png" width="48px" height="48px"></a>
-        <a id="logo-container" href="/main" class="brand-logo mont big-screen-only">
+        <a id="logo-container" href="/main" class="brand-logo mont"><img src="/images/icon.png" width="32px" height="32px"></a>
+        <a id="logo-container" href="/main" class="brand-logo mont big-screen-only plain">
             musicoin
         </a>
     </div>
@@ -99,14 +131,19 @@
             <a href="/faq" class="header-menu-item"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
             <a href="/browse" class="header-menu-item"><i class="fa fa-search" aria-hidden="true"></i></a>
             <div style="width:20px"></div>
-            <%  if (user.profile.image) { %>
-            <a href="/profile">
-                <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
-            </a>
-            <%  } %>
-
-            <div>
-                <a href="/logout" target="_top" class="btn btn-default btn-sm">logout</a>
+            <div class="popover-markup" style="display:inline;">
+                <a href="#" class="trigger">
+                    <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
+                </a>
+                <div class="head hide"><%=user.profile.artistName%></div>
+                <div class="content hide">
+                    <div class="popoverContentContainer">
+                        <div id="optionMenu">
+                            <a href="/profile" class="btn btn-default">edit profile</a>
+                            <a href="/logout" target="_top" class="btn btn-default">sign out</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         <% } else { %>
         <!--<div class="mr5 text-middle">Request an Invite</div>-->
@@ -116,9 +153,24 @@
         <% } %>
     </div>
 </div>
-<div class="header-nav">
-    <div class="flex-row">
-    </div>
-    <div class="flex-row">
-    </div>
-</div>
+
+<script>
+  $( document ).ready(function() {
+    $('.optionView').hide();
+
+    // Popover
+    $(function(){
+      $('.popover-markup > .trigger').popover({
+        html: true,
+        placement: "bottom",
+        title: function () {
+          return $(this).parent().find('.head').html();
+        },
+        content: function () {
+          return $(this).parent().find('.content').html();
+        },
+        template: '<div class="popover dashboardPopover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"></div></div></div>'
+      });
+    });
+  });
+</script>

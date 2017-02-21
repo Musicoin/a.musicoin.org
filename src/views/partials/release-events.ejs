@@ -1,0 +1,23 @@
+
+<div class="chat-messages">
+    <% for (var i=0; i < releases.length; i++) {
+        var release = releases[i];
+    %>
+    <div class="chat-message event">
+        <div class="audio-track clickable m10 text-xlarge" licenseAddress='<%=release.address%>'>
+            <i class="fa fa-play-circle text-info" aria-hidden="true"></i>
+        </div>
+        <div class="top-center-text">
+            <a href="/track/<%=release.address%>"><div style="background-image: url('<%=release.image%>');" class="sender-image"></div></a>
+        </div>
+        <div class="chat-message-area">
+            <div class="chat-message-sender">
+                <a href="/track/<%=release.address%>"><%=release.title%></a>
+                <span class="message-time big-screen-only"><%=release.timeSince%></span>
+            </div>
+            by <a href="/artist/<%=release.artistProfileAddress%>"><%=release.artistName%></a>
+            <div class="chat-message-body chat-message-preview"><%=release.description%></div>
+        </div>
+    </div>
+    <%}%>
+</div>

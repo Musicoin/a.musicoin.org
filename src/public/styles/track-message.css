@@ -55,6 +55,12 @@
     padding: 5px;
 }
 
+.chat-message-preview {
+    max-height: 64px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .chat-message:hover {
     background-color: rgba(0,0,0,0.02);
 }
@@ -62,12 +68,8 @@
 .sender-image {
     width: 64px;
     height: 64px;
-    background-color: red;
     margin-right: 5px;
-    margin-bottom: 5px;
-    background-position: center;
     background-size: cover;
-    background-repeat: no-repeat;
 }
 
 .chat-message-sender {

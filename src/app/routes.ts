@@ -120,6 +120,28 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/floyd', isLoggedIn, function (req, res) {
+    if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
+      return res.redirect("/new-user");
+    }
+    const rs = jsonAPI.getNewReleases(6).catchReturn([]);
+    const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
+    const h  = jsonAPI.getHero();
+    const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
+    Promise.join(rs, fa, b, h, function (releases, artists, balance, hero) {
+      doRender(req, res, "index-new.ejs", {
+        musicoinClientBalance: balance,
+        hero: hero,
+        releases: releases,
+        featuredArtists: artists
+      });
+    })
+      .catch(function (err) {
+        console.log(err);
+        res.redirect('/error');
+      });
+  });
+
   function handleBrowseRequest(req, res, search, genre) {
     const maxGroupSize = req.query.maxGroupSize ? parseInt(req.query.maxGroupSize) : 8;
     const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize, search, genre).catchReturn([]);
@@ -180,6 +202,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     jsonAPI.getNewArtists(12)
       .then(function (artists) {
         res.render('partials/featured-artist-list.ejs', {artists: artists, iconSize: iconSize});
+      });
+  });
+
+  app.post('/elements/artist-events', function (req, res) {
+    const iconSize = req.body.iconSize ? req.body.iconSize : "small";
+    jsonAPI.getNewArtists(12)
+      .then(function (artists) {
+        res.render('partials/artist-events.ejs', {artists: artists, iconSize: iconSize});
+      });
+  });
+
+  app.post('/elements/release-events', function (req, res) {
+    jsonAPI.getNewReleases(6)
+      .then(function (releases) {
+        res.render('partials/release-events.ejs', {releases: releases});
       });
   });
 

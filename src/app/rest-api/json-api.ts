@@ -44,6 +44,16 @@ export interface ArtistProfile {
   pendingReleases: any[]
 }
 
+export interface Hero {
+  title: string,
+  titleLink: string,
+  subtitle: string,
+  subtitleLink: string,
+  image: string,
+  licenseAddress?: string,
+  label: string
+}
+
 export class MusicoinOrgJsonAPI {
   constructor(private musicoinAPI: MusicoinAPI, private mcHelper: MusicoinHelper, private mediaProvider) {
   }
@@ -147,6 +157,22 @@ export class MusicoinOrgJsonAPI {
           const v2 = b.playCount ? b.playCount : 0;
           return v2 - v1; // descending
         })
+      })
+  }
+
+  getHero(): Promise<Hero> {
+    return this.getNewReleases(1)
+      .then(releases => {
+        const release = releases[0];
+        return {
+          title: release.title,
+          titleLink: `/track/${release.address}`,
+          subtitle: release.artistName,
+          subtitleLink: `/artist/${release.artistAddress}`,
+          image: "images/hero.jpeg",
+          licenseAddress: release.address,
+          label: "Song of the Week",
+        }
       })
   }
 
@@ -283,8 +309,9 @@ export class MusicoinOrgJsonAPI {
 
   _convertDbRecordToArtist(record) {
     return this.mcHelper.getArtistProfile(record.profileAddress)
-      .then(function(artist) {
+      .then((artist) => {
         artist.profileAddress = record.profileAddress;
+        artist.timeSince = this._timeSince(record.joinDate);
         return artist;
       });
   }
@@ -368,6 +395,8 @@ export class MusicoinOrgJsonAPI {
         if (!license.artistName)
           license.artistName = record.artistName;
         license.genres = record.genres;
+        license.description = record.description;
+        license.timeSince = this._timeSince(record.releaseDate);
         return license;
       })
   }
