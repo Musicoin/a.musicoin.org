@@ -80,6 +80,17 @@ textarea.form-control {
     .two-columns > div {
         padding: 10px;
     }
+
+    .three-columns {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .three-columns > div {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
 }
 
 @media screen and (min-width: 800px) {
@@ -90,6 +101,15 @@ textarea.form-control {
     .two-columns > div {
         width: 50%;
         padding: 10px;
+    }
+
+    .three-columns {
+        display: flex;
+    }
+
+    .three-columns > div {
+        padding: 10px;
+        width: 33%;
     }
 }
 
@@ -121,6 +141,11 @@ textarea.form-control {
 .text-xlarge {
     font-size: 2em;
 }
+
+.text-medium {
+    font-size: 14pt;
+}
+
 
 .clickable {
     cursor: pointer;

@@ -5,12 +5,17 @@
     <%- include partials/page-head.ejs %>
     <style>
         body {
-            word-wrap: break-word;
-            background-image: url('/images/growing.jpg');
-            background-size: cover;
+            word-wrap:break-word;
+            /*background-image: url(images/growing.jpg);*/
+            background-image: url(images/waitlist.png);
             background-repeat: no-repeat;
-            text-shadow: 1px 1px rgba(0,0,0,0.5);
-            background-color: white;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
+            color: rgba(255,255,255,0.8);
         }
 
         a {
@@ -27,13 +32,28 @@
             height: 100%;
             position: relative;
         }
+
+        .email {
+            width: 300px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
+            font-size: 14px;
+            color: #333;
+        }
+
+        h1, h3 {
+            text-shadow: 1px 2px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
-<%- include partials/header.ejs %>
+<%- include('partials/header.ejs', {isAuthenticated: false}) %>
 <style>
     .background-cover {
-        background-color: rgba(0,0,0,0.2);
+        /*background-color: rgba(0,0,0,0.5);*/
+        display: none;
     }
     .subtle-text {
         color: white;
@@ -41,12 +61,50 @@
 </style>
 <div class="container">
     <div class="text-center">
-        <h1>Sorry, we're still growing</h1>
-        <h2>Musicoin is currently invite only</h2>
-        <h3>If you want to be added to the wait list, join our <a target="_blank" href="http://slack.musicoin.org/">slack channel</a> or send us a note on <a target="_blank" href="https://twitter.com/musicoins">twitter</a>!</h3>
+        <h1>Join our waiting list</h1>
+        <h3>We'll let you know when your account is ready</h3>
+
+        <div class="form-group flex-column center-text">
+            <input id=email class="mb5 email" type="text" name="email"  placeholder="email address">
+            <div class="mb5 center-text">
+                <input id="musician" type="checkbox" name="musician" value="true" <%- musician ? "checked" : ""%>>&nbsp;Check this box if you are a musician
+            </div>
+        </div>
+        <div class="btn btn-success btn-lg" onclick="submitWaitlist()">Add me!</div>
+        <div class="m10 flex">
+            <p id="result" class="text-medium">
+            </p>
+        </div>
     </div>
-    <BR><BR>
 </div>
+<script>
+    function submitWaitlist() {
+      var email = $("#email").val();
+      var musician = $("#musician").is(":checked");
+      if (!email) {
+        return alert("An email address is required!");
+      }
+
+      var result = $("#result");
+      $.post('/waitlist/add', {
+        email: email,
+        musician: musician
+      }, function (data) {
+        if (data.success) {
+            if (data.exists) {
+              result.html("You are already on the waiting list.  <br> You are currently number " + data.position);
+            }
+            else {
+              result.html("You have been added to the waiting list. <br> You are currently number " + data.position);
+            }
+        }
+        else {
+          var message = data.message ? data.message : "Sorry, something when wrong, please try again later";
+          result.html(message);
+        }
+      })
+    }
+</script>
 <%- include partials/connect-with-us.ejs %>
 </body>
 </html>

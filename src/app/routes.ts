@@ -297,7 +297,43 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   app.get('/welcome', (req, res) => doRender(req, res, 'welcome.ejs', {}));
-  app.get('/invite', (req, res) => doRender(req, res, 'invite.ejs', {}));
+  app.get('/invite', (req, res) => {
+    const musician = req.query.type == "musician";
+    doRender(req, res, 'invite.ejs', {
+      musician: musician
+    });
+  });
+  app.post('/waitlist/add', (req, res) => {
+    if (!req.body) {
+      console.log(`Waitlist request failed because no body was included`);
+      return res.json({
+          success: false,
+          message: "Invalid email address"
+        });
+    }
+
+    if (!FormUtils.validateEmail(req.body.email)) {
+      console.log(`Waitlist request failed because email does not appear to be valid: ${req.body.email}`);
+      return res.json({
+          success: false,
+          message: "Invalid email address"
+        });
+    }
+
+    return jsonAPI.addInviteRequest(req.body.email, req.body.musician == "true")
+      .then(result => {
+        res.json(result);
+      })
+      .catch(e => {
+        console.log(`Waitlist request failed for ${req.body.email}, musician=${req.body.musician}: ${e}`);
+        res.json({
+          success: false,
+          message: "ok"
+        })
+      })
+  });
+
+
   app.get('/new-user', (req, res) => {
     if (req.user.draftProfile && req.user.draftProfile.artistName) {
       return res.redirect("/profile");

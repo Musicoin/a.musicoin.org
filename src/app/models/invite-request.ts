@@ -5,6 +5,10 @@ import * as mongoose from 'mongoose';
 module.exports = mongoose.model('InviteRequest', mongoose.Schema({
   username: String,
   source: String,
+  musician: {
+    type: Boolean,
+    default: false
+  },
   requestDate: {
     type: Date,
     default: Date.now

@@ -2,8 +2,8 @@
     .header {
         display: flex;
         flex-direction: row;
-        padding-left: 50px;
-        padding-right: 50px;
+        padding-left: 20px;
+        padding-right: 20px;
         justify-content: space-between;
         align-items: center;
         z-index: 1;
@@ -110,7 +110,7 @@
 <div class="header">
     <div>
         <a id="logo-container" href="/main" class="brand-logo mont"><img src="/images/icon.png" width="32px" height="32px"></a>
-        <a id="logo-container" href="/main" class="brand-logo mont big-screen-only plain">
+        <a id="logo-container" href="/main" class="brand-logo mont plain">
             musicoin
         </a>
     </div>
@@ -120,7 +120,7 @@
             <% if (typeof isAdmin != "undefined" && isAdmin) { %>
             <div class="flex-column">
                 <div class="flex-row" style="border-bottom: 1px solid #aaa">
-                    <a href="/admin/invite-requests" class="header-menu-item text-danger"><i class="fa fa-list" aria-hidden="true" title="wait list"></i></a>
+                    <a href="/admin/invite-requests" class="header-menu-item text-danger"><i class="fa fa-list" aria-hidden="true" title="waiting list"></i></a>
                     <a href="/admin/users" class="header-menu-item text-danger"><i class="fa fa-users" aria-hidden="true" title="users"></i></a>
                     <a href="/admin/overview" class="header-menu-item text-danger" title="admin"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>
                     <a href="/admin/su" class="header-menu-item text-danger" title="log in as...">su</a>

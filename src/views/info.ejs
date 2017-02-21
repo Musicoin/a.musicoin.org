@@ -26,7 +26,6 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            height: 300px;
             background-position-y: bottom;
             background-size: cover;
             background-repeat: no-repeat;
@@ -73,8 +72,6 @@
         }
 
         .info-pi {
-            font-size: 24em;
-            line-height: 1.0;
             /*color: rgba(255,255,255,0.8)*/
         }
         .animation-area {
@@ -101,6 +98,15 @@
         #orbiter-link {
             display: none;
         }
+
+        .get-started {
+            width: 100%;
+            justify-content: center;
+        }
+
+        a {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -116,9 +122,49 @@
 <div xclass="container">
     <div xclass="col-sm-12">
         <div class="info-area">
-            <div class="text-center info-pi"><img src="/images/pi.png" width="220px"></div>
+            <div class="text-center info-pi"><img src="/images/pi.png" width="200px"></div>
             <div id="countdown" class="text-center info-title"></div>
-            <div id="orbiter-link" class="text-center text-large"><a style="position:relative; color:inherit;" href="https://github.com/Musicoin/go-musicoin/wiki/Start-a-miner">Click Here to Start Mining!</a></div>
+        </div>
+    </div>
+</div>
+
+<div class="three-columns get-started white-well box-shadow-top">
+    <div>
+        <div class="text-center">
+            <img src="images/microphone.png" height="96px">
+        </div>
+        <div class="text-center text-large">
+            <a class="plain" href="/invite?type=musician">Musicians</a>
+            <p class="subtle-text text-left text-medium">
+                Get top priority on our wait list.  We are actively seeking musicians that are ready
+                to join our global community.  <a href="/invite?type=musician">click here</a>
+            </p>
+        </div>
+    </div>
+    <div>
+        <div class="text-center text-large">
+            <div class="text-center">
+                <img src="images/headphones.jpg" height="96px">
+            </div>
+            <a class="plain" href="/invite?type=listener">Listeners</a>
+            <p class="subtle-text text-left text-medium">
+                Early adopters can get a sneak peek and the new world of music and help to shape the
+                user experience.  We are adding new listeners everyday! <a href="/invite?type=listener">click here</a>
+            </p>
+        </div>
+    </div>
+    <div>
+        <div class="text-center">
+            <img src="images/cpu.png" height="96px">
+        </div>
+        <div class="text-center text-large"><a class="plain" href="https://github.com/Musicoin/go-musicoin/wiki/Start-a-miner">
+                Miners
+            </a>
+            <p class="subtle-text text-left text-medium">
+                Join our active community of miners.  To get started, click
+                <a href="https://github.com/Musicoin/go-musicoin/wiki/Start-a-miner">here</a>
+                and join us in our slack channel for help and tips.
+            </p>
         </div>
     </div>
 </div>

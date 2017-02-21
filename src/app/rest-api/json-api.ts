@@ -91,6 +91,32 @@ export class MusicoinOrgJsonAPI {
     });
   }
 
+  addInviteRequest(email: string, musician: boolean): Promise<any> {
+    return InviteRequest.findOne({username: {"$regex": email, "$options": "i"}}).exec()
+      .then(request => {
+        let insert = Promise.resolve();
+        if (!request) {
+          const query = {username: email, source: "waitlist", musician: musician},
+            update = {},
+            options = {upsert: true, new: true, setDefaultsOnInsert: true};
+
+          // Find the document
+          insert = InviteRequest.findOneAndUpdate(query, update, options);
+        }
+        const condition = request ? {requestDate: {$lt: request.requestDate}} : {};
+        const exists = !!request;
+        return insert.then(() => InviteRequest.count(condition).exec())
+          .then(count => {
+            return {
+              address: email,
+              exists: exists,
+              position: exists ? count : count-1,
+              success: true
+            }
+          })
+      });
+  }
+
   getAllInviteRequests(_search: string, start: number, length: number): Promise<any> {
     const search = this._sanitize(_search);
     let filter = {};
