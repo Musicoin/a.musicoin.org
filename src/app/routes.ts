@@ -207,7 +207,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.post('/elements/artist-events', function (req, res) {
     const iconSize = req.body.iconSize ? req.body.iconSize : "small";
-    jsonAPI.getNewArtists(12)
+    jsonAPI.getFeaturedArtists(12)
       .then(function (artists) {
         res.render('partials/artist-events.ejs', {artists: artists, iconSize: iconSize});
       });
