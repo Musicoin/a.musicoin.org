@@ -474,7 +474,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/admin/invite-requests', (req, res) => {
-    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/invite-requests?search=' + (req.query.search ? req.query.search : '');

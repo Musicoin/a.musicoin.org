@@ -197,7 +197,7 @@ export class MusicoinOrgJsonAPI {
           subtitleLink: `/artist/${release.artistAddress}`,
           image: "images/hero.jpeg",
           licenseAddress: release.address,
-          label: "Song of the Week",
+          label: "Artist of the Week",
         }
       })
   }
