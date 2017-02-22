@@ -1,6 +1,9 @@
 import {Promise} from 'bluebird';
 import {MusicoinHelper} from "../musicoin-helper";
 import {MusicoinAPI} from "../musicoin-api";
+import * as FormUtils from "../form-utils";
+import * as crypto from 'crypto';
+import {MailSender} from "../mail-sender";
 const User = require('../../app/models/user');
 const Release = require('../../app/models/release');
 const Playback = require('../../app/models/playback');
@@ -55,7 +58,11 @@ export interface Hero {
 }
 
 export class MusicoinOrgJsonAPI {
-  constructor(private musicoinAPI: MusicoinAPI, private mcHelper: MusicoinHelper, private mediaProvider) {
+  constructor(private musicoinAPI: MusicoinAPI,
+              private mcHelper: MusicoinHelper,
+              private mediaProvider,
+              private mailSender: MailSender,
+              private config: any) {
   }
 
   getArtist(address: string, includeReleases: boolean, includePending: boolean): Promise<ArtistProfile> {
@@ -114,6 +121,108 @@ export class MusicoinOrgJsonAPI {
               success: true
             }
           })
+      });
+  }
+
+  removeInviteRequest(_id: string): Promise<any> {
+    return InviteRequest.findByIdAndRemove(_id).exec()
+      .then((removed) => {
+        if (removed) {
+          console.log(`Removed waitlist entry: ${removed.username}`);
+          return {success: true}
+        }
+        return {success: false, reason: "Not found"}
+      })
+      .catch((err) => {
+        console.log(`Failed to remove waitlist entry: ${err}`);
+        return {success: false, reason: "Error"}
+      })
+  }
+
+  sendInvite(sender: any, email: string): Promise<any> {
+    let promise = Promise.resolve(null);
+    if (email) {
+      if (!FormUtils.validateEmail(email)) {
+        console.log(`Invalid email address provided: ${email}`);
+        return Promise.resolve({
+          email: email,
+          from: sender._id,
+          success: false,
+          reason: "invalid"
+        });
+      }
+      const conditions = [];
+      conditions.push({"invite.invitedAs": {"$regex": email, "$options": "i"}});
+      conditions.push({"google.email": {"$regex": email, "$options": "i"}});
+      promise = User.findOne({$or: conditions}).exec()
+    }
+    return promise.then((existingUser) => {
+      if (!existingUser) {
+        const newUser = new User();
+        const inviteCode = crypto.randomBytes(4).toString('hex');
+        newUser.invite = {
+          invitedBy: sender._id,
+          invitedAs: email,
+          inviteCode: inviteCode,
+          invitedOn: Date.now(),
+          claimed: false
+        };
+        return newUser.save()
+          .then(() => {
+            // if an and email address was provided, send an email, otherwise just generate the link
+            return email
+              ? this.mailSender.sendInvite(sender.draftProfile.artistName, email, this.config.serverEndpoint + "/accept/" + inviteCode)
+              : null;
+          })
+          .then(() => {
+            console.log("MailSender successfully sent invite");
+            return this.musicoinAPI.sendReward(sender.profileAddress, this.config.rewards.sentInvite)
+              .catch((err) => {
+                console.log("Failed to send reward for invite: " + err);
+                return null;
+              })
+          })
+          .then((tx) => {
+            console.log("Sent reward for invite: " + tx);
+            sender.invitesRemaining--;
+            return sender.save();
+          })
+          .then(() => {
+            return {
+              email: email,
+              from: sender._id,
+              success: true,
+              inviteCode: inviteCode
+            }
+          })
+          .catch(function (err) {
+            console.log(err);
+            return {
+              email: email,
+              from: sender._id,
+              success: false,
+              reason: "error"
+            }
+          });
+      }
+      else {
+        console.log(`User already exists: ${email}`);
+        return {
+          email: email,
+          from: sender._id,
+          success: false,
+          reason: "exists"
+        }
+      }
+    })
+      .catch(function (err) {
+        console.log(err);
+        return {
+          email: email,
+          from: sender._id,
+          success: false,
+          reason: "error"
+        }
       });
   }
 

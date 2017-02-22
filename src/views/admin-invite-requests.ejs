@@ -78,22 +78,56 @@
                     <th class="text-center">Username</th>
                     <th class="text-center">Source</th>
                     <th class="text-center">Musician</th>
+                    <th class="text-center"></th>
                 </tr>
 
                 <% for (var ivt=0; ivt < requests.length; ivt++) {
                     var req = requests[ivt];
                 %>
-                <tr>
+                <tr id="<%=req._id%>">
                     <td class="text-center middle"><%=req.requestDateDisplay%></td>
                     <td class="text-center middle"><%=req.username%></td>
                     <td class="text-center middle"><%=req.source%></td>
                     <td class="text-center middle"><%=req.musician ? "Yes" : "No"%></td>
+                    <td class="text-center middle send-invite clickable"
+                        requestid="<%=req._id%>"
+                        email="<%=req.username%>">
+                        Send
+                    </td>
                 </tr>
                 <%}%>
             </table>
         </div>
     </div>
 </div>
+<script>
+  $( document ).ready(function() {
+    $(document).on('click', '.send-invite', function() {
+      var email = $(this).attr("email");
+      var _id = $(this).attr("requestid");
+      var row = $("#" + _id);
+      $.post('/invite/send', {
+        email: email
+      }, function (data) {
+        if (data.success) {
+          $.post('/admin/waitlist/remove', {
+            _id: _id
+          }, function(data) {
+            if (data.success) {
+              row.html("<td class='alert-success' colspan=5 align=center>Sent!</td>");
+            }
+            else {
+              alert("Failed to remove invite request record");
+            }
+          });
+        }
+        else {
+          alert("Failed: " + data.reason);
+        }
+      })
+    })
+  });
+</script>
 <%- include partials/connect-with-us.ejs %>
 </body>
 </html>

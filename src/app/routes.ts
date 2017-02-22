@@ -20,12 +20,12 @@ const MAX_MESSAGES = 20;
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
+  const serverEndpoint = config.serverEndpoint;
   let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider);
-  let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider);
   const mailSender = new MailSender();
+  let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider, mailSender, config);
   let restAPI = new MusicoinRestAPI(jsonAPI);
   const addressResolver = new AddressResolver();
-  const serverEndpoint = config.serverEndpoint;
 
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider));
@@ -303,6 +303,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       musician: musician
     });
   });
+
+  app.post('/admin/waitlist/remove', (req, res) => {
+    jsonAPI.removeInviteRequest(req.body._id)
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log("failed to remove invite: " + err);
+        res.json({success: false, reason: "error"});
+      });
+  });
+
   app.post('/waitlist/add', (req, res) => {
     if (!req.body) {
       console.log(`Waitlist request failed because no body was included`);
@@ -347,67 +357,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function (req, res) {
     if (canInvite(req.user)) {
-      const email = req.body.email;
-      let promise = Promise.resolve(null);
-      if (email) {
-        if (!FormUtils.validateEmail(email)) {
-          console.log(`Invalid email address provided: ${email}`);
-          return res.redirect(`profile?invited=${email}&success=false&reason=invalid`);
-        }
-        const conditions = [];
-        conditions.push({"invite.invitedAs": {"$regex": req.body.email, "$options": "i"}});
-        conditions.push({"google.email": {"$regex": req.body.email, "$options": "i"}});
-        promise = User.findOne({$or: conditions}).exec()
-      }
-      promise.then((user) => {
-        if (!user) {
-          const newUser = new User();
-          const inviteCode = crypto.randomBytes(4).toString('hex');
-          newUser.invite = {
-            invitedBy: req.user._id,
-            invitedAs: email,
-            inviteCode: inviteCode,
-            invitedOn: Date.now(),
-            claimed: false
-          };
-          newUser.save()
-            .then(() => {
-              // if an and email address was provided, send an email, otherwise just generate the link
-              return email
-                ? mailSender.sendInvite(req.user.draftProfile.artistName, email, serverEndpoint + "/accept/" + inviteCode)
-                : null;
-            })
-            .then(() => {
-              console.log("MailSender successfully sent invite");
-              // try to send the reward.  For now, don't fail if the reward doesn't send.
-              // TODO: Fail here after we are confident that this new API should work
-              return musicoinApi.sendReward(req.user.profileAddress, config.rewards.sentInvite)
-                .catch((err) => {
-                  console.log("Failed to send reward for invite: " + err);
-                  return null;
-                })
-            })
-            .then((tx) => {
-              console.log("Sent reward for invite: " + tx);
-              req.user.invitesRemaining--;
-              return req.user.save();
-            })
-            .then(() => {
-              return res.redirect('profile?invited=' + email + "&success=true&inviteCode=" + inviteCode);
-            })
-            .catch(function (err) {
-              console.log(err);
-              res.redirect('profile?invited=' + email + "&success=false&reason=error");
-            });
-        }
-        else {
-          console.log(`User already exists: ${email}`);
-          return res.redirect('profile?invited=' + email + "&success=false&reason=exists");
-        }
-      })
-        .catch(function (err) {
-          console.log(err);
-          res.redirect('profile?invited=' + email + "&success=false&reason=error");
+      jsonAPI.sendInvite(req.user, req.body.email)
+        .then(result => {
+          res.redirect(`profile?invited=${result.email}&success=${result.success}&reason=${result.reason}&inviteCode=${result.inviteCode}`);
+        });
+    }
+    else {
+      throw new Error("Not authorized");
+    }
+  });
+
+  app.post('/invite/send', isLoggedIn, function (req, res) {
+    if (canInvite(req.user)) {
+      jsonAPI.sendInvite(req.user, req.body.email)
+        .then(result => {
+          res.json(result);
         });
     }
     else {
