@@ -651,7 +651,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       // if somehow the user when to the new user page, but already has a profile,
       // just skip this step
-      if (req.user.profileAddress) {
+      if (req.user.profileAddress && !!req.body.isNewUserPage) {
         console.log("Not saving from new user page, since the user already has a profile");
         return res.redirect("/profile");
       }
