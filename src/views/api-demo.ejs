@@ -68,8 +68,8 @@
                        class="inline-form-control address"
                        placeholder="<%=api.subpath%><%=paramsString%>"
                        onkeyup="<%-keyupExpr%>">
-                <input class="mr5" type="button" onclick="<%-submitExpr%>" value="Go">
-                <input type="button" onclick="<%-clearExpr%>" value="Clear">
+                <input class="mr5 btn btn-success" type="button" onclick="<%-submitExpr%>" value="Go">
+                <input type="button" class="btn btn-warning" onclick="<%-clearExpr%>" value="Clear">
             </div>
             <div id="<%=outputId%>" class="json-target"></div>
         </div>
@@ -88,7 +88,7 @@
                        class="inline-form-control address"
                        placeholder="track address"
                        onkeyup="demo.maybePlayAudio(event)">
-                <input class="mr5" type="button" onclick="demo.playAudio()" value="Go">
+                <input class="mr5 btn btn-success" type="button" onclick="demo.playAudio()" value="Go">
             </div>
             <audio id="demoAudio" controls></audio>
         </div>
