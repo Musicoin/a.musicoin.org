@@ -67,6 +67,10 @@ textarea.form-control {
     flex-direction: row;
 }
 
+.fill-width {
+    width: 100%;
+}
+
 .spread {
     display: flex;
     flex-direction: row;

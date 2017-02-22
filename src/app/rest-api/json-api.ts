@@ -481,7 +481,8 @@ export class MusicoinOrgJsonAPI {
           const release = m.release
             ? { title: m.release.title,
                 image: this.mediaProvider.resolveIpfsUrl(m.release.imageUrl),
-                contractAddress: m.release.contractAddress}
+                contractAddress: m.release.contractAddress,
+                id: m.release._id}
                 : null;
 
           return {
