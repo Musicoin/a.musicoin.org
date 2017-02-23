@@ -46,6 +46,10 @@
         h1, h3 {
             text-shadow: 1px 2px rgba(0,0,0,0.5);
         }
+
+        .new-user-name {
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -65,7 +69,7 @@
 
         <form id=profileForm action="/profile/save" enctype="multipart/form-data"  method="post">
             <div class="form-group">
-                <input type="text" name="artistName"  placeholder="e.g. a user name or band name">
+                <input type="text" class=new-user-name name="artistName"  placeholder="e.g. a user name or band name">
                 <input type="hidden" name="isNewUserPage" value="true">
             </div>
             <div class="btn btn-success btn-lg" onclick="profileForm.submit()">Next</div>
