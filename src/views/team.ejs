@@ -1,0 +1,250 @@
+<!doctype html>
+<html>
+<head>
+    <title>FAQ - Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body {
+            word-wrap: break-word;
+            background-image: url('/images/musician.jpg');
+            background-size: cover;
+        }
+
+        :target {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes highlight {
+            0% {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+            100% {
+                background-color: transparent;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<%
+var team = [
+             {
+               "name": "Issac Mao",
+               "image": "/img/team/issac",
+               "title": "Smart Guy",
+               "bio": "Does smart things",
+               "social": [
+                 {
+                   "name": "Twitter",
+                   "link": "https://twitter.com"
+                 },
+                 {
+                   "name": "Facebook",
+                   "link": "https://twitter.com"
+                 },
+                 {
+                   "name": "LinkedIn",
+                   "link": "https://twitter.com"
+                 }
+               ],
+               "donate": [
+                 {
+                   "currency": "BTC",
+                   "address": "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
+                 },
+                 {
+                   "currency": "MUC",
+                   "address": "0xa0f17e527d50b5973bc0d029006f0f55ace16819"
+                 }
+               ],
+               "projects": [
+                 {
+                   "title": "",
+                   "description": "",
+                   "image": ""
+                 },
+                 {
+                   "title": "",
+                   "description": "",
+                   "image": ""
+                 }
+               ]
+             },
+             {
+               "name": "Dan Pfifer",
+               "image": "/img/team/dan",
+               "title": "Smart Guy",
+               "bio": "Does smart things",
+               "social": [
+                 {
+                   "name": "Twitter",
+                   "link": "https://twitter.com"
+                 },
+                 {
+                   "name": "Facebook",
+                   "link": "https://twitter.com"
+                 },
+                 {
+                   "name": "LinkedIn",
+                   "link": "https://twitter.com"
+                 }
+               ],
+               "donate": [
+                 {
+                   "currency": "BTC",
+                   "address": "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
+                 },
+                 {
+                   "currency": "MUC",
+                   "address": "0xa0f17e527d50b5973bc0d029006f0f55ace16819"
+                 }
+               ],
+               "projects": [
+                 {
+                   "title": "",
+                   "description": "",
+                   "image": ""
+                 },
+                 {
+                   "title": "",
+                   "description": "",
+                   "image": ""
+                 }
+               ]
+             },
+             {
+               "name": "Brian Byrne",
+               "image": "/img/team/brian",
+               "title": "Music Guy",
+               "bio": "Does music things",
+               "social": [
+                 {
+                   "name": "Twitter",
+                   "link": "https://twitter.com"
+                 },
+                 {
+                   "name": "Facebook",
+                   "link": "https://twitter.com"
+                 },
+                 {
+                   "name": "LinkedIn",
+                   "link": "https://twitter.com"
+                 }
+               ],
+               "donate": [
+                 {
+                   "currency": "BTC",
+                   "address": "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
+                 },
+                 {
+                   "currency": "MUC",
+                   "address": "0xa0f17e527d50b5973bc0d029006f0f55ace16819"
+                 }
+               ],
+               "projects": [
+                 {
+                   "title": "",
+                   "description": "",
+                   "image": ""
+                 },
+                 {
+                   "title": "",
+                   "description": "",
+                   "image": ""
+                 }
+               ]
+             }
+           ];
+%>
+<div class="container">
+    <div class="page-header">
+        <h1>Musicoin Team</h1>
+    </div>
+    <div class="row">
+		<%
+		for (var t = 0; t < team.length; t++) {
+			var profile = team[t];
+		%>
+        <div class="well">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-3">
+							<img src="<%= profile.image %>"
+								 class="img-responsive center-block"
+								 alt="Responsive image">
+							<h2><%= profile.name %></h2>
+							<h3><%= profile.title %></h3>
+							<%
+							if(profile.hasOwnProperty('social') && profile.social.length > 0) {
+							%>
+								<%
+								for (var s = 0; s < profile.social.length; s++) {
+									var social = profile.social[s];
+								%>
+									<p>
+										<a href="<%= social.link %>" target="_blank">
+											<%= social.name %>
+										</a>
+									</p>
+								<% } %>
+							<% } %>
+						</div>
+						<div class="col-md-9">
+							<h4>Bio</h4>
+							<div><%= profile.bio %></div>
+							<h4>Projects</h4>
+
+							<%
+							if(profile.hasOwnProperty('projects') && profile.projects.length > 0) {
+							%>
+								<%
+								for (var p = 0; p < profile.projects.length; p++) {
+									var project = profile.projects[p];
+								%>
+									<div class="row">
+										<div class="col-md-8">
+											<h5><%= project.title %></h5>
+											<div>
+												<%= project.description %>
+											</div>
+										</div>
+										<div class="col-md-4">
+											<img class="img-responsive center-block" src="<%= project.image %>">
+										</div>
+									</div>
+									<p>&nbsp;</p>
+								<% } %>
+							<% } %>
+
+							<p>&nbsp;</p>
+
+							<%
+							if(profile.hasOwnProperty('donate') && profile.donate.length > 0) {
+							%>
+								<%
+								for (var w = 0; w < profile.donate.length; w++) {
+									var wallet = profile.donate[w];
+								%>
+									<div class="row">
+										<div class="col-sm-2">
+											<%= wallet.currency %>
+										</div>
+										<div class="col-sm-10">
+											<%= wallet.address %>
+										</div>
+									</div>
+								<% } %>
+							<% } %>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+		<% } %>
+    </div>
+</div>
+<%- include partials/connect-with-us.ejs %>
+</body>
+</html>
