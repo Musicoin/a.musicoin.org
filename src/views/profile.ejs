@@ -17,6 +17,13 @@
             align-items: center;
             cursor: pointer;
         }
+        .hero-image {
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
         .social-group {
             display: flex;
             flex-direction: column;
@@ -119,6 +126,11 @@
                         <img id="profileImage" style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"  src="<%=user.profile.image%>">
                         (click to change)
                         <input style="display: none" id="imageInput" type="file" name="photo">
+                    </div>
+                    <div class="form-group hero-image">
+                        <img id="heroImage" alt="No promo image selected" class="clickable" style="width: 300px; height: 70px; object-fit: contain"  src="<%=user.profile.heroImage%>">
+                        (click to set a wide-format promo image, 1300x300)
+                        <input style="display: none" id="heroInput" type="file" name="hero">
                     </div>
                     <div class="form-group">
                         <label>Name</label>
@@ -534,8 +546,16 @@
       readURL('profileImage', this);
     });
 
+    $("#heroInput").change(function(){
+      readURL('heroImage', this);
+    });
+
     $("#profileImage").click(function() {
       $("#imageInput").click();
+    })
+
+    $("#heroImage").click(function() {
+      $("#heroInput").click();
     })
 
     var inviteEmail = $("#inviteEmail");

@@ -46,6 +46,7 @@ const userSchema = mongoose.Schema({
     description: String,
     social: Object,
     ipfsImageUrl: String,
+    heroImageUrl: String,
     genres: [String],
     version: Number
   },

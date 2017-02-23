@@ -9,6 +9,7 @@ const Release = require('../../app/models/release');
 const Playback = require('../../app/models/playback');
 const InviteRequest = require('../../app/models/invite-request');
 const TrackMessage = require('../../app/models/track-message');
+const Hero = require('../../app/models/hero');
 
 const knownGenres = [
   "Alternative Rock",
@@ -296,17 +297,69 @@ export class MusicoinOrgJsonAPI {
   }
 
   getHero(): Promise<Hero> {
+    return Hero.find({startDate: {$lte: Date.now()}})
+      .sort({startDate: 'desc'})
+      .limit(1)
+      .exec()
+      .then(records => {
+        if (records && records.length > 0) {
+          return records[0];
+        }
+        throw new Error("No Hero defined!");
+      })
+      .catch((err) => {
+        console.log("Failed to load hero, using fallback! " + err);
+        return this.getFallbackHero();
+      })
+  }
+
+  getFallbackHero(): Promise<Hero> {
     return this.getNewReleases(1)
       .then(releases => {
         const release = releases[0];
         return {
-          title: release.title,
-          titleLink: `/track/${release.address}`,
-          subtitle: release.artistName,
-          subtitleLink: `/artist/${release.artistAddress}`,
+          subtitle: release.title,
+          subtitleLink: `/track/${release.address}`,
+          title: release.artistName,
+          titleLink: `/artist/${release.artistAddress}`,
           image: "images/hero.jpeg",
           licenseAddress: release.address,
-          label: "Artist of the Week",
+          label: "",
+        }
+      })
+  }
+
+  promoteTrackToHero(licenseAddress: string): Promise<any> {
+    return Release.findOne({contractAddress: licenseAddress}).exec()
+      .then(release => {
+        if (!release) return {success: false, reason: "Release not found"};
+        return User.findOne({profileAddress: release.artistAddress}).exec()
+          .then(artist => {
+            if (!artist) return {success: false, reason: "Artist not found"};
+            if (!artist.draftProfile || !artist.draftProfile.heroImageUrl || artist.draftProfile.heroImageUrl.trim().length == 0)
+              return {success: false, reason: "Artist does not have a promo image defined"};
+
+            const hero = new Hero({
+              subtitle: release.title,
+              subtitleLink: `/track/${release.contractAddress}`,
+              title: release.artistName,
+              titleLink: `/artist/${release.artistAddress}`,
+              image: this.mediaProvider.resolveIpfsUrl(artist.draftProfile.heroImageUrl),
+              licenseAddress: release.contractAddress,
+              label: "Artist of the Week",
+              startDate: Date.now()
+            });
+            return hero.save()
+              .then(() => {
+                return {success: true}
+              });
+          })
+      })
+      .catch(err => {
+        console.log("Failed to promote track to Hero: " + err);
+        return {
+          success: false,
+          reason: "Failed to promote track to Hero"
         }
       })
   }

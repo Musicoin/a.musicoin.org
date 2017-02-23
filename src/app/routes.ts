@@ -14,6 +14,7 @@ const TrackMessage = require('../app/models/track-message');
 const User = require('../app/models/user');
 const loginRedirect = "/";
 const maxImageWidth = 400;
+const maxHeroImageWidth = 1300;
 const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 20;
@@ -312,6 +313,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.json({success: false, reason: "error"});
       });
   });
+
+  app.post('/admin/hero/select', (req, res) => {
+    jsonAPI.promoteTrackToHero(req.body.licenseAddress)
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log("failed to promote track to hero: " + err);
+        res.json({success: false, reason: "error"});
+      });
+  });
+
 
   app.post('/waitlist/add', (req, res) => {
     if (!req.body) {
@@ -670,14 +681,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         : FormUtils.resizeImage(files.photo.path, maxImageWidth)
           .then((newPath) => mediaProvider.upload(newPath));
 
+      const uploadHeroImage = (!files.hero || files.hero.size == 0)
+        ? (profile.heroImageUrl && profile.heroImageUrl.trim().length > 0)
+          ? Promise.resolve(profile.heroImageUrl)
+          : Promise.resolve(null)
+        : FormUtils.resizeImage(files.hero.path, maxHeroImageWidth)
+          .then((newPath) => mediaProvider.upload(newPath));
+
       const version = profile.version ? profile.version : 1;
       const genres = fields.genres || "";
-      uploadImage.then((imageUrl) => {
+
+      Promise.join(uploadImage, uploadHeroImage, (imageUrl, heroImageUrl) => {
         req.user.draftProfile = {
           artistName: fields.artistName,
           description: fields.description,
           social: socialData,
           ipfsImageUrl: imageUrl,
+          heroImageUrl: heroImageUrl,
           genres: genres.split(",").map(s => s.trim()).filter(s => s),
           version: version + 1
         };
@@ -1076,6 +1096,9 @@ function preProcessUser(mediaProvider) {
         user.profile.image = user.profile.ipfsImageUrl
           ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
           : user.profile.image;
+        user.profile.heroImage = user.profile.heroImageUrl
+          ? mediaProvider.resolveIpfsUrl(user.profile.heroImageUrl)
+          : user.profile.heroImage;
       }
       user.canInvite = canInvite(user);
       user.isAdmin = isAdmin(user);
