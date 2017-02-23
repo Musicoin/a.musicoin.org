@@ -16,9 +16,11 @@
         var textClass = message.tips > 0 ? "text-warning" : "subtle-text";
         var track = message.release;
         var showThisTrack = _showTrack && message.release;
+        var releaseid = track ? track.id : "";
+        var licenseAddress = track ? track.contractAddress : "";
     %>
-    <div class="chat-message">
-        <div class="top-center-text">
+    <div class="chat-message" releaseid="<%=releaseid%>" licenseAddress='<%=licenseAddress%>'>
+        <div class="center-text">
             <% if (showThisTrack) { %>
             <div class="audio-track clickable m10 text-xlarge" licenseAddress='<%=track.contractAddress%>'>
                 <i class="fa fa-play-circle" aria-hidden="true"></i>
@@ -41,9 +43,16 @@
                 <span class="message-time big-screen-only"><%=message.time%></span>
             </div>
             <div class="chat-message-body"><%=message.body%></div>
+            <div class="inline-reply" style="display: none"><input placeholder="reply" class="inline-reply-input fill-width"></div>
         </div>
         <div class="action-area">
             <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
+
+            <!-- Inline reply isn't needed on the track page, since the context is always the same -->
+            <% if (showThisTrack) { %>
+            <i class="fa fa-reply btn subtle-text inline-reply-action" aria-hidden="true"></i>
+            <% } %>
+
             <div id="player-tip-button"
                  class="tip-button tip-button btn-xs clickable <%=textClass%>"
                  recipient="<%=message.sender.profileAddress%>"

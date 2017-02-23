@@ -28,7 +28,7 @@
         <div class="col-sm-4 flex-column mb20">
             <div class="m5 well white-well">
                 <div class="flex-column center-text">
-                    <div class="audio-track track-image show-off-container shadow clickable"
+                    <div class="track-image show-off-container shadow"
                          style="background-image: url('<%=license.image%>')">
                     </div>
                     <div class="audio-track clickable m10 text-large"
@@ -62,6 +62,14 @@
                            data-show-count="true">Tweet</a>
                         <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
                     </div>
+                    <% if (typeof isAdmin != "undefined" && isAdmin) { %>
+                    <div class="center-text mt10">
+                        <div class="promote-hero-track btn btn-danger btn-sm"
+                             address="<%=license.address%>">
+                            Set as Artist of the Week
+                        </div>
+                    </div>
+                    <%}%>
                 </div>
                 <div class="flex-column mb20 <%= isArtist ? "private-view" : ""%>">
                     <% if (isArtist) { %>
@@ -119,6 +127,27 @@
         dynamic.refreshElement(messages, {message: message, releaseid: releaseId});
       }
     });
+
+    $(".promote-hero-track").on('click', function() {
+      var licenseAddress = $(this).attr("address");
+      new Message("Are you sure?", 'warning', 5000)
+        .button('Yes', () => {
+          $.post("/admin/hero/select", {
+              licenseAddress: licenseAddress
+            },
+            function(data) {
+              if (data.success) {
+                new Message("Success!", 'success', 3000);
+              }
+              else {
+                new Message("Failed: " + data.reason, 'error', 5000);
+              }
+            })
+        })
+        .button('No', () => {
+
+        });
+    })
   });
 
   function saveTrackDescription() {
