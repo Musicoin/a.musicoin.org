@@ -93,7 +93,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // HOME PAGE (with login links) ========
   // =====================================
-  app.get('/main', isLoggedIn, function (req, res) {
+  app.get('/old', isLoggedIn, function (req, res) {
     if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
       return res.redirect("/new-user");
     }
@@ -121,7 +121,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.get('/floyd', isLoggedIn, function (req, res) {
+  app.get('/main', isLoggedIn, function (req, res) {
     if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
       return res.redirect("/new-user");
     }
