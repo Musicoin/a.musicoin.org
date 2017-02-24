@@ -49,10 +49,14 @@
     width: 100%;
 }
 
-.chat-message {
+.chat-message-normal {
     display: flex;
     flex-shrink: 0;
     padding: 5px;
+}
+
+.chat-message-normal:hover {
+    background-color: rgba(0,0,0,0.02);
 }
 
 .chat-message-highlight {
@@ -73,10 +77,6 @@
     max-height: 64px;
     text-overflow: ellipsis;
     overflow: hidden;
-}
-
-.chat-message:hover {
-    background-color: rgba(0,0,0,0.02);
 }
 
 .sender-image {

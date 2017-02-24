@@ -254,6 +254,14 @@ textarea.form-control {
 }
 
 
+.show-on-hover-target {
+    display: none;
+}
+
+.hover-target:hover .show-on-hover-target {
+    display: block;
+}
+
 
 
 .pulse-bg {

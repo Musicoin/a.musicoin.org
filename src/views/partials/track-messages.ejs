@@ -22,9 +22,9 @@
         var highlight = track
             ? message.sender.profileAddress == track.artistAddress
             : false;
-        var messageClass = highlight ? "chat-message-highlight" : "chat-message";
+        var messageClass = highlight ? "chat-message-highlight" : "chat-message-normal";
     %>
-    <div class="<%=messageClass%>"
+    <div class="chat-message hover-target <%=messageClass%>"
          releaseid="<%=releaseid%>"
          licenseAddress='<%=licenseAddress%>'
          senderAddress="<%=message.sender.profileAddress%>"
@@ -43,7 +43,7 @@
             <!--<a href="/track/<%=track.contractAddress%>" class="big-screen-only"><div style="background-image: url('<%=track.image%>')" class="sender-image"></div></a>-->
             <% } %>
         </div>
-        <div class="chat-message-area">
+        <div class="chat-message-area inline-reply-action clickable">
             <div class="chat-message-sender">
                 <a href="/artist/<%=message.sender.profileAddress%>"><%=message.sender.name%></a>
                 <% if (showThisTrack) { %>
@@ -56,9 +56,7 @@
             <div class="inline-reply" style="display: none"><input placeholder="reply" class="inline-reply-input fill-width"></div>
         </div>
         <div class="action-area">
-            <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
-            <i class="fa fa-reply btn subtle-text inline-reply-action" aria-hidden="true"></i>
-
+            <i class="fa fa-reply btn subtle-text inline-reply-action show-on-hover-target" aria-hidden="true"></i>
             <div id="player-tip-button"
                  class="tip-button tip-button btn-xs clickable <%=textClass%>"
                  recipient="<%=message.sender.profileAddress%>"
@@ -72,6 +70,7 @@
                  context-id="<%=message.id%>">
                 <%-icon%>
             </div>
+            <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
         </div>
     </div>
     <%}%>
