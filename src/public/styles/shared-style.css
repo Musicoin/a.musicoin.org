@@ -128,6 +128,11 @@ textarea.form-control {
     margin: 2px;
 }
 
+.event-header {
+    color: #555;
+    font-size: 2em;
+}
+
 .pad5 {  padding: 5px;  }
 .pad10 {  padding: 10px;  }
 .pad20 {  padding: 20px;  }
