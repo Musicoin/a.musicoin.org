@@ -32,7 +32,7 @@
 
     <div class="two-columns white-well box-shadow-top">
         <div class="pad10">
-            <div class="center-text"><img width=24 height=24 class="mr10" src="/images/chat.png">chatter</div>
+            <div class="center-text event-header"><img width=24 height=24 class="mr10" src="/images/chat.png">chatter</div>
             <div class="dynamic-element message-scroller"
                  style="min-height: 180px"
                  id="de-track-messages"
@@ -47,27 +47,23 @@
         </div>
 
         <div class="pad10">
-            <div class="well white-well">
-                <div class="event-header text-center subtle-text">new releases</div>
-                <div class="dynamic-element"
-                     style="min-height: 180px"
-                     id="de-new-releases"
-                     de-refresh-period="10"
-                     de-refresh-offset="2"
-                     de-url="/elements/release-events">
-                    <%- include('partials/release-events.ejs', {releases: releases}) %>
-                </div>
+            <div class="event-header text-center">new releases</div>
+            <div class="dynamic-element"
+                 style="min-height: 180px"
+                 id="de-new-releases"
+                 de-refresh-period="10"
+                 de-refresh-offset="2"
+                 de-url="/elements/release-events">
+                <%- include('partials/release-events.ejs', {releases: releases}) %>
             </div>
 
-            <div class="well white-well">
-                <div class="event-header text-center subtle-text">new artists</div>
-                <div class="dynamic-element"
-                     id="de-featured-artists"
-                     de-refresh-period="10"
-                     de-refresh-offset="0"
-                     de-url="/elements/artist-events">
-                    <%- include('partials/artist-events.ejs', {artists: featuredArtists}) %>
-                </div>
+            <div class="event-header text-center">new artists</div>
+            <div class="dynamic-element"
+                 id="de-featured-artists"
+                 de-refresh-period="10"
+                 de-refresh-offset="0"
+                 de-url="/elements/artist-events">
+                <%- include('partials/artist-events.ejs', {artists: featuredArtists}) %>
             </div>
         </div>
     </div>
