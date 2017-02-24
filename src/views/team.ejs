@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>FAQ - Musicoin</title>
+    <title>Team - Musicoin</title>
     <%- include partials/page-head.ejs %>
     <style>
         body {
@@ -48,16 +48,6 @@ var team = [
                    "link": "https://twitter.com"
                  }
                ],
-               "donate": [
-                 {
-                   "currency": "BTC",
-                   "address": "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
-                 },
-                 {
-                   "currency": "MUC",
-                   "address": "0xa0f17e527d50b5973bc0d029006f0f55ace16819"
-                 }
-               ],
                "projects": [
                  {
                    "title": "",
@@ -90,16 +80,6 @@ var team = [
                    "link": "https://twitter.com"
                  }
                ],
-               "donate": [
-                 {
-                   "currency": "BTC",
-                   "address": "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
-                 },
-                 {
-                   "currency": "MUC",
-                   "address": "0xa0f17e527d50b5973bc0d029006f0f55ace16819"
-                 }
-               ],
                "projects": [
                  {
                    "title": "",
@@ -130,16 +110,6 @@ var team = [
                  {
                    "name": "LinkedIn",
                    "link": "https://twitter.com"
-                 }
-               ],
-               "donate": [
-                 {
-                   "currency": "BTC",
-                   "address": "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
-                 },
-                 {
-                   "currency": "MUC",
-                   "address": "0xa0f17e527d50b5973bc0d029006f0f55ace16819"
                  }
                ],
                "projects": [
@@ -215,26 +185,6 @@ var team = [
 										</div>
 									</div>
 									<p>&nbsp;</p>
-								<% } %>
-							<% } %>
-
-							<p>&nbsp;</p>
-
-							<%
-							if(profile.hasOwnProperty('donate') && profile.donate.length > 0) {
-							%>
-								<%
-								for (var w = 0; w < profile.donate.length; w++) {
-									var wallet = profile.donate[w];
-								%>
-									<div class="row">
-										<div class="col-sm-2">
-											<%= wallet.currency %>
-										</div>
-										<div class="col-sm-10">
-											<%= wallet.address %>
-										</div>
-									</div>
 								<% } %>
 							<% } %>
 						</div>
