@@ -55,6 +55,20 @@
     padding: 5px;
 }
 
+.chat-message-highlight {
+    display: flex;
+    flex-shrink: 0;
+    padding: 5px;
+    background-color: #f5f5ff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    margin: 2px;
+}
+
+.chat-message-highlight:hover {
+    background-color: #f3f3ff;
+}
+
 .chat-message-preview {
     max-height: 64px;
     text-overflow: ellipsis;

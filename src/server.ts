@@ -10,7 +10,7 @@ import * as mongoose from 'mongoose';
 import * as passport from 'passport';
 import * as passportConfigurer from './config/passport';
 import {MusicoinAPI} from './app/musicoin-api';
-import {PendingTxDaemon} from './app/tx-daemon';
+
 
 import favicon = require('serve-favicon');
 const config = require('./config/config');
@@ -29,7 +29,6 @@ app.set('view engine', 'ejs');
 // connect to database
 mongoose.Promise = require('bluebird');
 mongoose.connect(config.database.url);
-new PendingTxDaemon().start(musicoinApi, config.database.pendingReleaseIntervalMs);
 
 passportConfigurer.configure(passport, mediaProvider, config.auth);
 

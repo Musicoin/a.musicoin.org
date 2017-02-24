@@ -60,6 +60,7 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 5
   },
+  following: [String],
   invite: {
     invitedBy: {
       type: mongoose.Schema.Types.ObjectId,

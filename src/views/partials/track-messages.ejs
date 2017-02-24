@@ -2,10 +2,11 @@
 <div class="chat-messages">
     <%
         var _showTrack = typeof showTrack != "undefined" ? showTrack : false;
+        var _noContentMessage = typeof noContentMessage != "undefined" ? noContentMessage : "Be the first to comment";
     %>
     <% if (messages.length == 0) { %>
     <div class="center-text subtle-text pad20">
-        Be the first to comment
+        <%=_noContentMessage%>
     </div>
     <% } %>
     <% for (var i=0; i < messages.length; i++) {
@@ -18,8 +19,17 @@
         var showThisTrack = _showTrack && message.release;
         var releaseid = track ? track.id : "";
         var licenseAddress = track ? track.contractAddress : "";
+        var highlight = track
+            ? message.sender.profileAddress == track.artistAddress
+            : false;
+        var messageClass = highlight ? "chat-message-highlight" : "chat-message";
     %>
-    <div class="chat-message" releaseid="<%=releaseid%>" licenseAddress='<%=licenseAddress%>'>
+    <div class="<%=messageClass%>"
+         releaseid="<%=releaseid%>"
+         licenseAddress='<%=licenseAddress%>'
+         senderAddress="<%=message.sender.profileAddress%>"
+         messageid="<%=message.id%>">
+        <%=message.followReason%>
         <div class="center-text">
             <% if (showThisTrack) { %>
             <div class="audio-track clickable m10 text-xlarge" licenseAddress='<%=track.contractAddress%>'>
@@ -47,11 +57,7 @@
         </div>
         <div class="action-area">
             <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
-
-            <!-- Inline reply isn't needed on the track page, since the context is always the same -->
-            <% if (showThisTrack) { %>
             <i class="fa fa-reply btn subtle-text inline-reply-action" aria-hidden="true"></i>
-            <% } %>
 
             <div id="player-tip-button"
                  class="tip-button tip-button btn-xs clickable <%=textClass%>"

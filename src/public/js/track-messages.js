@@ -15,12 +15,18 @@ $( document ).ready(function() {
   $(document).on('keyup', '.inline-reply-input', function(e) {
     if(e.keyCode == 13) {
       var input = $(this);
-      var releaseId = input.closest('.chat-message').attr("releaseid");
-      var address = input.closest('.chat-message').attr("licenseAddress");
+      var chatMessage = input.closest('.chat-message');
+      var releaseId = chatMessage.attr("releaseid");
+      var address = chatMessage.attr("licenseAddress");
+      var messageid = chatMessage.attr("messageid");
       var messages = input.closest('.message-scroller.dynamic-element-paused')
       var message = input.val();
       input.val("");
-      dynamic.refreshElement(messages, {message: message, releaseid: releaseId, address: address});
+      dynamic.refreshElement(messages, {
+        message: message,
+        releaseid: releaseId,
+        address: address,
+        replyto: messageid});
       closeInlineReply(input);
     }
     else if(e.keyCode == 27) {

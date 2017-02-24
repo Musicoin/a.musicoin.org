@@ -504,16 +504,75 @@ export class MusicoinOrgJsonAPI {
       });
   }
 
-  postLicenseMessages(contractAddress: string, releaseid: string, senderId: string, message: string): Promise<any[]> {
-    return Release.findOne({contractAddress: contractAddress}).exec()
-      .then(record => {
-        return TrackMessage.create({
-          artistAddress: record.artistAddress,
-          contractAddress: contractAddress,
-          release: releaseid,
-          sender: senderId,
-          message: message
-        });
+  isUserFollowing(userId: string, toFollow: string ) {
+    return User.findById(userId).exec()
+      .then(user => {
+        return {
+          success: true,
+          following: user.following && user.following.indexOf(toFollow) >= 0
+        };
+      })
+  }
+
+  toggleUserFollowing(userId: string, toFollow: string ) {
+    return User.findById(userId).exec()
+      .then(user => {
+        if (!user.following) user.following = [];
+        const idx = user.following.indexOf(toFollow);
+        let following = false;
+        if (idx >= 0) {
+          user.following.splice(idx, 1);
+        }
+        else {
+         user.following.push(toFollow);
+         following = true;
+        }
+
+        return user.save()
+          .then(() => {
+            return {
+              success: true,
+              following: following
+            }
+          })
+      })
+  }
+
+  postLicenseMessages(contractAddress: string, senderAddress: string, message: string, replyToId?: string): Promise<any[]> {
+    const r = Release.findOne({contractAddress: contractAddress}).exec();
+    const s = User.findOne({profileAddress: senderAddress}).exec();
+    const m = replyToId ? TrackMessage.findById(replyToId).exec() : Promise.resolve(null);
+
+    return Promise.join(r, s, m, (record, sender, replyToMessage) => {
+      return TrackMessage.create({
+        artistAddress: record.artistAddress,
+        contractAddress: contractAddress,
+        senderAddress: sender.profileAddress,
+        release: record._id,
+        sender: sender._id,
+        message: message,
+        replyToMessage: replyToId,
+        replyToSender: replyToMessage ? replyToMessage.sender : null
+      });
+    })
+  }
+
+  getFeedMessages(userId: string, limit: number): Promise<any[]> {
+    return User.findOne({_id: userId}).exec()
+      .then((user) => {
+        if (user) {
+          const following = user.following && user.following.length > 0 ? user.following : [];
+          return this._executeTrackMessagesQuery(
+            TrackMessage.find()
+              .or([
+                {artistAddress: {$in: following}}, // comments on track from artists I follow
+                {senderAddress: {$in: following}}, // comments by users/artists I follow
+                {sender: userId}, // messages I sent
+                {replyToSender: userId} // messages in reply to my messages
+              ])
+            .limit(limit))
+        }
+        return [];
       })
   }
 
@@ -521,8 +580,11 @@ export class MusicoinOrgJsonAPI {
     const condition = contractAddress && contractAddress.trim().length > 0
       ? {contractAddress: contractAddress}
       : {};
-    return TrackMessage.find(condition)
-      .limit(limit)
+    return this._executeTrackMessagesQuery(TrackMessage.find(condition).limit(limit));
+  }
+
+  private _executeTrackMessagesQuery(query: any): Promise<any[]> {
+    return query
       .sort({"timestamp": 'desc'})
       .populate("sender")
       .populate("release")
@@ -532,11 +594,14 @@ export class MusicoinOrgJsonAPI {
 
           // old message won't have this new property
           const release = m.release
-            ? { title: m.release.title,
-                image: this.mediaProvider.resolveIpfsUrl(m.release.imageUrl),
-                contractAddress: m.release.contractAddress,
-                id: m.release._id}
-                : null;
+            ? {
+              title: m.release.title,
+              image: this.mediaProvider.resolveIpfsUrl(m.release.imageUrl),
+              contractAddress: m.release.contractAddress,
+              artistAddress: m.release.artistAddress,
+              id: m.release._id
+            }
+            : null;
 
           return {
             id: m._id,

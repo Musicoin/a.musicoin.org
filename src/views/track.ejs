@@ -46,7 +46,19 @@
                             licenseAddress='<%=license.address%>'>
                         <i class="fa fa-play-circle" aria-hidden="true"></i> Play
                     </div>
-                    <div class="track-artist mb10">Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a></div>
+                    <div class="track-artist mb10">
+                        Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
+                        <div class="follow-toggle-button btn btn-default btn-xs mr10"
+                             user="<%=license.artistProfileAddress%>"
+                             text-following="Following"
+                             class-following="btn-success"
+                             text-not-following="Follow"
+                             class-not-following="btn-default"
+                        >
+                            Follow
+                        </div>
+                    </div>
+
                     <div class="center-text">
                         <div id="player-tip-button"
                              class="tip-button btn btn-success tip-button btn-xs mr10"
@@ -65,7 +77,11 @@
                            data-hashtags="musicoin"
                            data-show-count="true">Tweet</a>
                         <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
                     </div>
+
+
+
                     <% if (typeof isAdmin != "undefined" && isAdmin) { %>
                     <div class="center-text mt10">
                         <div class="promote-hero-track btn btn-danger btn-sm"

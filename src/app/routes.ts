@@ -8,6 +8,7 @@ import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 import {AddressResolver} from "./address-resolver";
 import {MailSender} from "./mail-sender";
+import {PendingTxDaemon} from './tx-daemon';
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const TrackMessage = require('../app/models/track-message');
@@ -27,6 +28,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider, mailSender, config);
   let restAPI = new MusicoinRestAPI(jsonAPI);
   const addressResolver = new AddressResolver();
+
+  new PendingTxDaemon(r => {
+    jsonAPI.postLicenseMessages(r.contractAddress, r.artistAddress, "New release!")
+      .catch(err => {
+        console.log(`Failed to post a message about a new release: ${err}`)
+      });
+  })
+    .start(musicoinApi, config.database.pendingReleaseIntervalMs);
+
 
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider));
@@ -143,6 +153,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/feed', isLoggedIn, function (req, res) {
+    const m = jsonAPI.getFeedMessages(req.user._id, 30);
+    const rs = jsonAPI.getNewReleases(6).catchReturn([]);
+    const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
+    const h  = jsonAPI.getHero();
+
+    Promise.join(m, rs, h, fa, function (messages, releases, hero, artists) {
+      doRender(req, res, "feed.ejs", {
+        messages: messages,
+        releases: releases,
+        hero: hero,
+        featuredArtists: artists
+      });
+    })
+      .catch(function (err) {
+        console.log(err);
+        res.redirect('/error');
+      });
+  });
+
   function handleBrowseRequest(req, res, search, genre) {
     const maxGroupSize = req.query.maxGroupSize ? parseInt(req.query.maxGroupSize) : 8;
     const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize, search, genre).catchReturn([]);
@@ -249,13 +279,37 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
 
     const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, req.body.releaseid, req.user._id, req.body.message)
+      ? jsonAPI.postLicenseMessages(req.body.address, req.user.profileAddress, req.body.message, req.body.replyto)
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     post.then(() => jsonAPI.getLicenseMessages(req.body.address, limit))
       .then(messages => {
         doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
+      })
+      .catch(err => {
+        console.log("Failed to load track messages: " + err);
+        doRender(req, res, "partials/track-messages.ejs", {messages: []});
+      })
+  });
+
+  app.post('/elements/feed', function (req, res) {
+    // don't redirect if they aren't logged in, this is just page section
+    if (!req.isAuthenticated()) {
+      return doRender(req, res, "partials/track-messages.ejs", {messages: []});
+    }
+
+    const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
+      ? jsonAPI.postLicenseMessages(req.body.address, req.user.profileAddress, req.body.message, req.body.replyto)
+      : Promise.resolve(null);
+    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
+    const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
+    post.then(() => jsonAPI.getFeedMessages(req.user._id, limit))
+      .then(messages => {
+        doRender(req, res, "partials/track-messages.ejs", {
+          messages: messages,
+          showTrack: showTrack,
+          noContentMessage: req.body.nocontent});
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
@@ -620,6 +674,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     })
   });
 
+  app.post('/follows', isLoggedIn, hasProfile, function(req, res) {
+    jsonAPI.isUserFollowing(req.user._id, req.body.profileAddress)
+      .then(result => {
+        res.json(result);
+      })
+      .catch((err) => {
+        console.log(`Failed to check following status, user: ${req.user._id} follows: ${req.body.profileAddress}, ${err}`)
+      })
+  });
+
+  app.post('/follow', isLoggedIn, hasProfile, function(req, res) {
+    jsonAPI.toggleUserFollowing(req.user._id, req.body.profileAddress)
+      .then(result => {
+        res.json(result);
+      })
+      .catch((err) => {
+        console.log(`Failed to toggle following, user: ${req.user._id} tried to follow/unfollow: ${req.body.profileAddress}, ${err}`)
+      })
+  });
+
   app.post('/tip', isLoggedIn, hasProfile, function (req, res) {
     musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
       .then(function (tx) {
@@ -635,6 +709,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               console.log("Updated tip count on track message: " + r.tips);
             })
         }
+      })
+      .then(() => {
+        // if this was a tip to a track, add a message to the track saying the user tipped it
+        // fire and forget (don't fail if this fails)
+        Release.findOne({contractAddress: req.body.recipient}).exec()
+          .then(release => {
+            if (release) {
+              return jsonAPI.postLicenseMessages(
+                req.body.recipient,
+                req.user.profileAddress,
+                `${req.user.draftProfile.artistName} sent a tip!`)
+            }
+            return null;
+          })
+          .catch(err => {
+            console.log("Failed to send a automated-tip message: " + err);
+          })
       })
       .catch(function (err) {
         console.log(err);

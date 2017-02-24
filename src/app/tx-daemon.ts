@@ -4,6 +4,8 @@ const Release = require('../app/models/release');
 const User = require('../app/models/user');
 
 export class PendingTxDaemon {
+  constructor(private releaseCallback) {}
+
   start(musicoinApi: MusicoinAPI, intervalMs: number) {
     console.log(`Starting pending release daemon with interval ${intervalMs}ms`);
     Timers.setInterval(() => this.checkForPendingReleases(musicoinApi), intervalMs);
@@ -87,7 +89,7 @@ export class PendingTxDaemon {
 
   updatePendingReleaseStatus(musicoinApi: MusicoinAPI, r) {
     musicoinApi.getTransactionStatus(r.tx)
-      .then(function(result) {
+      .then((result) => {
         if (result.status == "pending") {
           console.log("pending release still pending: " + r.title);
           return;
@@ -117,6 +119,11 @@ export class PendingTxDaemon {
           }
           else {
             console.log("Pending release updated successfully!");
+          }
+        })
+        .then(() => {
+          if (r.contractAddress && r.state == 'published' && this.releaseCallback) {
+            this.releaseCallback(r);
           }
         })
       })

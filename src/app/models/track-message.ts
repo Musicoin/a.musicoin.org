@@ -11,6 +11,10 @@ module.exports = mongoose.model('TrackMessage', mongoose.Schema({
     type: String,
     index: true,
   },
+  senderAddress: {
+    type: String,
+    index: true,
+  },
   sender: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -18,6 +22,14 @@ module.exports = mongoose.model('TrackMessage', mongoose.Schema({
   release: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Release'
+  },
+  replyToMessage: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'TrackMessage'
+  },
+  replyToSender: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   message: String,
   tips: {
