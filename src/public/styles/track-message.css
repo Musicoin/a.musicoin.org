@@ -80,10 +80,20 @@
 }
 
 .sender-image {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     margin-right: 5px;
     background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+}
+
+.release-image {
+    width: 48px;
+    height: 48px;
+    margin-right: 5px;
+    background-size: cover;
+    background-position: center;
 }
 
 .chat-message-sender {
