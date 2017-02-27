@@ -1,104 +1,96 @@
 <!doctype html>
 <html>
 <head>
-    <title><%=artist.artistName%> - Musicoin</title>
     <%- include partials/page-head.ejs %>
+    <title>Musicoin.org</title>
     <style>
-        body        {
-            word-wrap:break-word;
-            background-image: url('<%=artist.image%>');
-            background-size: cover;
+        body {
+            background-color: #333;
+            color: #eee;
+            background-image: url('/images/musician.jpg');
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-size: cover;
         }
-        .profile-image {
-            justify-content: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
+        .home_icon {
+            height: 80px;
         }
-        .social-group {
-            display: flex;
-            flex-direction: column;
-        }
-        input.form-control  {
-            width: 230px;
-        }
-        .flex-row {
-            display: flex;
-            flex-direction: row;
-        }
-        .stat {
-            margin-right: 20px;
+        .free-play-count {
+            font-size: 72px;
+            line-height: 0.9;
+            text-align: center;
+            margin-top: 20px;
+            color: #e4aa17;
         }
     </style>
+    <link rel="stylesheet" href="/styles/track-message.css">
 </head>
 <body>
 <%- include partials/header.ejs %>
-<div class="container">
-    <div class="page-header">
-        <h1><%=artist.artistName%>
-            <div id="player-tip-button"
-                 class="tip-button btn btn-success tip-button btn-xs"
-                 recipient="<%=artist.profileAddress%>"
-                 amount="1"
-                 text-success="Thanks! :)"
-                 text-fail=":("
-                 text-default="Tip User (1 $MC)">
-                Tip Artist (1 $MC)
-            </div>
-            <div class="follow-toggle-button btn btn-default btn-xs mr10"
-                 user="<%=artist.profileAddress%>"
-                 text-following="Following"
-                 class-following="btn-success"
-                 text-not-following="Follow"
-                 class-not-following="btn-default"
-            >
-                Follow
-            </div>
-        </h1>
-        <div class="subtle-text">profile address: <%=artist.profileAddress%></div>
-        <div class="subtle-text pad10 text-justify">
-        <%
+
+<%- include('partials/hero.ejs', {}) %>
+
+<div class="box-shadow-top white-well pad20">
+    <div id="player-tip-button"
+         class="tip-button btn btn-success tip-button btn-xs"
+         recipient="<%=artist.profileAddress%>"
+         amount="1"
+         text-success="Thanks! :)"
+         text-fail=":("
+         text-default="Tip User (1 $MC)">
+        Tip Artist (1 $MC)
+    </div>
+    <div class="follow-toggle-button btn btn-default btn-xs mr10"
+         user="<%=artist.profileAddress%>"
+         text-following="Following"
+         class-following="btn-success"
+         text-not-following="Follow"
+         class-not-following="btn-default"
+    >
+        Follow
+    </div>
+    <%- include partials/social-links.ejs %>
+    <p></p>
+    <div id=description class="text-justify more">
+        <div class="more-content">
+            <%
             var paragraphs = artist.description ? artist.description.split("\n").map(s => s.trim()).filter(s => s) : [];
             for (var i=0; i < paragraphs.length; i++) {
-              var paragraph = paragraphs[i];
+                var paragraph = paragraphs[i];
 
-        %>
-            <p><%=paragraph%></p>
-        <%}%>
+            %>
+            <%=paragraph%>
+            <br><br>
+            <%}%>
         </div>
-        <%- include partials/social-links.ejs %>
+        <a class="morelink clickable">show more</a>
     </div>
+</div>
 
-    <!--<div>-->
-        <!--<div class="col-sm-6">-->
-            <!--<div class="well">-->
-                <!--<div class="profile-image">-->
-                    <!--<img id="profileImage" style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"  src="<%=artist.image%>">-->
-                <!--</div>-->
-                <!--<div class="form-group">-->
-                    <!--<div name="description"><%= artist.description %></div>-->
-                <!--</div>-->
-                <!--<div class="form-group">-->
-                    <!--<label>Social</label>-->
-
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <% if (releases.length > 0) {%>
-    <div class="row">
-        <div class="well">
-            <h3 class="section-header">Releases</h3>
-            <%- include partials/track-list.ejs %>
+<div class="two-columns white-well">
+    <div class="pad10">
+        <div class="center-text event-header"><img width=24 height=24 class="mr10" src="/images/chat.png">chatter</div>
+        <div class="dynamic-element message-scroller"
+             style="min-height: 180px"
+             id="de-track-messages"
+             de-refresh-period="10"
+             de-refresh-offset="10"
+             de-showtrack="true"
+             de-limit=20,
+             de-nocontent="No messages"
+             de-user="<%=artist.profileAddress%>"
+             de-url="/elements/user-messages">
+            <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
         </div>
     </div>
-    <%}%>
+
+    <div class="pad10">
+        <div class="event-header text-center">releases</div>
+        <!-- I don't see a reason for this to be a dynamic element -->
+        <%- include('partials/release-events.ejs', {releases: releases}) %>
+    </div>
 </div>
 <%- include partials/player-hook.ejs %>
+<%- include partials/connect-with-us.ejs %>
 </body>
 </html>

@@ -54,8 +54,9 @@ export interface Hero {
   subtitle: string,
   subtitleLink: string,
   image: string,
+  profileImage: string,
   licenseAddress?: string,
-  label: string
+  label: string,
 }
 
 export class MusicoinOrgJsonAPI {
@@ -313,20 +314,43 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getUserHero(profileAddress: string): Promise<Hero> {
+    return User.findOne({profileAddress: profileAddress}).exec()
+      .then((user) => {
+        return {
+          subtitle: "",
+          subtitleLink: "",
+          title: user.draftProfile.artistName,
+          titleLink: "",
+          image: user.draftProfile.heroImageUrl
+            ? this.mediaProvider.resolveIpfsUrl(user.draftProfile.heroImageUrl)
+            : "",
+          profileImage: this.mediaProvider.resolveIpfsUrl(user.draftProfile.ipfsImageUrl),
+          licenseAddress: "",
+          label: "",
+          description: user.draftProfile
+        }
+      })
+  }
+
   getFallbackHero(): Promise<Hero> {
     return this.getNewReleases(1)
       .then(releases => {
         const release = releases[0];
-        return {
-          subtitle: release.title,
-          subtitleLink: `/track/${release.address}`,
-          title: release.artistName,
-          titleLink: `/artist/${release.artistAddress}`,
-          image: "images/hero.jpeg",
-          licenseAddress: release.address,
-          label: "",
-        }
+        return this._createHeroFromReleaseRecord(release, "images/hero.jpeg");
       })
+  }
+
+  private _createHeroFromReleaseRecord(release: any, image: string) {
+    return {
+      subtitle: release.title,
+      subtitleLink: `/track/${release.address}`,
+      title: release.artistName,
+      titleLink: `/artist/${release.artistAddress}`,
+      image: image,
+      licenseAddress: release.address,
+      label: "",
+    }
   }
 
   promoteTrackToHero(licenseAddress: string): Promise<any> {
@@ -579,6 +603,13 @@ export class MusicoinOrgJsonAPI {
   getLicenseMessages(contractAddress: string, limit: number): Promise<any[]> {
     const condition = contractAddress && contractAddress.trim().length > 0
       ? {contractAddress: contractAddress}
+      : {};
+    return this._executeTrackMessagesQuery(TrackMessage.find(condition).limit(limit));
+  }
+
+  getUserMessages(profileAddress: string, limit: number): Promise<any[]> {
+    const condition = profileAddress && profileAddress.trim().length > 0
+      ? {$or: [{artistAddress: profileAddress}, {senderAddress: profileAddress}]}
       : {};
     return this._executeTrackMessagesQuery(TrackMessage.find(condition).limit(limit));
   }

@@ -44,9 +44,24 @@
         background: linear-gradient(to top, rgba(0,0,0,1) 0%,rgba(0,0,0,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
     }
+
+    .no-wide-image {
+
+    }
 </style>
 
-<div class="hero box-shadow-top" style="background-image: url('<%=hero.image%>')">
+<%
+    var bgImage = hero.image;
+    var style = "";
+    if (!bgImage) {
+        style = (`background-size: contain;
+        background-repeat: no-repeat;
+        background-color: black;`)
+        bgImage = hero.profileImage;
+    }
+%>
+
+<div class="hero box-shadow-top" style="background-image: url('<%=bgImage%>'); <%=style%>">
     <% if(hero.licenseAddress) { %>
     <div class="hero-play center-text">
         <i class="fa fa-play-circle hero-play-button clickable audio-track"
