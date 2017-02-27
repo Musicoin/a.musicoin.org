@@ -54,8 +54,9 @@ export interface Hero {
   subtitle: string,
   subtitleLink: string,
   image: string,
+  profileImage: string,
   licenseAddress?: string,
-  label: string
+  label: string,
 }
 
 export class MusicoinOrgJsonAPI {
@@ -323,7 +324,8 @@ export class MusicoinOrgJsonAPI {
           titleLink: "",
           image: user.draftProfile.heroImageUrl
             ? this.mediaProvider.resolveIpfsUrl(user.draftProfile.heroImageUrl)
-            : this.mediaProvider.resolveIpfsUrl(user.draftProfile.ipfsImageUrl),
+            : "",
+          profileImage: this.mediaProvider.resolveIpfsUrl(user.draftProfile.ipfsImageUrl),
           licenseAddress: "",
           label: "",
           description: user.draftProfile
