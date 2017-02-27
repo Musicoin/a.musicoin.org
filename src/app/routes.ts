@@ -293,6 +293,27 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.post('/elements/user-messages', function (req, res) {
+    // don't redirect if they aren't logged in, this is just page section
+    if (!req.isAuthenticated()) {
+      return doRender(req, res, "partials/track-messages.ejs", {messages: []});
+    }
+
+    const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
+      ? jsonAPI.postLicenseMessages(req.body.address, req.user.profileAddress, req.body.message, req.body.replyto)
+      : Promise.resolve(null);
+    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
+    const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
+    post.then(() => jsonAPI.getUserMessages(req.body.user, limit))
+      .then(messages => {
+        doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
+      })
+      .catch(err => {
+        console.log("Failed to load track messages: " + err);
+        doRender(req, res, "partials/track-messages.ejs", {messages: []});
+      })
+  });
+
   app.post('/elements/feed', function (req, res) {
     // don't redirect if they aren't logged in, this is just page section
     if (!req.isAuthenticated()) {
@@ -575,9 +596,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   app.get('/artist/:address', isLoggedIn, function (req, res, next) {
     // find tracks for artist
-    jsonAPI.getArtist(req.params.address, true, false)
-      .then((output: ArtistProfile) => {
+    const m = jsonAPI.getUserMessages(req.params.address, 30);
+    const a = jsonAPI.getArtist(req.params.address, true, false);
+    const h = jsonAPI.getUserHero(req.params.address);
+    Promise.join(a, m, h, (output, messages, hero) => {
         if (!output) return res.redirect("/not-found");
+        output.messages = messages;
+        hero.description = output.artist.description;
+        output.hero = hero;
         doRender(req, res, "artist.ejs", output);
       })
   });
