@@ -4,6 +4,7 @@ _Getting started_
 
  * run `npm install`
  * run `tsc` to compile
+ * make sure mongo is running
  * `npm start` or `node src/server.js`
   
  

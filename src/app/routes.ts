@@ -370,6 +370,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  //app.get('/team', (req, res) => doRender(req, res, 'team.ejs', {}));
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   app.get('/welcome', (req, res) => doRender(req, res, 'welcome.ejs', {}));
