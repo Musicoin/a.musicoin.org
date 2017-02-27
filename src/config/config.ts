@@ -19,6 +19,9 @@ const keyValueConfig = {
   twitterClientId: process.env.TWITTER_CLIENT_ID || "yourClientId",
   twitterClientSecret: process.env.TWITTER_SECRET || "yourClientSecret",
 
+  facebookClientId: process.env.FACEBOOK_CLIENT_ID || "yourClientId",
+  facebookClientSecret: process.env.FACEBOOK_SECRET || "yourClientSecret",
+
   soundcloudClientId: process.env.SOUNDCLOUD_CLIENT_ID || "yourClientId",
   soundcloudClientSecret: process.env.SOUNDCLOUD_SECRET || "yourClientSecret",
   soundcloudCallbackEndpoint: process.env.SOUNDCLOUD_CALLBACK_ENDPOINT || `http://alpha.musicoin.org/auth/soundcloud/callback`,
@@ -98,6 +101,11 @@ const config = {
       'clientID'   : keyValueConfig.soundcloudClientId,
       'clientSecret': keyValueConfig.soundcloudClientSecret,
       'callbackURL' : keyValueConfig.soundcloudCallbackEndpoint
+    },
+    'facebookAuth'  : {
+      'clientID'    : keyValueConfig.facebookClientId,
+      'clientSecret': keyValueConfig.facebookClientSecret,
+      'callbackURL' : `${keyValueConfig.authCallbackEndpoint}/auth/facebook/callback`
     }
   },
   certificate: {

@@ -1063,6 +1063,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       failureRedirect: '/invite'
     }));
 
+  app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
+
+  // handle the callback after twitter has authenticated the user
+  app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+      successRedirect: loginRedirect,
+      failureRedirect: '/invite'
+    }));
+
   app.get('/auth/twitter', passport.authenticate('twitter', {scope: 'email'}));
 
   // handle the callback after twitter has authenticated the user

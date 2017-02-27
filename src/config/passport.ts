@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const SoundCloudStrategy = require('passport-soundcloud').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy
 
 // load up the user model
 const User = require('../app/models/user');
@@ -158,10 +159,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
       // asynchronous
       process.nextTick(function() {
-        if (req.user) {
-          return done(null, req.user);
-        }
-
         const localProfile = {
           id: profile.id,
           token: token,
@@ -171,16 +168,38 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           picture: profile._json.picture
         };
 
-        const conditions = { $or : [
-          { 'google.id' : localProfile.id },
-          { 'google.email' : localProfile.email }
-        ]};
-
         doStandardLogin("google",
           req,
           profile,
           localProfile,
-          User.findOne(conditions),
+          done);
+      });
+    }));
+
+  // =========================================================================
+  // FACEBOOK ==================================================================
+  // =========================================================================
+  passport.use(new FacebookStrategy({
+      clientID: configAuth.facebookAuth.clientID,
+      clientSecret: configAuth.facebookAuth.clientSecret,
+      callbackURL: configAuth.facebookAuth.callbackURL,
+      passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+    },
+    function(req, token, tokenSecret, profile, done) {
+
+      // asynchronous
+      process.nextTick(function() {
+        const localProfile = {
+          id: profile.id,
+          token: token,
+          name: profile.displayName,
+          email: profile.email
+        };
+
+        doStandardLogin("facebook",
+          req,
+          profile,
+          localProfile,
           done);
       });
     }));
@@ -200,10 +219,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
       // asynchronous
       process.nextTick(function() {
-        if (req.user) {
-          return done(null, req.user);
-        }
-
         const localProfile = {
           id: profile.id,
           token: token,
@@ -212,16 +227,10 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           picture: profile._json.profile_image_url_https
         };
 
-        const conditions = { $or : [
-          { 'twitter.id' : localProfile.id },
-          { 'twitter.username' : localProfile.username }
-        ]};
-
         doStandardLogin("twitter",
           req,
           profile,
           localProfile,
-          User.findOne(conditions),
           done);
       });
     }));
@@ -241,28 +250,18 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
       // asynchronous
       process.nextTick(function() {
-        if (req.user) {
-          return done(null, req.user);
-        }
-
         const localProfile = {
           id: profile.id,
           token: token,
           username: profile._json.permalink,
           name: profile._json.full_name,
           picture: profile._json.avatar_url
-        }
-
-        const conditions = { $or : [
-          { 'soundcloud.id' : localProfile.id },
-          { 'soundcloud.username' : localProfile.username }
-        ]};
+        };
 
         doStandardLogin("soundcloud",
           req,
           profile,
           localProfile,
-          User.findOne(conditions),
           done);
       });
     }));
@@ -271,11 +270,16 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                             req,
                             externalProfile,
                             localProfile,
-                            existingUserQuery,
                             done) {
+     if (req.user) {
+       return done(null, req.user);
+     }
+
     // check if the user is already logged in
     // first, check if this user already exists
-    existingUserQuery.exec()
+    const condition = {};
+    condition[authProvider + ".id"] = localProfile.id;
+    User.findOne(condition).exec()
       .then(function (user) {
         if (user) return user;
         if (!req.session || !req.session.inviteCode) return null;
