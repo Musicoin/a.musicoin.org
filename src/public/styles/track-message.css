@@ -32,6 +32,7 @@
 
 .chat-message-area {
     flex-grow: 1;
+    font-family: 'Noto Sans', sans-serif;
 }
 
 .chat-input-area {
