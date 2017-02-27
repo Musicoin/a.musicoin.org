@@ -196,9 +196,17 @@
         margin-right: 10px;
         font-size: 14pt;
     }
+
+    .no_selection {
+        -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+        -moz-user-select: none; /* mozilla browsers */
+        -khtml-user-select: none; /* webkit (konqueror) browsers */
+        -ms-user-select: none; /* IE10+ */
+    }
+
 </style>
 <div id="player-section" class="fixed-footer player show-on-play">
-    <div class="player-foreground">
+    <div class="player-foreground no_selection">
         <img id="player-badge-image" src="/images/default-profile.png" class="song-badge-image big-screen-only">
         <div class="song-badge-info">
             <div id=player-title-area  class="flex-row middle clickable title-link">
@@ -219,15 +227,11 @@
             </div>
         </div>
 
-        <div class="mr10 big-screen-only"><span id="player-plays">23</span><span>&nbsp;plays</span></div>
         <div id="player-tip-button"
-             class="tip-button tip-button clickable text-large"
-             recipient=""
-             amount="1"
-             text-success='<i class="fa fa-heart text-danger message-tip" aria-hidden="true"></i>'
-             text-fail=":("
-             text-default='<i class="fa fa-heart text-danger message-tip" aria-hidden="true"></i>'>
-            <i class="fa fa-heart-o" aria-hidden="true"></i>
+             title="Send a tip"
+             class="clickable text-large mr10"
+             recipient="">
+            <i class="fa fa-heart btn btn-plain btn-sm" aria-hidden="true"></i>
         </div>
         <img class="clickable title-link" width=24 height=24 src="/images/chat.png">
     </div>
@@ -289,13 +293,16 @@
       $("#player")[0].src = url + "?" + new Date().getTime();
       $("#player-background")[0].style.backgroundImage = "url('" + img + "')";
       $("#player-badge-image")[0].src = img;
-      $("#player-plays")[0].innerHTML = playCount;
+//      $("#player-plays")[0].innerHTML = playCount;
 //      $("#player-tips")[0].innerHTML = tipCount;
 
       // update the tip button with the new address and reset the icon
-      var tipButton = $("#player-tip-button");
-      tipButton.attr("recipient", licenseAddress);
-      tipButton.html('<i class="fa fa-heart-o message-tip" aria-hidden="true"></i>');
+//      var tipButton = $("#player-tip-button");
+//      tipButton.attr("recipient", licenseAddress);
+//      tipButton.html('<i class="fa fa-heart-o message-tip" aria-hidden="true"></i>');
+
+      var heartButton = $("#player-tip-button");
+      heartButton.attr("recipient", licenseAddress);
 
       audioPlayer.audioElement.play();
     },
@@ -366,5 +373,10 @@
 
   $(document).ready(function () {
     audioPlayer.initialize();
+
+    $("#player-tip-button").on('click', function() {
+      var _tipModule = parent.document.getElementById("mainFrame").contentWindow.tipModule;
+      _tipModule.accumulateTips($(this));
+    })
   });
 </script>

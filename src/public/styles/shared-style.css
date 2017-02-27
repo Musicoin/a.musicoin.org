@@ -317,6 +317,22 @@ textarea.form-control {
     border-color: #c7640e;
 }
 
+
+.btn-plain {
+    color: #ffffff;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.btn-plain:hover,
+.btn-plain:focus,
+.btn-plain:active,
+.btn-plain.active {
+    color: #ff1155;
+    background-color: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+}
+
 a.plain:link,
 a.plain:visited,
 a.plain:hover,

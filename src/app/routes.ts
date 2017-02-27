@@ -745,10 +745,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         Release.findOne({contractAddress: req.body.recipient}).exec()
           .then(release => {
             if (release) {
+              const units = req.body.amount == 1 ? " coin" : "coins";
               return jsonAPI.postLicenseMessages(
                 req.body.recipient,
                 req.user.profileAddress,
-                `${req.user.draftProfile.artistName} sent a tip!`)
+                `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units}!`)
             }
             return null;
           })

@@ -1,5 +1,7 @@
 /src/**/*.js.map
-/src/**/*.js
+/src/app/**/*.js
+/src/config/**/*.js
+/src/media/**/*.js
 /logs
 /.idea
 /node_modules
