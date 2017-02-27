@@ -35,7 +35,7 @@
                     <div class="track-image show-off-container shadow"
                          style="background-image: url('<%=license.image%>')">
                     </div>
-                    <div class="audio-track clickable m10 text-large"
+                    <div class="audio-track clickable text-large"
                             audioUrl='<%=license.audioUrl%>'
                             trackTitle='<%=license.title%>'
                             artistName='<%=license.artistName%>'
@@ -46,6 +46,7 @@
                             licenseAddress='<%=license.address%>'>
                         <i class="fa fa-play-circle" aria-hidden="true"></i> Play
                     </div>
+                    <div class="mb10"><%=license.playCount%> plays</div>
                     <div class="track-artist mb10">
                         Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
                         <div class="follow-toggle-button btn btn-default btn-xs mr10"
@@ -77,7 +78,6 @@
                            data-hashtags="musicoin"
                            data-show-count="true">Tweet</a>
                         <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-
                     </div>
 
 
