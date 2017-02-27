@@ -79,6 +79,7 @@
                     <th class="text-center">Source</th>
                     <th class="text-center">Musician</th>
                     <th class="text-center"></th>
+                    <th class="text-center"></th>
                 </tr>
 
                 <% for (var ivt=0; ivt < requests.length; ivt++) {
@@ -89,10 +90,15 @@
                     <td class="text-center middle"><%=req.username%></td>
                     <td class="text-center middle"><%=req.source%></td>
                     <td class="text-center middle"><%=req.musician ? "Yes" : "No"%></td>
-                    <td class="send-invite btn btn-success btn-sm"
+                    <td class="send-invite btn btn-success btn-sm mr5"
                         requestid="<%=req._id%>"
                         email="<%=req.username%>">
                         Send
+                    </td>
+                    <td class="delete-invite btn btn-danger btn-sm"
+                        requestid="<%=req._id%>"
+                        email="<%=req.username%>">
+                        Delete
                     </td>
                 </tr>
                 <%}%>
@@ -102,6 +108,27 @@
 </div>
 <script>
   $( document ).ready(function() {
+    $(".delete-invite").on('click', function() {
+      var _id = $(this).attr("requestid");
+      var row = $("#" + _id);
+      new Message("Are you sure?", 'warning', 5000)
+        .button('Yes', () => {
+          $.post('/admin/waitlist/remove', {
+            _id: _id
+          }, function(data) {
+            if (data.success) {
+              row.html("<td class='alert-success' colspan=5 align=center>Removed!</td>");
+            }
+            else {
+              new Message("Failed to delete the entry", 'error', 5000)
+            }
+          });
+        })
+        .button('No', () => {
+
+        });
+    })
+
     $(document).on('click', '.send-invite', function() {
       var email = $(this).attr("email");
       var _id = $(this).attr("requestid");
@@ -117,12 +144,12 @@
               row.html("<td class='alert-success' colspan=5 align=center>Sent!</td>");
             }
             else {
-              alert("Failed to remove invite request record");
+              new Message("Failed to remove the entry", 'error', 5000)
             }
           });
         }
         else {
-          alert("Failed: " + data.reason);
+          new Message("Failed: " + data.reason, 'error', 5000)
         }
       })
     })
