@@ -1,5 +1,10 @@
 <script>
   $( document ).ready(function() {
+    var _audioPlayer = parent.document.getElementById("playerFrame");
+    if (!_audioPlayer && !window.location.pathname.startsWith("/nav")) {
+      window.location = '/nav' + window.location.pathname;
+    }
+
     $(document).on('click', '.audio-track', function() {
       var item = $(this);
       var that = this;
