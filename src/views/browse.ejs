@@ -40,8 +40,8 @@
                 </form>
             </div>
         </div>
+        <h3><%=genreFilter%></h3>
     </div>
-
 
     <%if (artists && artists.length > 0) {%>
     <div class="container">
@@ -78,7 +78,7 @@
             <% if (showMore) {%>
             <div class="abs-top-right subtle-text clickable"
                  de-target-id="de-featured-artists">
-                <a class="subtle-text" href="/browse?genre=<%=genre%>&search=<%=searchTerm%>&maxGroupSize=20">more</a>
+                <a class="subtle-text" href="<%=createMoreLink(genre, searchTerm, 20)%>">more</a>
             </div>
             <% } %>
         </div>
@@ -88,3 +88,13 @@
     <%- include partials/connect-with-us.ejs %>
 </body>
 </html>
+
+<%
+ function createMoreLink(_genre, _search, _size) {
+   var size = _size ? _size : 20;
+   var encodeGenre = _genre ? encodeURIComponent(_genre) : "";
+   var encodeSearch = _search ? encodeURIComponent(_search) : "";
+   return `/browse?genre=${encodeGenre}&search=${encodeSearch}&maxGroupSize=${size}`;
+ }
+
+ %>

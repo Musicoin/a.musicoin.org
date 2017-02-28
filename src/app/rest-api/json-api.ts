@@ -446,7 +446,7 @@ export class MusicoinOrgJsonAPI {
 
   getNewReleasesByGenre(limit: number, maxGroupSize: number, _search?: string, _genre?:string): Promise<any> {
     const search = this._sanitize(_search);
-    const genre = this._sanitize(_genre);
+    const genre = _genre;
     const flatten = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
     const artistList = search
       ? User.find({"draftProfile.artistName": {"$regex": search, "$options": "i"}})
