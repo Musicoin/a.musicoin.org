@@ -273,13 +273,24 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                             done) {
      if (req.user) {
        const user = req.user;
-       user[authProvider] = localProfile;
-       return user.save(function (err) {
-         if (err)
-           return done(err);
+       const condition = {};
+       condition[authProvider + ".id"] = localProfile.id;
+       return User.findOne(condition).exec()
+         .then(other => {
+           if (!other) {
+             user[authProvider] = localProfile;
+             return user.save(function (err) {
+               if (err)
+                 return done(err);
 
-         return done(null, user);
-       });
+               return done(null, user);
+             });
+           }
+           else {
+             console.log("cannot link account that is already linked to another account! user.id: " + req.user._id + ", other.id: " + other._id);
+             return done(null, user);
+           }
+         })
      }
 
     // check if the user is already logged in

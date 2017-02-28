@@ -143,7 +143,44 @@
                             <a href="/feed" class="btn btn-default">home</a>
                             <a href="/logout" target="_top" class="btn btn-default">sign out</a>
                         </div>
-                        <!--<div class="mr5"><a href="/connect/google" target="_top" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>-->
+
+                        <% if(!user.google.token || !user.twitter.token || !user.facebook.token) { %>
+                        <div class="center-text subtle-text flex-column mb5">
+                            <div>Link another account (<a class=text-small href="/faq#WhyLinkAccounts">why?</a>)</div>
+                            <div class="flex-row center-text">
+                                <% if(!user.google.token) { %>
+                                <div class="mr5"><a href="/connect/google" target="_top" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>
+                                <% } %>
+
+                                <% if(!user.twitter.token) { %>
+                                <div class="mr5"><a href="/connect/twitter" target="_top" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>
+                                <% } %>
+
+                                <% if(!user.facebook.token) { %>
+                                <div class="mr5"><a href="/connect/facebook" target="_top" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% } %>
+
+                        <!--<% if(user.google.id || user.twitter.id || user.facebook.id) { %>-->
+                        <!--<div class="center-text subtle-text flex-column">-->
+                            <!--<a onclick='$("#unlink").toggle()' class="clickable">Want to unlink an account?</a>-->
+                            <!--<div id=unlink class="flex-row center-text" style="display: none">-->
+                                <!--<% if(user.google.token) { %>-->
+                                <!--<div class="mr5"><a href="/unlink/google" target="_top" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>-->
+                                <!--<% } %>-->
+
+                                <!--<% if(user.twitter.token) { %>-->
+                                <!--<div class="mr5"><a href="/unlink/twitter" target="_top" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>-->
+                                <!--<% } %>-->
+
+                                <!--<% if(user.facebook.token) { %>-->
+                                <!--<div class="mr5"><a href="/unlink/facebook" target="_top" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>-->
+                                <!--<% } %>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<% } %>-->
                     </div>
                 </div>
             </div>

@@ -1051,6 +1051,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // profile gets us their basic information including their name
   // email gets their emails
   app.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
+  app.get('/connect/google', passport.authorize('google', {scope: ['profile', 'email']}));
 
   // the callback after google has authenticated the user
   app.get('/auth/google/callback',
@@ -1058,6 +1059,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       successRedirect: loginRedirect,
       failureRedirect: '/invite'
     }));
+
+  app.get('/connect/google/callback',
+    passport.authorize('google', {
+      successRedirect: loginRedirect,
+      failureRedirect: '/'
+    }));
+
 
   app.get('/auth/soundcloud', passport.authenticate('soundcloud'));
 
@@ -1069,6 +1077,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }));
 
   app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
+  app.get('/connect/facebook', passport.authorize('facebook', {scope: ['public_profile', 'email']}));
 
   // handle the callback after twitter has authenticated the user
   app.get('/auth/facebook/callback',
@@ -1077,7 +1086,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       failureRedirect: '/invite'
     }));
 
+  // handle the callback after twitter has authenticated the user
+  app.get('/connect/facebook/callback',
+    passport.authenticate('facebook', {
+      successRedirect: loginRedirect,
+      failureRedirect: '/invite'
+    }));
+
   app.get('/auth/twitter', passport.authenticate('twitter', {scope: 'email'}));
+  app.get('/connect/twitter', passport.authorize('twitter', {scope: 'email'}));
 
   // handle the callback after twitter has authenticated the user
   app.get('/auth/twitter/callback',
@@ -1086,31 +1103,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       failureRedirect: '/invite'
     }));
 
-  // =============================================================================
-  // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
-  // =============================================================================
-
-  // locally --------------------------------
-  /*
-   app.get('/connect/local', function(req, res) {
-   res.render('connect-local.ejs', { message: req.flash('loginMessage') });
-   });
-
-   app.post('/connect/local', passport.authenticate('local-signup', {
-   successRedirect : loginRedirect, // redirect to the secure profile section
-   failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
-   failureFlash : true // allow flash messages
-   }));
-   */
-
-  // send to google to do the authentication
-  app.get('/connect/google', passport.authorize('google', {scope: ['profile', 'email']}));
-
-  // the callback after google has authorized the user
-  app.get('/connect/google/callback',
-    passport.authorize('google', {
+  app.get('/connect/twitter/callback',
+    passport.authenticate('twitter', {
       successRedirect: loginRedirect,
-      failureRedirect: '/'
+      failureRedirect: '/invite'
     }));
 
   // =============================================================================
@@ -1123,6 +1119,22 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/unlink/google', function (req, res) {
     var user = req.user;
     user.google.token = undefined;
+    user.save(function (err) {
+      res.redirect('/profile');
+    });
+  });
+
+  app.get('/unlink/twitter', function (req, res) {
+    var user = req.user;
+    user.twitter.token = undefined;
+    user.save(function (err) {
+      res.redirect('/profile');
+    });
+  });
+
+  app.get('/unlink/facebook', function (req, res) {
+    var user = req.user;
+    user.facebook.token = undefined;
     user.save(function (err) {
       res.redirect('/profile');
     });
