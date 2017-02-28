@@ -30,12 +30,20 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   let restAPI = new MusicoinRestAPI(jsonAPI);
   const addressResolver = new AddressResolver();
 
-  new PendingTxDaemon(r => {
+  const newProfileListener = p => {
+    jsonAPI.sendRewardsForInvite(p)
+      .then((results) => console.log(`Rewards sent for inviting ${p._id} profile=${p.profileAddress}, txs: ${JSON.stringify(results)}`))
+      .catch(err => console.log(`Failed to send invite rewards: ${err}`));
+  };
+
+  const newReleaseListener = r => {
     jsonAPI.postLicenseMessages(r.contractAddress, r.artistAddress, "New release!")
       .catch(err => {
         console.log(`Failed to post a message about a new release: ${err}`)
       });
-  })
+  };
+
+  new PendingTxDaemon(newProfileListener, newReleaseListener)
     .start(musicoinApi, config.database.pendingReleaseIntervalMs);
 
 

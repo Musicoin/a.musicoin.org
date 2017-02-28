@@ -4,7 +4,7 @@ const Release = require('../app/models/release');
 const User = require('../app/models/user');
 
 export class PendingTxDaemon {
-  constructor(private releaseCallback) {}
+  constructor(private newProfileCallback, private releaseCallback) {}
 
   start(musicoinApi: MusicoinAPI, intervalMs: number) {
     console.log(`Starting pending release daemon with interval ${intervalMs}ms`);
@@ -38,7 +38,7 @@ export class PendingTxDaemon {
       return;
     }
     musicoinApi.getTransactionStatus(p.pendingTx)
-      .then(function(result) {
+      .then((result) => {
         if (result.status == "pending") {
           console.log("pending profile update still pending: " + description);
           return;
@@ -51,6 +51,7 @@ export class PendingTxDaemon {
           // Updates will not include a contractAddress since the contract already exists
           if (result.receipt.contractAddress) {
             p.profileAddress = result.receipt.contractAddress;
+            this.newProfileCallback(p);
           }
         }
         else if (result.status == "error") {

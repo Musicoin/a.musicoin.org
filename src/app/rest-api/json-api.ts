@@ -141,6 +141,25 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  sendRewardsForInvite(p: any): Promise<any> {
+    if (!p || !p.invite || !p.invite.invitedBy) {
+      console.log(`Could not send an invite reward, user did not have an invite, newUser.id: ${p._id}, invite: ${JSON.stringify(p.invite)}`);
+      return Promise.resolve();
+    }
+
+    return User.findById(p.invite.invitedBy).exec()
+      .then(sender => {
+        const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, this.config.rewards.forAcceptingInvite);
+        const sendRewardToInviter = this.musicoinAPI.sendReward(sender.profileAddress, this.config.rewards.forInviteeJoining);
+        return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
+          return {
+            inviteeRewardTx: tx1,
+            inviterRewardTx: tx2
+          }
+        });
+      })
+  }
+
   sendInvite(sender: any, email: string): Promise<any> {
     let promise = Promise.resolve(null);
     if (email) {
@@ -175,19 +194,6 @@ export class MusicoinOrgJsonAPI {
             return email
               ? this.mailSender.sendInvite(sender.draftProfile.artistName, email, this.config.serverEndpoint + "/accept/" + inviteCode)
               : null;
-          })
-          .then(() => {
-            console.log("MailSender successfully sent invite");
-            return this.musicoinAPI.sendReward(sender.profileAddress, this.config.rewards.sentInvite)
-              .catch((err) => {
-                console.log("Failed to send reward for invite: " + err);
-                return null;
-              })
-          })
-          .then((tx) => {
-            console.log("Sent reward for invite: " + tx);
-            sender.invitesRemaining--;
-            return sender.save();
           })
           .then(() => {
             return {
