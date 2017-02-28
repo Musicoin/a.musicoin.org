@@ -14,6 +14,7 @@ const Release = require('../app/models/release');
 const TrackMessage = require('../app/models/track-message');
 const User = require('../app/models/user');
 const loginRedirect = "/";
+const notLoggedInRedirect = "/welcome"
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
 const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
@@ -69,11 +70,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return new Date(timestamp * 1000).toLocaleDateString('en-US', options);
   }
 
-  app.get('/', isLoggedIn, function (req, res) {
+  app.get('/', unauthRedirect("/info"), checkLoginRedirect, function (req, res) {
     res.render('index-frames.ejs', {mainFrameLocation: "/main"});
   });
 
   app.get('/accept/:code', (req, res) => {
+    console.log("host: " + req.get('host'));
+    if (req.get('host') == 'alpha.musicoin.org') {
+      return res.redirect("https://musicoin.org/accept/" + req.params.code);
+    }
     User.findOne({"invite.inviteCode": req.params.code}).exec()
       .then((record) => {
         delete req.session.inviteCode;
@@ -1186,6 +1191,22 @@ function canInvite(user) {
   return user.invitesRemaining > 0 || isAdmin(user);
 }
 
+function unauthRedirect(dest: string) {
+  return function (req, res, next) {
+    // if (true) return next();
+    console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionID}`);
+
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+      return next();
+
+    console.log(`User is not logged in, redirecting to ${dest}`);
+
+    // if they aren't logged in, redirect them
+    res.redirect(dest);
+  }
+}
+
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
@@ -1199,7 +1220,25 @@ function isLoggedIn(req, res, next) {
   console.log(`User is not logged in, redirecting`);
 
   // if they aren't redirect them to the home page
-  res.redirect('/info');
+  req.session.destinationUrl = req.originalUrl;
+  res.redirect(notLoggedInRedirect);
+}
+
+// used only when processing the login success redirect page.  Google, Twitter, Facebook
+// will always redirect to the same page.  If we captured the where they were trying to
+// go before the were redirected to the auth provider, then when they come back we can
+// send them to their intended destination.
+// e.g. User goes to /xyz
+// User is not logged in, so save "/xyz" in the session
+// User is redirected for auth, and sent to /auth/success by passport
+// when
+function checkLoginRedirect(req, res, next) {
+  if (req.session && req.session.destinationUrl) {
+    const dest = req.session.destinationUrl;
+    delete req.session.destinationUrl;
+    return res.redirect(dest);
+  }
+  next();
 }
 
 function adminOnly(req, res, next) {

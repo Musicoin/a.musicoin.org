@@ -272,7 +272,14 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                             localProfile,
                             done) {
      if (req.user) {
-       return done(null, req.user);
+       const user = req.user;
+       user[authProvider] = localProfile;
+       return user.save(function (err) {
+         if (err)
+           return done(err);
+
+         return done(null, user);
+       });
      }
 
     // check if the user is already logged in
