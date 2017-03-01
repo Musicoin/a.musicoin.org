@@ -23,6 +23,10 @@ module.exports = mongoose.model('TrackMessage', mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Release'
   },
+  artist: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
   replyToMessage: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TrackMessage'

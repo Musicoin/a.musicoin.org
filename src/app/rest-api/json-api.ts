@@ -587,6 +587,7 @@ export class MusicoinOrgJsonAPI {
         contractAddress: contractAddress,
         senderAddress: sender.profileAddress,
         release: release ? release._id : null,
+        artist: artist ? artist._id : null,
         sender: sender._id,
         message: message,
         replyToMessage: replyToId,
@@ -633,6 +634,7 @@ export class MusicoinOrgJsonAPI {
       .sort({"timestamp": 'desc'})
       .populate("sender")
       .populate("release")
+      .populate("artist")
       .exec()
       .then(records => {
         return records.map(m => {
@@ -654,10 +656,17 @@ export class MusicoinOrgJsonAPI {
               profileAddress: m.sender.profileAddress
             } : {};
 
+          const artist = m.artist ? {
+              name: m.artist.draftProfile.artistName,
+              image: this.mediaProvider.resolveIpfsUrl(m.artist.draftProfile.ipfsImageUrl),
+              profileAddress: m.artist.profileAddress
+            } : {};
+
           return {
             id: m._id,
             sender: sender,
             release: release,
+            artist: artist,
             body: m.message,
             time: this._timeSince(m.timestamp.getTime()),
             tips: m.tips
