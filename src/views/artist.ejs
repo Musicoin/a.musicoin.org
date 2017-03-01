@@ -72,7 +72,7 @@
         <div class="center-text event-header"><img width=24 height=24 class="mr10" src="/images/chat.png">chatter</div>
         <div class="dynamic-element message-scroller"
              style="min-height: 180px"
-             id="de-track-messages"
+             id="de-user-messages"
              de-refresh-period="10"
              de-refresh-offset="10"
              de-showtrack="true"
@@ -90,6 +90,11 @@
         <%- include('partials/release-events.ejs', {releases: releases}) %>
     </div>
 </div>
+<script>
+  function refreshMessageList() {
+    dynamic.refreshElement($("#de-user-messages"));
+  }
+</script>
 <%- include partials/player-hook.ejs %>
 <%- include partials/connect-with-us.ejs %>
 </body>

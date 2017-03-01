@@ -573,17 +573,19 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
-  postLicenseMessages(contractAddress: string, senderAddress: string, message: string, replyToId?: string): Promise<any[]> {
-    const r = Release.findOne({contractAddress: contractAddress}).exec();
+  postLicenseMessages(contractAddress: string, artistAddress: string, senderAddress: string, message: string, replyToId?: string): Promise<any[]> {
+    const r = contractAddress ? Release.findOne({contractAddress: contractAddress}).exec() : Promise.resolve(null);
+    const a = artistAddress ? User.findOne({profileAddress: artistAddress}).exec() : Promise.resolve(null);
     const s = User.findOne({profileAddress: senderAddress}).exec();
     const m = replyToId ? TrackMessage.findById(replyToId).exec() : Promise.resolve(null);
 
-    return Promise.join(r, s, m, (record, sender, replyToMessage) => {
+    return Promise.join(r, a, s, m, (release, artist, sender, replyToMessage) => {
+      const artistAddress = artist ? artist.profileAddress : release ? release.artistAddress : replyToMessage ? replyToMessage.artistAddress : null
       return TrackMessage.create({
-        artistAddress: record.artistAddress,
+        artistAddress: artistAddress,
         contractAddress: contractAddress,
         senderAddress: sender.profileAddress,
-        release: record._id,
+        release: release ? release._id : null,
         sender: sender._id,
         message: message,
         replyToMessage: replyToId,

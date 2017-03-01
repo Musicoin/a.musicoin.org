@@ -34,7 +34,8 @@ $( document ).ready(function() {
   $(document).on('click', '.follow-toggle-button', function() {
     var element = $(this);
     var toFollow = element.attr('user');
-    $.post('/follow', {profileAddress: toFollow}, function(data) {
+    var licenseAddress = element.attr('licenseAddress');
+    $.post('/follow', {profileAddress: toFollow, licenseAddress: licenseAddress}, function(data) {
       handleResponse(element, data);
       if (data.authenticated == false) {
         new Message("You need to login to send a tip", "warning", 5000)

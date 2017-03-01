@@ -39,7 +39,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   };
 
   const newReleaseListener = r => {
-    jsonAPI.postLicenseMessages(r.contractAddress, r.artistAddress, "New release!")
+    jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, "New release!")
       .catch(err => {
         console.log(`Failed to post a message about a new release: ${err}`)
       });
@@ -262,7 +262,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/elements/track-messages', function (req, res) {
     // don't redirect if they aren't logged in, this is just page section
     const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, req.user.profileAddress, req.body.message, req.body.replyto)
+      ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, req.body.replyto)
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
@@ -278,7 +278,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.post('/elements/user-messages', function (req, res) {
     const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, req.user.profileAddress, req.body.message, req.body.replyto)
+      ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, req.body.replyto)
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
@@ -299,7 +299,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
 
     const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, req.user.profileAddress, req.body.message, req.body.replyto)
+      ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, req.body.replyto)
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
@@ -702,6 +702,37 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     jsonAPI.toggleUserFollowing(req.user._id, req.body.profileAddress)
       .then(result => {
         res.json(result);
+        return result;
+      })
+      .then((result) => {
+        if (result.following) {
+          if (req.body.licenseAddress) {
+            Release.findOne({contractAddress: req.body.licenseAddress}).exec()
+              .then(release => {
+                if (release) {
+                  return jsonAPI.postLicenseMessages(
+                    req.body.licenseAddress,
+                    null,
+                    req.user.profileAddress,
+                    `${req.user.draftProfile.artistName} is now following ${release.artistName}`)
+                }
+                return null;
+              })
+              .catch(err => {
+                console.log("Failed to send a automated-follow message: " + err);
+              })
+          }
+          else {
+            User.findOne({profileAddress: req.body.profileAddress})
+              .then((followedUser) => {
+                return jsonAPI.postLicenseMessages(
+                  null,
+                  req.body.profileAddress,
+                  req.user.profileAddress,
+                  `${req.user.draftProfile.artistName} is now following ${followedUser.draftProfile.artistName}`)
+              })
+          }
+        }
       })
       .catch((err) => {
         console.log(`Failed to toggle following, user: ${req.user._id} tried to follow/unfollow: ${req.body.profileAddress}, ${err}`)
@@ -716,7 +747,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log(`Payment submitted! tx : ${tx}`);
         res.json({success: true, tx: tx});
         if (req.body.contextType == "TrackMessage") {
-          TrackMessage.findById(req.body.contextId)
+          return TrackMessage.findById(req.body.contextId)
             .then(record => {
               record.tips++;
               return record.save();
@@ -731,12 +762,25 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         // fire and forget (don't fail if this fails)
         Release.findOne({contractAddress: req.body.recipient}).exec()
           .then(release => {
+            const units = req.body.amount == 1 ? " coin" : "coins";
             if (release) {
-              const units = req.body.amount == 1 ? " coin" : "coins";
               return jsonAPI.postLicenseMessages(
                 req.body.recipient,
+                null,
                 req.user.profileAddress,
                 `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units}!`)
+            }
+            else {
+              User.findOne({profileAddress: req.body.recipient})
+                .then((followedUser) => {
+                  if (followedUser) {
+                    return jsonAPI.postLicenseMessages(
+                      null,
+                      followedUser.profileAddress,
+                      req.user.profileAddress,
+                      `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} to ${followedUser.draftProfile.artistName}!`)
+                  }
+                })
             }
             return null;
           })
