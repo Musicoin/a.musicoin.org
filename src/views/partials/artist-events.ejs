@@ -12,6 +12,7 @@
                 <a href="/artist/<%=artist.profileAddress%>"><%=artist.artistName%></a>
                 <span class="message-time big-screen-only"><%=artist.timeSince%></span>
             </div>
+            <div class="subtle-text text-small"><%=artist.genres ? artist.genres.join(", ") : ""%></div>
             <div class="chat-message-body chat-message-preview"><%=artist.description%></div>
         </div>
     </div>

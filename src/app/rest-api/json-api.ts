@@ -79,7 +79,7 @@ export class MusicoinOrgJsonAPI {
     const a = User.findOne({profileAddress: address}).exec()
       .then(dbRecord => {
         if (!dbRecord) return null;
-        return this.mcHelper.getArtistProfile(address)
+        return this._convertDbRecordToArtist(dbRecord)
       });
 
     const rs = !includeReleases
@@ -535,6 +535,7 @@ export class MusicoinOrgJsonAPI {
       .then((artist) => {
         artist.profileAddress = record.profileAddress;
         artist.timeSince = this._timeSince(record.joinDate);
+        artist.genres = record.draftProfile.genres;
         return artist;
       });
   }

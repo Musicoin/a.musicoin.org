@@ -50,6 +50,7 @@
         Follow
     </div>
     <%- include partials/social-links.ejs %>
+    <div class="subtle-text"><%=artist.genres ? artist.genres.join(", ") : ""%></div>
     <p></p>
     <div id=description class="text-justify more">
         <div class="more-content">
