@@ -13,6 +13,7 @@ const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const TrackMessage = require('../app/models/track-message');
 const User = require('../app/models/user');
+const ErrorReport = require('../app/models/error-report');
 const loginRedirect = "/nav/feed";
 const notLoggedInRedirect = "/welcome"
 const maxImageWidth = 400;
@@ -657,6 +658,27 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           }
         });
       });
+  });
+
+  app.post("/error-report", function(req, res) {
+    const userProfileAddress = req.user ? req.user.profileAddress : "Unknown";
+    const userId = req.user ? req.user._id : null;
+    console.log(`Error reported by client: 
+      licenseAddress: ${req.body.licenseAddress}, 
+      errorCode: ${req.body.errorCode}, 
+      errorContext: ${req.body.errorContext},
+      userProfileAddress: ${userProfileAddress}, 
+      user: ${userId}`);
+
+    ErrorReport.create({
+      licenseAddress: req.body.licenseAddress,
+      user: userId,
+      userProfileAddress: userProfileAddress,
+      errorCode: req.body.errorCode,
+      errorContext: req.body.errorContext
+    }); // async, not checking result
+
+    res.json({success: true});
   });
 
   // =====================================

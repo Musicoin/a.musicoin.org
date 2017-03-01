@@ -318,8 +318,37 @@
           console.log("Old playbackId: " + audioPlayer.playbackId);
           audioPlayer.playbackId++;
           console.log("New playbackId: " + audioPlayer.playbackId);
-          alert("Playback failed: " + audioPlayer.audioElement.error.code + ", " + audioPlayer.audioElement.src);
+          $.post('/error-report', {
+            licenseAddress: audioPlayer.nowPlayingLicenseAddress,
+            errorContext: audioPlayer.audioElement.src,
+            errorCode: e.target.error.code
+          }, function(data) {
+            if (data.success) {
+              console.log("Reported error to Musicoin service successfully");
+            }
+            else {
+              console.log("Failed to report error to Musicoin service: " + JSON.stringify(data));
+            }
+          });
+          switch (e.target.error.code) {
+            case e.target.error.MEDIA_ERR_ABORTED:
+//              alert('You aborted the video playback.');
+              break;
+            case e.target.error.MEDIA_ERR_NETWORK:
+              alert('A network error caused the audio download to fail.');
+              break;
+            case e.target.error.MEDIA_ERR_DECODE:
+              alert('The audio playback was aborted due to a corruption problem or because the video used features your browser did not support.');
+              break;
+            case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+              alert('The video audio not be loaded, either because the server or network failed or because the format is not supported.');
+              break;
+            default:
+              alert('An unknown error occurred.');
+              break;
+          }
         });
+
         audioPlayer.audioElement.addEventListener('timeupdate', function () {
           var progress_percent = audioPlayer.audioElement.currentTime / audioPlayer.audioElement.duration * 100;
           $("#player-progress-div").css("width", progress_percent + "%");
