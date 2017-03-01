@@ -542,6 +542,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           search: req.query.search,
           users: users,
           navigation: {
+            show10: `${url}&length=10`,
+            show25: `${url}&length=25`,
+            show50: `${url}&length=50`,
             description: `Showing ${start + 1} to ${start + users.length}`,
             start: previous > 0 ? `${url}&length=${length}` : null,
             back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,

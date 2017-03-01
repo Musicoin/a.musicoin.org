@@ -252,9 +252,9 @@ export class MusicoinOrgJsonAPI {
   }
 
   getAllUsers(_search: string, start: number, length: number): Promise<any> {
-    const search = this._sanitize(_search);
     let filter = {};
-    if (search) {
+    if (_search) {
+      const search = _search.trim();
       filter = {$or: [
         {"draftProfile.artistName": {"$regex": search, "$options": "i"}},
         {"invite.invitedAs": {"$regex": search, "$options": "i"}},
@@ -262,6 +262,10 @@ export class MusicoinOrgJsonAPI {
         {"google.name": {"$regex": search, "$options": "i"}},
         {"twitter.username": {"$regex": search, "$options": "i"}},
         {"twitter.displayName": {"$regex": search, "$options": "i"}},
+        {"facebook.email": {"$regex": search, "$options": "i"}},
+        {"facebook.name": {"$regex": search, "$options": "i"}},
+        {"soundcloud.name": {"$regex": search, "$options": "i"}},
+        {"soundcloud.username": {"$regex": search, "$options": "i"}},
       ]};
     }
     return User.find(filter)
