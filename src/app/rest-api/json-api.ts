@@ -163,6 +163,7 @@ export class MusicoinOrgJsonAPI {
   sendInvite(sender: any, email: string): Promise<any> {
     let promise = Promise.resolve(null);
     if (email) {
+      email = email.trim();
       if (!FormUtils.validateEmail(email)) {
         console.log(`Invalid email address provided: ${email}`);
         return Promise.resolve({
