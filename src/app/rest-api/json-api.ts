@@ -641,13 +641,15 @@ export class MusicoinOrgJsonAPI {
             }
             : null;
 
-          return {
-            id: m._id,
-            sender: {
+          const sender = m.sender ? {
               name: m.sender.draftProfile.artistName,
               image: this.mediaProvider.resolveIpfsUrl(m.sender.draftProfile.ipfsImageUrl),
               profileAddress: m.sender.profileAddress
-            },
+            } : {};
+
+          return {
+            id: m._id,
+            sender: sender,
             release: release,
             body: m.message,
             time: this._timeSince(m.timestamp.getTime()),

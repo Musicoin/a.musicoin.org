@@ -13,6 +13,11 @@ $( document ).ready(function() {
         element.addClass(element.attr('class-not-following'));
       }
     }
+    else if (data.authenticated == false || data.profile == false) {
+      element.text(element.attr('text-not-following'));
+      element.removeClass(element.attr('class-following'));
+      element.addClass(element.attr('class-not-following'));
+    }
     else {
       new Message("Sorry, an error occurred", 'error', 5000)
     }
@@ -31,6 +36,18 @@ $( document ).ready(function() {
     var toFollow = element.attr('user');
     $.post('/follow', {profileAddress: toFollow}, function(data) {
       handleResponse(element, data);
+      if (data.authenticated == false) {
+        new Message("You need to login to send a tip", "warning", 5000)
+          .button("Login", () => {
+            window.top.location = "/welcome";
+          });
+      }
+      else if (data.profile == false) {
+        new Message("You need to save your profile before you can tip", "warning", 5000)
+          .button("Go to my profile", () => {
+            window.location = "/profile";
+          });
+      }
     })
   });
 });

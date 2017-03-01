@@ -1,5 +1,6 @@
 const keyValueConfig = {
   port: process.env.PORT || 3000,
+  publicPagesEnabled: process.env.PUBLIC_PAGES_ENABLED || false,
 
   musicoinApiEndpoint: process.env.MUSICOIN_API_ENDPOINT || "http://localhost:8082",
   musicoinApiClientId: process.env.MUSICOIN_CLIENT_ID || "clientID",
@@ -33,6 +34,7 @@ const keyValueConfig = {
 
 const config = {
   port: keyValueConfig.port,
+  publicPagesEnabled: keyValueConfig.publicPagesEnabled,
   sessionSecret: keyValueConfig.sessionSecret,
   serverEndpoint: keyValueConfig.authCallbackEndpoint,
   loggingConfig: {

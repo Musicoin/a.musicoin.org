@@ -20,10 +20,12 @@ const maxHeroImageWidth = 1300;
 const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 20;
+let publicPagesEnabled = false;
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
   const serverEndpoint = config.serverEndpoint;
+  publicPagesEnabled = config.publicPagesEnabled;
   let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider);
   const mailSender = new MailSender();
   let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider, mailSender, config);
@@ -103,47 +105,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.get('/player', isLoggedIn, (req, res) => {
+  app.get('/player', isLoggedInOrIsPublic, (req, res) => {
     res.render('player-frame.ejs');
   });
 
   // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
   // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
-  app.get('/nav/*', isLoggedIn, (req, res) => {
+  app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
     res.render('index-frames.ejs', {mainFrameLocation: req.originalUrl.substr(4)});
   });
 
   // =====================================
-  // HOME PAGE (with login links) ========
+  // HOME PAGE
   // =====================================
-  app.get('/old', isLoggedIn, function (req, res) {
-    if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
-      return res.redirect("/new-user");
-    }
-    const rs = jsonAPI.getNewReleases(6).catchReturn([]);
-    const na = jsonAPI.getNewArtists(12).catchReturn([]);
-    const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
-    const ps = jsonAPI.getRecentPlays(6).catchReturn([]);
-    const tp = jsonAPI.getTopPlayed(6).catchReturn([]);
-    const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
-    const m = jsonAPI.getLicenseMessages("", 5);
-    Promise.join(rs, na, fa, ps, tp, b, m, function (releases, artists, featuredArtists, recent, topPlayed, balance, messages) {
-      doRender(req, res, "index.ejs", {
-        musicoinClientBalance: balance,
-        releases: releases,
-        artists: artists,
-        featuredArtists: featuredArtists,
-        topPlayed: topPlayed,
-        recent: recent,
-        messages: messages
-      });
-    })
-      .catch(function (err) {
-        console.log(err);
-        res.redirect('/error');
-      });
-  });
-
   app.get('/main', isLoggedIn, function (req, res) {
     if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
       return res.redirect("/new-user");
@@ -287,11 +261,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.post('/elements/track-messages', function (req, res) {
     // don't redirect if they aren't logged in, this is just page section
-    if (!req.isAuthenticated()) {
-      return doRender(req, res, "partials/track-messages.ejs", {messages: []});
-    }
-
-    const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
+    const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
       ? jsonAPI.postLicenseMessages(req.body.address, req.user.profileAddress, req.body.message, req.body.replyto)
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
@@ -307,12 +277,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/elements/user-messages', function (req, res) {
-    // don't redirect if they aren't logged in, this is just page section
-    if (!req.isAuthenticated()) {
-      return doRender(req, res, "partials/track-messages.ejs", {messages: []});
-    }
-
-    const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
+    const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
       ? jsonAPI.postLicenseMessages(req.body.address, req.user.profileAddress, req.body.message, req.body.replyto)
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
@@ -610,7 +575,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // PUBLIC ARTIST PROFILE SECTION =====================
   // =====================================
-  app.get('/artist/:address', isLoggedIn, function (req, res, next) {
+  app.get('/artist/:address', isLoggedInOrIsPublic, function (req, res, next) {
     // find tracks for artist
     const m = jsonAPI.getUserMessages(req.params.address, 30);
     const a = jsonAPI.getArtist(req.params.address, true, false);
@@ -644,7 +609,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   //0xa0f17e527d50b5973bc0d029006f0f55ace16819
-  app.get('/track/:address', isLoggedIn, function (req, res, next) {
+  app.get('/track/:address', isLoggedInOrIsPublic, function (req, res, next) {
     const ms = jsonAPI.getLicenseMessages(req.params.address, 20);
     const l = jsonAPI.getLicense(req.params.address);
     const r = Release.findOne({contractAddress: req.params.address});
@@ -655,7 +620,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           releaseId: release._id,
           description: release.description,
           messages: messages,
-          isArtist: req.user.profileAddress == license.artistProfileAddress
+          isArtist: req.user && req.user.profileAddress == license.artistProfileAddress
         });
       })
   });
@@ -716,7 +681,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     })
   });
 
-  app.post('/follows', isLoggedIn, hasProfile, function(req, res) {
+  app.post('/follows', function(req, res) {
+    if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
+    if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
     jsonAPI.isUserFollowing(req.user._id, req.body.profileAddress)
       .then(result => {
         res.json(result);
@@ -726,7 +693,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.post('/follow', isLoggedIn, hasProfile, function(req, res) {
+  app.post('/follow', function(req, res) {
+    if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
+    if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
     jsonAPI.toggleUserFollowing(req.user._id, req.body.profileAddress)
       .then(result => {
         res.json(result);
@@ -736,7 +705,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.post('/tip', isLoggedIn, hasProfile, function (req, res) {
+  app.post('/tip', function (req, res) {
+    if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
+    if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
     musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
       .then(function (tx) {
         console.log(`Payment submitted! tx : ${tx}`);
@@ -1151,7 +1122,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/ppp/:address', (req, res, next) => {
     console.log("(pre login check): Got ppp request for " + req.params.address);
     next();
-  }, isLoggedIn, function (req, res) {
+  }, isLoggedInOrIsPublic, function (req, res) {
     console.log("Got ppp request for " + req.params.address);
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
@@ -1225,6 +1196,11 @@ function unauthRedirect(dest: string) {
     // if they aren't logged in, redirect them
     res.redirect(dest);
   }
+}
+
+function isLoggedInOrIsPublic(req, res, next) {
+  if (publicPagesEnabled) return next();
+  return isLoggedIn(req, res, next);
 }
 
 // route middleware to make sure a user is logged in

@@ -8,6 +8,18 @@ var tipModule = {
       function(err, result) {
         if (err) {
           tipButton.html(tipButton.attr("text-fail"));
+          if (result.authenticated == false) {
+            new Message("You need to login to send a tip", "warning", 5000)
+              .button("Login", () => {
+                window.top.location = "/welcome";
+              });
+          }
+          else if (result.profile == false) {
+            new Message("You need to save your profile before you can tip", "warning", 5000)
+              .button("Go to my profile", () => {
+                window.location = "/profile";
+              });
+          }
         }
         else {
           tipButton.html(tipButton.attr("text-success"));
@@ -32,7 +44,7 @@ var tipModule = {
         callback(null, data);
       }
       else {
-        callback(new Error("Failed to send tip"));
+        callback(new Error("Failed to send tip"), data);
       }
     })
   },

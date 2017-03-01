@@ -53,7 +53,13 @@
                 <span class="message-time big-screen-only"><%=message.time%></span>
             </div>
             <div class="chat-message-body"><%=message.body%></div>
-            <div class="inline-reply" style="display: none"><input placeholder="reply" class="inline-reply-input fill-width"></div>
+            <div class="inline-reply" style="display: none">
+                <% if (isAuthenticated) { %>
+                <input placeholder="reply" class="inline-reply-input fill-width">
+                <% } else { %>
+                <div class="text-warning text-center">You can join the conversation after you <a href="/welcome" target="_top">sign in</a></div>
+                <% }  %>
+            </div>
         </div>
         <div class="action-area">
             <i class="fa fa-reply btn subtle-text inline-reply-action show-on-hover-target" aria-hidden="true"></i>

@@ -271,8 +271,12 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                             externalProfile,
                             localProfile,
                             done) {
+     // check if the user is already logged in
      if (req.user) {
        const user = req.user;
+
+       // we can link this new auth method to this account, as long as it isn't linked to
+       // another account already.
        const condition = {};
        condition[authProvider + ".id"] = localProfile.id;
        return User.findOne(condition).exec()
@@ -293,7 +297,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
          })
      }
 
-    // check if the user is already logged in
     // first, check if this user already exists
     const condition = {};
     condition[authProvider + ".id"] = localProfile.id;
