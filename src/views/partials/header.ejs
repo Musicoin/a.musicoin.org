@@ -132,6 +132,22 @@
             <a href="/faq" class="header-menu-item"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
             <a href="/browse" class="header-menu-item"><i class="fa fa-search" aria-hidden="true"></i></a>
             <div style="width:20px"></div>
+
+            <div class="popover-markup">
+                <a href="#" id=preferences class="trigger header-menu-item"><i class="fa fa-bell" aria-hidden="true"></i></a>
+                <div class="head hide">Notifications</div>
+                <div class="content hide">
+                    <div class="popoverContentContainer">
+                        <div class="flex-row">
+                            <label class="switch">
+                                <input id=messagePreference type="checkbox" <%=user.preferences && user.preferences.notifyOnComment ? "checked" : ""%>>
+                                <div class="slider round"></div>
+                            </label>
+                            <span class="text-dark center-text clickable" onclick="$('#messagePreference').click()">Notify me about comments/tips</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="popover-markup" style="display:inline;">
                 <a href="#" class="trigger">
                     <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
@@ -198,6 +214,31 @@
 <script>
   $( document ).ready(function() {
     $('.optionView').hide();
+
+    $(document).on('change', '#messagePreference', function () {
+      var checked = $("#messagePreference")[0].checked;
+      if (checked) {
+        $("#messagePreference").attr("checked", "true");
+      }
+      else {
+        $("#messagePreference").removeAttr("checked");
+      }
+      var newHTML = $(this).closest('.popover-content').html();
+      $.post("/preferences/update", {
+        notifyOnComment: checked
+      }, function (data) {
+        if (data.success) {
+
+        }
+        else {
+          new Message("Failed to update preferences", "error", 3000);
+          $("#messagePreference")[0].checked = !checked;
+        }
+
+        // this is so dumb.  popovers do some magic that destroys state.  wtf??
+        $("#preferences").data('bs.popover').options.content = newHTML;
+      })
+    })
 
     // Popover
     $(function(){

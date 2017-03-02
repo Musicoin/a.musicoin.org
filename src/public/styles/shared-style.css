@@ -190,6 +190,10 @@ textarea.form-control {
     color: #aaa
 }
 
+.text-dark {
+    color: #333
+}
+
 @media screen and (max-width: 800px) {
     .big-screen-only {
         display: none !important;

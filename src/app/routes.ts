@@ -447,6 +447,27 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
   });
 
+  app.post('/preferences/update', isLoggedIn, function(req, res) {
+    if (!req.user.preferences) {
+      req.user.preferences = {};
+    }
+    const originalValue = req.user.preferences.notifyOnComment || false;
+    req.user.preferences.notifyOnComment = req.body.notifyOnComment == "true";
+    req.user.save()
+      .then(() => {
+        res.json({
+          success: true
+        });
+      })
+      .catch((err) => {
+        console.log(`Failed to save user preferences: ${err}`);
+        res.json({
+          success: false,
+          notifyOnComment: originalValue
+        });
+      })
+  });
+
   // =====================================
   // LOGIN ===============================
   // =====================================
@@ -503,6 +524,22 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         })
         return doRender(req, res, 'admin-overview.ejs', {accounts: output});
       })
+  });
+
+  app.get('/admin/mail/invite', isLoggedIn, adminOnly, function (req, res) {
+    res.render("mail/invite.ejs", {invite: {
+      invitedBy: "TestUser",
+      acceptUrl: "http://localhost:3000/accept/12345"
+    }})
+  });
+
+  app.get('/admin/mail/message', isLoggedIn, adminOnly, function (req, res) {
+    res.render("mail/message.ejs", {notification: {
+      senderName: "Sender-Dan",
+      message: "This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. actually This is some message.  It's really long. This is some message.  It's really long. ",
+      trackName: "My Track",
+      acceptUrl: "http://localhost:3000/track/12345"
+    }})
   });
 
   app.get('/admin/invite-requests', (req, res) => {

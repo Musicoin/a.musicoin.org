@@ -193,8 +193,12 @@ export class MusicoinOrgJsonAPI {
         return newUser.save()
           .then(() => {
             // if an and email address was provided, send an email, otherwise just generate the link
+            const invite = {
+              invitedBy: sender.draftProfile.artistName,
+              acceptUrl: this.config.serverEndpoint + "/accept/" + inviteCode
+            }
             return email
-              ? this.mailSender.sendInvite(sender.draftProfile.artistName, email, this.config.serverEndpoint + "/accept/" + inviteCode)
+              ? this.mailSender.sendInvite(email, invite)
               : null;
           })
           .then(() => {
@@ -583,6 +587,39 @@ export class MusicoinOrgJsonAPI {
 
     return Promise.join(r, a, s, m, (release, artist, sender, replyToMessage) => {
       const artistAddress = artist ? artist.profileAddress : release ? release.artistAddress : replyToMessage ? replyToMessage.artistAddress : null
+
+      // notify the user that is the subject of this message about the comment/tip, as long as
+      // they allow it.
+      const actualArtist = artist ? Promise.resolve(artist) : User.findOne({profileAddress: artistAddress}).exec();
+      actualArtist
+          .then(a => {
+            if (!a.preferences || !a.preferences.notifyOnComment)
+              return;
+
+            // don't notify me about my own messages
+            if (senderAddress == artistAddress)
+              return;
+
+            const recipient = a ? this._getUserEmail(a) : null;
+            if (recipient) {
+              const urlPath = release
+                ? "/track/" + release.contractAddress
+                : "/artist/" + artistAddress;
+              const notification = {
+                trackName: release ? release.title : null,
+                actionUrl: this.config.serverEndpoint + urlPath,
+                message: message,
+                senderName: sender.draftProfile.artistName
+              };
+              this.mailSender.sendMessageNotification(recipient, notification)
+                .then(() => console.log("Message notification sent to " + recipient))
+                .catch(err => `Failed to send message to ${recipient}, error: ${err}`);
+            }
+            else {
+              console.log(`Could not send message to artist ${artistAddress} because no email address is associated with the account`);
+            }
+          });
+
       return TrackMessage.create({
         artistAddress: artistAddress,
         contractAddress: contractAddress,
@@ -756,6 +793,15 @@ export class MusicoinOrgJsonAPI {
         license.timeSince = this._timeSince(record.releaseDate);
         return license;
       })
+  }
+
+  _getUserEmail(user): string {
+    if (!user) return null;
+    if (user.preferredEmail) return user.preferredEmail;
+    if (user.google && user.google.email) return user.google.email;
+    if (user.facebook && user.facebook.email) return user.facebook.email;
+    if (user.invite && user.invite.invitedAs) return user.invite.invitedAs;
+    return null;
   }
 
   _sanitize(s: string) {

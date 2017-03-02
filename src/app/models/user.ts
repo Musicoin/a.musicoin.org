@@ -80,6 +80,10 @@ const userSchema = mongoose.Schema({
       type: Boolean,
       default: false
     }
+  },
+  preferences: {
+    notifyOnComment: Boolean,
+    default: false
   }
 });
 
