@@ -21,14 +21,14 @@ export class MailSender {
 
   sendInvite(recipient: string, invite: Invite): Promise<any> {
     const subject = `${invite.invitedBy} wants to you join Musicoin!`;
-    return this.sendTemplate("views/mail/invite.ejs", recipient, subject, {invite: invite});
+    return this.sendTemplate("../views/mail/invite.ejs", recipient, subject, {invite: invite});
   }
 
   sendMessageNotification(recipient: string, notification: MessageNotification): Promise<any> {
     const subject = notification.trackName
       ? `${notification.senderName} commented on '${notification.trackName}'`
       : `${notification.senderName} sent you a message!`
-    return this.sendTemplate("views/mail/message.ejs", recipient, subject, {notification: notification});
+    return this.sendTemplate("../views/mail/message.ejs", recipient, subject, {notification: notification});
   }
 
   private sendTemplate(template: string, recipient: string, subject: string, data: any) {
