@@ -96,7 +96,7 @@
                 %>
                 <tr id="<%=report._id%>">
                     <td class="text-center middle"><%=error.dateDisplay%></td>
-                    <td class="text-center middle"><%=report.user.draftProfile.artistName%></td>
+                    <td class="text-center middle"><%=username%></td>
                     <td class="text-center middle"><a href="/track/<%=track.contractAddress%>"><%=track.title%></a></td>
                     <td class="text-center middle"><a href="/artist/<%=track.artistAddress%>"><%=track.artistName%></a></td>
                     <td class="text-center middle"><%=report.errorCode%><br><%=getErrorDescription(report.errorCode)%></td>
