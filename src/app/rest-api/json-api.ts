@@ -708,8 +708,9 @@ export class MusicoinOrgJsonAPI {
         {"errorContext": {"$regex": search, "$options": "i"}}
       ]};
     }
+
     return ErrorReport.find(filter)
-      .sort({"date": 'asc'})
+      .sort({"date": 'desc'})
       .skip(start)
       .limit(length)
       .populate("user")
