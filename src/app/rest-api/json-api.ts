@@ -593,15 +593,19 @@ export class MusicoinOrgJsonAPI {
       const actualArtist = artist ? Promise.resolve(artist) : User.findOne({profileAddress: artistAddress}).exec();
       actualArtist
           .then(a => {
-            if (!a.preferences || !a.preferences.notifyOnComment)
+            if (!a.preferences || !a.preferences.notifyOnComment) {
+              console.log(`Not sending notification because ${a.draftProfile.artistName} does not have notifications enabled`);
               return;
-
+            }
             // don't notify me about my own messages
-            if (senderAddress == artistAddress)
+            if (senderAddress == artistAddress) {
+              console.log(`Not sending notification because the sender and receiver are the same: ${senderAddress}`);
               return;
+            }
 
             const recipient = a ? this._getUserEmail(a) : null;
             if (recipient) {
+              console.log(`Sending message notification to: ${recipient}`);
               const urlPath = release
                 ? "/track/" + release.contractAddress
                 : "/artist/" + artistAddress;
