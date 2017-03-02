@@ -31,7 +31,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
   // used to deserialize the user
   passport.deserializeUser(function (id, done) {
-    console.log("deserialize user: " + id);
     User.findById(id, function (err, user) {
       if (err) return done(err, null);
       if (user) {
