@@ -2,6 +2,8 @@ import {Promise} from 'bluebird';
 import {mail as helper} from 'sendgrid';
 import * as ejs from 'ejs';
 const renderFile = Promise.promisify(ejs.renderFile);
+const path = require('path');
+const appDir = path.dirname(require.main.filename);
 
 export interface Invite {
   invitedBy: string,
@@ -17,21 +19,23 @@ export interface MessageNotification {
 
 export class MailSender {
   constructor() {
+    console.log("AppDir: " + appDir);
   }
 
   sendInvite(recipient: string, invite: Invite): Promise<any> {
     const subject = `${invite.invitedBy} wants to you join Musicoin!`;
-    return this.sendTemplate("../views/mail/invite.ejs", recipient, subject, {invite: invite});
+    return this.sendTemplate(`${appDir}/views/mail/invite.ejs`, recipient, subject, {invite: invite});
   }
 
   sendMessageNotification(recipient: string, notification: MessageNotification): Promise<any> {
     const subject = notification.trackName
       ? `${notification.senderName} commented on '${notification.trackName}'`
-      : `${notification.senderName} sent you a message!`
-    return this.sendTemplate("../views/mail/message.ejs", recipient, subject, {notification: notification});
+      : `${notification.senderName} sent you a message!`;
+    return this.sendTemplate(`${appDir}/views/mail/message.ejs`, recipient, subject, {notification: notification});
   }
 
   private sendTemplate(template: string, recipient: string, subject: string, data: any) {
+    console.log("Loading template: " + template);
     return renderFile(template, data)
       .then(html => {
         const from_email = new helper.Email("musicoin@musicoin.org");
