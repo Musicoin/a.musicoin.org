@@ -252,13 +252,13 @@
     previouslySelectedTrack: null,
 
     playItem: function (e, url, title, artist, img, playCount, tipCount, artistProfileAddress, licenseAddress) {
-      if (url == audioPlayer.nowPlayingUrl) return;
+      if (url == audioPlayer.nowPlayingUrl) return false;
 
       var now = new Date().getTime();
       if (now - audioPlayer.previousTime < audioPlayer.minMillisBetweenPlays) {
         audioPlayer.previousTime = now;
         console.log("Too fast!");
-        return;
+        return false;
       }
       audioPlayer.playbackId++;
       console.log("Current playbackId: " + audioPlayer.playbackId);
@@ -305,6 +305,7 @@
       heartButton.attr("recipient", licenseAddress);
 
       audioPlayer.audioElement.play();
+      return true;
     },
 
     initialize: function () {

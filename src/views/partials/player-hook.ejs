@@ -12,7 +12,7 @@
       console.log("Getting details for " + item.attr("licenseAddress"))
       var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
       $.get( "/json-api/track/" + item.attr("licenseAddress"), function( data ) {
-        _audioPlayer.playItem(that,
+        var result = _audioPlayer.playItem(that,
           data.audioUrl,
           data.title,
           data.artistName,
@@ -22,6 +22,12 @@
           data.artistProfileAddress,
           data.address
         )
+        if (result) {
+          new Message("This playback was paid for by Musicoin.org!", "success", 5000)
+            .button("Why?", () => {
+              window.location = "/faq#WhyFreePlays";
+            })
+        }
       });
     });
   });
