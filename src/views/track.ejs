@@ -46,7 +46,10 @@
                             licenseAddress='<%=license.address%>'>
                         <i class="fa fa-play-circle" aria-hidden="true"></i> Play
                     </div>
-                    <div class="mb10"><%=license.playCount%> plays</div>
+
+                    <div><%=license.playCount%> plays</div>
+                    <div class="mb10"><%=license.directTipCount%> tips</div>
+
                     <div class="track-artist mb10">
                         Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
                         <div class="follow-toggle-button btn btn-default btn-xs mr10"
@@ -55,8 +58,7 @@
                              text-following="Following"
                              class-following="btn-success"
                              text-not-following="Follow"
-                             class-not-following="btn-default"
-                        >
+                             class-not-following="btn-default">
                             Follow
                         </div>
                     </div>
@@ -67,6 +69,7 @@
                              recipient="<%=license.address%>"
                              amount="1"
                              text-success="Thanks! :)"
+                             context-type="Release"
                              text-fail=":("
                              text-default="Tip (1 $MC)">
                             Tip (1 $MC)

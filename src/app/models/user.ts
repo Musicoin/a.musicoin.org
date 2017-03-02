@@ -84,7 +84,8 @@ const userSchema = mongoose.Schema({
   preferences: {
     notifyOnComment: Boolean,
     default: false
-  }
+  },
+  directTipCount: Number
 });
 
 // methods ======================

@@ -22,6 +22,11 @@
             margin-top: 20px;
             color: #e4aa17;
         }
+
+        .social-link {
+            font-size: 14pt;
+        }
+
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -29,28 +34,53 @@
 <%- include partials/header.ejs %>
 
 <%- include('partials/hero.ejs', {}) %>
+<%
+function formatNumber(value) {
+    const lookup = ["", "k", "M", "B", "T"];
+    var order = Math.min(Math.floor(Math.log10(value)/3), lookup.length-1);
+    var mult = value / Math.pow(10, 3*order);
+    var decimals = order > 0 ? 1 : 0;
+    return mult.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + lookup[order];
+}
+ %>
 
 <div class="box-shadow-top white-well pad20">
-    <div id="player-tip-button"
-         class="tip-button btn btn-success tip-button btn-xs"
-         recipient="<%=artist.profileAddress%>"
-         amount="1"
-         text-success="Thanks! :)"
-         text-fail=":("
-         text-default="Tip (1 $MC)">
-        Tip (1 $MC)
+    <div class="">
+        <%- include partials/social-links.ejs %>
     </div>
-    <div class="follow-toggle-button btn btn-default btn-xs mr10"
-         user="<%=artist.profileAddress%>"
-         text-following="Following"
-         class-following="btn-success"
-         text-not-following="Follow"
-         class-not-following="btn-default"
-    >
-        Follow
-    </div>
-    <%- include partials/social-links.ejs %>
     <div class="subtle-text"><%=artist.genres ? artist.genres.join(", ") : ""%></div>
+    <div class="mb10"></div>
+    <div class="flex-row mb10">
+        <div class="flex-column mr10 center-text">
+            <div id="player-tip-button"
+                 class="tip-button btn btn-success tip-button btn-xs"
+                 recipient="<%= artist.profileAddress %>"
+                 amount="1"
+                 context-type="User"
+                 text-success="Thanks! :)"
+                 text-fail=":("
+                 text-default="Tip (1 $MC)">
+                Tip
+            </div>
+            <div class="subtle-text"><%= formatNumber(artist.directTipCount)%> mc</div>
+        </div>
+
+        <div class="flex-column center-text mr10">
+            <div class="follow-toggle-button btn btn-default btn-xs"
+                 user="<%= artist.profileAddress %>"
+                 text-following="Following"
+                 class-following="btn-success"
+                 text-not-following="Follow"
+                 class-not-following="btn-default">
+                Follow
+            </div>
+
+            <!-- Hiding this for now until we have real data -->
+            <div class="subtle-text" style="visibility: hidden"><%=formatNumber(1000000)%></div>
+        </div>
+    </div>
+
+
     <p></p>
     <div id=description class="text-justify more">
         <div class="more-content">

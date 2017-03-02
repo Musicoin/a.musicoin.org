@@ -541,6 +541,7 @@ export class MusicoinOrgJsonAPI {
         artist.profileAddress = record.profileAddress;
         artist.timeSince = this._timeSince(record.joinDate);
         artist.genres = record.draftProfile.genres;
+        artist.directTipCount = record.directTipCount || 0;
         return artist;
       });
   }
@@ -717,26 +718,44 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  addToMessageTipCount(messageId: string, coins: number): Promise<any> {
+    return TrackMessage.findById(messageId)
+      .then(record => {
+        record.tips += coins;
+        return record.save();
+      })
+      .then(r => {
+        console.log("Updated tip count on track message: " + r.tips);
+      })
+  }
+
+  addToReleaseTipCount(contractAddress: string, coins: number) {
+    return Release.findOne({contractAddress: contractAddress}).exec()
+      .then(release => {
+        if (release) {
+          release.directTipCount = release.directTipCount ? release.directTipCount + coins : coins;
+          return release.save();
+        }
+        return false;
+      })
+  }
+
+  addToUserTipCount(profileAddress: string, coins: number) {
+    return User.findOne({profileAddress: profileAddress}).exec()
+      .then(user => {
+        if (user) {
+          user.directTipCount = user.directTipCount ? user.directTipCount + coins : coins;
+          return user.save();
+        }
+        return false;
+      })
+  }
 
   getLicense(contractAddress: string): Promise<any> {
     console.log("Getting license: " + contractAddress);
-    return this.mcHelper.getLicense(contractAddress)
-      .bind(this)
-      .then(function(license) {
-        console.log("Getting license: " + contractAddress + " ... done");
-        if (license.artistName) return license;
-
-        console.log("Looking up artist: " + license.artistProfileAddress);
-        return User.findOne({profileAddress: license.artistProfileAddress}).exec()
-          .then(function(record) {
-            if (record && record.artistName) {
-              license.artistName = record.artistName;
-            }
-            else {
-              license.artistName = "";
-            }
-            return license;
-          })
+    return Release.findOne({contractAddress: contractAddress}).exec()
+      .then(record => {
+        return this._convertDbRecordToLicense(record);
       })
   }
 
@@ -795,6 +814,8 @@ export class MusicoinOrgJsonAPI {
         license.genres = record.genres;
         license.description = record.description;
         license.timeSince = this._timeSince(record.releaseDate);
+        license.directTipCount = record.directTipCount || 0;
+        license.directPlayCount = record.directPlayCount || 0;
         return license;
       })
   }

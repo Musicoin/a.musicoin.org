@@ -1,4 +1,4 @@
-<div style="font-size: 24px">
+<div class="social-links">
     <%
     var socialTypes = [
         {id: "website", name: "artist website", icon: "fa-external-link"},
@@ -24,7 +24,7 @@
         }
 
     if (value) { %>
-    <a href="<%=value%>" target="_blank" class="fa <%= icon %> social-link"></a>
+    <a href="<%=value%>" target="_blank" class="fa <%= icon %> mr5 social-link"></a>
     <% }
     }
     %>

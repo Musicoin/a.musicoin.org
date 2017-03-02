@@ -37,6 +37,11 @@ textarea.form-control {
     justify-content: center;
 }
 
+.social-links {
+    font-size: 14px;
+    align-items: baseline;
+}
+
 .social-link {
     color: #aaa;
 }
