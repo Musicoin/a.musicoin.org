@@ -78,7 +78,7 @@
                     <th class="text-center">Track</th>
                     <th class="text-center">Artist</th>
                     <th class="text-center">Error Code</th>
-                    <th class="text-center">Error Context</th>
+                    <!--<th class="text-center">Error Context</th>-->
                     <th class="text-center"></th>
                 </tr>
 
@@ -92,15 +92,15 @@
                     var report = error.report;
                     var track = error.track;
                     var username = report.user && report.user.draftProfile ? report.user.draftProfile.artistName : "Anonymous";
-
+                    var userAddress = report.user ? report.user.profileAddress : "";
                 %>
                 <tr id="<%=report._id%>">
                     <td class="text-center middle"><%=error.dateDisplay%></td>
-                    <td class="text-center middle"><%=username%></td>
+                    <td class="text-center middle"><a href="/artist/<%=userAddress%>"><%=username%></a></td>
                     <td class="text-center middle"><a href="/track/<%=track.contractAddress%>"><%=track.title%></a></td>
                     <td class="text-center middle"><a href="/artist/<%=track.artistAddress%>"><%=track.artistName%></a></td>
                     <td class="text-center middle"><%=report.errorCode%><br><%=getErrorDescription(report.errorCode)%></td>
-                    <td class="text-center middle"><%=report.errorContext%></td>
+                    <!--<td class="text-center middle"><%=report.errorContext%></td>-->
                     <td class="delete-error btn btn-danger btn-sm"
                         errorid="<%=report._id%>">
                         Delete
