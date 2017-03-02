@@ -91,6 +91,7 @@
                     var error = errors[ivt];
                     var report = error.report;
                     var track = error.track;
+                    var username = report.user && report.user.draftProfile ? report.user.draftProfile.artistName : "Anonymous";
 
                 %>
                 <tr id="<%=report._id%>">
