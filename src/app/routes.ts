@@ -532,6 +532,42 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.post('/admin/errors/remove', (req, res) => {
+    jsonAPI.removeError(req.body._id)
+      .then(result => res.json(result))
+      .catch(err => {
+        console.log("failed to remove error: " + err);
+        res.json({success: false, reason: "error"});
+      });
+  });
+
+  app.get('/admin/errors', (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start - length);
+    const url = '/admin/errors?search=' + (req.query.search ? req.query.search : '');
+    var options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
+    jsonAPI.getErrors(req.query.search, start, length)
+      .then(errors => {
+        errors.forEach(r => {
+          r.dateDisplay = r.report.date.toLocaleDateString('en-US', options);
+        });
+        return errors;
+      })
+      .then(errors => {
+        doRender(req, res, 'admin-errors.ejs', {
+          search: req.query.search,
+          errors: errors,
+          navigation: {
+            description: `Showing ${start + 1} to ${start + errors.length}`,
+            start: previous > 0 ? `${url}&length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+            next: errors.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+          }
+        });
+      });
+  });
+
   app.get('/admin/users', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;

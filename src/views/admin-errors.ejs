@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Users - Musicoin</title>
+    <title>Errors - Musicoin</title>
     <%- include partials/page-head.ejs %>
     <style>
         body        {
@@ -38,12 +38,12 @@
 <div class="container">
     <div class="search-area mb20">
         <div class="col-sm-5">
-            <form action="/admin/invite-requests" method="get">
+            <form action="/admin/errors" method="get">
                 <div class="flex-row">
                     <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
                     <input class="form-control text-large pl25"
                            name="search"
-                           value="<%= search %>" placeholder="search users"
+                           value="<%= search %>" placeholder="search"
                            autofocus onfocus="this.value = this.value;">
                 </div>
             </form>
@@ -73,30 +73,35 @@
             </div>
             <table class="table table-responsive" width="100%">
                 <tr>
-                    <th class="text-center">Request Date</th>
-                    <th class="text-center">Username</th>
-                    <th class="text-center">Source</th>
-                    <th class="text-center">Musician</th>
-                    <th class="text-center"></th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">User</th>
+                    <th class="text-center">Track</th>
+                    <th class="text-center">Artist</th>
+                    <th class="text-center">Error Code</th>
+                    <th class="text-center">Error Context</th>
                     <th class="text-center"></th>
                 </tr>
 
-                <% for (var ivt=0; ivt < requests.length; ivt++) {
-                    var req = requests[ivt];
+                <%
+                var messages = [
+                  "User aborted playback",
+
+                ]
+                for (var ivt=0; ivt < errors.length; ivt++) {
+                    var error = errors[ivt];
+                    var report = error.report;
+                    var track = error.track;
+
                 %>
-                <tr id="<%=req._id%>">
-                    <td class="text-center middle"><%=req.requestDateDisplay%></td>
-                    <td class="text-center middle"><%=req.username%></td>
-                    <td class="text-center middle"><%=req.source%></td>
-                    <td class="text-center middle"><%=req.musician ? "Yes" : "No"%></td>
-                    <td class="send-invite btn btn-success btn-sm mr5"
-                        requestid="<%=req._id%>"
-                        email="<%=req.username%>">
-                        Send
-                    </td>
-                    <td class="delete-invite btn btn-danger btn-sm"
-                        requestid="<%=req._id%>"
-                        email="<%=req.username%>">
+                <tr id="<%=report._id%>">
+                    <td class="text-center middle"><%=error.dateDisplay%></td>
+                    <td class="text-center middle"><%=report.user.draftProfile.artistName%></td>
+                    <td class="text-center middle"><a href="/track/<%=track.contractAddress%>"><%=track.title%></a></td>
+                    <td class="text-center middle"><a href="/artist/<%=track.artistAddress%>"><%=track.artistName%></a></td>
+                    <td class="text-center middle"><%=report.errorCode%><br><%=getErrorDescription(report.errorCode)%></td>
+                    <td class="text-center middle"><%=report.errorContext%></td>
+                    <td class="delete-error btn btn-danger btn-sm"
+                        errorid="<%=report._id%>">
                         Delete
                     </td>
                 </tr>
@@ -107,12 +112,12 @@
 </div>
 <script>
   $( document ).ready(function() {
-    $(".delete-invite").on('click', function() {
-      var _id = $(this).attr("requestid");
+    $(".delete-error").on('click', function() {
+      var _id = $(this).attr("errorid");
       var row = $("#" + _id);
       new Message("Are you sure?", 'warning', 5000)
         .button('Yes', () => {
-          $.post('/admin/waitlist/remove', {
+          $.post('/admin/errors/remove', {
             _id: _id
           }, function(data) {
             if (data.success) {
@@ -127,33 +132,25 @@
 
         });
     })
-
-    $(document).on('click', '.send-invite', function() {
-      var email = $(this).attr("email");
-      var _id = $(this).attr("requestid");
-      var row = $("#" + _id);
-      $.post('/invite/send', {
-        email: email
-      }, function (data) {
-        if (data.success) {
-          $.post('/admin/waitlist/remove', {
-            _id: _id
-          }, function(data) {
-            if (data.success) {
-              row.html("<td class='alert-success' colspan=5 align=center>Sent!</td>");
-            }
-            else {
-              new Message("Failed to remove the entry", 'error', 5000)
-            }
-          });
-        }
-        else {
-          new Message("Failed: " + data.reason, 'error', 5000)
-        }
-      })
-    })
   });
 </script>
+<%
+ function getErrorDescription(code) {
+     switch (parseInt(code)) {
+         case 1:
+            return 'MEDIA_ERR_ABORTED';
+         case 2:
+             return 'MEDIA_ERR_NETWORK';
+         case 3:
+             return 'MEDIA_ERR_DECODE';
+         case 4:
+             return 'MEDIA_ERR_SRC_NOT_SUPPORTED';
+         default:
+             return 'An unknown error occurred.';
+     }
+ }
+
+ %>
 <%- include partials/connect-with-us.ejs %>
 </body>
 </html>

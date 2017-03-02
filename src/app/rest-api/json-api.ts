@@ -10,6 +10,7 @@ const Playback = require('../../app/models/playback');
 const InviteRequest = require('../../app/models/invite-request');
 const TrackMessage = require('../../app/models/track-message');
 const Hero = require('../../app/models/hero');
+const ErrorReport = require('../../app/models/error-report');
 
 const knownGenres = [
   "Alternative Rock",
@@ -695,6 +696,51 @@ export class MusicoinOrgJsonAPI {
             }
             return license;
           })
+      })
+  }
+
+  getErrors(_search: string, start: number, length: number): Promise<any> {
+    const search = _search;
+    let filter = {};
+    if (search) {
+      filter = {$or: [
+        {"errorCode": {"$regex": search, "$options": "i"}},
+        {"errorContext": {"$regex": search, "$options": "i"}}
+      ]};
+    }
+    return ErrorReport.find(filter)
+      .sort({"date": 'asc'})
+      .skip(start)
+      .limit(length)
+      .populate("user")
+      .exec()
+      .then(errorReports => {
+        const updated = errorReports.map(report => {
+          return Release.findOne({contractAddress: report.licenseAddress})
+            .exec()
+            .then(track => {
+              return {
+                report: report,
+                track: track
+              };
+            })
+        });
+        return Promise.all(updated);
+      });
+  }
+
+  removeError(_id: string): Promise<any> {
+    return ErrorReport.findByIdAndRemove(_id).exec()
+      .then((removed) => {
+        if (removed) {
+          console.log(`Removed error report entry: ${removed._id}`);
+          return {success: true}
+        }
+        return {success: false, reason: "Not found"}
+      })
+      .catch((err) => {
+        console.log(`Failed to remove error report entry: ${err}`);
+        return {success: false, reason: "Error"}
       })
   }
 
