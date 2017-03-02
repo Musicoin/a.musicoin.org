@@ -36,6 +36,7 @@
 <%- include('partials/hero.ejs', {}) %>
 <%
 function formatNumber(value) {
+    if (!value) value = 0;
     const lookup = ["", "k", "M", "B", "T"];
     var order = Math.min(Math.floor(Math.log10(value)/3), lookup.length-1);
     var mult = value / Math.pow(10, 3*order);
