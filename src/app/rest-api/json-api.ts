@@ -629,56 +629,60 @@ export class MusicoinOrgJsonAPI {
       const actualArtist = artist ? Promise.resolve(artist) : User.findOne({profileAddress: artistAddress}).exec();
       actualArtist
           .then(a => {
+            let sendNotification = true;
             if (!a.preferences || !a.preferences.notifyOnComment) {
               console.log(`Not sending notification because ${a.draftProfile.artistName} does not have notifications enabled`);
-              return;
+              sendNotification = false;
             }
             // don't notify me about my own messages
             if (senderAddress == artistAddress) {
               console.log(`Not sending notification because the sender and receiver are the same: ${senderAddress}`);
-              return;
+              sendNotification = false;
             }
 
-            const recipient = a ? this._getUserEmail(a) : null;
-            if (recipient) {
-              console.log(`Sending message notification to: ${recipient}`);
-              const urlPath = release
-                ? "/track/" + release.contractAddress
-                : "/artist/" + artistAddress;
-              const notification = {
-                trackName: release ? release.title : null,
-                actionUrl: this.config.serverEndpoint + urlPath,
-                message: message,
-                senderName: sender.draftProfile.artistName
-              };
-              this.mailSender.sendMessageNotification(recipient, notification)
-                .then(() => console.log("Message notification sent to " + recipient))
-                .catch(err => `Failed to send message to ${recipient}, error: ${err}`);
+            if (sendNotification) {
+              const recipient = a ? this._getUserEmail(a) : null;
+              if (recipient) {
+                console.log(`Sending message notification to: ${recipient}`);
+                const urlPath = release
+                  ? "/track/" + release.contractAddress
+                  : "/artist/" + artistAddress;
+                const notification = {
+                  trackName: release ? release.title : null,
+                  actionUrl: this.config.serverEndpoint + urlPath,
+                  message: message,
+                  senderName: sender.draftProfile.artistName
+                };
+                this.mailSender.sendMessageNotification(recipient, notification)
+                  .then(() => console.log("Message notification sent to " + recipient))
+                  .catch(err => `Failed to send message to ${recipient}, error: ${err}`);
+              }
+              else {
+                console.log(`Could not send message to artist ${artistAddress} because no email address is associated with the account`);
+              }
             }
-            else {
-              console.log(`Could not send message to artist ${artistAddress} because no email address is associated with the account`);
-            }
+
+            return TrackMessage.create({
+              artistAddress: artistAddress,
+              contractAddress: contractAddress,
+              senderAddress: sender.profileAddress,
+              release: release ? release._id : null,
+              artist: a ? a._id : null,
+              sender: sender._id,
+              message: message,
+              replyToMessage: replyToId,
+              replyToSender: replyToMessage ? replyToMessage.sender : null
+            });
           });
-
-      return TrackMessage.create({
-        artistAddress: artistAddress,
-        contractAddress: contractAddress,
-        senderAddress: sender.profileAddress,
-        release: release ? release._id : null,
-        artist: artist ? artist._id : null,
-        sender: sender._id,
-        message: message,
-        replyToMessage: replyToId,
-        replyToSender: replyToMessage ? replyToMessage.sender : null
-      });
     })
   }
 
   getFeedMessages(userId: string, limit: number): Promise<any[]> {
     const f = Follow.find({follower: userId}).exec();
     const u = User.findOne({_id: userId}).exec();
-    return Promise.join(u, f, (user, following) => {
+    return Promise.join(u, f, (user, followingRecords) => {
         if (user) {
+          const following = followingRecords.map(fr => fr.following);
           return this._executeTrackMessagesQuery(
             TrackMessage.find()
               .or([
