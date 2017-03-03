@@ -675,15 +675,15 @@ export class MusicoinOrgJsonAPI {
   }
 
   getFeedMessages(userId: string, limit: number): Promise<any[]> {
-    return User.findOne({_id: userId}).exec()
-      .then((user) => {
+    const f = Follow.find({follower: userId}).exec();
+    const u = User.findOne({_id: userId}).exec();
+    return Promise.join(u, f, (user, following) => {
         if (user) {
-          const following = user.following && user.following.length > 0 ? user.following : [];
           return this._executeTrackMessagesQuery(
             TrackMessage.find()
               .or([
-                {artistAddress: {$in: following}}, // comments on track from artists I follow
-                {senderAddress: {$in: following}}, // comments by users/artists I follow
+                {artist: {$in: following}}, // comments on track from artists I follow
+                {sender: {$in: following}}, // comments by users/artists I follow
                 {sender: userId}, // messages I sent
                 {replyToSender: userId} // messages in reply to my messages
               ])
