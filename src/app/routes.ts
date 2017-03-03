@@ -51,7 +51,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
 
   app.use('/json-api', restAPI.getRouter());
-  app.use('/', preProcessUser(mediaProvider));
+  app.use('/', preProcessUser(mediaProvider, jsonAPI));
   app.use('/admin/*', isLoggedIn, adminOnly);
 
   function doRender(req, res, view, context) {
@@ -123,7 +123,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
       return res.redirect("/new-user");
     }
-    const rs = jsonAPI.getNewReleases(6).catchReturn([]);
+    const rs = jsonAPI.getNewReleases(12).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
     const h  = jsonAPI.getHero();
     const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
@@ -142,8 +142,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/feed', isLoggedIn, function (req, res) {
-    const m = jsonAPI.getFeedMessages(req.user._id, 30);
-    const rs = jsonAPI.getNewReleases(6).catchReturn([]);
+    const m = jsonAPI.getFeedMessages(req.user._id, 24);
+    const rs = jsonAPI.getNewReleases(12).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
     const h  = jsonAPI.getHero();
 
@@ -687,19 +687,28 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   //0xa0f17e527d50b5973bc0d029006f0f55ace16819
   app.get('/track/:address', isLoggedInOrIsPublic, function (req, res, next) {
+    console.log("Loading track page for track address: " + req.params.address);
     const ms = jsonAPI.getLicenseMessages(req.params.address, 20);
     const l = jsonAPI.getLicense(req.params.address);
     const r = Release.findOne({contractAddress: req.params.address});
 
     Promise.join(l, ms, r, (license, messages, release) => {
-        doRender(req, res, "track.ejs", {
-          license: license,
-          releaseId: release._id,
-          description: release.description,
-          messages: messages,
-          isArtist: req.user && req.user.profileAddress == license.artistProfileAddress
-        });
-      })
+      return User.findOne({profileAddress: license.artistProfileAddress}).exec()
+        .then(artist => {
+          doRender(req, res, "track.ejs", {
+            artist: artist,
+            license: license,
+            releaseId: release._id,
+            description: release.description,
+            messages: messages,
+            isArtist: req.user && req.user.profileAddress == license.artistProfileAddress
+          });
+        })
+    })
+    .catch(err => {
+      console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
+      res.render('not-found.ejs');
+    })
   });
 
   app.get('/invite-history', isLoggedIn, (req, res) => {
@@ -782,19 +791,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/follows', function(req, res) {
     if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
     if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
-    jsonAPI.isUserFollowing(req.user._id, req.body.profileAddress)
+    jsonAPI.isUserFollowing(req.user._id, req.body.toFollow)
       .then(result => {
         res.json(result);
       })
       .catch((err) => {
-        console.log(`Failed to check following status, user: ${req.user._id} follows: ${req.body.profileAddress}, ${err}`)
+        console.log(`Failed to check following status, user: ${req.user._id} follows: ${req.body.toFollow}, ${err}`)
       })
   });
 
   app.post('/follow', function(req, res) {
     if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
     if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
-    jsonAPI.toggleUserFollowing(req.user._id, req.body.profileAddress)
+
+    const updateStatus = (req.body.follow == "true")
+      ? jsonAPI.startFollowing(req.user._id, req.body.toFollow)
+      : jsonAPI.stopFollowing(req.user._id, req.body.toFollow)
+
+    updateStatus
       .then(result => {
         res.json(result);
         return result;
@@ -818,11 +832,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               })
           }
           else {
-            User.findOne({profileAddress: req.body.profileAddress})
+            User.findById(req.body.toFollow).exec()
               .then((followedUser) => {
                 return jsonAPI.postLicenseMessages(
                   null,
-                  req.body.profileAddress,
+                  followedUser.profileAddress,
                   req.user.profileAddress,
                   `${req.user.draftProfile.artistName} is now following ${followedUser.draftProfile.artistName}`)
               })
@@ -830,7 +844,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         }
       })
       .catch((err) => {
-        console.log(`Failed to toggle following, user: ${req.user._id} tried to follow/unfollow: ${req.body.profileAddress}, ${err}`)
+        console.log(`Failed to toggle following, user: ${req.user._id} tried to follow/unfollow: ${req.body.toFollow}, ${err}`)
       })
   });
 
@@ -1387,7 +1401,7 @@ function hasProfile(req, res, next) {
   res.redirect('/');
 }
 
-function preProcessUser(mediaProvider) {
+function preProcessUser(mediaProvider, jsonAPI) {
   return function preProcessUser(req, res, next) {
     const user = req.user;
     if (user) {
@@ -1401,6 +1415,16 @@ function preProcessUser(mediaProvider) {
       }
       user.canInvite = canInvite(user);
       user.isAdmin = isAdmin(user);
+      if (user.following && user.following.length > 0) {
+        return jsonAPI.migrateUserFollowing(user._id)
+          .then(() => {
+            console.log("Successfully migrated user");
+          })
+          .catch((err) => {
+            console.log("Failed to migrate user: " + err);
+            return next();
+          })
+      }
     }
     next();
   }

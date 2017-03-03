@@ -85,7 +85,14 @@ const userSchema = mongoose.Schema({
     notifyOnComment: Boolean,
     default: false
   },
-  directTipCount: Number
+  directTipCount: {
+    type: Number,
+    default: 0
+  },
+  followerCount: {
+    type: Number,
+    default: 0
+  }
 });
 
 // methods ======================

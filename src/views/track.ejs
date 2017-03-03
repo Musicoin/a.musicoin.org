@@ -53,7 +53,7 @@
                     <div class="track-artist mb10">
                         Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
                         <div class="follow-toggle-button btn btn-default btn-xs mr10"
-                             user="<%=license.artistProfileAddress%>"
+                             user="<%=artist._id%>"
                              licenseAddress="<%=license.address%>"
                              text-following="Following"
                              class-following="btn-success"
@@ -71,8 +71,8 @@
                              text-success="Thanks! :)"
                              context-type="Release"
                              text-fail=":("
-                             text-default="Tip (1 $MC)">
-                            Tip (1 $MC)
+                             text-default="Tip">
+                            Tip
                         </div>
                         <a href="https://twitter.com/share"
                            class="twitter-share-button"

@@ -6,17 +6,20 @@ $( document ).ready(function() {
         element.text(element.attr('text-following'));
         element.removeClass(element.attr('class-not-following'));
         element.addClass(element.attr('class-following'));
+        element.attr('following', 'true');
       }
       else {
         element.text(element.attr('text-not-following'));
         element.removeClass(element.attr('class-following'));
         element.addClass(element.attr('class-not-following'));
+        element.attr('following', 'false');
       }
     }
     else if (data.authenticated == false || data.profile == false) {
       element.text(element.attr('text-not-following'));
       element.removeClass(element.attr('class-following'));
       element.addClass(element.attr('class-not-following'));
+      element.attr('following', 'false');
     }
     else {
       new Message("Sorry, an error occurred", 'error', 5000)
@@ -26,7 +29,7 @@ $( document ).ready(function() {
   $(".follow-toggle-button").each(function() {
     var element = $(this);
     var toFollow = element.attr('user');
-    $.post('/follows', {profileAddress: toFollow}, function(data) {
+    $.post('/follows', {toFollow: toFollow}, function(data) {
       handleResponse(element, data);
     });
   });
@@ -35,7 +38,8 @@ $( document ).ready(function() {
     var element = $(this);
     var toFollow = element.attr('user');
     var licenseAddress = element.attr('licenseAddress');
-    $.post('/follow', {profileAddress: toFollow, licenseAddress: licenseAddress}, function(data) {
+    var follow = element.attr('following') != "true";
+    $.post('/follow', {toFollow: toFollow, licenseAddress: licenseAddress, follow: follow}, function(data) {
       handleResponse(element, data);
       if (data.authenticated == false) {
         new Message("You need to login to send a tip", "warning", 5000)

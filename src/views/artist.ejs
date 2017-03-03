@@ -60,7 +60,7 @@ function formatNumber(value) {
                  context-type="User"
                  text-success="Thanks! :)"
                  text-fail=":("
-                 text-default="Tip (1 $MC)">
+                 text-default="Tip">
                 Tip
             </div>
             <div class="subtle-text"><%= formatNumber(artist.directTipCount)%> tipped</div>
@@ -68,7 +68,7 @@ function formatNumber(value) {
 
         <div class="flex-column center-text mr10">
             <div class="follow-toggle-button btn btn-default btn-xs"
-                 user="<%= artist.profileAddress %>"
+                 user="<%= artist.id %>"
                  text-following="Following"
                  class-following="btn-success"
                  text-not-following="Follow"
@@ -77,7 +77,7 @@ function formatNumber(value) {
             </div>
 
             <!-- Hiding this for now until we have real data -->
-            <div class="subtle-text" style="visibility: hidden"><%=formatNumber(1000000)%></div>
+            <div class="subtle-text"><%=formatNumber(artist.followerCount)%></div>
         </div>
     </div>
 

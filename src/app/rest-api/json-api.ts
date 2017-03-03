@@ -5,6 +5,7 @@ import * as FormUtils from "../form-utils";
 import * as crypto from 'crypto';
 import {MailSender} from "../mail-sender";
 const User = require('../../app/models/user');
+const Follow = require('../../app/models/follow');
 const Release = require('../../app/models/release');
 const Playback = require('../../app/models/playback');
 const InviteRequest = require('../../app/models/invite-request');
@@ -542,41 +543,75 @@ export class MusicoinOrgJsonAPI {
         artist.timeSince = this._timeSince(record.joinDate);
         artist.genres = record.draftProfile.genres;
         artist.directTipCount = record.directTipCount || 0;
+        artist.followerCount = record.followerCount || 0;
+        artist.id = record._id;
         return artist;
       });
   }
 
-  isUserFollowing(userId: string, toFollow: string ) {
+  migrateUserFollowing(userId: string) {
     return User.findById(userId).exec()
       .then(user => {
+        if (user.following && user.following.length > 0) {
+          const promises = user.following.map(f => {
+            return User.findOne({profileAddress: f}).exec()
+              .then(wasFollowing => {
+                return this.startFollowing(userId, wasFollowing._id)
+              });
+          })
+          return Promise.all(promises)
+            .then(() => {
+              user.following = [];
+              return user.save();
+            })
+        }
+      })
+  }
+
+  isUserFollowing(userId: string, toFollow: string ) {
+    return Follow.findOne({follower: userId, following: toFollow}).exec()
+      .then(match => {
         return {
           success: true,
-          following: user.following && user.following.indexOf(toFollow) >= 0
+          following: !!match
         };
       })
   }
 
-  toggleUserFollowing(userId: string, toFollow: string ) {
-    return User.findById(userId).exec()
-      .then(user => {
-        if (!user.following) user.following = [];
-        const idx = user.following.indexOf(toFollow);
-        let following = false;
-        if (idx >= 0) {
-          user.following.splice(idx, 1);
-        }
-        else {
-         user.following.push(toFollow);
-         following = true;
-        }
+  startFollowing(userId: string, toFollow: string) : Promise<any> {
+    const options = {upsert: true, new: true, setDefaultsOnInsert: true};
 
-        return user.save()
-          .then(() => {
-            return {
-              success: true,
-              following: following
-            }
-          })
+    return Follow.findOneAndUpdate({follower: userId, following: toFollow}, {}, options).exec()
+      .then(inserted => {
+        MusicoinOrgJsonAPI._updateFollowerCount(toFollow, 1)
+          .catch(err => console.log(`Could not update total followers after follow for ${toFollow}: ${err}`));
+        return {
+          success: true,
+          following: !!inserted
+        }
+      })
+  }
+
+  stopFollowing(userId: string, toFollow: string) : Promise<any> {
+    return Follow.findOneAndRemove({follower: userId, following: toFollow}).exec()
+      .then(removed => {
+        if (removed) {
+          // fire and forget
+          MusicoinOrgJsonAPI._updateFollowerCount(toFollow, -1)
+            .catch(err => console.log(`Could not update total followers after unfollow for ${toFollow}: ${err}`));
+        }
+        return {
+          success: true,
+          following: false
+        }
+      })
+  }
+
+  private static _updateFollowerCount(toFollow: string, inc: number): Promise<any> {
+    return User.findById(toFollow).exec()
+      .then(user => {
+        user.followerCount = Math.max(0, user.followerCount ? user.followerCount + inc : inc);
+        user.save()
       })
   }
 
