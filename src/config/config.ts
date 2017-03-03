@@ -55,6 +55,17 @@ const config = {
     ipfsHost: keyValueConfig.ipfsReadEndpoint,
     ipfsAddUrl: `${keyValueConfig.ipfsAddEndpoint}/api/v0/add`,
   },
+  ui: {
+    feed: {
+      newMessages: 24,
+      newReleases: 12,
+      newArtists: 12
+    },
+    home: {
+      newReleases: 12,
+      newArtists: 12
+    }
+  },
   musicoinApi: {
     ipfsHost: keyValueConfig.ipfsReadEndpoint,
     apiHost: keyValueConfig.musicoinApiEndpoint,

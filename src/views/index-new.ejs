@@ -41,6 +41,7 @@
                      id="de-featured-artists"
                      de-refresh-period="10"
                      de-refresh-offset="0"
+                     de-limit="<%= ui.newArtists %>"
                      de-url="/elements/artist-events">
                     <%- include('partials/artist-events.ejs', {artists: featuredArtists}) %>
                 </div>
@@ -55,6 +56,7 @@
                 <div class="dynamic-element"
                      style="min-height: 180px"
                      id="de-new-releases"
+                     de-limit="<%= ui.newReleases %>"
                      de-refresh-period="10"
                      de-refresh-offset="2"
                      de-url="/elements/release-events">

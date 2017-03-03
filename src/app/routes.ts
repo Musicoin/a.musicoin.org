@@ -20,7 +20,7 @@ const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
 const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 const MAX_MESSAGE_LENGTH = 1000;
-const MAX_MESSAGES = 20;
+const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
@@ -123,8 +123,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
       return res.redirect("/new-user");
     }
-    const rs = jsonAPI.getNewReleases(12).catchReturn([]);
-    const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
+    const rs = jsonAPI.getNewReleases(config.ui.home.newReleases).catchReturn([]);
+    const fa = jsonAPI.getFeaturedArtists(config.ui.home.newArtists).catchReturn([]);
     const h  = jsonAPI.getHero();
     const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
     Promise.join(rs, fa, b, h, function (releases, artists, balance, hero) {
@@ -132,7 +132,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         musicoinClientBalance: balance,
         hero: hero,
         releases: releases,
-        featuredArtists: artists
+        featuredArtists: artists,
+        ui: config.ui.home
       });
     })
       .catch(function (err) {
@@ -142,9 +143,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/feed', isLoggedIn, function (req, res) {
-    const m = jsonAPI.getFeedMessages(req.user._id, 24);
-    const rs = jsonAPI.getNewReleases(12).catchReturn([]);
-    const fa = jsonAPI.getFeaturedArtists(12).catchReturn([]);
+    const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages);
+    const rs = jsonAPI.getNewReleases(config.ui.feed.newReleases).catchReturn([]);
+    const fa = jsonAPI.getFeaturedArtists(config.ui.feed.newArtists).catchReturn([]);
     const h  = jsonAPI.getHero();
 
     Promise.join(m, rs, h, fa, function (messages, releases, hero, artists) {
@@ -152,7 +153,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         messages: messages,
         releases: releases,
         hero: hero,
-        featuredArtists: artists
+        featuredArtists: artists,
+        ui: config.ui.feed
       });
     })
       .catch(function (err) {
@@ -225,36 +227,38 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/elements/artist-events', function (req, res) {
+    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const iconSize = req.body.iconSize ? req.body.iconSize : "small";
-    jsonAPI.getFeaturedArtists(12)
+    jsonAPI.getFeaturedArtists(limit)
       .then(function (artists) {
         res.render('partials/artist-events.ejs', {artists: artists, iconSize: iconSize});
       });
   });
 
   app.post('/elements/release-events', function (req, res) {
-    jsonAPI.getNewReleases(6)
+    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
+    jsonAPI.getNewReleases(limit)
       .then(function (releases) {
         res.render('partials/release-events.ejs', {releases: releases});
       });
   });
 
   app.post('/elements/new-releases', function (req, res) {
-    jsonAPI.getNewReleases(6)
+    jsonAPI.getNewReleases(12)
       .then(function (releases) {
         res.render('partials/track-list.ejs', {releases: releases});
       });
   });
 
   app.post('/elements/recently-played', function (req, res) {
-    jsonAPI.getRecentPlays(6)
+    jsonAPI.getRecentPlays(12)
       .then(function (releases) {
         res.render('partials/track-list.ejs', {releases: releases});
       });
   });
 
   app.post('/elements/top-played', function (req, res) {
-    jsonAPI.getTopPlayed(6)
+    jsonAPI.getTopPlayed(12)
       .then(function (releases) {
         res.render('partials/track-list.ejs', {releases: releases});
       });
@@ -309,7 +313,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         doRender(req, res, "partials/track-messages.ejs", {
           messages: messages,
           showTrack: showTrack,
-          noContentMessage: req.body.nocontent});
+          noContentMessage: req.body.nocontent
+        });
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
