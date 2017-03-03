@@ -12,6 +12,7 @@ const InviteRequest = require('../../app/models/invite-request');
 const TrackMessage = require('../../app/models/track-message');
 const Hero = require('../../app/models/hero');
 const ErrorReport = require('../../app/models/error-report');
+const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 
 const knownGenres = [
   "Alternative Rock",
@@ -568,6 +569,33 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  setupNewUser(user: any): Promise<any> {
+    const name = this._getUserName(user);
+    user.draftProfile = {
+      artistName: name,
+      description: "",
+      social: {},
+      ipfsImageUrl: defaultProfileIPFSImage,
+      heroImageUrl: null,
+      genres: [],
+      version: 1
+    };
+
+    const d = this.mediaProvider.uploadText(user.draftProfile.description);
+    const s = this.mediaProvider.uploadText(JSON.stringify(user.draftProfile.social));
+    return Promise.join(user.save(), d, s, (saved, descriptionUrl, socialUrl) => {
+      return this.musicoinAPI.publishProfile(null, name, descriptionUrl, user.draftProfile.ipfsImageUrl, socialUrl)
+    })
+      .then((tx) => {
+        console.log(`Transaction submitted! Profile tx : ${tx}`);
+        user.pendingTx = tx;
+        user.updatePending = true;
+        user.hideProfile = false;
+        console.log(`Saving profile tx info to the database...`);
+        return user.save();
+      })
+  }
+
   isUserFollowing(userId: string, toFollow: string ) {
     return Follow.findOne({follower: userId, following: toFollow}).exec()
       .then(match => {
@@ -868,6 +896,19 @@ export class MusicoinOrgJsonAPI {
     return null;
   }
 
+  private _getUserName(user: any) {
+    if (!user) return "New User";
+    if (user.google && this._notBlank(user.google.name)) return user.google.name;
+    if (user.facebook && this._notBlank(user.facebook.name)) return user.facebook.name;
+    if (user.twitter && this._notBlank(user.twitter.displayName)) return user.twitter.displayName;
+    if (user.twitter && this._notBlank(user.twitter.username)) return user.twitter.username;
+    return "New User";
+  }
+
+  private _notBlank(s: string) {
+    return s && s.trim().length > 0;
+  }
+
   _sanitize(s: string) {
     return s ? s.replace(/[^a-zA-Z0-9]/g, ' ').trim() : s;
   }
@@ -907,4 +948,6 @@ export class MusicoinOrgJsonAPI {
     }
     return `${rounded} ${unit} ago`;
   }
+
+
 }

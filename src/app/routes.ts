@@ -120,9 +120,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // HOME PAGE
   // =====================================
   app.get('/main', isLoggedIn, function (req, res) {
-    if (!req.user.draftProfile || !req.user.draftProfile.artistName) {
-      return res.redirect("/new-user");
-    }
     const rs = jsonAPI.getNewReleases(config.ui.home.newReleases).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(config.ui.home.newArtists).catchReturn([]);
     const h  = jsonAPI.getHero();
@@ -920,7 +917,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       // if somehow the user when to the new user page, but already has a profile,
       // just skip this step
-      if (req.user.profileAddress && !!req.body.isNewUserPage) {
+      const isNewUserPage = fields["isNewUserPage"] == "true";
+      if (req.user.profileAddress && isNewUserPage) {
         console.log("Not saving from new user page, since the user already has a profile");
         return res.redirect("/profile");
       }
@@ -980,6 +978,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   }
                   else {
                     console.log(`Saving profile to database ok!`);
+                    if (isNewUserPage) {
+                      return res.redirect(loginRedirect);
+                    }
                     res.redirect("/profile");
                   }
                 });
@@ -1410,25 +1411,37 @@ function preProcessUser(mediaProvider, jsonAPI) {
   return function preProcessUser(req, res, next) {
     const user = req.user;
     if (user) {
-      if (user.profile) {
-        user.profile.image = user.profile.ipfsImageUrl
-          ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
-          : user.profile.image;
-        user.profile.heroImage = user.profile.heroImageUrl
-          ? mediaProvider.resolveIpfsUrl(user.profile.heroImageUrl)
-          : user.profile.heroImage;
-      }
-      user.canInvite = canInvite(user);
-      user.isAdmin = isAdmin(user);
-      if (user.following && user.following.length > 0) {
-        return jsonAPI.migrateUserFollowing(user._id)
+      if(!req.user.draftProfile || !req.user.draftProfile.artistName) {
+        return jsonAPI.setupNewUser(user)
           .then(() => {
-            console.log("Successfully migrated user");
+            return res.redirect(loginRedirect);
           })
-          .catch((err) => {
-            console.log("Failed to migrate user: " + err);
+          .catch(err => {
+            console.log("Failed to setup new user: " + err);
             return next();
           })
+      }
+      else {
+        if (user.profile) {
+          user.profile.image = user.profile.ipfsImageUrl
+            ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
+            : user.profile.image;
+          user.profile.heroImage = user.profile.heroImageUrl
+            ? mediaProvider.resolveIpfsUrl(user.profile.heroImageUrl)
+            : user.profile.heroImage;
+        }
+        user.canInvite = canInvite(user);
+        user.isAdmin = isAdmin(user);
+        if (user.following && user.following.length > 0) {
+          return jsonAPI.migrateUserFollowing(user._id)
+            .then(() => {
+              console.log("Successfully migrated user");
+            })
+            .catch((err) => {
+              console.log("Failed to migrate user: " + err);
+              return next();
+            })
+        }
       }
     }
     next();
