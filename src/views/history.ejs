@@ -27,6 +27,10 @@
             margin-left: 10px;
             font-size: 14pt;
         }
+
+        .row1 {
+            background-color: rgba(255,255,255,0.1);
+        }
     </style>
 </head>
 <body>
@@ -58,23 +62,43 @@
                 <tr>
                     <th><div class="history">Type</div></th>
                     <th><div class="history">Title</div></th>
-                    <th><div class="history">Source</div></th>
-                    <th class="big-screen-only"><div class="history">From</div></th>
+                    <!--<th><div class="history">Source</div></th>-->
+                    <th class="big-screen-only"><div class="history">From/To</div></th>
                     <th><div class="history text-right">Musicoins</div></th>
                     <th><div class="history">Time</div></th>
                 </tr>
-            <% for (var i=0; i < history.length; i++) {
-              var item = history[i];
+            <%
+            var alternate = false;
+            var prev = "";
+            for (var i=0; i < history.length; i++) {
+                var item = history[i];
+                item.incoming = address == item.to;
+                item.outgoing = address == item.from;
+
+                var icon = item.incoming ? "from " : item.outgoing ? "to " : "";
+                var addr = item.incoming ? item.from : item.to;
+                var style = "";
+                if (user && user.profileAddress && user.profileAddress==addr) {
+                  addr = "your profile";
+                }
+                if (item.transactionHash != prev) {
+                  alternate = !alternate;
+                  prev = item.transactionHash;
+                }
+                else {
+                  style = "border-top: 0px";
+                }
+                var rowClass = alternate ? "row1" : "row2";
             %>
-                <tr>
-                    <td><div class="history"><%=item.eventType%></div></td>
-                    <td><div class="history"><%=item.title%></div></td>
-                    <td><div class="history">
-                            <img src="/images/icon.png" width="24px" height="24px"><span class="big-screen-only"> <%=item.source%></span></div>
-                    </td>
-                    <td class="big-screen-only"><div class="history"><%=item.from%></div></td>
-                    <td><div class="history text-right"><%=item.musicoins%> <a target="_blank" href="http://orbiter.musicoin.org/tx/<%=item.transactionHash%>"> (tx)</a></div></td>
-                    <td><div class="history"><%=item.formattedDate%></div></td>
+                <tr class="<%=rowClass%>">
+                    <td style="<%=style%>"><div class="history"><%=item.eventType%></div></td>
+                    <td style="<%=style%>"><div class="history"><%=item.title%></div></td>
+                    <!--<td><div class="history">-->
+                            <!--<img src="/images/icon.png" width="24px" height="24px"><span class="big-screen-only"> <%=item.source%></span></div>-->
+                    <!--</td>-->
+                    <td style="<%=style%>" class="big-screen-only"><div class="history"><%=icon%><%=addr%></div></td>
+                    <td style="<%=style%>"><div class="history text-right"><%=item.musicoins%> <a target="_blank" href="http://orbiter.musicoin.org/tx/<%=item.transactionHash%>"> (tx)</a></div></td>
+                    <td style="<%=style%>"><div class="history"><%=item.formattedDate%></div></td>
                 </tr>
             <%}%>
             </table>
