@@ -31,6 +31,12 @@ textarea.form-control {
     border: none;
 }
 
+/* prevents auto-zoom on mobile when inputting */
+.text-default-size {
+    font-size: 1em;
+}
+
+
 .search-area {
     width: 100%;
     display: flex;
