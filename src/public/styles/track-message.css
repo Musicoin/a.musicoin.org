@@ -7,6 +7,16 @@
     border-radius: 4px;
 }
 
+.large-track-image {
+    background-size: cover;
+    width: 256px;
+    height: 256px;
+    max-width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 4px;
+}
+
 .track-name {
     font-weight: bold;
 }
