@@ -204,6 +204,11 @@ export class MusicoinOrgJsonAPI {
               : null;
           })
           .then(() => {
+            console.log(`Sent invite to ${email}`);
+            sender.invitesRemaining--;
+            return sender.save();
+          })
+          .then(() => {
             return {
               email: email,
               from: sender._id,
@@ -705,14 +710,15 @@ export class MusicoinOrgJsonAPI {
     })
   }
 
-  getFeedMessages(userId: string, limit: number): Promise<any[]> {
+  getFeedMessages(userId: string, limit: number, minDate?: any): Promise<any[]> {
     const f = Follow.find({follower: userId}).exec();
     const u = User.findOne({_id: userId}).exec();
     return Promise.join(u, f, (user, followingRecords) => {
         if (user) {
           const following = followingRecords.map(fr => fr.following);
+          const filter = minDate ? {timestamp: {$gte: minDate}} : {};
           return this._executeTrackMessagesQuery(
-            TrackMessage.find()
+            TrackMessage.find(filter)
               .or([
                 {artist: {$in: following}}, // comments on track from artists I follow
                 {sender: {$in: following}}, // comments by users/artists I follow
