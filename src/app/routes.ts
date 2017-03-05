@@ -1090,7 +1090,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const selfAddress = req.user.profileAddress;
       const promises = tracks
         .filter(t => t.title)
-        .filter(t => t.audio.size > 0)
+        .filter(t => t.audio && t.audio.size > 0)
         .map(track => {
           const recipients = FormUtils.extractRecipients(track);
           track.contributors = recipients.contributors;
