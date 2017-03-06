@@ -551,14 +551,36 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }})
   });
 
-  app.get('/admin/mail/daily/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
-    jsonAPI.getUserStatsReport(req.params.profileAddress, Date.now(), "day")
+  app.get('/admin/mail/activity/daily/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+    renderReport(req, res, "day", "daily");
+  });
+
+  app.get('/admin/mail/activity/weekly/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+    renderReport(req, res, "week", "weekly");
+  });
+
+  app.get('/admin/mail/activity/monthly/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+    renderReport(req, res, "month", "monthly");
+  });
+
+  app.get('/admin/mail/activity/yearly/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+    renderReport(req, res, "year", "yearly");
+  });
+
+  app.get('/admin/mail/activity/all/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+    renderReport(req, res, "all", "historical");
+  });
+
+  function renderReport(req, res, duration, durationAdj) {
+    jsonAPI.getUserStatsReport(req.params.profileAddress, Date.now(), duration)
       .then(report => {
         report.actionUrl = config.serverEndpoint + loginRedirect;
         report.baseUrl = config.serverEndpoint;
-        res.render("mail/report-daily.ejs", {report: report});
+        report.description = `Musicoin ${durationAdj} report`;
+        report.duration = duration;
+        res.render("mail/activity-report.ejs", {report: report});
       })
-  });
+  }
 
   app.get('/admin/invite-requests', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
