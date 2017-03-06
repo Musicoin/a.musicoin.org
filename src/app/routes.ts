@@ -266,6 +266,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     // don't redirect if they aren't logged in, this is just page section
     const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
       ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, req.body.replyto)
+        .then(() => {
+          return jsonAPI.addToReleaseCommentCount(req.body.address);
+        })
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
@@ -282,6 +285,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/elements/user-messages', function (req, res) {
     const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
       ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, req.body.replyto)
+        .then(() => {
+          return jsonAPI.addToReleaseCommentCount(req.body.address);
+        })
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
@@ -543,6 +549,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       trackName: "My Track",
       acceptUrl: "http://localhost:3000/track/12345"
     }})
+  });
+
+  app.get('/admin/mail/daily/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+    jsonAPI.getUserStatsReport(req.params.profileAddress, Date.now(), "day")
+      .then(report => {
+        report.actionUrl = config.serverEndpoint + loginRedirect;
+        report.baseUrl = config.serverEndpoint;
+        res.render("mail/report-daily.ejs", {report: report});
+      })
   });
 
   app.get('/admin/invite-requests', (req, res) => {

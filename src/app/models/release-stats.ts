@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 
 module.exports = mongoose.model('ReleaseStats', mongoose.Schema({
-  user: {
+  release: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Release',
     index: true

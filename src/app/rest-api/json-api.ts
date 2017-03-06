@@ -657,7 +657,7 @@ export class MusicoinOrgJsonAPI {
   private static _updateUserStat(userId: string, date: number, duration:  string, update: any): Promise<any> {
     const options = {upsert: true, new: true, setDefaultsOnInsert: true};
     return UserStats.findOneAndUpdate(
-      this._getStatsCondition(userId, date, duration),
+      this._getUserStatsCondition(userId, date, duration),
       update,
       options
     ).exec();
@@ -684,15 +684,23 @@ export class MusicoinOrgJsonAPI {
   private static _updateReleaseStat(releaseId: string, date: number, duration:  string, update: any): Promise<any> {
     const options = {upsert: true, new: true, setDefaultsOnInsert: true};
     return ReleaseStats.findOneAndUpdate(
-      this._getStatsCondition(releaseId, date, duration),
+      this._getReleaseStatsCondition(releaseId, date, duration),
       update,
       options
     ).exec();
   }
 
-  private static _getStatsCondition(userId: string, date: number, duration: string) : Promise<any> {
+  private static _getUserStatsCondition(userId: string, date: number, duration: string) : Promise<any> {
     return {
       user: userId,
+      startDate: this._getDatePeriodStart(date, duration),
+      duration: duration
+    }
+  }
+
+  private static _getReleaseStatsCondition(releaseId: string, date: number, duration: string) : Promise<any> {
+    return {
+      release: releaseId,
       startDate: this._getDatePeriodStart(date, duration),
       duration: duration
     }
@@ -764,16 +772,6 @@ export class MusicoinOrgJsonAPI {
               replyToMessage: replyToId,
               replyToSender: replyToMessage ? replyToMessage.sender : null
             })
-              .then(message => {
-                if (!release) return message;
-                return MusicoinOrgJsonAPI._updateReleaseStats(release._id, Date.now(), {$inc: {commentCount: 1}})
-                  .then(() => message)
-                  .catch((err) => {
-                    console.log(`Failed to update comment count stats: ${err}`);
-                    return message;
-                  });
-              });
-
           });
     })
   }
@@ -886,6 +884,18 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  addToReleaseCommentCount(contractAddress: string): Promise<any> {
+    return Release.findOne({contractAddress: contractAddress}).exec()
+      .then(release => {
+        return MusicoinOrgJsonAPI._updateReleaseStats(release.id, Date.now(), {$inc: {commentCount: 1}})
+          .catch(err => {
+            console.log(`Failed to update reporting stats for release: ${err}`);
+            return release;
+          })
+          .then(() => release);
+      })
+  }
+
   addToReleasePlayCount(contractAddress: string): Promise<any> {
     // async, not checking result
     Playback.create({contractAddress: contractAddress});
@@ -922,6 +932,52 @@ export class MusicoinOrgJsonAPI {
         })
           .then(() => user);
       })
+  }
+
+  getUserStatsReport(profileAddress: string, date: number, duration: string): Promise<any> {
+    const u = User.findOne({profileAddress: profileAddress}).exec()
+    const rs = Release.find({artistAddress: profileAddress}).exec()
+    return Promise.join(u, rs, (user, releases) => {
+      var uStatsCondition = MusicoinOrgJsonAPI._getUserStatsCondition(user._id, date, duration);
+      const ustats = UserStats.findOne(uStatsCondition)
+        .then(userStats => {
+          return userStats ? userStats : {
+              followCount: 0,
+              tipCount: 0,
+              commentCount: 0,
+              startDate: uStatsCondition.startDate,
+              user: uStatsCondition.user,
+              duration: uStatsCondition.duration
+            }
+        });
+      const rstats = releases.map(release => {
+        var rStatsCondition = MusicoinOrgJsonAPI._getReleaseStatsCondition(release._id, date, duration);
+        return ReleaseStats.findOne(rStatsCondition)
+          .then(stats => {
+            if (!stats) {
+              stats = Object.assign(rStatsCondition, {playCount: 0, tipCount: 0, commentCount: 0});
+            }
+            stats.track = release;
+            return stats ? stats : {
+                playCount: 0,
+                tipCount: 0,
+                commentCount: 0,
+                duration: rStatsCondition.duration,
+                startDate: rStatsCondition.startDate,
+                release: release._id
+              }
+          })
+      });
+      return Promise.join(ustats, Promise.all(rstats), (userStats, allReleaseStats) => {
+        return {
+          user: user,
+          stats: {
+            user: userStats,
+            releases: allReleaseStats
+          }
+        }
+      })
+    })
   }
 
   getLicense(contractAddress: string): Promise<any> {
