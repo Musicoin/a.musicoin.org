@@ -1289,13 +1289,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       // context.contentType = license.contentType && !license.contentType.startsWith("0x") ? license.contentType : context.contentType;
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
         .then(function (result) {
-          Playback.create({contractAddress: req.params.address}); // async, not checking result
-          release.directPlayCount = release.directPlayCount ? release.directPlayCount + 1 : 1;
-          release.save(function (err) {
-            if (err) console.warn("Failed to update playcount: " + err);
-          });
-
-          return result;
+          // try to update stats, but don't fail if update fails
+          return jsonAPI.addToReleasePlayCount(release.contractAddress)
+            .then(() => result)
+            .catch(err => {
+              console.log(`Failed to update stats for release: ${err}`);
+              return result;
+            });
         });
     })
       .then(function (result) {

@@ -1,12 +1,16 @@
 import {Promise} from 'bluebird';
 import {MusicoinHelper} from "../musicoin-helper";
 import {MusicoinAPI} from "../musicoin-api";
+import * as moment from "moment";
 import * as FormUtils from "../form-utils";
 import * as crypto from 'crypto';
 import {MailSender} from "../mail-sender";
+import unitOfTime = moment.unitOfTime;
 const User = require('../../app/models/user');
+const UserStats = require('../../app/models/user-stats');
 const Follow = require('../../app/models/follow');
 const Release = require('../../app/models/release');
+const ReleaseStats = require('../../app/models/release-stats');
 const Playback = require('../../app/models/playback');
 const InviteRequest = require('../../app/models/invite-request');
 const TrackMessage = require('../../app/models/track-message');
@@ -91,7 +95,7 @@ export class MusicoinOrgJsonAPI {
 
     const ps = !includePending
       ? Promise.resolve(null)
-      : this._getReleaseEntries({artistAddress: address, state: 'pending'})
+      : this._getReleaseEntries({artistAddress: address, state: 'pending'});
 
     return Promise.join(a, rs, ps, function(artist, releases, pendingReleases) {
       if (!artist) return null;
@@ -198,7 +202,7 @@ export class MusicoinOrgJsonAPI {
             const invite = {
               invitedBy: sender.draftProfile.artistName,
               acceptUrl: this.config.serverEndpoint + "/accept/" + inviteCode
-            }
+            };
             return email
               ? this.mailSender.sendInvite(email, invite)
               : null;
@@ -641,11 +645,65 @@ export class MusicoinOrgJsonAPI {
   }
 
   private static _updateFollowerCount(toFollow: string, inc: number): Promise<any> {
-    return User.findById(toFollow).exec()
-      .then(user => {
-        user.followerCount = Math.max(0, user.followerCount ? user.followerCount + inc : inc);
-        user.save()
-      })
+    const findUser = User.findById(toFollow).exec();
+    const updateStats = this._updateUserStats(toFollow, Date.now(), {$inc: {followCount: inc}});
+
+    return Promise.join(findUser, updateStats, (user, stats) => {
+      user.followerCount = Math.max(0, user.followerCount ? user.followerCount + inc : inc);
+      return user.save();
+    })
+  }
+
+  private static _updateUserStat(userId: string, date: number, duration:  string, update: any): Promise<any> {
+    const options = {upsert: true, new: true, setDefaultsOnInsert: true};
+    return UserStats.findOneAndUpdate(
+      this._getStatsCondition(userId, date, duration),
+      update,
+      options
+    ).exec();
+  }
+
+  private static _updateUserStats(userId: string, date: number, update: any): Promise<any> {
+    return Promise.all([
+      this._updateUserStat(userId, date, "day", update),
+      this._updateUserStat(userId, date, "week", update),
+      this._updateUserStat(userId, date, "month", update),
+      this._updateUserStat(userId, date, "year", update),
+      this._updateUserStat(userId, date, "all", update)]);
+  }
+
+  private static _updateReleaseStats(releaseId: string, date: number, update: any): Promise<any> {
+    return Promise.all([
+      this._updateReleaseStat(releaseId, date, "day", update),
+      this._updateReleaseStat(releaseId, date, "week", update),
+      this._updateReleaseStat(releaseId, date, "month", update),
+      this._updateReleaseStat(releaseId, date, "year", update),
+      this._updateReleaseStat(releaseId, date, "all", update)]);
+  }
+
+  private static _updateReleaseStat(releaseId: string, date: number, duration:  string, update: any): Promise<any> {
+    const options = {upsert: true, new: true, setDefaultsOnInsert: true};
+    return ReleaseStats.findOneAndUpdate(
+      this._getStatsCondition(releaseId, date, duration),
+      update,
+      options
+    ).exec();
+  }
+
+  private static _getStatsCondition(userId: string, date: number, duration: string) : Promise<any> {
+    return {
+      user: userId,
+      startDate: this._getDatePeriodStart(date, duration),
+      duration: duration
+    }
+  }
+
+  private static _getDatePeriodStart(date: number, duration: string): Promise<number> {
+    if (duration == "day" || duration == "week" || duration == "month" || duration == "year")
+      return moment(date).startOf(duration);
+    else if (duration == "all")
+      return 0;
+    else throw new Error("Invalid duration specified for stats table: " + duration);
   }
 
   postLicenseMessages(contractAddress: string, _artistAddress: string, senderAddress: string, message: string, replyToId?: string): Promise<any[]> {
@@ -705,7 +763,17 @@ export class MusicoinOrgJsonAPI {
               message: message,
               replyToMessage: replyToId,
               replyToSender: replyToMessage ? replyToMessage.sender : null
-            });
+            })
+              .then(message => {
+                if (!release) return message;
+                return MusicoinOrgJsonAPI._updateReleaseStats(release._id, Date.now(), {$inc: {commentCount: 1}})
+                  .then(() => message)
+                  .catch((err) => {
+                    console.log(`Failed to update comment count stats: ${err}`);
+                    return message;
+                  });
+              });
+
           });
     })
   }
@@ -796,13 +864,10 @@ export class MusicoinOrgJsonAPI {
       .then(record => {
         record.tips += coins;
         return record.save();
-      })
-      .then(r => {
-        console.log("Updated tip count on track message: " + r.tips);
-      })
+      });
   }
 
-  addToReleaseTipCount(contractAddress: string, coins: number) {
+  addToReleaseTipCount(contractAddress: string, coins: number): Promise<any> {
     return Release.findOne({contractAddress: contractAddress}).exec()
       .then(release => {
         if (release) {
@@ -811,9 +876,36 @@ export class MusicoinOrgJsonAPI {
         }
         return false;
       })
+      .then(release => {
+        return MusicoinOrgJsonAPI._updateReleaseStats(release.id, Date.now(), {$inc: {tipCount: coins}})
+          .catch(err => {
+            console.log(`Failed to update reporting stats for release: ${err}`);
+            return release;
+          })
+          .then(() => release);
+      })
   }
 
-  addToUserTipCount(profileAddress: string, coins: number) {
+  addToReleasePlayCount(contractAddress: string): Promise<any> {
+    // async, not checking result
+    Playback.create({contractAddress: contractAddress});
+
+    return Release.findOne({contractAddress: contractAddress}).exec()
+      .then(release => {
+        release.directPlayCount = release.directPlayCount ? release.directPlayCount + 1 : 1;
+        return release.save();
+      })
+      .then(release => {
+        return MusicoinOrgJsonAPI._updateReleaseStats(release.id, Date.now(), {$inc: {playCount: 1}})
+          .catch(err => {
+            console.log(`Failed to update reporting stats for release: ${err}`);
+            return release;
+          })
+          .then(() => release);
+      })
+  }
+
+  addToUserTipCount(profileAddress: string, coins: number): Promise<any> {
     return User.findOne({profileAddress: profileAddress}).exec()
       .then(user => {
         if (user) {
@@ -821,6 +913,14 @@ export class MusicoinOrgJsonAPI {
           return user.save();
         }
         return false;
+      })
+      .then(user => {
+        return MusicoinOrgJsonAPI._updateUserStats(user._id, Date.now(), {$inc: {tipCount: coins}})
+          .catch(err => {
+            console.log(`Failed to update reporting stats for user: ${err}`);
+            return user;
+        })
+          .then(() => user);
       })
   }
 
