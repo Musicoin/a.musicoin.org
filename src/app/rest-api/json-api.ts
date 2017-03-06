@@ -104,7 +104,7 @@ export class MusicoinOrgJsonAPI {
   }
 
   addInviteRequest(email: string, musician: boolean): Promise<any> {
-    return InviteRequest.findOne({username: {"$regex": email, "$options": "i"}}).exec()
+    return InviteRequest.findOne({username: {"$regex": email, "$options": "i"}, source: "waitlist"}).exec()
       .then(request => {
         let insert = Promise.resolve();
         if (!request) {
@@ -648,9 +648,9 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
-  postLicenseMessages(contractAddress: string, artistAddress: string, senderAddress: string, message: string, replyToId?: string): Promise<any[]> {
+  postLicenseMessages(contractAddress: string, _artistAddress: string, senderAddress: string, message: string, replyToId?: string): Promise<any[]> {
     const r = contractAddress ? Release.findOne({contractAddress: contractAddress}).exec() : Promise.resolve(null);
-    const a = artistAddress ? User.findOne({profileAddress: artistAddress}).exec() : Promise.resolve(null);
+    const a = _artistAddress ? User.findOne({profileAddress: _artistAddress}).exec() : Promise.resolve(null);
     const s = User.findOne({profileAddress: senderAddress}).exec();
     const m = replyToId ? TrackMessage.findById(replyToId).exec() : Promise.resolve(null);
 
