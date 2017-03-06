@@ -42,7 +42,7 @@ $( document ).ready(function() {
     $.post('/follow', {toFollow: toFollow, licenseAddress: licenseAddress, follow: follow}, function(data) {
       handleResponse(element, data);
       if (data.authenticated == false) {
-        new Message("You need to login to send a tip", "warning", 5000)
+        new Message("You need to login to follow a user", "warning", 5000)
           .button("Login", () => {
             window.top.location = "/welcome";
           });
