@@ -35,23 +35,54 @@
                     <div class="large-track-image show-off-container shadow"
                          style="background-image: url('<%=license.image%>')">
                     </div>
+
                     <div class="audio-track clickable text-large"
-                            audioUrl='<%=license.audioUrl%>'
-                            trackTitle='<%=license.title%>'
-                            artistName='<%=license.artistName%>'
-                            image='<%=license.image%>'
-                            playCount='<%=license.playCount%>'
-                            tipCount='<%=license.tipCount%>'
-                            artistProfileAddress='<%=license.artistProfileAddress%>'
-                            licenseAddress='<%=license.address%>'>
+                         audioUrl='<%=license.audioUrl%>'
+                         trackTitle='<%=license.title%>'
+                         artistName='<%=license.artistName%>'
+                         image='<%=license.image%>'
+                         playCount='<%=license.playCount%>'
+                         tipCount='<%=license.tipCount%>'
+                         artistProfileAddress='<%=license.artistProfileAddress%>'
+                         licenseAddress='<%=license.address%>'>
                         <i class="fa fa-play-circle" aria-hidden="true"></i> Play
                     </div>
 
-                    <div><%=license.playCount%> plays</div>
-                    <div class="mb10"><%=license.directTipCount%> tips</div>
+                    <table class="mb5">
+                        <tr>
+                            <td align="right" class="pr5"><%=license.playCount%></td>
+                            <td align="left">plays</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td align="right" class="pr5"><%=license.directTipCount%></td>
+                            <td align="left">tips</td>
+                            <td>
+                                <div id="player-tip-button"
+                                     class="tip-button btn btn-success btn-xs"
+                                     recipient="<%=license.address%>"
+                                     amount="1"
+                                     text-success="Thanks! :)"
+                                     context-type="Release"
+                                     text-fail=":("
+                                     text-default="Tip">
+                                    Tip
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
 
-                    <div class="track-artist mb10">
-                        Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
+                    <div class="center-text" class="mb20">
+                        <a href="https://twitter.com/share"
+                           class="twitter-share-button"
+                           data-text="Check out '<%=license.title%>' by <%=license.artistName%> on @musicoins"
+                           data-url="https://musicoin.org/nav/track/<%=license.address%>"
+                           data-show-count="true">Tweet</a>
+                        <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    </div>
+
+                    <div class="track-artist mb20">
+                        <h3>Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a></h3>
                         <div class="follow-toggle-button btn btn-default btn-xs mr10"
                              user="<%=artist._id%>"
                              licenseAddress="<%=license.address%>"
@@ -63,31 +94,8 @@
                         </div>
                     </div>
 
-                    <div class="center-text">
-                        <div id="player-tip-button"
-                             class="tip-button btn btn-success tip-button btn-xs mr10"
-                             recipient="<%=license.address%>"
-                             amount="1"
-                             text-success="Thanks! :)"
-                             context-type="Release"
-                             text-fail=":("
-                             text-default="Tip">
-                            Tip
-                        </div>
-                        <a href="https://twitter.com/share"
-                           class="twitter-share-button"
-                           data-text="Check out '<%=license.title%>' by <%=license.artistName%> on Musicoin"
-                           data-url="https://musicoin.org/nav/track/<%=license.address%>"
-                           data-via="musicoins"
-                           data-hashtags="musicoin"
-                           data-show-count="true">Tweet</a>
-                        <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-                    </div>
-
-
-
                     <% if (typeof isAdmin != "undefined" && isAdmin) { %>
-                    <div class="center-text mt10">
+                    <div class="center-text mt20">
                         <div class="promote-hero-track btn btn-danger btn-sm"
                              address="<%=license.address%>">
                             Set as Artist of the Week

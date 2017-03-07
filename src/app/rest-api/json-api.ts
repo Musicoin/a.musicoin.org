@@ -786,7 +786,6 @@ export class MusicoinOrgJsonAPI {
           return this._executeTrackMessagesQuery(
             TrackMessage.find(filter)
               .or([
-                {artist: {$in: following}}, // comments on track from artists I follow
                 {sender: {$in: following}}, // comments by users/artists I follow
                 {sender: userId}, // messages I sent
                 {replyToSender: userId} // messages in reply to my messages
@@ -806,7 +805,7 @@ export class MusicoinOrgJsonAPI {
 
   getUserMessages(profileAddress: string, limit: number): Promise<any[]> {
     const condition = profileAddress && profileAddress.trim().length > 0
-      ? {$or: [{artistAddress: profileAddress}, {senderAddress: profileAddress}]}
+      ? {senderAddress: profileAddress}
       : {};
     return this._executeTrackMessagesQuery(TrackMessage.find(condition).limit(limit));
   }
@@ -835,7 +834,8 @@ export class MusicoinOrgJsonAPI {
           const sender = m.sender ? {
               name: m.sender.draftProfile.artistName,
               image: this.mediaProvider.resolveIpfsUrl(m.sender.draftProfile.ipfsImageUrl),
-              profileAddress: m.sender.profileAddress
+              profileAddress: m.sender.profileAddress,
+              isArtist: !!m.sender.mostRecentReleaseDate
             } : {};
 
           const artist = m.artist ? {

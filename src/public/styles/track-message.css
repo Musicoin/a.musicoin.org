@@ -96,6 +96,15 @@
     margin-right: 5px;
     background-size: cover;
     background-position: center;
+    border-radius: 10px;
+}
+
+.sender-image-artist {
+    width: 48px;
+    height: 48px;
+    margin-right: 5px;
+    background-size: cover;
+    background-position: center;
     border-radius: 50%;
 }
 

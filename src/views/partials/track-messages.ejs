@@ -17,13 +17,14 @@
         var textClass = message.tips > 0 ? "text-warning" : "subtle-text";
         var track = message.release;
         var showThisTrack = _showTrack && message.release;
-        var showThisArtist = message.artist && message.artist.profileAddress;
+        var showThisArtist = _showTrack && message.artist && message.artist.profileAddress;
         var releaseid = track ? track.id : "";
         var licenseAddress = track ? track.contractAddress : "";
         var highlight = track
             ? message.sender.profileAddress == track.artistAddress
             : false;
         var messageClass = highlight ? "chat-message-highlight" : "chat-message-normal";
+        var senderClass = message.sender.isArtist ? "sender-image-artist" : "sender-image";
     %>
     <div class="chat-message hover-target <%=messageClass%>"
          releaseid="<%=releaseid%>"
@@ -37,14 +38,13 @@
                 <i class="fa fa-play-circle" aria-hidden="true"></i>
             </div>
             <% } %>
-
-            <a href="/artist/<%=message.sender.profileAddress%>"><div style="background-image: url('<%=message.sender.image%>')" class="sender-image"></div></a>
+            <a href="/artist/<%=message.sender.profileAddress%>"><div style="background-image: url('<%=message.sender.image%>')" class="<%=senderClass%>"></div></a>
             <% if (showThisTrack) { %>
             <!--<i class="fa fa-long-arrow-right subtle-text big-screen-only" aria-hidden="true"></i>&nbsp;-->
             <!--<a href="/track/<%=track.contractAddress%>" class="big-screen-only"><div style="background-image: url('<%=track.image%>')" class="sender-image"></div></a>-->
             <% } %>
         </div>
-        <div class="chat-message-area inline-reply-action clickable">
+        <div class="chat-message-area">
             <div class="chat-message-sender">
                 <a href="/artist/<%=message.sender.profileAddress%>"><%=message.sender.name%></a>
                 <% if (showThisTrack) { %>
