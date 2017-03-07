@@ -189,7 +189,7 @@
                     <% } %>
                     <div style="display:flex; justify-content: flex-end">
                         <button type="submit" class="btn btn-success btn-lg">
-                            <%= (user.pendingTx || user.profileAddress) ? "Update" : "Save" %>
+                            <%= (user.pendingTx || user.profileAddress) ? "Update Profile" : "Save Profile" %>
                         </button>
                     </div>
                     <% if (typeof profileUpdateError != "undefined" && profileUpdateError) {%>
@@ -446,7 +446,7 @@
                     <div style="display:flex; justify-content: flex-end">
                         <div onclick='$( "#licensePreview" ).load( "/license/preview", loadLicenseFields() ); $("#licensePreview").show()'
                              class="btn btn-success">
-                            Preview
+                            Release...
                         </div>
                     </div>
                     <div class="wallet-action-toggle subtle-text"
