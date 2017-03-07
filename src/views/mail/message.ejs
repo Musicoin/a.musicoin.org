@@ -37,6 +37,16 @@
             border-radius: 4px;
             background-color: #55AA55;
         }
+
+        a.preferences {
+            color: blue;
+        }
+
+        .preferences {
+            text-align: center;
+            color: #aaa;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -56,6 +66,7 @@
     <span class="button">
         <a href="<%= notification.actionUrl %>" style="color: white">Reply</a>
     </span>
+    <div class="preferences">You can adjust your notification preferences on <a class="preferences" href="<%=notification.actionUrl%>">musicoin.org</a></div>
 </div>
 </body>
 </html>

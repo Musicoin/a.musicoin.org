@@ -105,6 +105,12 @@
         color:#555;
     }
 
+    .admin-area {
+        color: black;
+        background-color: #fee;
+        margin-top: 20px;
+    }
+
 </style>
 <div class="background-cover"></div>
 <div class="header">
@@ -117,17 +123,6 @@
 
     <div class="flex-row">
         <% if (isAuthenticated) { %>
-            <% if (typeof isAdmin != "undefined" && isAdmin) { %>
-            <div class="flex-column">
-                <div class="flex-row" style="border-bottom: 1px solid #aaa">
-                    <a href="/admin/errors" class="header-menu-item text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></a>
-                    <a href="/admin/invite-requests" class="header-menu-item text-danger"><i class="fa fa-list" aria-hidden="true" title="waiting list"></i></a>
-                    <a href="/admin/users" class="header-menu-item text-danger"><i class="fa fa-users" aria-hidden="true" title="users"></i></a>
-                    <a href="/admin/overview" class="header-menu-item text-danger" title="admin"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>
-                    <a href="/admin/su" class="header-menu-item text-danger" title="log in as...">su</a>
-                </div>
-            </div>
-            <% } %>
             <div style="width:20px"></div>
             <!--<a href="/faq" class="header-menu-item"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>-->
             <a href="/browse" class="header-menu-item"><i class="fa fa-search" aria-hidden="true"></i></a>
@@ -176,6 +171,19 @@
                                 <% if(!user.facebook.token) { %>
                                 <div class="mr5"><a href="/connect/facebook" target="_top" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>
                                 <% } %>
+                            </div>
+                        </div>
+                        <% } %>
+
+                        <% if (typeof isAdmin != "undefined" && isAdmin) { %>
+                        <div class="admin-area">
+                            <div class="text-normal text-center">Admin Functions</div>
+                            <div class="flex-row">
+                                <a href="/admin/errors" class="header-menu-item text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></a>
+                                <a href="/admin/invite-requests" class="header-menu-item text-danger"><i class="fa fa-list" aria-hidden="true" title="waiting list"></i></a>
+                                <a href="/admin/users" class="header-menu-item text-danger"><i class="fa fa-users" aria-hidden="true" title="users"></i></a>
+                                <a href="/admin/overview" class="header-menu-item text-danger" title="admin"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>
+                                <a href="/admin/su" class="header-menu-item text-danger" title="log in as...">su</a>
                             </div>
                         </div>
                         <% } %>
