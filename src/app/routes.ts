@@ -176,6 +176,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render('player-frame.ejs');
   });
 
+
+  // This sucks.  If I want twitter cards to work, we need metadata about the
+  // track in the top frame, not the inner frame.  I can't sort out a better way
+  // Using the oembed server approach would be MUCH better, but I can't get it to work. :/
+  // Twitter just ignores my oembed link.
+  app.get('/nav/track/:address', isLoggedInOrIsPublic, (req, res) => {
+    jsonAPI.getLicense(req.params.address)
+      .then(license => {
+        res.render('index-frames.ejs', {
+          license: license,
+          mainFrameLocation: req.originalUrl.substr(4)
+        });
+      });
+  });
+
   // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
   // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
   app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {

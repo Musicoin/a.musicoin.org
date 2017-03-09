@@ -1,0 +1,14 @@
+<% if (typeof license != "undefined") { %>
+<!-- Twitter card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@musicoins">
+<meta name="twitter:title" content="<%=license.title%>">
+
+<!-- Open Graph -->
+<meta property="og:image" content="https://musicoin.org<%=license.image%>">
+<meta property="og:description" content="<%=license.description || "Find this track and others on musicoin.org"%>">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://musicoin.org">
+<meta property="og:title" content="<%=license.title%> by <%=license.artistName%>">
+<meta property="og:site_name" content="Musicoin"/>
+<% } %>
