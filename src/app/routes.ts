@@ -72,7 +72,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               "version": 1.0,
               "type": "rich",
               "provider_name": "Musicoin",
-              "provider_url": "http://musicoin.org",
+              "provider_url": "https://musicoin.org",
               "height": 65,
               "width": "100%",
               "title": release.title,
