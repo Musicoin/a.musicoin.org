@@ -50,6 +50,31 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     .start(musicoinApi, config.database.pendingReleaseIntervalMs);
 
 
+  app.use('/oembed', (req, res) => res.render('oembed.ejs'));
+  app.use('/services/oembed', (req, res, next) => {
+    console.log("Got oEmbed request: " + req.query.url);
+    res.json({
+      "version": "1.0",
+      "type": "audio",
+      "provider_name": "YouTube",
+      "provider_url": "http://youtube.com/",
+      "width": 425,
+      "height": 344,
+      "title": "Amazing Nintendo Facts",
+      "author_name": "ZackScott",
+      "author_url": "http://www.youtube.com/user/ZackScott",
+      "html":
+      `<object width="425" height="344">
+        <param name="movie" value="http://www.youtube.com/v/M3r2XDceM6A&fs=1"></param>
+        <param name="allowFullScreen" value="true"></param>
+        <param name="allowscriptaccess" value="always"></param>
+        <embed src="http://www.youtube.com/v/M3r2XDceM6A&fs=1"
+        type="application/x-shockwave-flash" width="425" height="344"
+        allowscriptaccess="always" allowfullscreen="true"></embed>
+    </object>`.replace(/(?:\r\n|\r|\n)/g, '')
+    })
+  });
+
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider, jsonAPI));
   app.use('/admin/*', isLoggedIn, adminOnly);
