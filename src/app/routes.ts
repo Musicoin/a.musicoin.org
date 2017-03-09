@@ -78,7 +78,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               "title": release.title,
               "description": release.description || `${release.title} by ${release.artistName}`,
               "thumbnail_url": "https://musicoin.org/images/thumbnail.png",
-              "html": `\u003Ciframe width=\"200\" height=\"64\" scrolling=\"no\" frameborder=\"no\" src=\"https://musicoin.org/eplayer?track=${id}\"\u003E\u003C/iframe\u003E`,
+              "html": `\u003Ciframe width=\"300\" height=\"64\" scrolling=\"no\" frameborder=\"no\" src=\"https://musicoin.org/eplayer?track=${id}\"\u003E\u003C/iframe\u003E`,
               "author_name": release.artistName,
               "author_url": `https://musicoin.org/nav/artist/${release.artistAddress}`
             };
