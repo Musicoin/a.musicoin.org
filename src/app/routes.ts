@@ -58,14 +58,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const parts = req.query.url.split('/');
       const type = parts[parts.length-2];
       const id = parts[parts.length-1];
+      console.log("Parsed oEmbed request: " + id);
       if (type == "track" && id && id.trim().length > 0) {
-        return Release.findOne({contractAddress: req.params.address})
+        console.log("Looking for track: " + id);
+        return Release.findOne({contractAddress: id})
           .then(release => {
             if (!release) {
+              console.log("Could not find track: " + id);
               res.status(404);
               return res.end();
             }
-            res.json({
+            const json = {
               "version": 1.0,
               "type": "rich",
               "provider_name": "Musicoin",
@@ -78,7 +81,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               "html": `\u003Ciframe width=\"200%\" height=\"64\" scrolling=\"no\" frameborder=\"no\" src=\"https://musicoin.org/eplayer?track=${id}\"\u003E\u003C/iframe\u003E`,
               "author_name": release.artistName,
               "author_url": `https://musicoin.org/nav/artist/${release.artistAddress}`
-            });
+            };
+            console.log("Responding with: " + JSON.stringify(json, null, 2));
+            res.json(json);
           });
 
       }
