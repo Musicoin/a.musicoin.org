@@ -1,0 +1,356 @@
+<!doctype html>
+<html>
+<head>
+    <%- include partials/page-head.ejs %>
+</head>
+<body>
+<style>
+    .player {
+        background-color: #333;
+        width: 100%;
+        height: 64px;
+        min-width: 200px;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .player-foreground {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        flex-direction: row;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 5px;
+        right: 0;
+        z-index: 2;
+        min-width: 300px;
+        width: 100%;
+        height: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .player-bookend {
+        height: 100%;
+        width: 250px;
+    }
+
+    .song-badge {
+        display: flex;
+        align-items: center;
+        max-width: 400px;
+        min-width: 33%;
+    }
+
+    .player-segment {
+        overflow: hidden;
+        white-space: nowrap;
+        flex-basis: 40%;
+        margin-right: 10px;
+    }
+
+    .player-action-area {
+        display: flex;
+        flex-direction: row;
+        color: white;
+        font-size: 14pt;
+        height: 100%;
+        justify-content: flex-end;
+        align-items: center;
+        flex-basis: 20%;
+        max-width: 150px;
+    }
+
+    .song-badge-info {
+        display: flex;
+        flex-direction: column;
+        margin: 10px;
+        overflow: hidden;
+    }
+
+    .song-badge-image {
+        max-width: 48px;
+        height: 48px;
+        object-fit: contain;
+    }
+
+    .player-song-name {
+        color: white;
+        font-size: 14pt;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .player-artist-name {
+        color: rgba(255,255,255,0.5);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .player-controls {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+    }
+
+    .player-progress {
+        position: relative;
+        height: 10px;
+        flex-grow: 1;
+    }
+
+    .progress-bar {
+        position: absolute;
+        left: 0;
+        height: 4px;
+        border-radius: 5px !important;
+    }
+
+    .progress-background {
+        right: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .progress-foreground {
+        width: 0%;
+        background-color: white;
+    }
+
+    .player-controls-area {
+        height: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+    }
+
+    .player-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-size: cover;
+        background-position: center;
+        filter: blur(5px);
+        overflow: hidden;
+        opacity: 0.3;
+        z-index: 1;
+    }
+
+
+    .play-controls-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .player-control:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .player-control {
+        border-radius: 50% !important;
+        width: 48px;
+        height: 48px;
+        margin-left: 10px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .player-control-large {
+    }
+
+    .player-action-values {
+        margin-right: 5px;
+        text-align: right;
+    }
+
+    .player-time-area {
+        display: flex;
+        justify-content: space-between;
+        color: white;
+    }
+
+    .player-progress-row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .selected-track {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    #player-message {
+        display: none;
+    }
+
+    .player-time-field {
+        min-width: 50px;
+        text-align: center;
+    }
+
+    #player-tip-button {
+        margin-right: 10px;
+        font-size: 14pt;
+    }
+
+    .no_selection {
+        -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+        -moz-user-select: none; /* mozilla browsers */
+        -khtml-user-select: none; /* webkit (konqueror) browsers */
+        -ms-user-select: none; /* IE10+ */
+    }
+
+</style>
+<audio id="player"></audio>
+<div id="player-section" class="player">
+
+    <div class="player-foreground no_selection">
+        <img id="player-badge-image" src="/images/default-profile.png" class="song-badge-image big-screen-only">
+        <div class="song-badge-info">
+            <div id=player-title-area  class="flex-row middle clickable title-link">
+                <div id="player-title" class="player-song-name mr10"><%=license.title%></div>
+            </div>
+            <div id="player-artist" class="player-artist-name clickable"><%=license.artistName%></div>
+        </div>
+
+        <img id="player-play-button" onclick="audioPlayer.togglePlayState()" src="/images/player/play.png"
+             class="player-control player-control-large">
+
+        <div class="player-progress mr5">
+            <div class="progress-bar progress-background"></div>
+            <div id="player-progress-div" class="progress-bar progress-foreground"></div>
+            <div class="spread mt5">
+                <div id="player-time-played" class="player-time-field">00:00</div>
+                <div id="player-time-left" class="player-time-field">00:00</div>
+            </div>
+        </div>
+    </div>
+    <div id="player-background" class="player-background" style="background-image: url('<%=license.image%>')"></div>
+</div>
+
+<script>
+  var audioPlayer = {
+    audioElement: null,
+
+    nowPlayingUrl: "<%=license.audioUrl%>",
+    nowPlayingLicenseAddress: null,
+    nowPlayingArtistProfile: null,
+    playbackId: 0,
+    previousTime: 0,
+    minMillisBetweenPlays: 2000,
+
+    previouslySelectedTrack: null,
+
+    initialize: function () {
+      if (!audioPlayer.audioElement) {
+        audioPlayer.audioElement = $('#player')[0];
+        audioPlayer.audioElement.style.display = "block";
+        audioPlayer.audioElement.addEventListener('error', function (e) {
+          if (audioPlayer.nowPlayingUrl == null) return;
+
+          $("#player-message").text("Playback failed!");
+          console.log("Old playbackId: " + audioPlayer.playbackId);
+          audioPlayer.playbackId++;
+          console.log("New playbackId: " + audioPlayer.playbackId);
+          $.post('/error-report', {
+            licenseAddress: audioPlayer.nowPlayingLicenseAddress,
+            errorContext: audioPlayer.audioElement.src,
+            errorCode: e.target.error.code
+          }, function(data) {
+            if (data.success) {
+              console.log("Reported error to Musicoin service successfully");
+            }
+            else {
+              console.log("Failed to report error to Musicoin service: " + JSON.stringify(data));
+            }
+          });
+          switch (e.target.error.code) {
+            case e.target.error.MEDIA_ERR_ABORTED:
+//              alert('You aborted the video playback.');
+              break;
+            case e.target.error.MEDIA_ERR_NETWORK:
+              alert('A network error caused the audio download to fail.');
+              break;
+            case e.target.error.MEDIA_ERR_DECODE:
+              alert('The audio playback was aborted due to a corruption problem or because the video used features your browser did not support.');
+              break;
+            case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+              alert('The video audio not be loaded, either because the server or network failed or because the format is not supported.');
+              break;
+            default:
+              alert('An unknown error occurred.');
+              break;
+          }
+        });
+
+        audioPlayer.audioElement.addEventListener('timeupdate', function () {
+          var progress_percent = audioPlayer.audioElement.currentTime / audioPlayer.audioElement.duration * 100;
+          $("#player-progress-div").css("width", progress_percent + "%");
+          $("#player-time-played")[0].innerText = audioPlayer.formatTime(audioPlayer.audioElement.currentTime);
+          $("#player-time-left")[0].innerText = audioPlayer.formatTime(audioPlayer.audioElement.duration);
+        });
+
+        audioPlayer.audioElement.addEventListener('ended', function () {
+          audioPlayer.nowPlayingUrl = null;
+          audioPlayer.audioElement.src = null;
+        })
+
+        audioPlayer.audioElement.addEventListener('play', function () {
+          $("#player-play-button")[0].src = "/images/player/pause.png";
+        })
+
+        audioPlayer.audioElement.addEventListener('pause', function () {
+          $("#player-play-button")[0].src = "/images/player/play.png";
+        })
+
+        $("#player-artist").on('click', function() {
+          if (audioPlayer.nowPlayingArtistProfile)
+            parent.document.getElementById("mainFrame").src = "/artist/" + audioPlayer.nowPlayingArtistProfile;
+        })
+
+        $(".title-link").on('click', function() {
+          if (audioPlayer.nowPlayingLicenseAddress)
+            parent.document.getElementById("mainFrame").src = "/track/" + audioPlayer.nowPlayingLicenseAddress;
+        })
+      }
+      return audioPlayer.audioElement;
+    },
+
+    formatTime: function (seconds) {
+      var output = new Date(seconds * 1000).toISOString().substr(11, 8);
+      if (output.startsWith("00:")) return output.substr(3);
+      return output;
+    },
+
+    togglePlayState: function () {
+      if (!audioPlayer.audioElement.src) {
+        audioPlayer.audioElement.src = audioPlayer.nowPlayingUrl;
+        audioPlayer.audioElement.play();
+      }
+      else if (audioPlayer.audioElement.paused) {
+        if (audioPlayer.audioElement.readyState > 0) {
+          audioPlayer.audioElement.play();
+        }
+      }
+      else {
+        audioPlayer.audioElement.pause();
+      }
+    }
+  }
+
+  $(document).ready(function () {
+    audioPlayer.initialize();
+  });
+</script>
+</body>
+</html>

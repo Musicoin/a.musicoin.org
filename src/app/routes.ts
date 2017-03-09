@@ -52,27 +52,62 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.use('/oembed', (req, res) => res.render('oembed.ejs'));
   app.use('/services/oembed', (req, res, next) => {
+    // https://musicoin.org/nav/track/0x28e4f842f0a441e0247bdb77f3e10b4a54da2502
     console.log("Got oEmbed request: " + req.query.url);
-    res.json({
-      "version": "1.0",
-      "type": "audio",
-      "provider_name": "YouTube",
-      "provider_url": "http://youtube.com/",
-      "width": 425,
-      "height": 344,
-      "title": "Amazing Nintendo Facts",
-      "author_name": "ZackScott",
-      "author_url": "http://www.youtube.com/user/ZackScott",
-      "html":
-      `<object width="425" height="344">
-        <param name="movie" value="http://www.youtube.com/v/M3r2XDceM6A&fs=1"></param>
-        <param name="allowFullScreen" value="true"></param>
-        <param name="allowscriptaccess" value="always"></param>
-        <embed src="http://www.youtube.com/v/M3r2XDceM6A&fs=1"
-        type="application/x-shockwave-flash" width="425" height="344"
-        allowscriptaccess="always" allowfullscreen="true"></embed>
-    </object>`.replace(/(?:\r\n|\r|\n)/g, '')
-    })
+    if (req.query.url && req.query.url.startsWith("https://musicoin.org/")) {
+      const parts = req.query.url.split('/');
+      const type = parts[parts.length-2];
+      const id = parts[parts.length-1];
+      if (type == "track" && id && id.trim().length > 0) {
+        return Release.findOne({contractAddress: req.params.address})
+          .then(release => {
+            if (!release) {
+              res.status(404);
+              return res.end();
+            }
+            res.json({
+              "version": 1.0,
+              "type": "rich",
+              "provider_name": "Musicoin",
+              "provider_url": "http://musicoin.org",
+              "height": 400,
+              "width": "100%",
+              "title": release.title,
+              "description": release.description || `${release.title} by ${release.artistName}`,
+              "thumbnail_url": "https://musicoin.org/images/thumbnail.png",
+              "html": `\u003Ciframe width=\"200%\" height=\"64\" scrolling=\"no\" frameborder=\"no\" src=\"https://musicoin.org/eplayer?track=${id}\"\u003E\u003C/iframe\u003E`,
+              "author_name": release.artistName,
+              "author_url": `https://musicoin.org/nav/artist/${release.artistAddress}`
+            });
+          });
+
+      }
+    }
+    res.status(404);
+    res.end();
+  });
+
+  app.get('/eplayer', isLoggedInOrIsPublic, (req, res) => {
+    if (req.query.track) {
+      const l = jsonAPI.getLicense(req.query.track);
+      const r = Release.findOne({contractAddress: req.query.track});
+
+      Promise.join(l, r, (license, release) => {
+        return User.findOne({profileAddress: license.artistProfileAddress}).exec()
+          .then(artist => {
+            doRender(req, res, "eplayer.ejs", {
+              artist: artist,
+              license: license,
+              releaseId: release._id,
+              description: release.description,
+            });
+          })
+      })
+        .catch(err => {
+          console.log(`Failed to load embedded player for license: ${req.params.address}, err: ${err}`);
+          res.render('not-found.ejs');
+        });
+    }
   });
 
   app.use('/json-api', restAPI.getRouter());
