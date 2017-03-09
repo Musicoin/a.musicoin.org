@@ -1,6 +1,6 @@
 $( document ).ready(function() {
   $(document).on('click', '.inline-reply-action', function() {
-    var messageScroller = $(this).closest('.message-scroller.dynamic-element');
+    var messageScroller = $(this).closest('[data-behavior~=chat-message-area].dynamic-element');
     messageScroller.removeClass('dynamic-element');
     messageScroller.addClass('dynamic-element-paused');
 
@@ -19,7 +19,7 @@ $( document ).ready(function() {
       var releaseId = chatMessage.attr("releaseid");
       var address = chatMessage.attr("licenseAddress");
       var messageid = chatMessage.attr("messageid");
-      var messages = input.closest('.message-scroller.dynamic-element-paused')
+      var messages = input.closest('[data-behavior~=chat-message-area].dynamic-element-paused')
       var message = input.val();
       input.val("");
       dynamic.refreshElement(messages, {
@@ -39,7 +39,7 @@ $( document ).ready(function() {
   })
 
   function closeInlineReply(element) {
-    var messageScroller = element.closest('.message-scroller.dynamic-element-paused')
+    var messageScroller = element.closest('[data-behavior~=chat-message-area].dynamic-element-paused')
     messageScroller.removeClass('dynamic-element-paused');
     messageScroller.addClass('dynamic-element');
 
