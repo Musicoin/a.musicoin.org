@@ -185,7 +185,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // Using the oembed server approach would be MUCH better, but I can't get it to work. :/
   // Twitter just ignores my oembed link.
   app.get('/nav/track/:address', isLoggedInOrIsPublic, (req, res) => {
-    console.log("Got external request for a nav/track page, rendering metadata in the outer frame: " + req.params.addres);
+    console.log("Got external request for a nav/track page, rendering metadata in the outer frame: " + req.params.address);
     jsonAPI.getLicense(req.params.address)
       .then(license => {
         res.render('index-frames.ejs', {
@@ -851,13 +851,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 
   app.post('/connect/email', validateLoginEmail, passport.authenticate('local', {
-    successRedirect : '/', // redirect to the secure profile section
+    successRedirect : loginRedirect, // redirect to the secure profile section
     failureRedirect : '/connect/email', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
 
   app.post('/login', validateLoginEmail, passport.authenticate('local', {
-    successRedirect : '/', // redirect to the secure profile section
+    successRedirect : loginRedirect, // redirect to the secure profile section
     failureRedirect : '/login', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
