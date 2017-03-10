@@ -236,6 +236,16 @@ textarea.form-control {
     box-shadow:         inset  0  10px 8px -8px rgba(0,0,0,0.5);
 }
 
+.box-shadow-bottom {
+    -moz-box-shadow:    inset  0  -10px 8px -8px rgba(0,0,0,0.5);
+    -webkit-box-shadow: inset  0  -10px 8px -8px rgba(0,0,0,0.5);
+    box-shadow:         inset  0  -10px 8px -8px rgba(0,0,0,0.5);
+}
+
+.shadow-no-hover {
+    box-shadow: 0 0 25px -4px black;
+}
+
 .shadow {
     box-shadow: 0 0 25px -4px black;
 }

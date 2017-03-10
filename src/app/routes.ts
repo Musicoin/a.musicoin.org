@@ -182,6 +182,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // Using the oembed server approach would be MUCH better, but I can't get it to work. :/
   // Twitter just ignores my oembed link.
   app.get('/nav/track/:address', isLoggedInOrIsPublic, (req, res) => {
+    console.log("Got external request for a nav/track page, rendering metadata in the outer frame: " + req.params.addres);
     jsonAPI.getLicense(req.params.address)
       .then(license => {
         res.render('index-frames.ejs', {
@@ -813,10 +814,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const r = Release.findOne({contractAddress: req.params.address});
 
     Promise.join(l, ms, r, (license, messages, release) => {
-      return User.findOne({profileAddress: license.artistProfileAddress}).exec()
-        .then(artist => {
+      jsonAPI.getArtist(license.artistProfileAddress, false, false)
+        .then(response => {
           doRender(req, res, "track.ejs", {
-            artist: artist,
+            artist: response.artist,
             license: license,
             releaseId: release._id,
             description: release.description,

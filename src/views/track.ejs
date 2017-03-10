@@ -28,6 +28,21 @@
         #chat-input {
             color: black;
         }
+
+        .track-artist-badge {
+            justify-content: flex-start;
+        }
+
+        .track-artist-badge-area {
+            width: 254px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 0;
+        }
+
+        .white-well.track-info-area {
+            background-color: #f0f0f0;
+        }
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -39,20 +54,32 @@
     </h1>
     <div class="row">
         <div class="col-sm-4 flex-column mb20">
-            <div class="m5 well white-well">
+            <div class="m5 well white-well track-info-area">
                 <div class="flex-column center-text">
-                    <div class="large-track-image show-off-container shadow"
+                    <div class="flex-column track-artist-badge-area">
+                        <div class="flex-row track-artist-badge">
+                            <a href="/artist/<%=artist.profileAddress%>">
+                                <div style="background-image: url('<%=artist.image%>')" class="sender-image-artist"></div>
+                            </a>
+                            <div class="flex-column text-left">
+                                <a class="mb5" href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
+                                <div class="follow-toggle-button btn btn-default btn-xs mr10"
+                                     user="<%=artist.id%>"
+                                     licenseAddress="<%=license.address%>"
+                                     text-following="Following"
+                                     class-following="btn-success"
+                                     text-not-following="Follow"
+                                     class-not-following="btn-default">
+                                    Follow
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="large-track-image show-off-container"
                          style="background-image: url('<%=license.image%>')">
                     </div>
 
-                    <div class="audio-track clickable text-large"
-                         audioUrl='<%=license.audioUrl%>'
-                         trackTitle='<%=license.title%>'
-                         artistName='<%=license.artistName%>'
-                         image='<%=license.image%>'
-                         playCount='<%=license.playCount%>'
-                         tipCount='<%=license.tipCount%>'
-                         artistProfileAddress='<%=license.artistProfileAddress%>'
+                    <div class="audio-track clickable text-large btn"
                          licenseAddress='<%=license.address%>'>
                         <i class="fa fa-play-circle" aria-hidden="true"></i> Play
                     </div>
@@ -88,19 +115,6 @@
                            data-url="https://musicoin.org/nav/track/<%=license.address%>"
                            data-show-count="true">Tweet</a>
                         <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-                    </div>
-
-                    <div class="track-artist mb20">
-                        <h3>Artist: <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a></h3>
-                        <div class="follow-toggle-button btn btn-default btn-xs mr10"
-                             user="<%=artist._id%>"
-                             licenseAddress="<%=license.address%>"
-                             text-following="Following"
-                             class-following="btn-success"
-                             text-not-following="Follow"
-                             class-not-following="btn-default">
-                            Follow
-                        </div>
                     </div>
 
                     <% if (typeof isAdmin != "undefined" && isAdmin) { %>
