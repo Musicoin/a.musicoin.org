@@ -11,13 +11,16 @@ const userSchema = mongoose.Schema({
   },
   pendingTx: String,
   local: {
+    id: String,
     email: String,
+    username: String,
     password: String,
   },
   facebook: {
     id: String,
     token: String,
     email: String,
+    username: String,
     name: String
   },
   twitter: {

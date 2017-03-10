@@ -12,6 +12,7 @@ import {PendingTxDaemon} from './tx-daemon';
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const TrackMessage = require('../app/models/track-message');
+const EmailConfirmation = require('../app/models/email-confirmation');
 const User = require('../app/models/user');
 const ErrorReport = require('../app/models/error-report');
 const loginRedirect = "/nav/feed";
@@ -161,9 +162,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         delete req.session.inviteCode;
         let inviteClaimed = false;
         if (record) {
-          record.invite.clicked = true;
-          record.save();
-          req.session.inviteCode = req.params.code;
+          if (!record.invite.claimed) {
+            record.invite.clicked = true;
+            record.save();
+            req.session.inviteCode = req.params.code;
+          }
           res.redirect("/welcome?inviteClaimed=" + record.invite.claimed);
         }
         else {
@@ -616,6 +619,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.get('/admin/mail/confirm', isLoggedIn, adminOnly, function (req, res) {
+    res.render("mail/email-confirmation.ejs", {
+      code: "XY12345"
+    })
+  });
+
   app.get('/admin/mail/invite', isLoggedIn, adminOnly, function (req, res) {
     res.render("mail/invite.ejs", {invite: {
       invitedBy: "TestUser",
@@ -750,26 +759,109 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   // =====================================
-  // SIGNUP ==============================
+  // EMAIL ==============================
   // =====================================
-  // show the signup form
-  /*
-   app.get('/signup', function (req, res) {
+  app.get('/login', function (req, res) {
+    if (req.user) {
+      console.log("User is already logged in, redirecting away from login page");
+      return res.redirect(loginRedirect);
+    }
+    // render the page and pass in any flash data if it exists
+    doRender(req, res, 'login.ejs', {message: req.flash('loginMessage')});
+  });
 
-   // render the page and pass in any flash data if it exists
-   res.render('signup.ejs', {message: req.flash('signupMessage')});
-   });
+  app.get('/connect/email', function (req, res) {
+    // render the page and pass in any flash data if it exists
+    doRender(req, res, 'login.ejs', {
+      message: req.flash('loginMessage'),
+    });
+  });
 
-   // process the signup form
-   app.post('/signup', passport.authenticate('local-signup', {
-   successRedirect : '/', // redirect to the secure profile section
-   failureRedirect : '/signup', // redirect back to the signup page if there is an error
-   failureFlash : true // allow flash messages
-   }));
+  app.post('/login/confirm', function (req, res) {
+    if (req.body.email) req.body.email = req.body.email.trim();
+    if (!FormUtils.validateEmail(req.body.email)) {
+      res.json({
+        success: false,
+        email: req.body.email,
+        reason: "The email address does not appear to be valid"
+      });
+    }
+    else {
+      const code = crypto.randomBytes(4).toString('hex')
+      EmailConfirmation.create({email: req.body.email, code: code})
+        .then(record => {
+          return mailSender.sendEmailConfirmationCode(req.body.email, code)
+            .then(() => {
+              console.log(`Sent email confirmation code to ${req.body.email}: ${code}`)
+              res.json({
+                success: true,
+                email: req.body.email
+              });
+            })
+        })
+        .catch((err) => {
+          console.log(`Failed to send email confirmation code: ${err}`);
+          res.json({
+            success: false,
+            email: req.body.email,
+            reason: "An internal error occurred.  Please try again later."
+          });
+        });
+    }
+  });
 
-   // process the signup form
-   // app.post('/signup', do all our passport stuff here);
-   */
+  function validateLoginEmail(req, res, next) {
+    if (req.body.email) req.body.email = req.body.email.trim();
+    if (!FormUtils.validateEmail(req.body.email)) {
+      doRender(req, res, 'login.ejs', {
+        message: `The email address you entered '${req.body.email}' does not appear to be valid`,
+      });
+    }
+
+    // in cases where the user is creating/linking an email address, check the password
+    if (req.isAuthenticated() || (!req.isAuthenticated() && req.session && req.session.inviteCode)) {
+      // passwords must match (also check client side, but don't count on it)
+      if (req.body.password != req.body.password2) {
+        return doRender(req, res, 'login.ejs', {
+          message: `Your passwords did not match`,
+        });
+      }
+
+      // minimum password strength
+      const error = FormUtils.checkPasswordStrength(req.body.password);
+      if (error) {
+        return doRender(req, res, 'login.ejs', {
+          message: error,
+        });
+      }
+
+      return EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation})
+        .then(record => {
+          if (record) {
+            next();
+          }
+          else {
+            return doRender(req, res, 'login.ejs', {
+              message: "The confirmation code provided did not match the email address provided.",
+            });
+          }
+        })
+    }
+    return next();
+  }
+
+  app.post('/connect/email', validateLoginEmail, passport.authenticate('local', {
+    successRedirect : '/', // redirect to the secure profile section
+    failureRedirect : '/connect/email', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+  }));
+
+  app.post('/login', validateLoginEmail, passport.authenticate('local', {
+    successRedirect : '/', // redirect to the secure profile section
+    failureRedirect : '/login', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+  }));
+
   // =====================================
   // PUBLIC ARTIST PROFILE SECTION =====================
   // =====================================

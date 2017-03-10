@@ -18,6 +18,13 @@ const defaultProfile = {
 // expose this function to our app using module.exports
 export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
+  class LoginFailed extends Error {
+    constructor(message) {
+      super(message);
+      this.name = 'LoginFailed';
+    }
+  }
+
   // =========================================================================
   // passport session setup ==================================================
   // =========================================================================
@@ -39,64 +46,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       done(null, user);
     });
   });
-
-  // =========================================================================
-  // LOCAL SIGNUP ============================================================
-  // =========================================================================
-  // we are using named strategies since we have one for login and one for signup
-  // by default, if there was no name, it would just be called 'local'
-
-  passport.use('local-signup', new LocalStrategy({
-      // by default, local strategy uses username and password, we will override with email
-      usernameField: 'email',
-      passwordField: 'password',
-      passReqToCallback: true // allows us to pass back the entire request to the callback
-    },
-    function (req, email, password, done) {
-
-      // asynchronous
-      // User.findOne wont fire unless data is sent back
-      process.nextTick(function () {
-
-        // find a user whose email is the same as the forms email
-        // we are checking to see if the user trying to login already exists
-        User.findOne({'local.email': email}, function (err, user) {
-          // if there are any errors, return the error
-          if (err)
-            return done(err);
-
-          // check to see if theres already a user with that email
-          if (user) {
-            return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
-          } else {
-
-            // if there is no user with that email
-            // create the user
-            const newUser = new User();
-
-            // set the user's local credentials
-            newUser.local.email = email;
-            newUser.local.password = newUser.generateHash(password);
-
-            // save the user
-            newUser.save(function (err) {
-              if (err)
-                throw err;
-              return done(null, newUser);
-            });
-          }
-
-        });
-
-      });
-
-    }));
-
-  // =========================================================================
-  // LOCAL LOGIN =============================================================
-  // =========================================================================
-  // we are using named strategies since we have one for login and one for signup
-  // by default, if there was no name, it would just be called 'local'
 
   /**
    * This route supports a switch user option for admin users.  It's a bit of a hack, but it can only be
@@ -144,6 +93,33 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       });
     }));
 
+  passport.use('local', new LocalStrategy({
+      // by default, local strategy uses username and password, we will override with email
+      usernameField: 'email',
+      passwordField: 'password',
+      passReqToCallback: true // allows us to pass back the entire request to the callback
+    },
+    function (req, email, password, done) {
+      // asynchronous
+      const newUser = new User();
+      process.nextTick(function() {
+        const localProfile = {
+          id: email,
+          email: email,
+          username: email,
+          token: "token", // doesn't matter, just for compatibility with other methods
+          password: newUser.generateHash(password),
+        };
+
+        doStandardLogin("local",
+          req,
+          localProfile,
+          done,
+          (user) => {
+            return user.validPassword(password)
+          });
+      });
+    }));
 
   // =========================================================================
   // GOOGLE ==================================================================
@@ -169,7 +145,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
         doStandardLogin("google",
           req,
-          profile,
           localProfile,
           done);
       });
@@ -191,13 +166,13 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         const localProfile = {
           id: profile.id,
           token: token,
+          username: profile.displayName,
           name: profile.displayName,
           email: profile.email
         };
 
         doStandardLogin("facebook",
           req,
-          profile,
           localProfile,
           done);
       });
@@ -228,7 +203,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
         doStandardLogin("twitter",
           req,
-          profile,
           localProfile,
           done);
       });
@@ -259,7 +233,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
         doStandardLogin("soundcloud",
           req,
-          profile,
           localProfile,
           done);
       });
@@ -267,18 +240,27 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
    function doStandardLogin(authProvider: string,
                             req,
-                            externalProfile,
                             localProfile,
-                            done) {
+                            done,
+                            validation?) {
      // check if the user is already logged in
+     const condition = {};
+     condition[authProvider + ".id"] = localProfile.id;
+     const userQuery = User.findOne(condition).exec()
+       .then((user) => {
+         if(user && validation && !validation(user)) {
+           throw new LoginFailed("Password");
+         }
+         return user;
+       });
+
+     // if the user is already logged in, see if the account can be linked
      if (req.user) {
        const user = req.user;
 
        // we can link this new auth method to this account, as long as it isn't linked to
        // another account already.
-       const condition = {};
-       condition[authProvider + ".id"] = localProfile.id;
-       return User.findOne(condition).exec()
+       userQuery
          .then(other => {
            if (!other) {
              user[authProvider] = localProfile;
@@ -291,61 +273,83 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
            }
            else {
              console.log("cannot link account that is already linked to another account! user.id: " + req.user._id + ", other.id: " + other._id);
-             return done(null, user);
+             return done(null, false, req.flash('loginMessage', 'This address is already linked to another account'));
            }
          })
+         .catch(function (err) {
+           if (err instanceof LoginFailed) {
+             console.log(`Link attempt failed due to invalid password ${authProvider}: ${err}`);
+             return done(null, false, req.flash('loginMessage', 'This address is already linked to another account'));
+           }
+           else {
+             console.log(`Failed while trying to link an account ${authProvider}: ${err}`);
+             done(err);
+           }
+         });
      }
+     else {
+       // first, check if this user already exists
+       userQuery
+         .then(function (user) {
+           if (user) return user;
+           if (!req.session || !req.session.inviteCode) return null;
 
-    // first, check if this user already exists
-    const condition = {};
-    condition[authProvider + ".id"] = localProfile.id;
-    User.findOne(condition).exec()
-      .then(function (user) {
-        if (user) return user;
-        if (!req.session || !req.session.inviteCode) return null;
+           // if not, look for an unclaimed invite
+           return User.findOne({
+             $and: [
+               {'invite.inviteCode': req.session.inviteCode},
+               {'invite.claimed': false},
+               {'twitter': null},
+               {'google': null},
+               {'facebook': null},
+               {'soundcloud': null},
+               {'local': null},
+               {'profileAddress': null}
+             ]
+           }).exec()
+         })
+         .then(function (user) {
+           if (user) {
+             // either the user already existed, or we can claim this invite
+             delete req.session.inviteCode;
+             user.invite.claimed = true;
+             user[authProvider] = localProfile;
 
-        // if not, look for an unclaimed invite
-        return User.findOne({
-          $and: [
-            {'invite.inviteCode': req.session.inviteCode},
-            {'invite.claimed': false},
-          ]
-        }).exec()
-      })
-      .then(function (user) {
-        delete req.session.inviteCode;
-        if (user) {
-          // if there is a user id already but no token (user was linked at one point and then removed)
-          if (!user[authProvider].token || !user.invite.claimed) {
-            user.invite.claimed = true;
-            user[authProvider] = localProfile;
+             return user.save(function (err) {
+               if (err)
+                 return done(err);
 
-            return user.save(function (err) {
-              if (err)
-                return done(err);
+               return done(null, user);
+             });
+           }
 
-              return done(null, user);
-            });
-          }
+           else {
+             // no user or unclaimed invite was found
+             var query = {username: localProfile.username, source: authProvider},
+               update = {expire: new Date()},
+               options = {upsert: true, new: true, setDefaultsOnInsert: true};
 
-          return done(null, user); // user found, return that user
-        }
-        else {
-          var query = {username: localProfile.username, source: authProvider},
-            update = {expire: new Date()},
-            options = {upsert: true, new: true, setDefaultsOnInsert: true};
-
-          // Find the document
-          InviteRequest.findOneAndUpdate(query, update, options, function (error, result) {
-            if (error) return;
-            console.log("Created invite request for user: " + externalProfile.username);
-          });
-          return done(null, false, req.flash('loginMessage', 'An invite is required'));
-        }
-      })
-      .catch(function (err) {
-        console.log(`Failed while trying to login with ${authProvider}: ${err}`);
-        done(err);
-      });
+             // Find the document
+             InviteRequest.findOneAndUpdate(query, update, options, function (error, result) {
+               if (error) return;
+               console.log("Created invite request for user: " + localProfile.username);
+             });
+             if (req.session && req.session.inviteCode) {
+               return done(null, false, req.flash('loginMessage', 'The invite code you are using has already been claimed'));
+             }
+             return done(null, false, req.flash('loginMessage', 'An invite is required'));
+           }
+         })
+         .catch(function (err) {
+           if (err instanceof LoginFailed) {
+             console.log(`Login attempt failed due to invalid password ${authProvider}: ${err}`);
+             return done(null, false, req.flash('loginMessage', 'Oops! User not found or invalid password.'));
+           }
+           else {
+             console.log(`Failed while trying to login with ${authProvider}: ${err}`);
+             done(err);
+           }
+         });
+     }
   };
 }

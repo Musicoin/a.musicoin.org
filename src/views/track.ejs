@@ -58,9 +58,11 @@
                 <div class="flex-column center-text">
                     <div class="flex-column track-artist-badge-area">
                         <div class="flex-row track-artist-badge">
+                            <% if (artist.image != license.image) { %>
                             <a href="/artist/<%=artist.profileAddress%>">
                                 <div style="background-image: url('<%=artist.image%>')" class="sender-image-artist"></div>
                             </a>
+                            <% } %>
                             <div class="flex-column text-left">
                                 <a class="mb5" href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
                                 <div class="follow-toggle-button btn btn-default btn-xs mr10"

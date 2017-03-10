@@ -171,6 +171,10 @@
                                 <% if(!user.facebook.token) { %>
                                 <div class="mr5"><a href="/connect/facebook" target="_top" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>
                                 <% } %>
+
+                                <% if(!user.local.id) { %>
+                                <div class="mr5"><a href="/connect/email" target="_top" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></a></div>
+                                <% } %>
                             </div>
                         </div>
                         <% } %>
