@@ -83,7 +83,7 @@ const userSchema = mongoose.Schema({
   },
   preferences: {
     notifyOnComment: Boolean,
-    default: true
+    default: false
   },
   directTipCount: {
     type: Number,
