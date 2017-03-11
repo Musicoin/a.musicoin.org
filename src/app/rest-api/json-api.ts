@@ -600,6 +600,7 @@ export class MusicoinOrgJsonAPI {
         user.pendingTx = tx;
         user.updatePending = true;
         user.hideProfile = false;
+        user.pendingInitialization = false;
         console.log(`Saving profile tx info to the database...`);
         return user.save();
       })
@@ -1060,10 +1061,11 @@ export class MusicoinOrgJsonAPI {
 
   private _getUserName(user: any) {
     if (!user) return "New User";
+    if (user.local && this._notBlank(user.local.username)) return user.local.username;
     if (user.google && this._notBlank(user.google.name)) return user.google.name;
     if (user.facebook && this._notBlank(user.facebook.name)) return user.facebook.name;
     if (user.twitter && this._notBlank(user.twitter.displayName)) return user.twitter.displayName;
-    if (user.twitter && this._notBlank(user.twitter.username)) return user.twitter.username;
+    if (user.soundcloud && this._notBlank(user.soundcloud.username)) return user.soundcloud.username;
     return "New User";
   }
 

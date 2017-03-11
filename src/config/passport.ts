@@ -106,7 +106,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         const localProfile = {
           id: email,
           email: email,
-          username: email,
+          username: req.body && req.body.name ? req.body.name : email,
           token: "token", // doesn't matter, just for compatibility with other methods
           password: newUser.generateHash(password),
         };
@@ -307,6 +307,13 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                {'profileAddress': null}
              ]
            }).exec()
+             .then(user => {
+               if (user) {
+                 user.pendingInitialization = true;
+               }
+               return user;
+             })
+
          })
          .then(function (user) {
            if (user) {

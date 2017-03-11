@@ -59,8 +59,14 @@
         <form name="loginForm" action="<%=action%>" method="post" onsubmit="return validatePasswords()">
             <div class="form-group">
                 <label>Email</label>
-                <input type="text" class="form-control" name="email">
+                <input type="text" class="form-control" name="email" placeholder="Enter your email, then click 'Get a code'">
             </div>
+            <% if (isNewAccount) { %>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" name="name" placeholder="Choose a screen name">
+            </div>
+            <% } %>
             <div class="form-group">
                 <label>Password</label>
                 <input type="password" class="form-control" name="password">
@@ -110,6 +116,8 @@
   })
 
     var validatePassword = "<%=isLinking || isNewAccount%>" == "true";
+    var validateCode = "<%=isLinking || isNewAccount%>" == "true";
+    var validateUsername = "<%=isNewAccount%>" == "true";
     function validatePasswords() {
       var email = document.forms["loginForm"]["email"].value;
       if (!email || email.trim().length == 0) {
@@ -119,12 +127,22 @@
 
       var pwd = document.forms["loginForm"]["password"].value;
       if (!pwd || pwd.trim().length == 0) {
-        alert("A password is required");
+        new Message("A password is required", 'error', 5000);
+        return false;
+      }
+
+      if (validateUsername && document.forms["loginForm"]["name"].value.trim().length == 0) {
+        new Message("Please enter a screen name", 'error', 5000);
         return false;
       }
 
       if (validatePassword && document.forms["loginForm"]["password2"].value != pwd) {
-        alert("Passwords do not match!");
+        new Message("Passwords do not match!", 'error', 5000);
+        return false;
+      }
+
+      if (validateCode && document.forms["loginForm"]["confirmation"].value.trim().length == 0) {
+        new Message("Please enter the confirmation code", 'error', 5000);
         return false;
       }
     }

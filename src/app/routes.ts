@@ -819,11 +819,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
 
     // in cases where the user is creating/linking an email address, check the password
-    if (req.isAuthenticated() || (!req.isAuthenticated() && req.session && req.session.inviteCode)) {
+    const isLinking = req.isAuthenticated();
+    const isNewAccount = (!req.isAuthenticated() && req.session && req.session.inviteCode);
+    if (isLinking || isNewAccount) {
       // passwords must match (also check client side, but don't count on it)
       if (req.body.password != req.body.password2) {
         return doRender(req, res, 'login.ejs', {
           message: `Your passwords did not match`,
+        });
+      }
+
+      if (isNewAccount && (!req.body.name || req.body.name.trim().length == 0)) {
+        return doRender(req, res, 'login.ejs', {
+          message: `Please enter a screen name`,
         });
       }
 
@@ -1622,7 +1630,7 @@ function preProcessUser(mediaProvider, jsonAPI) {
   return function preProcessUser(req, res, next) {
     const user = req.user;
     if (user) {
-      if(!req.user.draftProfile || !req.user.draftProfile.artistName) {
+      if(req.user.pendingInitialization) {
         return jsonAPI.setupNewUser(user)
           .then(() => {
             return res.redirect(loginRedirect);

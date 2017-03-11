@@ -97,7 +97,8 @@ const userSchema = mongoose.Schema({
   followerCount: {
     type: Number,
     default: 0
-  }
+  },
+  pendingInitialization: Boolean
 });
 
 // methods ======================
