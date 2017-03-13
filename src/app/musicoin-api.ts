@@ -152,6 +152,19 @@ export class MusicoinAPI {
   }
 
   getJson(url: string, cacheTTL?: number, properties?: any): Promise<any> {
+    // caching library has some edge cases that aren't handled properly.  Adding
+    // some fill logic here, although it's not ideal.
+    if (cacheTTL) {
+        return this._getJson(url, cacheTTL, properties)
+          .catch(err => {
+            console.log("Failed to execute with cachedRequest impl, falling through: " + err);
+            return this._getJson(url, null, properties);
+          })
+    }
+    return this._getJson(url, null, properties);
+  }
+
+  _getJson(url: string, cacheTTL?: number, properties?: any): Promise<any> {
     var requestImpl = cacheTTL ? cachedRequest : request;
     return new Promise(function(resolve, reject) {
       requestImpl({
