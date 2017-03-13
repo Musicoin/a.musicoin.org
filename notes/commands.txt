@@ -26,3 +26,16 @@ gmc-windows-4.0-386-im.exe --datadir C:/Users/Dan/.musicoin-pi/chain --rpc --rpc
 mongorestore -d musicoin-org --nsInclude musicoin-org.users /user-import
 mongorestore --collection users --db musicoin-org /user-import/users.bson
 db.users.update({}, {$unset: {profileAddress: null}}, {multi: true})
+
+
+
+# Subtree for overview pages
+# Setup
+git remote add overview https://github.com/Musicoin/musicoin.github.io.git
+git fetch overview
+git read-tree --prefix=src/overview -u overview/master
+git commit -m "Adding overview page as a subtree"
+
+# Update
+get fetch overview
+git merge -s subtree --squash overview/master --allow-unrelated-histories
