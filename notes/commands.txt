@@ -28,6 +28,9 @@ mongorestore --collection users --db musicoin-org /user-import/users.bson
 db.users.update({}, {$unset: {profileAddress: null}}, {multi: true})
 
 
+# importing keys
+mongorestore --collection apiuseraccounts --db key-store
+mongorestore --collection licensekeys --db key-store
 
 # Subtree for overview pages
 # Setup
