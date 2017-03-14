@@ -521,7 +521,7 @@ export class MusicoinOrgJsonAPI {
             }
             return flatten(genreOrder.map(g => genreItems[g]));
           })
-          .then(items => items.map(item => this._convertDbRecordToLicense(item)))
+          .then(items => items.map(item => this._convertDbRecordToLicenseLite(item)))
           .then(promises => Promise.all(promises));
       })
   }
@@ -1033,6 +1033,21 @@ export class MusicoinOrgJsonAPI {
         console.log(`Failed to remove error report entry: ${err}`);
         return {success: false, reason: "Error"}
       })
+  }
+
+  _convertDbRecordToLicenseLite(record) {
+    return {
+      artistName: record.artistName,
+      genres: record.genres,
+      description: record.description,
+      timeSince: this._timeSince(record.releaseDate),
+      directTipCount: record.directTipCount || 0,
+      directPlayCount: record.directPlayCount || 0,
+      artistProfileAddress: record.artistAddress,
+      title: record.title,
+      image: this.mediaProvider.resolveIpfsUrl(record.imageUrl),
+      address: record.contractAddress
+    }
   }
 
   _convertDbRecordToLicense(record) {

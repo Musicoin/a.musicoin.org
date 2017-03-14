@@ -64,13 +64,6 @@
         %>
         <div class="track-container tracks-flex-col">
             <div class="audio-track track-image show-off-container shadow clickable"
-                 audioUrl='<%=release.audioUrl%>'
-                 trackTitle='<%=release.title%>'
-                 artistName='<%=release.artistName%>'
-                 image='<%=release.image%>'
-                 playCount='<%=release.playCount%>'
-                 tipCount='<%=release.tipCount%>'
-                 artistProfileAddress='<%=release.artistProfileAddress%>'
                  licenseAddress='<%=release.address%>'
                  style="background-image: url('<%=release.image%>')">
                 <div class="show-off"></div>
@@ -86,7 +79,7 @@
                     <%=release.artistName%>
                 </a>
             </div>
-            <div class="description track-artist"><%=release.playCount%> plays</div>
+            <div class="description track-artist"><%=release.directPlayCount%> plays</div>
         </div>
         <%}%>
 
