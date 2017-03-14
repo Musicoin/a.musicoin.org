@@ -48,6 +48,21 @@
 </head>
 <body>
 <%- include partials/header.ejs %>
+
+<%
+    var twitterHandle = license.artistName; // default, just use artist name (without @-prefix, so not a twitter handle)
+    if (artist && artist.social && artist.social.twitter) {
+      var twitterUrl = artist.social.twitter;
+      if (twitterUrl.endsWith('/')) {
+        twitterUrl = twitterUrl.substring(0, twitterUrl.length - 1);
+      }
+      var idx = twitterUrl.lastIndexOf('/');
+      if (idx >= 0 && idx < twitterUrl.length-1) {
+          twitterHandle = "@" + twitterUrl.substring(twitterUrl.lastIndexOf('/')+1, twitterUrl.length);
+      }
+    }
+ %>
+
 <div class="container">
     <h1>
         <%=license.title%>
@@ -113,7 +128,7 @@
                     <div class="center-text" class="mb20">
                         <a href="https://twitter.com/share"
                            class="twitter-share-button"
-                           data-text="Check out '<%=license.title%>' by <%=license.artistName%> on @musicoins"
+                           data-text="Check out '<%=license.title%>' by <%=twitterHandle%> on @musicoins"
                            data-url="https://musicoin.org/nav/track/<%=license.address%>"
                            data-show-count="true">Tweet</a>
                         <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
