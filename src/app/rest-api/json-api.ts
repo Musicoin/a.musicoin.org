@@ -754,7 +754,7 @@ export class MusicoinOrgJsonAPI {
 
             if (sendNotification) {
               const recipient = a ? this._getUserEmail(a)
-                : messageType == "donation" ? "musicoin@berry.ai" : null;
+                : messageType == "donate" ? "musicoin@berry.ai" : null;
 
               if (recipient) {
                 console.log(`Sending message notification to: ${recipient}`);
