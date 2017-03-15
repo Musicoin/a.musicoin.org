@@ -260,7 +260,10 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
        // we can link this new auth method to this account, as long as it isn't linked to
        // another account already.
-       userQuery
+       const existingUserCondition = {};
+       existingUserCondition[authProvider + ".id"] = localProfile.id;
+       existingUserCondition["_id"] = {$ne: req.user._id};
+       User.findOne(existingUserCondition).exec()
          .then(other => {
            if (!other) {
              user[authProvider] = localProfile;
