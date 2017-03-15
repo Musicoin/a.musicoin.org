@@ -760,7 +760,9 @@ export class MusicoinOrgJsonAPI {
                 console.log(`Sending message notification to: ${recipient}`);
                 const urlPath = release
                   ? "/track/" + release.contractAddress
-                  : "/artist/" + artistAddress;
+                  : artistAddress
+                    ? "/artist/" + artistAddress
+                    : "/artist/" + senderAddress;
                 const notification = {
                   trackName: release ? release.title : null,
                   actionUrl: this.config.serverEndpoint + urlPath,
