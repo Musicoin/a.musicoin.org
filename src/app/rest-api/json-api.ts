@@ -736,9 +736,11 @@ export class MusicoinOrgJsonAPI {
       actualArtist
           .then(a => {
             let sendNotification = true;
-            if (!a && messageType != "donate") {
-              console.log(`Not sending notification because not artist was found and this is not a donation`);
-              sendNotification = false;
+            if (!a) {
+              if (messageType != "donate") {
+                console.log(`Not sending notification because not artist was found and this is not a donation`);
+                sendNotification = false;
+              }
             }
             else if (!a.preferences || !a.preferences.notifyOnComment) {
               console.log(`Not sending notification because ${a.draftProfile.artistName} does not have notifications enabled`);
