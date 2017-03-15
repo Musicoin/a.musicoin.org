@@ -157,6 +157,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       clientID: configAuth.facebookAuth.clientID,
       clientSecret: configAuth.facebookAuth.clientSecret,
       callbackURL: configAuth.facebookAuth.callbackURL,
+      profileFields: ['id', 'displayName', 'email'],
       passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
     },
     function(req, token, tokenSecret, profile, done) {
@@ -168,7 +169,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           token: token,
           username: profile.displayName,
           name: profile.displayName,
-          email: profile.email
+          email: profile.emails && profile.emails.length > 0 ? profile.emails[0].value : profile.email
         };
 
         doStandardLogin("facebook",
