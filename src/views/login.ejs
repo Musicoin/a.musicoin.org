@@ -40,7 +40,7 @@
             var action = isLinking ? "/connect/email" : "/login";
             var btnText = isLinking ? "Link" : isNewAccount ? "Create" : "Login"
             var isUpdating = isLinking && user.local && user.local.id;
-            var currentEmail = user.local && user.local.email ? user.local.email : "";
+            var currentEmail = user && user.local && user.local.email ? user.local.email : "";
         %>
 
         <% if (isLinking) { %>
