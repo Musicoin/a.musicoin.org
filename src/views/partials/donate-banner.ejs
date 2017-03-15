@@ -1,0 +1,68 @@
+<style>
+    .donation-area {
+        background-color: #338833;
+        padding: 5px;
+        font-size: 1.3em;
+        display: flex;
+        justify-content: space-between;
+    }
+    .donation-area-buttons > span {
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+    .donation-description {
+        background-color: #efe;
+        padding: 15px;
+        font-size: 1.2em;
+        display: none;
+        color: green;
+    }
+
+    .donation-toggle {
+        font-size: small;
+        color: rgba(255,255,255,0.5);
+        align-content: center;
+    }
+</style>
+<div>
+    <div class="donation-area">
+        <div class="big-screen-only"></div>
+        <div class="donation-area-buttons">
+            <span>Donate to Musicoin.org!</span>
+            <span class="big-screen-only">
+                    <%- include donate-buttons.ejs %>
+                </span>
+        </div>
+
+        <div class="clickable donation-toggle center-text" onclick="$('#donate-description').toggle()">Details</div>
+    </div>
+
+    <div id="donate-description" class="donation-description box-shadow-top">
+        <h3 class="center-text"><i class="fa fa-line-chart mr10" aria-hidden="true"></i>Help us grow!</h3>
+        <div class="two-columns">
+            <div>
+                Musicoin.org has been entirely self-funded because we believe we can create a platform that
+                both artists and listeners will love.
+                <br><br>
+                Donate directly to the project fund to help with operations costs, or help keep the free-play program alive a bit longer!
+                <div class="donation-area-buttons">
+                        <span class="small-screen-only center-text">
+                            <%- include donate-buttons.ejs %>
+                        </span>
+                </div>
+            </div>
+            <div>
+                Short on coins?  No problem, help spread the word on social media!
+                <br><br>
+                <div class="center-text" class="mb20">
+                    <a href="https://twitter.com/share"
+                       class="twitter-share-button"
+                       data-text="Check out @musicoins!"
+                       data-url="https://musicoin.org/"
+                       data-show-count="true">Tweet</a>
+                    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

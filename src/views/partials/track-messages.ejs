@@ -25,6 +25,9 @@
             : false;
         var messageClass = highlight ? "chat-message-highlight" : "chat-message-normal";
         var senderClass = message.sender.isArtist ? "sender-image-artist" : "sender-image";
+        if (message.messageType == "donate") {
+            messageClass += " message-donate";
+        }
     %>
     <div class="chat-message hover-target <%=messageClass%>"
          releaseid="<%=releaseid%>"

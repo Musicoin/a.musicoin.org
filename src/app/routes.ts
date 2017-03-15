@@ -24,6 +24,14 @@ const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
 
+const MESSAGE_TYPES = {
+  comment: "comment",
+  release: "release",
+  donate: "donate",
+  follow: "follow",
+  tip: "tip",
+}
+
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
   const serverEndpoint = config.serverEndpoint;
@@ -41,7 +49,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   };
 
   const newReleaseListener = r => {
-    jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, "New release!")
+    jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, "New release!", MESSAGE_TYPES.release)
       .catch(err => {
         console.log(`Failed to post a message about a new release: ${err}`)
       });
@@ -349,7 +357,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/elements/track-messages', function (req, res) {
     // don't redirect if they aren't logged in, this is just page section
     const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, req.body.replyto)
+      ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, MESSAGE_TYPES.comment, req.body.replyto)
         .then(() => {
           return jsonAPI.addToReleaseCommentCount(req.body.address);
         })
@@ -1044,7 +1052,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                     req.body.licenseAddress,
                     null,
                     req.user.profileAddress,
-                    `${req.user.draftProfile.artistName} is now following ${release.artistName}`)
+                    `${req.user.draftProfile.artistName} is now following ${release.artistName}`,
+                    MESSAGE_TYPES.follow
+                  )
                 }
                 return null;
               })
@@ -1059,7 +1069,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   null,
                   followedUser.profileAddress,
                   req.user.profileAddress,
-                  `${req.user.draftProfile.artistName} is now following ${followedUser.draftProfile.artistName}`)
+                  `${req.user.draftProfile.artistName} is now following ${followedUser.draftProfile.artistName}`,
+                  MESSAGE_TYPES.follow)
               })
           }
         }
@@ -1093,7 +1104,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   req.body.recipient,
                   null,
                   req.user.profileAddress,
-                  `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} on "${release.title}"`)
+                  `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} on "${release.title}"`,
+                  MESSAGE_TYPES.tip)
               }
             })
         }
@@ -1105,9 +1117,22 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   null,
                   tippedUser.profileAddress,
                   req.user.profileAddress,
-                  `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} to ${tippedUser.draftProfile.artistName}!`)
+                  `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} to ${tippedUser.draftProfile.artistName}!`,
+                  MESSAGE_TYPES.tip)
               }
             });
+        }
+        else if (req.body.contextType == "Donate") {
+          const msg = req.body.recipient == "0xfef55843244453abc7e183d13139a528bdfbcbed"
+            ? `${req.user.draftProfile.artistName} sponsored ${req.body.amount} plays!`
+            : `${req.user.draftProfile.artistName} donated ${req.body.amount} ${units} to Musicoin.org!`;
+
+          return jsonAPI.postLicenseMessages(
+            null,
+            null,
+            req.user.profileAddress,
+            msg,
+            MESSAGE_TYPES.donate)
         }
       })
       .catch(function (err) {
@@ -1119,8 +1144,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/send', isLoggedIn, function (req, res) {
     musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
       .then(function (tx) {
-        console.log(`Payment submitted! tx : ${tx}`);
-        res.redirect("/profile?sendError=false");
+        if (tx) {
+          console.log(`Payment submitted! tx : ${tx}`);
+          res.redirect("/profile?sendError=false");
+        }
+        else throw new Error(`Failed to send payment, no tx id was returned: from: ${req.user.profileAddress} to ${req.body.recipient}, amount: ${req.body.amount}`);
       })
       .catch(function (err) {
         console.log(err);

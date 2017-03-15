@@ -36,6 +36,7 @@ module.exports = mongoose.model('TrackMessage', mongoose.Schema({
     ref: 'User'
   },
   message: String,
+  messageType: String,
   tips: {
     type: Number,
     default: 0

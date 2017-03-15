@@ -60,6 +60,9 @@
       if (idx >= 0 && idx < twitterUrl.length-1) {
           twitterHandle = "@" + twitterUrl.substring(twitterUrl.lastIndexOf('/')+1, twitterUrl.length);
       }
+      else if (twitterUrl.trim().length > 1) {
+          twitterHandle = "@" + twitterUrl.trim();
+      }
     }
  %>
 

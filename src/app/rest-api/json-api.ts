@@ -715,33 +715,45 @@ export class MusicoinOrgJsonAPI {
     else throw new Error("Invalid duration specified for stats table: " + duration);
   }
 
-  postLicenseMessages(contractAddress: string, _artistAddress: string, senderAddress: string, message: string, replyToId?: string): Promise<any[]> {
+  postLicenseMessages(contractAddress: string, _artistAddress: string, senderAddress: string, message: string, _messageType: string, replyToId?: string): Promise<any[]> {
     const r = contractAddress ? Release.findOne({contractAddress: contractAddress}).exec() : Promise.resolve(null);
     const a = _artistAddress ? User.findOne({profileAddress: _artistAddress}).exec() : Promise.resolve(null);
     const s = User.findOne({profileAddress: senderAddress}).exec();
     const m = replyToId ? TrackMessage.findById(replyToId).exec() : Promise.resolve(null);
+    const messageType = _messageType ? _messageType : "comment";
 
     return Promise.join(r, a, s, m, (release, artist, sender, replyToMessage) => {
       const artistAddress = artist ? artist.profileAddress : release ? release.artistAddress : replyToMessage ? replyToMessage.artistAddress : null
 
       // notify the user that is the subject of this message about the comment/tip, as long as
       // they allow it.
-      const actualArtist = artist ? Promise.resolve(artist) : User.findOne({profileAddress: artistAddress}).exec();
+      const actualArtist = artist
+        ? Promise.resolve(artist)
+        : artistAddress
+          ? User.findOne({profileAddress: artistAddress}).exec()
+          : Promise.resolve(null);
+
       actualArtist
           .then(a => {
             let sendNotification = true;
-            if (!a.preferences || !a.preferences.notifyOnComment) {
+            if (!a && messageType != "donate") {
+              console.log(`Not sending notification because not artist was found and this is not a donation`);
+              sendNotification = false;
+            }
+            else if (!a.preferences || !a.preferences.notifyOnComment) {
               console.log(`Not sending notification because ${a.draftProfile.artistName} does not have notifications enabled`);
               sendNotification = false;
             }
             // don't notify me about my own messages
-            if (senderAddress == artistAddress) {
+            else if (senderAddress == artistAddress) {
               console.log(`Not sending notification because the sender and receiver are the same: ${senderAddress}`);
               sendNotification = false;
             }
 
             if (sendNotification) {
-              const recipient = a ? this._getUserEmail(a) : null;
+              const recipient = a ? this._getUserEmail(a)
+                : messageType == "donation" ? "musicoin@berry.ai" : null;
+
               if (recipient) {
                 console.log(`Sending message notification to: ${recipient}`);
                 const urlPath = release
@@ -771,7 +783,8 @@ export class MusicoinOrgJsonAPI {
               sender: sender._id,
               message: message,
               replyToMessage: replyToId,
-              replyToSender: replyToMessage ? replyToMessage.sender : null
+              replyToSender: replyToMessage ? replyToMessage.sender : null,
+              messageType: messageType
             })
           });
     })
@@ -852,7 +865,8 @@ export class MusicoinOrgJsonAPI {
             artist: artist,
             body: m.message,
             time: this._timeSince(m.timestamp.getTime()),
-            tips: m.tips
+            tips: m.tips,
+            messageType: m.messageType ? m.messageType : "comment"
           }
         })
       })
