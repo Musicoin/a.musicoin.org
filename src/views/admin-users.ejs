@@ -93,8 +93,8 @@
                     <th class="text-center">Invite<br>Clicked</th>
                     <th class="text-center">Linked<br>Google</th>
                     <th class="text-center">Linked<br>Twitter</th>
-                    <th class="text-center">Linked<br>Soundcloud</th>
                     <th class="text-center">Linked<br>Facebook</th>
+                    <th class="text-center">Linked<br>Local</th>
                     <th class="text-center">Profile</th>
                     <th class="text-center">Music<br>Released</th>
                     <th class="text-center">Invites<br>Left</th>
@@ -127,8 +127,13 @@
                         <%-!!user.twitter.token ? user.twitter.username : unchecked %><BR>
                         <%-!!user.twitter.token ? user.twitter.displayName : "" %>
                     </td>
-                    <td class="text-center middle"><%-!!user.soundcloud.token ? user.soundcloud.username : unchecked %></td>
-                    <td class="text-center middle"><%-!!user.facebook.token ? user.facebook.name : unchecked %></td>
+                    <td class="text-center middle">
+                        <%-!!user.facebook.token ? user.facebook.name : unchecked %> <BR>
+                        <%-!!user.facebook.token ? user.facebook.email : "" %>
+                    </td>
+                    <td class="text-center middle">
+                        <%-!!user.local.id ? user.local.email : unchecked %>
+                    </td>
                     <td class="text-center middle">
                         <% if(user.profileAddress && user.draftProfile.artistName) { %>
                         <a target="_blank" href="/artist/<%=user.profileAddress%>"><%=user.draftProfile.artistName%></a>
