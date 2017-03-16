@@ -1088,6 +1088,7 @@ export class MusicoinOrgJsonAPI {
     if (user.preferredEmail) return user.preferredEmail;
     if (user.google && user.google.email) return user.google.email;
     if (user.facebook && user.facebook.email) return user.facebook.email;
+    if (user.local && user.local.email) return user.local.email;
     if (user.invite && user.invite.invitedAs) return user.invite.invitedAs;
     return null;
   }
