@@ -42,3 +42,35 @@ git commit -m "Adding overview page as a subtree"
 # Update
 git fetch overview
 git merge -s subtree --squash overview/master --allow-unrelated-histories
+
+
+## migration process
+
+# Created new DB host, following instructions to allow remote access
+https://ianlondon.github.io/blog/mongodb-auth/
+
+# Added tags to app server (musicoin-org) and db server (musicoin-org-db)
+# then setup a firewall rule to allow access from app server to db-server on mongo port
+
+# snapshot of db on old host
+tar -zcvf backup.tar.gz 031617
+
+# copy over to new host and extract/restore
+tar -zxvf backup.tar.gz
+mongorestore -u musicoin -p XXXXX -d musicoin-org backup/musicoin-org
+
+# To connect to local mongo db
+mongo -u musicoin -p XXXXX musicoin-org
+
+# setup backups
+sudo crontab -e
+
+# add this line (every day a 3:30 call the backup script)
+30 3 * * * /db_backups/backup.sh >> /db_backups/backup.log 2>&1
+
+# Create this file /db_backups/backup.sh
+#!/bin/sh
+DIR=`date +%m%d%y`
+DEST=/db_backups/$DIR
+mkdir $DEST
+mongodump -u musicoin -p XXXXX -d musicoin-org -o $DEST

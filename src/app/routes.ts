@@ -149,6 +149,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return parts.join(".");
   }
 
+  function _formatAsISODateTime(timestamp) {
+    const iso = new Date(timestamp * 1000).toISOString();
+    return `${iso.substr(0, 10)} ${iso.substr(11, 8)} UTC`;
+  }
+
   function _formatDate(timestamp) {
     // TODO: Locale
     var options = {year: 'numeric', month: 'short', day: 'numeric'};
@@ -433,7 +438,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       addressResolver.lookupAddress(req.user.profileAddress, req.params.address),
       function (history, name) {
         history.forEach(h => {
-          h.formattedDate = _formatDate(h.timestamp);
+          h.formattedDate = _formatAsISODateTime(h.timestamp);
           h.musicoins = _formatNumber(h.musicoins, 5);
         });
         doRender(req, res, 'history.ejs', {
