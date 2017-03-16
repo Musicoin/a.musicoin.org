@@ -124,6 +124,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
   });
 
+  app.use('/health/shallow', (req, res) => {
+    res.json({ok: true})
+  });
+
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider, jsonAPI));
   app.use('/admin/*', isLoggedIn, adminOnly);
