@@ -80,6 +80,10 @@
             max-width: 100px;
         }
 
+        input.form-control, label.form-entry {
+            margin: 2px;
+        }
+
         .profile-release-item > * {
             margin-bottom: 10px;
         }
@@ -283,13 +287,21 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td colspan="2">
+                                    <div class="text-warning text-center mb20">Warning! Exchanges may not recognize coins sent directly from your profile.
+                                        (<a href="/faq/#ExchangeDeposit">why?</a>)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td></td>
                                 <td class="text-right">
-                                    <button type="submit" class="btn btn-warning">
+                                    <button type="submit" class="btn btn-warning mb10">
                                         Send
                                     </button>
                                 </td>
                             </tr>
+
                         </table>
                     </form>
                 </div>

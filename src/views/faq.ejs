@@ -19,12 +19,12 @@
         }
 
         :target {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(100, 200, 100, 0.2);
         }
 
         @keyframes highlight {
             0% {
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(100, 200, 100, 0.2);
             }
             100% {
                 background-color: transparent;
@@ -43,7 +43,7 @@
         <h1>FAQ</h1>
     </div>
     <div class="row">
-        <div class="well">
+        <div class="well white-well">
             <%
             var questions = [
                 {
@@ -55,6 +55,19 @@
                      play.  Of course, this won't last forever, but for now we hope you enjoy it.
 
                      Contact us if you are interested in making a donation of Musicoins to keep the free plays flowing!`)
+                },
+                {
+                    id: "ExchangeDeposit",
+                    question: "Why can't I send directly from my profile to an exchange?",
+                    answer: (`Many exchanges process the our blockchain in the same way they process other
+                    blockchains, like Bitcoin.  However, Musicoin has some added features that allow Musicoin
+                    to automatically distribute a Pay-per-Play payment to multiple recipients.  Unfortunately,
+                    unless exchanges adjust their application to consider these transfers as well, they simply
+                    don't see your deposit.
+
+                    If you have already transferred funds from your profile to an exchange, you can open a support
+                    ticket with the exchange to retrieve your funds.  They are not lost, but only the exchange can
+                    help you retrieve your funds.`)
                 },
                 {
                     question: "If Musicoin isn't based on traditional currency, how do listeners obtain coins?",
@@ -141,7 +154,7 @@
                 %>
                 <div id="<%= id %>" class="question">
                     <li class="faq-question"><%= question %></li>
-                    <div class="subtle-text">
+                    <div class="">
                     <%
                     var paragraphs = answer.split("\n\n").map(s => s.trim()).filter(s => s);
                     for (var i=0; i < paragraphs.length; i++) {
