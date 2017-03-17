@@ -2,3 +2,15 @@ ssh jenkins@104.198.6.5 <<EOF
   touch /home/jenkins/monitor
   exit
 EOF
+
+ssh jenkins@35.185.105.234 <<EOF
+  touch /home/jenkins/monitor
+  exit
+EOF
+
+sleep 10
+
+ssh jenkins@35.185.87.182 <<EOF
+  touch /home/jenkins/monitor
+  exit
+EOF
