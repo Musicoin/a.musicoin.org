@@ -37,7 +37,11 @@
         <%=message.followReason%>
         <div class="center-text">
             <% if (showThisTrack) { %>
-            <div class="audio-track clickable m10 text-xlarge" licenseAddress='<%=track.contractAddress%>'>
+            <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=track.contractAddress%>'>
+                <i class="fa fa-play-circle" aria-hidden="true"></i>
+            </div>
+            <% } else { %>
+            <div class="m10 text-large" style="visibility: hidden">
                 <i class="fa fa-play-circle" aria-hidden="true"></i>
             </div>
             <% } %>
