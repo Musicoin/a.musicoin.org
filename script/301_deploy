@@ -1,11 +1,4 @@
-ssh jenkins@35.185.105.234 <<EOF
-  touch /home/jenkins/monitor
-  exit
-EOF
-
-sleep 10
-
-ssh jenkins@35.185.87.182 <<EOF
+ssh jenkins@35.185.197.131 <<EOF
   touch /home/jenkins/monitor
   exit
 EOF
