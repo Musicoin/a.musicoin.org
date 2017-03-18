@@ -105,6 +105,15 @@ textarea.form-control {
         padding: 10px;
     }
 
+    .columns-2-to-1 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .columns-2-to-1 > div {
+        padding: 10px;
+    }
+
     .three-columns {
         display: flex;
         flex-direction: column;
@@ -114,7 +123,6 @@ textarea.form-control {
         padding: 10px;
         border-bottom: 1px solid #eee;
     }
-
 }
 
 @media screen and (min-width: 800px) {
@@ -125,6 +133,21 @@ textarea.form-control {
     .two-columns > div {
         width: 50%;
         padding: 10px;
+    }
+
+    .columns-2-to-1 {
+        display: flex;
+    }
+
+    .columns-2-to-1 > .col1 {
+        width: 66%;
+        padding: 10px;
+    }
+
+    .columns-2-to-1 > .col2 {
+        width: 33%;
+        padding: 10px;
+        min-width: 350px;
     }
 
     .three-columns {
