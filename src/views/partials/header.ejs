@@ -128,21 +128,7 @@
             <a href="/browse" class="header-menu-item"><i class="fa fa-search" aria-hidden="true"></i></a>
             <div style="width:20px"></div>
 
-            <div class="popover-markup">
-                <a href="#" id=preferences class="trigger header-menu-item"><i class="fa fa-bell" aria-hidden="true"></i></a>
-                <div class="head hide">Notifications</div>
-                <div class="content hide">
-                    <div class="popoverContentContainer">
-                        <div class="flex-row">
-                            <label class="switch">
-                                <input id=messagePreference type="checkbox" <%=user.preferences && user.preferences.notifyOnComment ? "checked" : ""%>>
-                                <div class="slider round"></div>
-                            </label>
-                            <span class="text-dark center-text clickable" onclick="$('#messagePreference').click()">Notify me about comments/tips</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <a href="/feed" class="header-menu-item"><i class="fa fa-bell" aria-hidden="true"></i></a>
             <div class="popover-markup" style="display:inline;">
                 <a href="#" class="trigger">
                     <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
@@ -151,7 +137,6 @@
                 <div class="content hide">
                     <div class="popoverContentContainer">
                         <div id="optionMenu">
-                            <a href="/feed" class="btn btn-default">home</a>
                             <a href="/profile" class="btn btn-default">profile</a>
                             <a href="/logout" target="_top" class="btn btn-danger">sign out</a>
                         </div>
@@ -214,6 +199,11 @@
                         <!--<% } %>-->
                     </div>
                 </div>
+            </div>
+            <div class="ml10" title="my balance">
+                <a href="/profile" class="plain">
+                    <span class="text-large"><%= user.formattedBalance%></span> <span class="subtle-text">MC</span>
+                </a>
             </div>
         <% } else { %>
         <!--<div class="mr5 text-middle">Sign in</div>-->

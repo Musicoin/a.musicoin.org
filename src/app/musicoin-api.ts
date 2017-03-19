@@ -49,6 +49,7 @@ export class MusicoinAPI {
     return this.getJson(`${this.apiConfig.getAccountBalance}/${address}`, 5000)
       .then((balance) => {
           balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          balance.formattedMusicoinsShort = this._formatShortNumber(balance.musicoins);
           return balance;
         }
       )
@@ -188,5 +189,14 @@ export class MusicoinAPI {
         resolve(result)
       })
     }.bind(this));
+  }
+
+  _formatShortNumber(value: any) {
+    if (!value || value == 0) return 0;
+    const lookup = ["", "k", "M", "B", "T"];
+    var order = Math.min(Math.floor(Math.log10(value) / 3), lookup.length - 1);
+    var mult = value / Math.pow(10, 3 * order);
+    var decimals = order > 0 ? 1 : 0;
+    return mult.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + lookup[order];
   }
 }

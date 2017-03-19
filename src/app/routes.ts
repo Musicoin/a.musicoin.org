@@ -133,17 +133,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/admin/*', isLoggedIn, adminOnly);
 
   function doRender(req, res, view, context) {
-    const defaultContext = {
-      user: req.user,
-      isAuthenticated: req.isAuthenticated(),
-      isAdmin: isAdmin(req.user),
-      hasInvite: !req.isAuthenticated()
-      && req.session
-      && req.session.inviteCode
-      && req.session.inviteCode.trim().length > 0,
-      inviteClaimed: req.query.inviteClaimed == "true"
-    };
-    res.render(view, Object.assign({}, defaultContext, context));
+    const b = req.user && req.user.profileAddress ? musicoinApi.getAccountBalance(req.user.profileAddress) : Promise.resolve(0);
+    if (req.user && req.user.profileAddress) {
+        b.then(balance => {
+          req.user.formattedBalance = balance.formattedMusicoinsShort;
+          const defaultContext = {
+            user: req.user,
+            isAuthenticated: req.isAuthenticated(),
+            isAdmin: isAdmin(req.user),
+            hasInvite: !req.isAuthenticated()
+            && req.session
+            && req.session.inviteCode
+            && req.session.inviteCode.trim().length > 0,
+            inviteClaimed: req.query.inviteClaimed == "true",
+          };
+          res.render(view, Object.assign({}, defaultContext, context));
+        })
+    }
   }
 
   function _formatNumber(value: any, decimals?: number) {

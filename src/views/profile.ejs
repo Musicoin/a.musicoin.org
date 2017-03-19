@@ -10,6 +10,7 @@
             background-attachment: fixed;
             background-size: cover;
         }
+
         .profile-image {
             justify-content: center;
             display: flex;
@@ -17,6 +18,7 @@
             align-items: center;
             cursor: pointer;
         }
+
         .hero-image {
             justify-content: center;
             display: flex;
@@ -24,28 +26,34 @@
             align-items: center;
             cursor: pointer;
         }
+
         .social-group {
             display: flex;
             flex-direction: column;
         }
+
         .flex-row {
             display: flex;
             flex-direction: row;
         }
+
         .stat {
             margin-right: 20px;
         }
+
         .upload-image {
-            cursor:pointer;
+            cursor: pointer;
             width: 96px;
             height: 96px;
             object-fit: contain;
-            background-color: rgba(255,255,255,0.1);
+            background-color: rgba(255, 255, 255, 0.1);
         }
+
         .instructions {
         }
+
         .form-entry {
-            background-color: rgba(255,255,255,0.1);
+            background-color: rgba(255, 255, 255, 0.1);
             cursor: pointer;
             padding: 8px;
             border-radius: 4px;
@@ -53,29 +61,33 @@
             color: #aaa
         }
 
-        h3 {
+        h3.section-title {
             /*font-family: monospace;*/
             text-transform: lowercase;
             text-align: center;
             margin-top: 10px;
         }
+
         .profile-release-item {
-            display:flex;
+            display: flex;
             flex-direction: column;
-            min-height:100px;
+            min-height: 100px;
             justify-content: space-around;
             padding-left: 10px;
             width: 100%;
         }
+
         .balance {
             font-size: 72px;
             line-height: 0.9;
             text-align: center;
         }
+
         .wallet-action-toggle {
             text-align: left;
             cursor: pointer;
         }
+
         input.form-number {
             max-width: 100px;
         }
@@ -87,9 +99,11 @@
         .profile-release-item > * {
             margin-bottom: 10px;
         }
+
         .row-template {
             display: none;
         }
+
         .release-distribution {
         }
 
@@ -106,12 +120,15 @@
             display: none;
             color: black;
         }
+
         .contributors {
             margin-top: 20px;
             margin-bottom: 0;
         }
+
         .wallet-actions {
         }
+
         .wallet-action-bar {
             justify-content: space-between;
         }
@@ -124,90 +141,106 @@
     <div>
         <div class="col-sm-6">
             <div class="well">
-                <h3>Public Profile</h3>
+                <h3 class="section-title">Public Profile</h3>
                 <form id=profileForm action="/profile/save" enctype="multipart/form-data" method="post">
                     <div class="form-group profile-image">
-                        <img id="profileImage" style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"  src="<%=user.profile.image%>">
+                        <img id="profileImage"
+                             style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"
+                             src="<%= user.profile.image %>">
                         (click to change)
                         <input style="display: none" id="imageInput" type="file" name="photo">
                     </div>
                     <div class="form-group hero-image">
-                        <img id="heroImage" alt="No promo image selected" class="clickable" style="width: 300px; height: 70px; object-fit: contain"  src="<%=user.profile.heroImage%>">
+                        <img id="heroImage" alt="No promo image selected" class="clickable"
+                             style="width: 300px; height: 70px; object-fit: contain"
+                             src="<%= user.profile.heroImage %>">
                         (click to set a wide-format promo image, 1300x300)
                         <input style="display: none" id="heroInput" type="file" name="hero">
                     </div>
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control" name="artistName" value="<%=user.profile.artistName%>" placeholder="this can be a username or band name">
+                        <input type="text" class="form-control" name="artistName" value="<%= user.profile.artistName %>"
+                               placeholder="this can be a username or band name">
                     </div>
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea class="form-control" name="description"  placeholder="let people know who you are"><%= user.profile.description %></textarea>
+                        <textarea class="form-control" name="description"
+                                  placeholder="let people know who you are"><%= user.profile.description %></textarea>
                     </div>
                     <div class="form-group">
                         <label>genres</label>
-                        <input name=genres class="form-control no-submit genre-list" placeholder="e.g. Rock, Country, etc" value="<%=user.profile.genres ? user.profile.genres.join(", ") : ""%>">
+                        <input name=genres class="form-control no-submit genre-list"
+                               placeholder="e.g. Rock, Country, etc"
+                               value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
                     </div>
                     <div class="form-group">
                         <label>social</label>
                         <br>
-                        <p class="subtle-text">Add links to your social network profile pages so your fans can follow you!</p>
+                        <p class="subtle-text">Add links to your social network profile pages so your fans can follow
+                            you!</p>
                         <table class="social-group">
                             <%
                             var socialTypes = [
                                 {id: "website", name: "artist website", icon: "fa-external-link"},
                                 {id: "bandcamp"},
-                                {id: "google", icon:"fa-google-plus"},
+                                {id: "google", icon: "fa-google-plus"},
                                 "facebook", "twitter",
                                 {id: "soundcloud", name: "sound cloud"}, "linkedin", "youtube",
-                                {id: "reverbnation", icon:"fa-star", name: "reverb nation"},
+                                {id: "reverbnation", icon: "fa-star", name: "reverb nation"},
                                 "pinterest", "instagram", "medium"
                             ]
-                            for (var i=0; i < socialTypes.length; i++) {
-                              var item = socialTypes[i];
-                              if (typeof item == "string") {
-                                item = {id: item};
-                              }
-                              var value = user.profile && user.profile.social ? user.profile.social[item.id] : "";
-                              var name = item.name ? item.name : item.id;
-                              var icon = item.icon ? item.icon : "fa-" + item.id;
+                            for (var i = 0; i < socialTypes.length; i++) {
+                                var item = socialTypes[i];
+                                if (typeof item == "string") {
+                                    item = {id: item};
+                                }
+                                var value = user.profile && user.profile.social ? user.profile.social[item.id] : "";
+                                var name = item.name ? item.name : item.id;
+                                var icon = item.icon ? item.icon : "fa-" + item.id;
                             %>
-                                <tr>
-                                    <td><span class="fa <%=icon%>"></span></td>
-                                    <td width="99%"><input type="text" class="form-control" name="social.<%=item.id%>" value="<%=value%>" placeholder="<%=name%>"></td>
-                                </tr>
-                            <%}%>
+                            <tr>
+                                <td><span class="fa <%= icon %>"></span></td>
+                                <td width="99%"><input type="text" class="form-control" name="social.<%= item.id %>"
+                                                       value="<%= value %>" placeholder="<%= name %> profile page url"></td>
+                            </tr>
+                            <% } %>
                         </table>
                     </div>
-                    <!--<div class="text-center">-->
-                        <!--<input type="checkbox" name="hideProfile" <%=user.hideProfile ? "checked" : ""%>>-->
-                        <!--This is a wallet-only account <a href="/faq#WalletOnlyAccount" target="help">(?)</a>-->
-                    <!--</div>-->
-                    <% if (user.profileAddress) {%>
+                    <div class="flex-row m10" style="justify-content: center">
+                        <label class="switch">
+                            <input id=messagePreference
+                                   type="checkbox" <%= user.preferences && user.preferences.notifyOnComment ? "checked" : "" %>>
+                            <div class="slider round"></div>
+                        </label>
+                        <span class="center-text clickable" onclick="$('#messagePreference').click()">Notify me about comments/tips</span>
+                    </div>
+                    <% if (user.profileAddress) { %>
                     <div class="text-center">
-                        View your public profile page here <a href="/artist/<%=user.profileAddress%>">here</a>
+                        View your public profile page here <a href="/artist/<%= user.profileAddress %>">here</a>
                     </div>
                     <br><br>
                     <% } else { %>
-                    <div class="text-center">By publishing your profile, you agree to our <a href="/terms">terms of use</a></div>
+                    <div class="text-center">By publishing your profile, you agree to our <a href="/terms">terms of
+                            use</a></div>
                     <% } %>
                     <div style="display:flex; justify-content: flex-end">
                         <button type="submit" class="btn btn-success btn-lg">
                             <%= (user.pendingTx || user.profileAddress) ? "Update Profile" : "Save Profile" %>
                         </button>
                     </div>
-                    <% if (typeof profileUpdateError != "undefined" && profileUpdateError) {%>
+                    <% if (typeof profileUpdateError != "undefined" && profileUpdateError) { %>
                     <div class="text-center text-danger">
-                        Update failed!  Please try again later.
+                        Update failed! Please try again later.
                     </div>
-                    <% }  %>
+                    <% } %>
 
-                    <% if (user.pendingTx) {%>
+                    <% if (user.pendingTx) { %>
                     <div class="text-center subtle-text mt10">
                         Your updates were sent to the network and we're just waiting for confirmation.<BR>
-                        <span class="subtle-text"><a target="_blank" href="http://orbiter.musicoin.org/tx/<%=user.pendingTx%>">view transaction</a></span>
+                        <span class="subtle-text"><a target="_blank"
+                                                     href="http://orbiter.musicoin.org/tx/<%= user.pendingTx %>">view transaction</a></span>
                     </div>
-                    <% }  %>
+                    <% } %>
 
                 </form>
 
@@ -216,57 +249,20 @@
     </div>
 
     <div class="row">
-        <!-- LOCAL INFORMATION -->
-        <!--<div class="col-sm-6">-->
-            <!--<div class="well">-->
-                <!--<h3><span class="fa fa-user"></span> Local</h3>-->
-
-                <!--<% if (user.local.email) { %>-->
-                <!--<p>-->
-                    <!--<strong>email</strong>: <%= user.local.email %><br>-->
-                <!--</p>-->
-
-                <!--<a href="/unlink/local" class="btn btn-default">Unlink</a>-->
-                <!--<% } else { %>-->
-                <!--<a href="/connect/local" class="btn btn-default">Connect Local</a>-->
-                <!--<% } %>-->
-
-            <!--</div>-->
-        <!--</div>-->
-
-        <!--<div class="col-sm-6">-->
-            <!--<div class="well">-->
-                <!--<h3 class="text-danger"><span class="fa fa-google-plus"></span> Google+</h3>-->
-
-                <!--&lt;!&ndash; check if the user has this token (is the user authenticated with this social account) &ndash;&gt;-->
-                <!--<% if (user.google.token) { %>-->
-                    <!--<p>-->
-                        <!--<strong>email</strong>: <%= user.google.email %><br>-->
-                        <!--<strong>name</strong>: <%= user.google.name %>-->
-                    <!--</p>-->
-
-                    <!--<a href="/unlink/google" class="btn btn-danger">Unlink</a>-->
-                <!--<% } else { %>-->
-                    <!--<a href="/connect/google" class="btn btn-danger">Connect Google</a>-->
-                <!--<% } %>-->
-
-            <!--</div>-->
-        <!--</div>-->
-
-        <% if (user.profileAddress) {%>
+        <% if (user.profileAddress) { %>
         <div class="col-sm-6">
             <div class="well">
-                <h3>my wallet</h3>
+                <h3 class="section-title">my wallet</h3>
                 <div>
-                    <div class="balance"><%=artist.formattedBalance%></div>
+                    <div class="balance"><%= artist.formattedBalance %></div>
                     <div class="text-center subtle-text">musicoins</div>
                 </div>
                 <div class=wallet-actions style="display: none">
                     <p>
 
-                    <br>
+                        <br>
                     <div class="text-center subtle-text">my wallet address</div>
-                    <div class="text-center"><%=user.profileAddress%></div>
+                    <div class="text-center"><%= user.profileAddress %></div>
                     <br>
 
                     <p class="subtle-text">
@@ -276,19 +272,22 @@
                         <table cellpadding="3">
                             <tr>
                                 <td>Recipient</td>
-                                <td width="99%"><input name=recipient type="text" class="form-control" placeholder="address"></td>
+                                <td width="99%"><input name=recipient type="text" class="form-control"
+                                                       placeholder="address"></td>
                             </tr>
                             <tr>
                                 <td>Amount</td>
                                 <td>
                                     <div class="flex-row">
-                                        <input name=amount type="number" class="form-control text-right form-number" placeholder="0">
+                                        <input name=amount type="number" class="form-control text-right form-number"
+                                               placeholder="0">
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <div class="text-warning text-center mb20">Warning! Exchanges may not recognize coins sent directly from your profile.
+                                    <div class="text-warning text-center mb20">Warning! Exchanges may not recognize
+                                        coins sent directly from your profile.
                                         (<a href="/faq/#ExchangeDeposit">why?</a>)
                                     </div>
                                 </td>
@@ -306,284 +305,295 @@
                     </form>
                 </div>
                 <div class="flex-row wallet-action-bar">
-                    <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions">show options</div>
-                    <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions" style="display: none">hide options</div>
-                    <a class="subtle-text" href="/tx/history/<%=user.profileAddress%>"><i title="transaction history" class="fa fa-list-ul" aria-hidden="true"></i></a>
-                </div>
-                <% if (typeof sendResult != "undefined") {%>
-                    <% if (sendResult.sendError) {%>
-                    <div class="text-center text-danger">
-                        Send failed!
+                    <div onclick='$(".wallet-actions").toggle()'
+                         class="wallet-action-toggle subtle-text wallet-actions">show options
                     </div>
-                    <% } else {%>
-                    <div class="text-center">
-                        Payment sent!
+                    <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions"
+                         style="display: none">hide options
                     </div>
-                    <% }%>
+                    <a class="subtle-text" href="/tx/history/<%= user.profileAddress %>"><i title="transaction history"
+                                                                                            class="fa fa-list-ul"
+                                                                                            aria-hidden="true"></i></a>
                 </div>
-                <%}%>
+                <% if (typeof sendResult != "undefined") { %>
+                <% if (sendResult.sendError) { %>
+                <div class="text-center text-danger">
+                    Send failed!
+                </div>
+                <% } else { %>
+                <div class="text-center">
+                    Payment sent!
+                </div>
+                <% } %>
             </div>
+            <% } %>
         </div>
+    </div>
 
-        <% if (user.canInvite) {%>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3>Invites</h3>
-                <div>
-                    <div class="balance"><%=user.invitesRemaining%></div>
-                    <div class="text-center subtle-text">invites left</div>
-                </div>
-                <div class="invite-options" style="<%= invited.inviteUrl ? "" : "display: none"%>">
-                    <h4>Referral Link</h4>
-                    <p class="subtle-text">
-                        Your referral link is reusable!  When some one signs up with your referral link, your
-                        invites remaining will go down by one and you will get your reward.
-                    <div class="text-success center-text">
-                        Your referral link
-                    </div>
-                    <div class="center-text">
-                        https://musicoin.org/accept/<%=user.reusableInviteCode%>
-                    </div>
-                    <br>
-                    <h4>Individual Invite Link</h4>
-                    <p class="subtle-text">
-                        If you want to create an invite for a <em>specific person</em>, enter an address below and we'll
-                        send an invite to that address. You can also copy and paste the generated link and send it to
-                        them separately. However, this type invite can only be used once.
-                    </p>
-                    <form action="/invite" method="post">
-                        <table cellpadding="3">
-                            <tr>
-                                <td class="text-nowrap">e-mail</td>
-                                <td width="99%"><input id=inviteEmail name=email type="text" class="form-control" placeholder="email address"></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td class="text-right">
-                                    <button id=btnInvite type="submit" class="btn btn-success">
-                                        Create invite link
-                                    </button>
-                                </td>
-                            </tr>
-                            <% if (invited.inviteUrl) { %>
-                            <tr>
-                                <td></td>
-                                <td>
-                                    <% if (invited.success) {%>
-                                    <div class="text-center">
-                                        <%=invited.email ? "An invite was sent to " + invited.email: ""%><br>
-                                        You can send this link via social media: <br>
-                                        <%=invited.inviteUrl%>
-                                    </div>
-                                    <%} else if (invited.reason == "exists"){%>
-                                    <div class="text-warning"><%=invited.email%> already has an invite.</div>
-                                    <%} else if (invited.reason == "invalid"){%>
-                                    <div class="text-danger"><%=invited.email%> is not a valid email address.</div>
-                                    <%} else {%>
-                                    <div class="text-danger">Failed to invite <%=invited.email%>, try again later</div>
-                                    <%}%>
-                                </td>
-                            </tr>
-                            <% } %>
-                        </table>
-                    </form>
-
-                </div>
-                <div class="flex-row wallet-action-bar">
-                    <div class="wallet-action-toggle subtle-text"
-                         onclick='$(".invite-options").toggle()'>
-                        <div class="invite-options">send an invite</div>
-                        <div class="invite-options" style="display: none">hide</div>
-                    </div>
-                    <a class="subtle-text" href="/invite-history"><i title="invite history" class="fa fa-list-ul" aria-hidden="true"></i></a>
-                </div>
+    <% if (user.canInvite) { %>
+    <div class="col-sm-6">
+        <div class="well">
+            <h3 class="section-title">Invites</h3>
+            <div>
+                <div class="balance"><%= user.invitesRemaining %></div>
+                <div class="text-center subtle-text">invites left</div>
             </div>
-        </div>
-        <%}%>
-
-        <% if (!user.hideProfile) { %>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3>Release</h3>
-                <form id=releaseForm action="/license/release" enctype="multipart/form-data" method="post">
-                    <% for (let i=0; i < 1; i++) {
-                        const rowId = `track${i}`;
-                        const displayId = rowId + "_imageDisplay";
-                    %>
-                    <div class="flex-row">
-                        <div class="flex-column clickable" onclick="<%=rowId%>_image.click()" >
-                            <img src="<%=user.profile.image%>" id="<%=displayId%>" class="upload-image">
-                            <div class="text-center small">
-                                (click to change)
-                            </div>
-                        </div>
-
-                        <div class="profile-release-item">
-                            <input class="no-submit form-control" type="text" name="<%=rowId%>.title" placeholder="title">
-                            <label class="no-submit form-entry" for="<%=rowId%>_audio" id="<%=rowId%>_audioLabel">Audio...</label>
-                            <input name="<%=rowId%>.genres" class="form-control no-submit genre-list"
-                                   placeholder="e.g. Rock, Country, etc" value="<%=user.profile.genres ? user.profile.genres.join(", ") : ""%>">
-                            <input style="display: none" onchange="updateAudioLabel('<%=rowId%>_audioLabel', this.id)" id="<%=rowId%>_audio" type="file" name="<%=rowId%>.audio">
-                            <input style="display: none" onchange="updateImageDisplay('<%=displayId%>', this.id)" id="<%=rowId%>_image" type="file" name="<%=rowId%>.image">
-                        </div>
-                    </div>
-
-                    <div class="release-distribution" style="display: none">
-                        <table class="table table-condensed table-responsive contributors">
-                            <tr>
-                                <th class="col-md-5">recipient <a href="/faq#WhatIsARecipient" target="help">(?)</a></th>
-                                <th class="col-md-1">shares <a href="/faq#WhatAreShares" target="help">(?)</a></th>
-                            </tr>
-                            <tr class="row-template" style="display: none">
-                                <td><input name="address"
-                                           class="no-submit form-control"
-                                           placeholder="email, wallet, or license address"></td>
-                                <td><input name="value"
-                                           class="no-submit form-control text-right"
-                                           placeholder=""></td>
-                            </tr>
-                            <tr>
-                                <td><label style="width: 100%"
-                                           class="form-entry">My wallet</label>
-                                    <input style="display: none"
-                                           name="track0.recipient.address"
-                                           class="no-submit form-control"
-                                           value="<%=user.profileAddress%>"></td>
-                                <td><input name="track0.recipient.value"
-                                           class="no-submit form-control text-right"
-                                           value="1"
-                                           placeholder=""></td>
-                            </tr>
-                        </table>
-                        <div class="text-right">
-                            <div class="btn btn-sm btn-link" onclick="addRow()" >
-                            <span class="glyphicon glyphicon-plus" value="Add"></span>
-                             add another entry
-                            </div>
-                        </div>
-                    </div>
-                    <div id="licensePreview"></div>
-                    <%}%>
-
-                    <button id=releaseButton style="display: none" type="submit"></button>
-                    <div style="display:flex; justify-content: flex-end">
-                        <div onclick='$( "#licensePreview" ).load( "/license/preview", loadLicenseFields() ); $("#licensePreview").show()'
-                             class="btn btn-success">
-                            Release...
-                        </div>
-                    </div>
-                    <div class="wallet-action-toggle subtle-text"
-                         onclick='$(".release-distribution").toggle()'>
-                        <div class="release-distribution">not a solo act? show distribution options</div>
-                        <div class="release-distribution" style="display: none">hide distribution options</div>
-                    </div>
+            <div class="invite-options" style="<%= invited.inviteUrl ? "" : "display: none" %>">
+                <h4>Referral Link</h4>
+                <p class="subtle-text">
+                    Your referral link is reusable! When some one signs up with your referral link, your
+                    invites remaining will go down by one and you will get your reward.
+                <div class="text-success center-text">
+                    Your referral link
+                </div>
+                <div class="center-text">
+                    https://musicoin.org/accept/<%= user.reusableInviteCode %>
+                </div>
+                <br>
+                <h4>Individual Invite Link</h4>
+                <p class="subtle-text">
+                    If you want to create an invite for a <em>specific person</em>, enter an address below and we'll
+                    send an invite to that address. You can also copy and paste the generated link and send it to
+                    them separately. However, this type invite can only be used once.
+                </p>
+                <form action="/invite" method="post">
+                    <table cellpadding="3">
+                        <tr>
+                            <td class="text-nowrap">e-mail</td>
+                            <td width="99%"><input id=inviteEmail name=email type="text" class="form-control"
+                                                   placeholder="email address"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="text-right">
+                                <button id=btnInvite type="submit" class="btn btn-success">
+                                    Create invite link
+                                </button>
+                            </td>
+                        </tr>
+                        <% if (invited.inviteUrl) { %>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <% if (invited.success) { %>
+                                <div class="text-center">
+                                    <%= invited.email ? "An invite was sent to " + invited.email : "" %><br>
+                                    You can send this link via social media: <br>
+                                    <%= invited.inviteUrl %>
+                                </div>
+                                <% } else if (invited.reason == "exists"){ %>
+                                <div class="text-warning"><%= invited.email %> already has an invite.</div>
+                                <% } else if (invited.reason == "invalid"){ %>
+                                <div class="text-danger"><%= invited.email %> is not a valid email address.</div>
+                                <% } else { %>
+                                <div class="text-danger">Failed to invite <%= invited.email %>, try again later</div>
+                                <% } %>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </table>
                 </form>
+
             </div>
-
-            <% if (typeof releaseError != "undefined" && releaseError) {%>
-            <div class="text-center text-danger">
-                Release failed!  Please try again later.
+            <div class="flex-row wallet-action-bar">
+                <div class="wallet-action-toggle subtle-text"
+                     onclick='$(".invite-options").toggle()'>
+                    <div class="invite-options">send an invite</div>
+                    <div class="invite-options" style="display: none">hide</div>
+                </div>
+                <a class="subtle-text" href="/invite-history"><i title="invite history" class="fa fa-list-ul"
+                                                                 aria-hidden="true"></i></a>
             </div>
-            <%}%>
         </div>
-        <%}%>
+    </div>
+    <% } %>
 
-        <div class="dynamic-element col-sm-6"
-             id="de-pending-releases"
-             de-refresh-period="none"
-             de-url="/elements/pending-releases">
-            <%- include partials/pending-releases.ejs %>
+    <% if (!user.hideProfile) { %>
+    <div class="col-sm-6">
+        <div class="well">
+            <h3 class="section-title">Release</h3>
+            <form id=releaseForm action="/license/release" enctype="multipart/form-data" method="post">
+                <% for (let i = 0; i < 1; i++) {
+                    const rowId = `track${i}`;
+                    const displayId = rowId + "_imageDisplay";
+                %>
+                <div class="flex-row">
+                    <div class="flex-column clickable" onclick="<%= rowId %>_image.click()">
+                        <img src="<%= user.profile.image %>" id="<%= displayId %>" class="upload-image">
+                        <div class="text-center small">
+                            (click to change)
+                        </div>
+                    </div>
+
+                    <div class="profile-release-item">
+                        <input class="no-submit form-control" type="text" name="<%= rowId %>.title" placeholder="title">
+                        <label class="no-submit form-entry" for="<%= rowId %>_audio" id="<%= rowId %>_audioLabel">Audio...</label>
+                        <input name="<%= rowId %>.genres" class="form-control no-submit genre-list"
+                               placeholder="e.g. Rock, Country, etc"
+                               value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
+                        <input style="display: none" onchange="updateAudioLabel('<%= rowId %>_audioLabel', this.id)"
+                               id="<%= rowId %>_audio" type="file" name="<%= rowId %>.audio">
+                        <input style="display: none" onchange="updateImageDisplay('<%= displayId %>', this.id)"
+                               id="<%= rowId %>_image" type="file" name="<%= rowId %>.image">
+                    </div>
+                </div>
+
+                <div class="release-distribution" style="display: none">
+                    <table class="table table-condensed table-responsive contributors">
+                        <tr>
+                            <th class="col-md-5">recipient <a href="/faq#WhatIsARecipient" target="help">(?)</a></th>
+                            <th class="col-md-1">shares <a href="/faq#WhatAreShares" target="help">(?)</a></th>
+                        </tr>
+                        <tr class="row-template" style="display: none">
+                            <td><input name="address"
+                                       class="no-submit form-control"
+                                       placeholder="email, wallet, or license address"></td>
+                            <td><input name="value"
+                                       class="no-submit form-control text-right"
+                                       placeholder=""></td>
+                        </tr>
+                        <tr>
+                            <td><label style="width: 100%"
+                                       class="form-entry">My wallet</label>
+                                <input style="display: none"
+                                       name="track0.recipient.address"
+                                       class="no-submit form-control"
+                                       value="<%= user.profileAddress %>"></td>
+                            <td><input name="track0.recipient.value"
+                                       class="no-submit form-control text-right"
+                                       value="1"
+                                       placeholder=""></td>
+                        </tr>
+                    </table>
+                    <div class="text-right">
+                        <div class="btn btn-sm btn-link" onclick="addRow()">
+                            <span class="glyphicon glyphicon-plus" value="Add"></span>
+                            add another entry
+                        </div>
+                    </div>
+                </div>
+                <div id="licensePreview"></div>
+                <% } %>
+
+                <button id=releaseButton style="display: none" type="submit"></button>
+                <div style="display:flex; justify-content: flex-end">
+                    <div onclick='$( "#licensePreview" ).load( "/license/preview", loadLicenseFields() ); $("#licensePreview").show()'
+                         class="btn btn-success">
+                        Release...
+                    </div>
+                </div>
+                <div class="wallet-action-toggle subtle-text"
+                     onclick='$(".release-distribution").toggle()'>
+                    <div class="release-distribution">not a solo act? show distribution options</div>
+                    <div class="release-distribution" style="display: none">hide distribution options</div>
+                </div>
+            </form>
         </div>
 
-        <div class="dynamic-element col-sm-6"
-             id="de-release-list"
-             de-refresh-period="none"
-             de-url="/elements/release-list">
-            <%- include partials/release-list.ejs %>
+        <% if (typeof releaseError != "undefined" && releaseError) { %>
+        <div class="text-center text-danger">
+            Release failed! Please try again later.
         </div>
+        <% } %>
+    </div>
+    <% } %>
 
-        <%
+    <div class="dynamic-element col-sm-6"
+         id="de-pending-releases"
+         de-refresh-period="none"
+         de-url="/elements/pending-releases">
+        <%- include partials/pending-releases.ejs %>
+    </div>
+
+    <div class="dynamic-element col-sm-6"
+         id="de-release-list"
+         de-refresh-period="none"
+         de-url="/elements/release-list">
+        <%- include partials/release-list.ejs %>
+    </div>
+
+    <%
         // I don't want to have this page constantly refreshing the pending releases unless
         // we have reason to believe there is likely to be a change.  When the user posts a
         // new release, the page will refresh.  At which point, we should see an pending release.
         // So, in those cases, set up two checks: 1min and 2mins from now.  After than, they user
         // will have to user the manual refresh option on the widget, or refresh the page.
-        if (pendingReleases.length > 0) { %>
-        <script>
-          console.log("Setting up two auto-refreshes...");
-          window.setTimeout(function () {
-            console.log("auto-refreshes 1 ...");
-            dynamic.refreshElement($("#de-release-list"));
-            dynamic.refreshElement($("#de-pending-releases"));
-          }, 60 * 1000)
-          window.setTimeout(function () {
-            console.log("auto-refreshes 2 ...");
-            dynamic.refreshElement($("#de-release-list"));
-            dynamic.refreshElement($("#de-pending-releases"));
-          }, 120 * 1000)
-        </script>
-        <%}%>
+    if (pendingReleases.length > 0) { %>
+    <script>
+      console.log("Setting up two auto-refreshes...");
+      window.setTimeout(function () {
+        console.log("auto-refreshes 1 ...");
+        dynamic.refreshElement($("#de-release-list"));
+        dynamic.refreshElement($("#de-pending-releases"));
+      }, 60 * 1000)
+      window.setTimeout(function () {
+        console.log("auto-refreshes 2 ...");
+        dynamic.refreshElement($("#de-release-list"));
+        dynamic.refreshElement($("#de-pending-releases"));
+      }, 120 * 1000)
+    </script>
+    <% } %>
 
-        <%} else {%>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3>wallet</h3>
-                Once you publish a profile, you can check your balance here and send coins to other users.
-            </div>
+    <% } else { %>
+    <div class="col-sm-6">
+        <div class="well">
+            <h3 class="section-title">wallet</h3>
+            Once you publish a profile, you can check your balance here and send coins to other users.
         </div>
-
-        <div class="col-sm-6">
-            <div class="well">
-                <h3>invite</h3>
-                Once you publish a profile, you can invite other users to join here.
-            </div>
-        </div>
-
-        <div class="col-sm-6">
-            <div class="well">
-                <h3>release</h3>
-                Once you publish a profile, you can release songs here.
-            </div>
-        </div>
-        <%}%>
     </div>
+
+    <div class="col-sm-6">
+        <div class="well">
+            <h3 class="section-title">invite</h3>
+            Once you publish a profile, you can invite other users to join here.
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="well">
+            <h3 class="section-title">release</h3>
+            Once you publish a profile, you can release songs here.
+        </div>
+    </div>
+    <% } %>
+</div>
 
 </div>
 <%- include partials/player-hook.ejs %>
 <%- include partials/connect-with-us.ejs %>
 </body>
 <script>
-  (function($) {
+  (function ($) {
 
     // prevent dynamically created input elements from submitting the form
-    $('.contributors').on('keydown', '.no-submit', function(e) {
-      if(e.keyCode == 13) {
+    $('.contributors').on('keydown', '.no-submit', function (e) {
+      if (e.keyCode == 13) {
         console.log('No way it will still submit the form...');
         return false;
       }
     });
   })(jQuery);
 
-  $( document ).ready(function() {
-    $("#imageInput").change(function(){
+  $(document).ready(function () {
+    $("#imageInput").change(function () {
       readURL('profileImage', this);
     });
 
-    $("#heroInput").change(function(){
+    $("#heroInput").change(function () {
       readURL('heroImage', this);
     });
 
-    $("#profileImage").click(function() {
+    $("#profileImage").click(function () {
       $("#imageInput").click();
     })
 
-    $("#heroImage").click(function() {
+    $("#heroImage").click(function () {
       $("#heroInput").click();
     })
 
     var inviteEmail = $("#inviteEmail");
     var btnInvite = $("#btnInvite");
-    $("#inviteEmail").keyup(function() {
+    $("#inviteEmail").keyup(function () {
       if (inviteEmail.val() && inviteEmail.val().trim().length > 0) {
         btnInvite.text("Send invite");
         btnInvite.addClass("btn-warning");
@@ -596,11 +606,12 @@
       }
     })
 
-    function split( val ) {
-      return val.split( /,\s*/ );
+    function split(val) {
+      return val.split(/,\s*/);
     }
-    function extractLast( term ) {
-      return split( term ).pop();
+
+    function extractLast(term) {
+      return split(term).pop();
     }
 
     var availableTags = [
@@ -633,42 +644,41 @@
       "World"
     ];
 
-    $( ".genre-list" )
-      .on( "keydown", function( event ) {
-        if ( event.keyCode === $.ui.keyCode.TAB &&
-          $( this ).autocomplete( "instance" ).menu.active ) {
+    $(".genre-list")
+      .on("keydown", function (event) {
+        if (event.keyCode === $.ui.keyCode.TAB &&
+          $(this).autocomplete("instance").menu.active) {
           event.preventDefault();
         }
       })
       .autocomplete({
         minLength: 0,
-        source: function( request, response ) {
+        source: function (request, response) {
           // delegate back to autocomplete, but extract the last term
-          response( $.ui.autocomplete.filter(
-            availableTags, extractLast( request.term ) ) );
+          response($.ui.autocomplete.filter(
+            availableTags, extractLast(request.term)));
         },
-        focus: function() {
+        focus: function () {
           // prevent value inserted on focus
           return false;
         },
-        select: function( event, ui ) {
-          var terms = split( this.value );
+        select: function (event, ui) {
+          var terms = split(this.value);
           // remove the current input
           terms.pop();
           // add the selected item
-          terms.push( ui.item.value );
+          terms.push(ui.item.value);
           // add placeholder to get the comma-and-space at the end
-          terms.push( "" );
-          this.value = terms.join( ", " );
+          terms.push("");
+          this.value = terms.join(", ");
           return false;
         }
       });
 
-    $.fn.serializeObject = function()
-    {
+    $.fn.serializeObject = function () {
       var o = {};
       var a = this.serializeArray();
-      $.each(a, function() {
+      $.each(a, function () {
         if (o[this.name] !== undefined) {
           if (!o[this.name].push) {
             o[this.name] = [o[this.name]];

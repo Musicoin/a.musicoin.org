@@ -186,6 +186,7 @@ textarea.form-control {
 .mr10 {  margin-right: 10px;  }
 .ml10 {  margin-left: 10px;  }
 .m10 {  margin: 10px;  }
+.m5 {  margin: 5px;  }
 .text-middle {
     display: flex;
     align-items: center;
@@ -196,6 +197,10 @@ textarea.form-control {
 
 .text-xlarge {
     font-size: 2em;
+}
+
+.text-default {
+    font-size: 1em;
 }
 
 .text-medium {
