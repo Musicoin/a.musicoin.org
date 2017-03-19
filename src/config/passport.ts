@@ -1,4 +1,5 @@
 import {Passport} from "passport";
+import {Promise} from "bluebird";
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
@@ -239,14 +240,43 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       });
     }));
 
-   function doStandardLogin(authProvider: string,
-                            req,
-                            localProfile,
-                            done,
-                            validation?) {
-     // check if the user is already logged in
-     const condition = {};
-     condition[authProvider + ".id"] = localProfile.id;
+  function createUserWithReusableInvite(req) {
+    return User.findOne({
+      $and: [
+        {reusableInviteCode: req.session.inviteCode},
+        {invitesRemaining: {$gt: 0}},
+      ]
+    })
+      .then(inviter => {
+        if (!inviter) return null;
+        const newUser = new User();
+        const inviteCode = req.session.inviteCode;
+        newUser.invite = {
+          invitedBy: inviter._id,
+          invitedAs: "",
+          inviteCode: inviteCode,
+          invitedOn: Date.now(),
+          claimed: true
+        };
+        inviter.invitesRemaining--;
+        return Promise.join(inviter.save(), newUser.save(), (_inviter, _newUser) => {
+          return _newUser;
+        })
+          .catch(err => {
+            console.log("Failed to create new user from reusable invite code: " + err);
+            return null;
+          })
+      })
+  }
+
+  function doStandardLogin(authProvider: string,
+                           req,
+                           localProfile,
+                           done,
+                           validation?) {
+    // check if the user is already logged in
+    const condition = {};
+    condition[authProvider + ".id"] = localProfile.id;
      const userQuery = User.findOne(condition).exec()
        .then((user) => {
          if(user && validation && !validation(user)) {
@@ -311,6 +341,12 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                {'profileAddress': null}
              ]
            }).exec()
+             .then(user => {
+               if (!user) {
+                 // now check to see if this is a reusable invite
+                 return createUserWithReusableInvite(req);
+               }
+             })
              .then(user => {
                if (user) {
                  user.pendingInitialization = true;

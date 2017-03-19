@@ -334,11 +334,22 @@
                     <div class="text-center subtle-text">invites left</div>
                 </div>
                 <div class="invite-options" style="<%= invited.inviteUrl ? "" : "display: none"%>">
-                    <br>
+                    <h4>Referral Link</h4>
                     <p class="subtle-text">
-                        Enter an address below and we'll send an invite to that address.  You can
-                        also copy and paste the generated link and send it separately via social media.
-                        However, each invite link can only be used once.
+                        Your referral link is reusable!  When some one signs up with your referral link, your
+                        invites remaining will go down by one and you will get your reward.
+                    <div class="text-success center-text">
+                        Your referral link
+                    </div>
+                    <div class="center-text">
+                        https://musicoin.org/accept/<%=user.reusableInviteCode%>
+                    </div>
+                    <br>
+                    <h4>Individual Invite Link</h4>
+                    <p class="subtle-text">
+                        If you want to create an invite for a <em>specific person</em>, enter an address below and we'll
+                        send an invite to that address. You can also copy and paste the generated link and send it to
+                        them separately. However, this type invite can only be used once.
                     </p>
                     <form action="/invite" method="post">
                         <table cellpadding="3">

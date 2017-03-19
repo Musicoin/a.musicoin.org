@@ -129,7 +129,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.use('/json-api', restAPI.getRouter());
-  app.use('/', preProcessUser(mediaProvider, jsonAPI));
+  app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
   app.use('/admin/*', isLoggedIn, adminOnly);
 
   function doRender(req, res, view, context) {
@@ -187,7 +187,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           res.redirect("/welcome?inviteClaimed=" + record.invite.claimed);
         }
         else {
-          res.redirect("/info");
+          return User.findOne({
+            "reusableInviteCode": req.params.code,
+            "invitesRemaining": {$gt: 0}
+          }).exec()
+            .then(inviter => {
+              if (inviter) {
+                req.session.inviteCode = req.params.code;
+                res.redirect("/welcome?inviteClaimed=false");
+              }
+              else {
+                res.redirect("/info");
+              }
+            })
         }
       });
   });
@@ -1661,6 +1673,23 @@ function hasProfile(req, res, next) {
   if (req.user.profileAddress)
     return next();
   res.redirect('/');
+}
+
+function checkInviteCode(req, res, next) {
+  const user = req.user;
+  if (user && !user.reusableInviteCode) {
+    user.reusableInviteCode = crypto.randomBytes(4).toString('hex');
+    return user.save()
+      .then(() => {
+        console.log(`Updated user invite link: ${user.reusableInviteCode}`);
+        next();
+      })
+      .catch(err => {
+        console.log(`Failed to create invite link: ${err}`);
+        next();
+      })
+  }
+  next();
 }
 
 function preProcessUser(mediaProvider, jsonAPI) {

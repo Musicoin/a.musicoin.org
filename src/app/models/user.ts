@@ -63,6 +63,7 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 5
   },
+  reusableInviteCode: String,
   following: [String],
   invite: {
     invitedBy: {
