@@ -66,7 +66,7 @@ ConfigUtils.loadConfig()
     app.use(flash());
 
     routes.configure(app, passport, musicoinApi, mediaProvider, config);
-// app.use(express.static(path.join(__dirname, 'overview')));
+    app.use(express.static(path.join(__dirname, 'overview')));
 
 // let angular catch them
     app.use(function(req, res) {
