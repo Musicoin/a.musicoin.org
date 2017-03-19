@@ -178,12 +178,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // });
 
   app.get('/accept/:code', (req, res) => {
-    console.log("host: " + req.get('host'));
+    console.log(`Processing /accept/${req.params.code}`)
     if (req.get('host') == 'alpha.musicoin.org') {
+      console.log(`Redirecting accept from alpha.musicoin.org: ${req.params.code}`);
       return res.redirect("https://musicoin.org/accept/" + req.params.code);
     }
+    console.log(`Looking for invite: ${req.params.code}`);
     User.findOne({"invite.inviteCode": req.params.code}).exec()
       .then((record) => {
+        console.log(`Invite query complete: ${record}`);
         delete req.session.inviteCode;
         let inviteClaimed = false;
         if (record) {
@@ -192,19 +195,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             record.save();
             req.session.inviteCode = req.params.code;
           }
+          console.log(`Redirecting to welcome page, invite ok!: ${req.params.code}`);
           res.redirect("/welcome?inviteClaimed=" + record.invite.claimed);
         }
         else {
+          console.log(`Checking for group invite: ${req.params.code}`);
           return User.findOne({
             "reusableInviteCode": req.params.code,
             "invitesRemaining": {$gt: 0}
           }).exec()
             .then(inviter => {
+              console.log(`GroupInvite query complete: ${inviter}`);
               if (inviter) {
+                console.log(`Redirecting to welcome page, group invite ok!: ${req.params.code}`);
                 req.session.inviteCode = req.params.code;
                 res.redirect("/welcome?inviteClaimed=false");
               }
               else {
+                console.log(`Invalid invite code: ${req.params.code}`);
                 res.redirect("/info");
               }
             })
