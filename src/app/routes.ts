@@ -478,7 +478,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
-  app.get('/welcome', (req, res) => doRender(req, res, 'welcome.ejs', {}));
+  app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => doRender(req, res, 'welcome.ejs', {}));
   app.get('/invite', (req, res) => {
     const musician = req.query.type == "musician";
     doRender(req, res, 'invite.ejs', {
@@ -1619,6 +1619,15 @@ function unauthRedirect(dest: string) {
 
     // if they aren't logged in, redirect them
     res.redirect(dest);
+  }
+}
+
+function redirectIfLoggedIn(dest) {
+  return function(req, res, next) {
+    if (req.isAuthenticated()) {
+      return res.redirect(dest);
+    }
+    return next();
   }
 }
 
