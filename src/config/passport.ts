@@ -346,6 +346,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                  // now check to see if this is a reusable invite
                  return createUserWithReusableInvite(req);
                }
+               return user;
              })
              .then(user => {
                if (user) {
