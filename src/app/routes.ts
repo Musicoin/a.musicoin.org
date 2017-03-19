@@ -129,27 +129,28 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.use('/json-api', restAPI.getRouter());
-  app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
+  app.use('/', debug("Got request, pre-processing"), preProcessUser(mediaProvider, jsonAPI), debug("checking group invite code.."), checkInviteCode);
   app.use('/admin/*', isLoggedIn, adminOnly);
 
   function doRender(req, res, view, context) {
-    const b = req.user && req.user.profileAddress ? musicoinApi.getAccountBalance(req.user.profileAddress) : Promise.resolve(0);
-    if (req.user && req.user.profileAddress) {
-        b.then(balance => {
-          req.user.formattedBalance = balance.formattedMusicoinsShort;
-          const defaultContext = {
-            user: req.user,
-            isAuthenticated: req.isAuthenticated(),
-            isAdmin: isAdmin(req.user),
-            hasInvite: !req.isAuthenticated()
-            && req.session
-            && req.session.inviteCode
-            && req.session.inviteCode.trim().length > 0,
-            inviteClaimed: req.query.inviteClaimed == "true",
-          };
-          res.render(view, Object.assign({}, defaultContext, context));
-        })
-    }
+    console.log("Calling doRender in " + view);
+    const b = req.user && req.user.profileAddress ? musicoinApi.getAccountBalance(req.user.profileAddress) : Promise.resolve(null);
+    return b.then(balance => {
+      if (req.user) {
+        req.user.formattedBalance = balance ? balance.formattedMusicoinsShort : "0";
+      }
+      const defaultContext = {
+        user: req.user,
+        isAuthenticated: req.isAuthenticated(),
+        isAdmin: isAdmin(req.user),
+        hasInvite: !req.isAuthenticated()
+        && req.session
+        && req.session.inviteCode
+        && req.session.inviteCode.trim().length > 0,
+        inviteClaimed: req.query.inviteClaimed == "true",
+      };
+      res.render(view, Object.assign({}, defaultContext, context));
+    })
   }
 
   function _formatNumber(value: any, decimals?: number) {
@@ -170,7 +171,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return new Date(timestamp * 1000).toLocaleDateString('en-US', options);
   }
 
-  app.get('/', (req, res) => {
+  app.get('/', debug("Showing index"), (req, res) => {
     res.render(__dirname + '/../overview/index.html', {});
   });
   // app.get('/', unauthRedirect("/info"), checkLoginRedirect, function (req, res) {
@@ -492,7 +493,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
-  app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => doRender(req, res, 'welcome.ejs', {}));
+  app.get('/welcome',  debug("Got welcome request"), redirectIfLoggedIn(loginRedirect), (req, res) => doRender(req, res, 'welcome.ejs', {}));
   app.get('/invite', (req, res) => {
     const musician = req.query.type == "musician";
     doRender(req, res, 'invite.ejs', {
@@ -1682,6 +1683,13 @@ function checkLoginRedirect(req, res, next) {
     return res.redirect(dest);
   }
   next();
+}
+
+function debug(msg) {
+  return function(req, res, next) {
+    console.log(msg);
+    return next();
+  }
 }
 
 function adminOnly(req, res, next) {
