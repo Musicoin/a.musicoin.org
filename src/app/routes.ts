@@ -164,7 +164,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return new Date(timestamp * 1000).toLocaleDateString('en-US', options);
   }
 
-  app.get('/', (req, res) => doRender(req, res, 'info.ejs', {}));
+  app.get('/', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
   // app.get('/', unauthRedirect("/info"), checkLoginRedirect, function (req, res) {
   //   res.render('index-frames.ejs', {mainFrameLocation: "/main"});
   // });

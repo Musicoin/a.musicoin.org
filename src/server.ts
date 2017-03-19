@@ -27,6 +27,7 @@ ConfigUtils.loadConfig()
     app.set('port', config.port);
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'ejs');
+    app.engine('html', require('ejs').renderFile);
 
 // connect to database
     mongoose.Promise = require('bluebird');
