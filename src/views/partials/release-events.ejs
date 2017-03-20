@@ -16,6 +16,12 @@
                 <span class="message-time big-screen-only"><%=release.timeSince%></span>
             </div>
             by <a href="/artist/<%=release.artistProfileAddress%>"><%=release.artistName%></a>
+            <% if (typeof release.playsLastWeek != "undefined") { %>
+            <div class="subtle-text text-small"><%=release.playsLastWeek + " plays last week"%></div>
+            <% } %>
+            <% if (typeof release.tipsLastWeek != "undefined") { %>
+            <div class="subtle-text text-small"><%=release.tipsLastWeek + " tips last week"%></div>
+            <% } %>
             <div class="subtle-text text-small"><%=release.genres ? release.genres.join(", ") : ""%></div>
             <div class="chat-message-body chat-message-preview"><%=release.description%></div>
         </div>
