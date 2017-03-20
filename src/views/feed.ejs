@@ -23,6 +23,20 @@
             color: #e4aa17;
         }
 
+        .option-button {
+            margin-right: 5px;
+            margin-left: 5px;
+            color: #aaa;
+        }
+        .option-button:hover {
+            text-decoration: underline;
+        }
+
+        .option-button[selected] {
+            color: #88f;
+            text-decoration: underline;
+        }
+
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -52,28 +66,39 @@
 
         <div class="pad10 col2" style="background-color: rgba(0,0,0,0.02)">
             <% if (typeof topPlayedLastWeek != "undefined") { %>
-            <div class="event-header text-center subtle-text">weekly top played</div>
+            <div class="event-header text-center subtle-text">top played</div>
+            <div class="flex-row center-text" target=top-played >
+                <div class="clickable option-button" period="day" onclick="selectTopPlayedPeriod($(this))">Day</div>
+                <div class="clickable option-button" selected period="week" onclick="selectTopPlayedPeriod($(this))">Week</div>
+                <div class="clickable option-button" period="month" onclick="selectTopPlayedPeriod($(this))">Month</div>
+            </div>
             <div class="dynamic-element"
                  style="min-height: 180px"
-                 id="de-new-releases"
+                 id="top-played"
                  de-limit="<%= ui.topPlayLastWeek %>"
                  de-refresh-period="10"
                  de-refresh-offset="2"
-                 de-url="/elements/top-played-week">
+                 de-period="week"
+                 de-url="/elements/top-played-period">
                 <%- include('partials/release-events.ejs', {releases: topPlayedLastWeek}) %>
             </div>
             <% } %>
 
             <% if (typeof topTippedLastWeek != "undefined") { %>
             <div class="event-header text-center subtle-text">weekly top tipped</div>
-            <div class="text-center subtle-text">weekly</div>
+            <div class="flex-row center-text" target=top-tipped>
+                <div class="clickable option-button" period="day" onclick="selectTopPlayedPeriod($(this))">Day</div>
+                <div class="clickable option-button" period="week" selected onclick="selectTopPlayedPeriod($(this))">Week</div>
+                <div class="clickable option-button" period="month" onclick="selectTopPlayedPeriod($(this))">Month</div>
+            </div>
             <div class="dynamic-element"
                  style="min-height: 180px"
-                 id="de-new-releases"
+                 id="top-tipped"
                  de-limit="<%= ui.topTippedLastWeek %>"
                  de-refresh-period="10"
                  de-refresh-offset="2"
-                 de-url="/elements/top-tipped-week">
+                 de-period="week"
+                 de-url="/elements/top-tipped-period">
                 <%- include('partials/release-events.ejs', {releases: topTippedLastWeek}) %>
             </div>
             <% } %>
@@ -100,7 +125,18 @@
             </div>
         </div>
     </div>
+    <script>
+        function selectTopPlayedPeriod(element) {
+          var section = element.parent();
+          section.find('.option-button').attr('selected', false);
 
+          element.attr('selected', true);
+
+          var dynamicElement = $('#' + section.attr('target'));
+          dynamicElement.attr('de-period', element.attr('period'));
+          dynamic.refreshElement(dynamicElement);
+        }
+    </script>
     <%- include partials/player-hook.ejs %>
     <%- include partials/connect-with-us.ejs %>
 </body>

@@ -1,8 +1,15 @@
 
 <div class="chat-messages">
-    <% for (var i=0; i < releases.length; i++) {
+    <%
+    var periodTexts = {
+        day: "yesterday",
+        week: "last week",
+        month: "last month"
+    }
+    for (var i=0; i < releases.length; i++) {
         var release = releases[i];
-        var showTimestamp = typeof release.playsLastWeek == "undefined" && typeof release.tipsLastWeek == "undefined"
+        var periodText = release.stats ? periodTexts[release.stats.period] : "";
+
     %>
     <div class="chat-message chat-message-normal event">
         <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=release.address%>'>
@@ -16,10 +23,10 @@
                 <a href="/track/<%=release.address%>"><%=release.title%></a>
             </div>
             by <a href="/artist/<%=release.artistProfileAddress%>"><%=release.artistName%></a>
-            <% if (typeof release.playsLastWeek != "undefined") { %>
-            <div class="subtle-text"><%=release.playsLastWeek + " plays last week"%></div>
-            <% } else if (typeof release.tipsLastWeek != "undefined") { %>
-            <div class="subtle-text"><%=release.tipsLastWeek + " tips last week"%></div>
+            <% if (typeof release.stats != "undefined" && typeof release.stats.plays != "undefined") { %>
+            <div class="subtle-text"><%=release.stats.plays + " plays " + periodText%></div>
+            <% } else if (typeof release.stats != "undefined" && typeof release.stats.tips != "undefined") { %>
+            <div class="subtle-text"><%=release.stats.tips + " tips " + periodText%></div>
             <% } else { %>
             <div class="subtle-text">Released <%=release.timeSince%></div>
             <% } %>

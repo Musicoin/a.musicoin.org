@@ -273,8 +273,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/feed', isLoggedIn, function (req, res) {
     const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages);
     const rs = jsonAPI.getNewReleases(config.ui.feed.newReleases).catchReturn([]);
-    const tpw = jsonAPI.getTopPlayedLastWeek(config.ui.feed.topPlayLastWeek).catchReturn([]);
-    const ttw = jsonAPI.getTopTippedLastWeek(config.ui.feed.topTippedLastWeek).catchReturn([]);
+    const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.feed.topPlayLastWeek, "week").catchReturn([]);
+    const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.feed.topTippedLastWeek, "week").catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(config.ui.feed.newArtists).catchReturn([]);
     const h  = jsonAPI.getHero();
 
@@ -375,17 +375,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.post('/elements/top-played-week', function (req, res) {
+  app.post('/elements/top-played-period', function (req, res) {
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
-    jsonAPI.getTopPlayedLastWeek(limit)
+    const period = req.body.period || 'week';
+    jsonAPI.getTopPlayedLastPeriod(limit, period)
       .then(function (releases) {
         res.render('partials/release-events.ejs', {releases: releases});
       });
   });
 
-  app.post('/elements/top-tipped-week', function (req, res) {
+  app.post('/elements/top-tipped-period', function (req, res) {
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
-    jsonAPI.getTopTippedLastWeek(limit)
+    const period = req.body.period || 'week';
+    jsonAPI.getTopTippedLastPeriod(limit, period)
       .then(function (releases) {
         res.render('partials/release-events.ejs', {releases: releases});
       });
@@ -1141,6 +1143,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/tip', function (req, res) {
     if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
     if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
+    if (req.user.profileAddress == req.body.recipient) return res.json({success: false, authenticated: true, profile: true, self: true});
     const units = req.body.amount == 1 ? " coin" : "coins";
     const amount = parseInt(req.body.amount);
     musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)

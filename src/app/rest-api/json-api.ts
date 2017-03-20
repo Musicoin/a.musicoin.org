@@ -324,19 +324,23 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
-  getTopPlayedLastWeek(limit: number): Promise<any> {
-    const lastWeek = moment(Date.now()).subtract(1, "week").toDate().getTime();
-    const start = MusicoinOrgJsonAPI._getDatePeriodStart(lastWeek, "week");
-    return ReleaseStats.find({startDate: start, duration: "week"})
+  getTopPlayedLastPeriod(limit: number, period: string): Promise<any> {
+    const start = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), period);
+    return ReleaseStats.find({startDate: start, duration: period})
       .sort({"playCount": "desc"})
       .populate("release")
       .limit(limit)
       .exec()
       .then(statsRecords => {
-        return statsRecords.map(sr => {
+        return statsRecords
+          .filter(sr => sr.release)
+          .map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
-              output.playsLastWeek = sr.playCount;
+              output.stats = {
+                plays: sr.playCount,
+                period: period
+              }
               return output;
             });
         })
@@ -344,9 +348,8 @@ export class MusicoinOrgJsonAPI {
       .then(promises => Promise.all(promises));
   }
 
-  getTopTippedLastWeek(limit: number): Promise<any> {
-    const lastWeek = moment(Date.now()).subtract(1, "week").toDate().getTime();
-    const start = MusicoinOrgJsonAPI._getDatePeriodStart(lastWeek, "week");
+  getTopTippedLastPeriod(limit: number, period: string): Promise<any> {
+    const start = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), "week");
     return ReleaseStats.find({startDate: start, duration: "week"})
       .sort({"tipCount": "desc"})
       .populate("release")
@@ -356,7 +359,10 @@ export class MusicoinOrgJsonAPI {
         return statsRecords.map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
-              output.tipsLastWeek = sr.tipCount;
+              output.stats = {
+                tips: sr.tipCount,
+                period: period
+              }
               return output;
             });
         })
@@ -745,6 +751,14 @@ export class MusicoinOrgJsonAPI {
       startDate: this._getDatePeriodStart(date, duration),
       duration: duration
     }
+  }
+
+  private static _getPreviousDatePeriodStart(date: number, duration: string): Promise<number> {
+    if (duration == "day" || duration == "week" || duration == "month" || duration == "year")
+      return moment(date).subtract(0, duration).startOf(duration);
+    else if (duration == "all")
+      return 0;
+    else throw new Error("Invalid duration specified for stats table: " + duration);
   }
 
   private static _getDatePeriodStart(date: number, duration: string): Promise<number> {

@@ -43,6 +43,10 @@ var tipModule = {
       if (data.success) {
         callback(null, data);
       }
+      else if (data.self) {
+        new Message("Sorry, you can't tip your own profile", 'warning', 5000);
+        callback(new Error("Failed to send tip"), data);
+      }
       else {
         callback(new Error("Failed to send tip"), data);
       }
