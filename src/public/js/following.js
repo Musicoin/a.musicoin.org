@@ -15,11 +15,8 @@ $( document ).ready(function() {
   };
 
   function handleResponse(element, data) {
-    var oldCount = parseInt(element.attr('follower-count'));
-
     if (data.success) {
       if (data.following) {
-        element.attr('follower-count', oldCount+1);
         updateFollowerCountLabel(element);
         element.text(element.attr('text-following'));
         element.removeClass(element.attr('class-not-following'));
@@ -27,7 +24,6 @@ $( document ).ready(function() {
         element.attr('following', 'true');
       }
       else {
-        element.attr('follower-count', oldCount-1);
         element.text(element.attr('text-not-following'));
         element.removeClass(element.attr('class-following'));
         element.addClass(element.attr('class-not-following'));
@@ -61,6 +57,10 @@ $( document ).ready(function() {
     var licenseAddress = element.attr('licenseAddress');
     var follow = element.attr('following') != "true";
     $.post('/follow', {toFollow: toFollow, licenseAddress: licenseAddress, follow: follow}, function(data) {
+      var oldCount = parseInt(element.attr('follower-count'));
+      if (data.success) {
+        element.attr('follower-count', data.following ? oldCount+1 : oldCount-1);
+      }
       handleResponse(element, data);
       if (data.authenticated == false) {
         new Message("You need to login to follow a user", "warning", 5000)
