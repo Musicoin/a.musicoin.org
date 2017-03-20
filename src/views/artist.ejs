@@ -72,12 +72,11 @@ function formatNumber(value) {
                  text-following="Following"
                  class-following="btn-success"
                  text-not-following="Follow"
-                 class-not-following="btn-default">
+                 class-not-following="btn-default"
+                 follower-count="<%=artist.followerCount%>">
                 Follow
             </div>
-
-            <!-- Hiding this for now until we have real data -->
-            <div class="subtle-text"><%=formatNumber(artist.followerCount)%></div>
+            <div class="follower-count subtle-text"> - </div>
         </div>
     </div>
 

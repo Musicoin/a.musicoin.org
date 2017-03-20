@@ -1,19 +1,39 @@
 $( document ).ready(function() {
 
+  function formatNumber(value) {
+    if (!value || value == 0) return 0;
+    const lookup = ["", "k", "M", "B", "T"];
+    var order = Math.min(Math.floor(Math.log10(value)/3), lookup.length-1);
+    var mult = value / Math.pow(10, 3*order);
+    var decimals = order > 0 ? 1 : 0;
+    return mult.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + lookup[order];
+  }
+
+  function updateFollowerCountLabel(element) {
+    var followerCountLabel = element.parent().find(".follower-count");
+    followerCountLabel.text(formatNumber(parseInt(element.attr('follower-count'))));
+  };
+
   function handleResponse(element, data) {
+    var oldCount = parseInt(element.attr('follower-count'));
+
     if (data.success) {
       if (data.following) {
+        element.attr('follower-count', oldCount+1);
+        updateFollowerCountLabel(element);
         element.text(element.attr('text-following'));
         element.removeClass(element.attr('class-not-following'));
         element.addClass(element.attr('class-following'));
         element.attr('following', 'true');
       }
       else {
+        element.attr('follower-count', oldCount-1);
         element.text(element.attr('text-not-following'));
         element.removeClass(element.attr('class-following'));
         element.addClass(element.attr('class-not-following'));
         element.attr('following', 'false');
       }
+      updateFollowerCountLabel(element);
     }
     else if (data.authenticated == false || data.profile == false) {
       element.text(element.attr('text-not-following'));
@@ -29,6 +49,7 @@ $( document ).ready(function() {
   $(".follow-toggle-button").each(function() {
     var element = $(this);
     var toFollow = element.attr('user');
+    updateFollowerCountLabel(element);
     $.post('/follows', {toFollow: toFollow}, function(data) {
       handleResponse(element, data);
     });
