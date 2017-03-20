@@ -129,7 +129,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.use('/json-api', restAPI.getRouter());
-  app.use('/', debug("Got request, pre-processing"), preProcessUser(mediaProvider, jsonAPI), debug("checking group invite code.."), checkInviteCode);
+  app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
   app.use('/admin/*', isLoggedIn, adminOnly);
 
   function doRender(req, res, view, context) {
@@ -171,7 +171,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return new Date(timestamp * 1000).toLocaleDateString('en-US', options);
   }
 
-  app.get('/', debug("Showing index"), (req, res) => {
+  app.get('/', (req, res) => {
     res.render(__dirname + '/../overview/index.html', {});
   });
   // app.get('/', unauthRedirect("/info"), checkLoginRedirect, function (req, res) {
@@ -534,7 +534,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
-  app.get('/welcome',  debug("Got welcome request"), redirectIfLoggedIn(loginRedirect), (req, res) => doRender(req, res, 'welcome.ejs', {}));
+  app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => doRender(req, res, 'welcome.ejs', {}));
   app.get('/invite', (req, res) => {
     const musician = req.query.type == "musician";
     doRender(req, res, 'invite.ejs', {
