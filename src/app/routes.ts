@@ -273,27 +273,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/feed', isLoggedIn, function (req, res) {
     const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages);
     const rs = jsonAPI.getNewReleases(config.ui.feed.newReleases).catchReturn([]);
-    const fa = jsonAPI.getFeaturedArtists(config.ui.feed.newArtists).catchReturn([]);
-    const h  = jsonAPI.getHero();
-
-    Promise.join(m, rs, h, fa, function (messages, releases, hero, artists) {
-      doRender(req, res, "feed.ejs", {
-        messages: messages,
-        releases: releases,
-        hero: hero,
-        featuredArtists: artists,
-        ui: config.ui.feed
-      });
-    })
-      .catch(function (err) {
-        console.log(err);
-        res.redirect('/error');
-      });
-  });
-
-  app.get('/feed2', isLoggedIn, function (req, res) {
-    const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages);
-    const rs = jsonAPI.getNewReleases(config.ui.feed.newReleases).catchReturn([]);
     const tpw = jsonAPI.getTopPlayedLastWeek(config.ui.feed.topPlayLastWeek).catchReturn([]);
     const ttw = jsonAPI.getTopTippedLastWeek(config.ui.feed.topTippedLastWeek).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(config.ui.feed.newArtists).catchReturn([]);
