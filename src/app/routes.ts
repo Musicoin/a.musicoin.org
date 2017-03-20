@@ -291,6 +291,31 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/feed2', isLoggedIn, function (req, res) {
+    const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages);
+    const rs = jsonAPI.getNewReleases(config.ui.feed.newReleases).catchReturn([]);
+    const tpw = jsonAPI.getTopPlayedLastWeek(config.ui.feed.topPlayLastWeek).catchReturn([]);
+    const ttw = jsonAPI.getTopTippedLastWeek(config.ui.feed.topTippedLastWeek).catchReturn([]);
+    const fa = jsonAPI.getFeaturedArtists(config.ui.feed.newArtists).catchReturn([]);
+    const h  = jsonAPI.getHero();
+
+    Promise.join(m, rs, h, fa, tpw, ttw, function (messages, releases, hero, artists, topPlayed, topTipped) {
+      doRender(req, res, "feed.ejs", {
+        messages: messages,
+        releases: releases,
+        topPlayedLastWeek: topPlayed,
+        topTippedLastWeek: topTipped,
+        hero: hero,
+        featuredArtists: artists,
+        ui: config.ui.feed
+      });
+    })
+      .catch(function (err) {
+        console.log(err);
+        res.redirect('/error');
+      });
+  });
+
   function handleBrowseRequest(req, res, search, genre) {
     const maxGroupSize = req.query.maxGroupSize ? parseInt(req.query.maxGroupSize) : 8;
     const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize, search, genre).catchReturn([]);
@@ -371,6 +396,22 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.post('/elements/top-played-week', function (req, res) {
+    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
+    jsonAPI.getTopPlayedLastWeek(limit)
+      .then(function (releases) {
+        res.render('partials/release-events.ejs', {releases: releases});
+      });
+  });
+
+  app.post('/elements/top-tipped-week', function (req, res) {
+    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
+    jsonAPI.getTopTippedLastWeek(limit)
+      .then(function (releases) {
+        res.render('partials/release-events.ejs', {releases: releases});
+      });
+  });
+
   app.post('/elements/new-releases', function (req, res) {
     jsonAPI.getNewReleases(12)
       .then(function (releases) {
@@ -444,7 +485,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     post.then(() => jsonAPI.getFeedMessages(req.user._id, limit))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", {
+        return doRender(req, res, "partials/track-messages.ejs", {
           messages: messages,
           showTrack: showTrack,
           noContentMessage: req.body.nocontent
@@ -452,7 +493,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
-        doRender(req, res, "partials/track-messages.ejs", {messages: []});
+        return doRender(req, res, "partials/track-messages.ejs", {messages: []});
       })
   });
 

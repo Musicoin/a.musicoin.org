@@ -51,6 +51,32 @@
         </div>
 
         <div class="pad10 col2" style="background-color: rgba(0,0,0,0.02)">
+            <% if (typeof topPlayedLastWeek != "undefined") { %>
+            <div class="event-header text-center subtle-text">top played</div>
+            <div class="dynamic-element"
+                 style="min-height: 180px"
+                 id="de-new-releases"
+                 de-limit="<%= ui.newReleases %>"
+                 de-refresh-period="10"
+                 de-refresh-offset="2"
+                 de-url="/elements/top-played-week">
+                <%- include('partials/release-events.ejs', {releases: topPlayedLastWeek}) %>
+            </div>
+            <% } %>
+
+            <% if (typeof topTippedLastWeek != "undefined") { %>
+            <div class="event-header text-center subtle-text">top tipped</div>
+            <div class="dynamic-element"
+                 style="min-height: 180px"
+                 id="de-new-releases"
+                 de-limit="<%= ui.newReleases %>"
+                 de-refresh-period="10"
+                 de-refresh-offset="2"
+                 de-url="/elements/top-tipped-week">
+                <%- include('partials/release-events.ejs', {releases: topTippedLastWeek}) %>
+            </div>
+            <% } %>
+
             <div class="event-header text-center subtle-text">new releases</div>
             <div class="dynamic-element"
                  style="min-height: 180px"
@@ -62,7 +88,7 @@
                 <%- include('partials/release-events.ejs', {releases: releases}) %>
             </div>
 
-            <div class="event-header text-center">new artists</div>
+            <div class="event-header text-center subtle-text">new artists</div>
             <div class="dynamic-element"
                  id="de-featured-artists"
                  de-refresh-period="10"

@@ -324,6 +324,46 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getTopPlayedLastWeek(limit: number): Promise<any> {
+    const lastWeek = moment(Date.now()).subtract(1, "week").toDate().getTime();
+    const start = MusicoinOrgJsonAPI._getDatePeriodStart(lastWeek, "week");
+    return ReleaseStats.find({startDate: start, duration: "week"})
+      .sort({"playCount": "desc"})
+      .populate("release")
+      .limit(limit)
+      .exec()
+      .then(statsRecords => {
+        return statsRecords.map(sr => {
+          return this._convertDbRecordToLicense(sr.release)
+            .then(output => {
+              output.playsLastWeek = sr.playCount;
+              return output;
+            });
+        })
+      })
+      .then(promises => Promise.all(promises));
+  }
+
+  getTopTippedLastWeek(limit: number): Promise<any> {
+    const lastWeek = moment(Date.now()).subtract(1, "week").toDate().getTime();
+    const start = MusicoinOrgJsonAPI._getDatePeriodStart(lastWeek, "week");
+    return ReleaseStats.find({startDate: start, duration: "week"})
+      .sort({"tipCount": "desc"})
+      .populate("release")
+      .limit(limit)
+      .exec()
+      .then(statsRecords => {
+        return statsRecords.map(sr => {
+          return this._convertDbRecordToLicense(sr.release)
+            .then(output => {
+              output.tipsLastWeek = sr.tipCount;
+              return output;
+            });
+        })
+      })
+      .then(promises => Promise.all(promises));
+  }
+
   getHero(): Promise<Hero> {
     return Hero.find({startDate: {$lte: Date.now()}})
       .sort({startDate: 'desc'})

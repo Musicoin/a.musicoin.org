@@ -41,7 +41,9 @@ function getStructuredConfig(keyValueConfig) {
     ui: {
       feed: {
         newMessages: 24,
-        newReleases: 12,
+        newReleases: 9,
+        topPlayLastWeek: 3,
+        topTippedLastWeek: 3,
         newArtists: 12
       },
       home: {
