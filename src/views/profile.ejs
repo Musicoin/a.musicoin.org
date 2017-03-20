@@ -316,19 +316,18 @@
                                                                                             aria-hidden="true"></i></a>
                 </div>
                 <% if (typeof sendResult != "undefined") { %>
-                <% if (sendResult.sendError) { %>
-                <div class="text-center text-danger">
-                    Send failed!
-                </div>
-                <% } else { %>
-                <div class="text-center">
-                    Payment sent!
-                </div>
+                    <% if (sendResult.sendError) { %>
+                        <div class="text-center text-danger">
+                            Send failed!
+                        </div>
+                    <% } else { %>
+                        <div class="text-center">
+                            Payment sent!
+                        </div>
+                    <% } %>
                 <% } %>
             </div>
-            <% } %>
         </div>
-    </div>
 
     <% if (user.canInvite) { %>
     <div class="col-sm-6">
