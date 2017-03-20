@@ -671,8 +671,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/admin/overview', isLoggedIn, adminOnly, function (req, res) {
     // render the page and pass in any flash data if it exists
-    musicoinApi.getAccountBalances(config.trackingAccounts.map(ta => ta.address))
-      .then(function (balances) {
+    const b = musicoinApi.getMusicoinAccountBalance();
+    const o = musicoinApi.getAccountBalances(config.trackingAccounts.map(ta => ta.address));
+    Promise.join(b, o, (mcBalance, balances) => {
         const output = [];
         balances.forEach((balance, index) => {
           const accountDetails = config.trackingAccounts[index];
@@ -682,6 +683,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             name: accountDetails.name,
             address: accountDetails.address,
           })
+        })
+        output.push({
+          balance: mcBalance.musicoins,
+          formattedBalance: mcBalance.formattedMusicoins,
+          name: "MC Client Balance",
+          address: "",
         })
         return doRender(req, res, 'admin-overview.ejs', {accounts: output});
       })
