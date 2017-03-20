@@ -755,7 +755,7 @@ export class MusicoinOrgJsonAPI {
 
   private static _getPreviousDatePeriodStart(date: number, duration: string): Promise<number> {
     if (duration == "day" || duration == "week" || duration == "month" || duration == "year")
-      return moment(date).subtract(0, duration).startOf(duration);
+      return moment(date).subtract(1, duration).startOf(duration);
     else if (duration == "all")
       return 0;
     else throw new Error("Invalid duration specified for stats table: " + duration);
