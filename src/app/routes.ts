@@ -134,7 +134,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/admin/*', isLoggedIn, adminOnly);
 
   function doRender(req, res, view, context) {
-    console.log("Calling doRender in " + view);
+    // console.log("Calling doRender in " + view);
     const b = req.user && req.user.profileAddress ? musicoinApi.getAccountBalance(req.user.profileAddress) : Promise.resolve(null);
     return b.then(balance => {
       if (req.user) {
@@ -254,8 +254,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/main', isLoggedIn, function (req, res) {
     const rs = jsonAPI.getNewReleases(config.ui.home.newReleases).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(config.ui.home.newArtists).catchReturn([]);
-    const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.feed.topPlayLastWeek, "week").catchReturn([]);
-    const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.feed.topTippedLastWeek, "week").catchReturn([]);
+    const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.home.topPlayLastWeek, "week").catchReturn([]);
+    const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.home.topTippedLastWeek, "week").catchReturn([]);
     const h  = jsonAPI.getHero();
     const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
     Promise.join(rs, fa, b, h, tpw, ttw, function (releases, artists, balance, hero, topPlayed, topTipped) {
