@@ -349,7 +349,7 @@ export class MusicoinOrgJsonAPI {
   }
 
   getTopTippedLastPeriod(limit: number, period: string): Promise<any> {
-    const start = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), "week");
+    const start = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), period);
     return ReleaseStats.find({startDate: start, duration: period})
       .sort({"tipCount": "desc"})
       .populate("release")
