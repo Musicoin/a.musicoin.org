@@ -90,6 +90,7 @@ const userSchema = mongoose.Schema({
       type: Boolean,
       default: true
     },
+    minimizeHeroInFeed: Boolean
   },
   directTipCount: {
     type: Number,

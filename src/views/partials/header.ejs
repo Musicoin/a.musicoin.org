@@ -125,6 +125,7 @@
         <% if (isAuthenticated) { %>
             <div style="width:20px"></div>
             <!--<a href="/faq" class="header-menu-item"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>-->
+            <a href="/main" class="header-menu-item"><i class="fa fa-compass" aria-hidden="true"></i></a>
             <a href="/browse" class="header-menu-item"><i class="fa fa-search" aria-hidden="true"></i></a>
             <div style="width:20px"></div>
 
@@ -237,9 +238,6 @@
           new Message("Failed to update preferences", "error", 3000);
           $("#messagePreference")[0].checked = !checked;
         }
-
-        // this is so dumb.  popovers do some magic that destroys state.  wtf??
-        $("#preferences").data('bs.popover').options.content = newHTML;
       })
     })
 

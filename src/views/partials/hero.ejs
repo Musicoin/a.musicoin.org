@@ -1,3 +1,7 @@
+<%
+    var togglable = typeof display != "undefined";
+ %>
+
 <style>
     .hero {
         width: 100%;
@@ -5,7 +9,7 @@
         background-color: white;
         background-size: cover;
         background-position: center;
-        display: flex;
+        display: <%= !togglable || display ? "flex" : "none"%>;
         flex-direction: column;
         justify-content: flex-end;
         position: relative;
@@ -48,6 +52,14 @@
     .no-wide-image {
 
     }
+
+    .large-hero-toggle {
+        position: absolute;
+        top:10px;
+        right:10px;
+        text-shadow: 1px 1px rgba(0,0,0,0.5);
+        display: <%= togglable ? "block" : "none"%>;
+    }
 </style>
 
 <%
@@ -60,8 +72,8 @@
         bgImage = hero.profileImage;
     }
 %>
-
 <div class="hero box-shadow-top" style="background-image: url('<%=bgImage%>'); <%=style%>">
+    <div class="hero-toggle large-hero-toggle clickable"><i class="fa fa-compress" aria-hidden="true"></i></div>
     <% if(hero.licenseAddress) { %>
     <div class="hero-play center-text">
         <i class="fa fa-play-circle hero-play-button clickable audio-track"

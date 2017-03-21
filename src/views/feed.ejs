@@ -28,7 +28,7 @@
 <body>
     <%- include partials/header.ejs %>
 
-    <%- include('partials/hero.ejs', {}) %>
+    <%- include('partials/hero.ejs', { display: !minimizeHeroInFeed }) %>
 
     <%- include partials/donate-banner.ejs %>
 
@@ -50,6 +50,8 @@
         </div>
 
         <div class="pad10 col2" style="background-color: rgba(0,0,0,0.02)">
+            <%- include('partials/mini-hero.ejs', { display: minimizeHeroInFeed }) %>
+
             <% if (typeof topPlayedLastWeek != "undefined") { %>
                 <%- include('partials/top-release-chart.ejs', {releases: topPlayedLastWeek, title: "top played", elementEndpoint: "top-played-period"}) %>
             <% } %>

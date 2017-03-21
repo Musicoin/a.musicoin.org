@@ -285,12 +285,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
     Promise.join(m, rs, h, fa, tpw, ttw, function (messages, releases, hero, artists, topPlayed, topTipped) {
       if (messages.length > 0) {
+        console.log("mini: " + req.user.preferences.minimizeHeroInFeed);
         doRender(req, res, "feed.ejs", {
           messages: messages,
           releases: releases,
           topPlayedLastWeek: topPlayed,
           topTippedLastWeek: topTipped,
           hero: hero,
+          minimizeHeroInFeed: !!req.user.preferences.minimizeHeroInFeed,
           featuredArtists: artists,
           ui: config.ui.feed
         });
@@ -623,8 +625,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (!req.user.preferences) {
       req.user.preferences = {};
     }
+
     const originalValue = req.user.preferences.notifyOnComment || false;
-    req.user.preferences.notifyOnComment = req.body.notifyOnComment == "true";
+    req.user.preferences.notifyOnComment = req.body.notifyOnComment ? req.body.notifyOnComment == "true" : originalValue;
+    console.log("set: " +  req.body.minimizeHeroInFeed);
+    req.user.preferences.minimizeHeroInFeed = req.body.minimizeHeroInFeed ? req.body.minimizeHeroInFeed == "true" : req.user.preferences.minimizeHeroInFeed;
     req.user.save()
       .then(() => {
         res.json({
