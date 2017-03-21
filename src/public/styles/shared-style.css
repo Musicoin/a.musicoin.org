@@ -410,3 +410,17 @@ a.morelink {
     max-height: 61px;
     overflow: hidden;
 }
+
+.option-button {
+    margin-right: 5px;
+    margin-left: 5px;
+    color: #aaa;
+}
+.option-button:hover {
+    text-decoration: underline;
+}
+
+.option-button[selected] {
+    color: #88f;
+    text-decoration: underline;
+}

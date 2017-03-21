@@ -214,7 +214,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               }
               else {
                 console.log(`Invalid invite code: ${req.params.code}`);
-                res.redirect("/info");
+                res.redirect("/");
               }
             })
         }
@@ -253,14 +253,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/main', isLoggedIn, function (req, res) {
     const rs = jsonAPI.getNewReleases(config.ui.home.newReleases).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(config.ui.home.newArtists).catchReturn([]);
+    const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.feed.topPlayLastWeek, "week").catchReturn([]);
+    const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.feed.topTippedLastWeek, "week").catchReturn([]);
     const h  = jsonAPI.getHero();
     const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
-    Promise.join(rs, fa, b, h, function (releases, artists, balance, hero) {
+    Promise.join(rs, fa, b, h, tpw, ttw, function (releases, artists, balance, hero, topPlayed, topTipped) {
       doRender(req, res, "index-new.ejs", {
         musicoinClientBalance: balance,
         hero: hero,
         releases: releases,
         featuredArtists: artists,
+        topPlayedLastWeek: topPlayed,
+        topTippedLastWeek: topTipped,
         ui: config.ui.home
       });
     })
@@ -279,15 +283,20 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const h  = jsonAPI.getHero();
 
     Promise.join(m, rs, h, fa, tpw, ttw, function (messages, releases, hero, artists, topPlayed, topTipped) {
-      doRender(req, res, "feed.ejs", {
-        messages: messages,
-        releases: releases,
-        topPlayedLastWeek: topPlayed,
-        topTippedLastWeek: topTipped,
-        hero: hero,
-        featuredArtists: artists,
-        ui: config.ui.feed
-      });
+      if (messages.length > 0) {
+        doRender(req, res, "feed.ejs", {
+          messages: messages,
+          releases: releases,
+          topPlayedLastWeek: topPlayed,
+          topTippedLastWeek: topTipped,
+          hero: hero,
+          featuredArtists: artists,
+          ui: config.ui.feed
+        });
+      }
+      else {
+        res.redirect("/main");
+      }
     })
       .catch(function (err) {
         console.log(err);
@@ -443,9 +452,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
+    const noContentMessage = req.body.nocontentmessage ? req.body.nocontentmessage : "No messages";
     post.then(() => jsonAPI.getUserMessages(req.body.user, limit))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
+        doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack, noContentMessage: noContentMessage});
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);

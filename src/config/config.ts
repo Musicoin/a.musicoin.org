@@ -47,8 +47,10 @@ function getStructuredConfig(keyValueConfig) {
         newArtists: 12
       },
       home: {
-        newReleases: 12,
-        newArtists: 12
+        newReleases: 6,
+        newArtists: 6,
+        topPlayLastWeek: 6,
+        topTippedLastWeek: 6,
       }
     },
     musicoinApi: {

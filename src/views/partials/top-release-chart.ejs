@@ -1,0 +1,33 @@
+<% if (typeof releases != "undefined") { %>
+<div>
+    <div class="event-header text-center subtle-text"><%=title%></div>
+    <div class="flex-row center-text" target=top-played >
+        <div class="clickable option-button" period="day" onclick="selectTopPlayedPeriod($(this))">Day</div>
+        <div class="clickable option-button" selected period="week" onclick="selectTopPlayedPeriod($(this))">Week</div>
+        <!--<div class="clickable option-button" period="month" onclick="selectTopPlayedPeriod($(this))">Month</div>-->
+    </div>
+    <div class="dynamic-element"
+         style="min-height: 180px"
+         de-limit="<%= ui.topPlayLastWeek %>"
+         de-period="week"
+         de-url="/elements/<%=elementEndpoint%>">
+        <%- include('release-events.ejs', {releases: releases}) %>
+    </div>
+</div>
+
+<script>
+  // don't include this multiple times
+  if (typeof selectTopPlayedPeriod == "undefined") {
+    function selectTopPlayedPeriod(element) {
+      var section = element.parent();
+      section.find('.option-button').attr('selected', false);
+
+      element.attr('selected', true);
+
+      var dynamicElement = element.parent().parent().find(".dynamic-element");
+      dynamicElement.attr('de-period', element.attr('period'));
+      dynamic.refreshElement(dynamicElement);
+    }
+  }
+</script>
+<% } %>

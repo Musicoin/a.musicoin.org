@@ -32,19 +32,13 @@
 
     <div class="two-columns white-well box-shadow-top">
             <div class="pad10">
-                <div class="event-header text-center subtle-text">new artists</div>
-                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
-                     de-target-id="de-featured-artists">
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
-                </div>
-                <div class="dynamic-element"
-                     id="de-featured-artists"
-                     de-refresh-period="10"
-                     de-refresh-offset="0"
-                     de-limit="<%= ui.newArtists %>"
-                     de-url="/elements/artist-events">
-                    <%- include('partials/artist-events.ejs', {artists: featuredArtists}) %>
-                </div>
+                <% if (typeof topPlayedLastWeek != "undefined") { %>
+                <%- include('partials/top-release-chart.ejs', {releases: topPlayedLastWeek, title: "top played", elementEndpoint: "top-played-period"}) %>
+                <% } %>
+
+                <% if (typeof topTippedLastWeek != "undefined") { %>
+                <%- include('partials/top-release-chart.ejs', {releases: topTippedLastWeek, title: "top tipped", elementEndpoint: "top-tipped-period"}) %>
+                <% } %>
             </div>
 
             <div class="pad10">
@@ -61,6 +55,20 @@
                      de-refresh-offset="2"
                      de-url="/elements/release-events">
                     <%- include('partials/release-events.ejs', {releases: releases}) %>
+                </div>
+
+                <div class="event-header text-center subtle-text">new artists</div>
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-featured-artists">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     id="de-featured-artists"
+                     de-refresh-period="10"
+                     de-refresh-offset="0"
+                     de-limit="<%= ui.newArtists %>"
+                     de-url="/elements/artist-events">
+                    <%- include('partials/artist-events.ejs', {artists: featuredArtists}) %>
                 </div>
             </div>
     </div>
