@@ -69,6 +69,12 @@
 <div class="container">
     <h1>
         <%=license.title%>
+        <a href="https://twitter.com/share"
+           class="twitter-share-button"
+           data-text="Check out '<%=license.title%>' by <%=twitterHandle%> on @musicoins"
+           data-url="https://musicoin.org/nav/track/<%=license.address%>"
+           data-show-count="true">Tweet</a>
+        <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
     </h1>
     <div class="row">
         <div class="col-sm-4 flex-column mb20">
@@ -99,23 +105,29 @@
                          style="background-image: url('<%=license.image%>')">
                     </div>
 
-                    <div class="audio-track clickable text-large btn"
-                         licenseAddress='<%=license.address%>'>
-                        <i class="fa fa-play-circle" aria-hidden="true"></i> Play
+                    <div class="flex-row" style="justify-content: space-between">
+                        <div class="audio-track clickable text-large btn"
+                             licenseAddress='<%=license.address%>'>
+                            <i class="fa fa-play-circle" aria-hidden="true"></i> Play
+                        </div>
                     </div>
 
                     <table class="mb5">
                         <tr>
-                            <td align="right" class="pr5"><%=license.playCount%></td>
-                            <td align="left">plays</td>
-                            <td></td>
+                            <td align="center" class="pr5">
+                                <div class="text-large">
+                                    <span class="text-large"><%=(parseInt(license.playCount) + parseInt(license.directTipCount))%></span><span class="text-small">MC</span> earned</div>
+                                <div class="subtle-text" style="position:relative; top:-5px"><%=license.playCount%> plays + <%=license.directTipCount%> tips</div>
+                            </td>
                         </tr>
                         <tr>
-                            <td align="right" class="pr5"><%=license.directTipCount%></td>
-                            <td align="left">tips</td>
+                            <td align="center" class="pr5 subtle-text"></td>
+                        </tr>
+                        <tr>
                             <td>
                                 <div id="player-tip-button"
-                                     class="tip-button btn btn-success btn-xs"
+                                     class="tip-button btn btn-success mt10"
+                                     style="width: 150px"
                                      recipient="<%=license.address%>"
                                      amount="1"
                                      text-success="Thanks! :)"
@@ -127,15 +139,6 @@
                             </td>
                         </tr>
                     </table>
-
-                    <div class="center-text" class="mb20">
-                        <a href="https://twitter.com/share"
-                           class="twitter-share-button"
-                           data-text="Check out '<%=license.title%>' by <%=twitterHandle%> on @musicoins"
-                           data-url="https://musicoin.org/nav/track/<%=license.address%>"
-                           data-show-count="true">Tweet</a>
-                        <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-                    </div>
 
                     <% if (typeof isAdmin != "undefined" && isAdmin) { %>
                     <div class="center-text mt20">
