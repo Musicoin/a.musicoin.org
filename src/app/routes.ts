@@ -9,6 +9,7 @@ import {MusicoinRestAPI} from "./rest-api/rest-api";
 import {AddressResolver} from "./address-resolver";
 import {MailSender} from "./mail-sender";
 import {PendingTxDaemon} from './tx-daemon';
+import moment = require("moment");
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const TrackMessage = require('../app/models/track-message');
@@ -747,7 +748,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   function renderReport(req, res, duration, durationAdj) {
-    jsonAPI.getUserStatsReport(req.params.profileAddress, Date.now(), duration)
+    const offset = req.query.offset ? req.query.offset : 0;
+    const asOf = moment().subtract(offset, duration).startOf(duration).toDate().getTime();
+    jsonAPI.getUserStatsReport(req.params.profileAddress, asOf, duration)
       .then(report => {
         report.actionUrl = config.serverEndpoint + loginRedirect;
         report.baseUrl = config.serverEndpoint;
