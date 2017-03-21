@@ -292,6 +292,10 @@ textarea.form-control {
     font-size: 10px;
 }
 
+.text-medium-small {
+    font-size: 14px;
+}
+
 .abs-top-right {
     position: absolute;
     top: 10px;
