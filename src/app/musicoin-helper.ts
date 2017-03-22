@@ -8,8 +8,8 @@ export class MusicoinHelper {
   getArtistProfile(profileAddress: string) {
     return this.musicoinApi.getProfile(profileAddress)
       .then((profile) => {
-        const s = this.mediaProvider.readJsonFromIpfs(profile.socialUrl)
-        const d = this.mediaProvider.readTextFromIpfs(profile.descriptionUrl);
+        const s = this.mediaProvider.readJsonFromIpfs(profile.socialUrl).catchReturn({});
+        const d = this.mediaProvider.readTextFromIpfs(profile.descriptionUrl).catchReturn("");
         return Promise.join(s, d, function(social, description){
           profile.image = this.mediaProvider.resolveIpfsUrl(profile.imageUrl);
           profile.social = social;

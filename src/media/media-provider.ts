@@ -82,24 +82,43 @@ MediaProvider.prototype.readTextFromIpfs = function(url) {
 };
 
 MediaProvider.prototype.getIpfsResource = function(resourceUrl, keyProvider) {
+  var timeout = 5000;
   return new Promise(function(resolve, reject) {
     const options = this._parseIpfsUrl(resourceUrl);
     if (options.err) return reject(options.err);
 
-    http.get(options.ipfsUrl, function (proxyRes) {
+    let downloading = false;
+    let aborted = false;
+    const request = http.get(options.ipfsUrl, function (proxyRes) {
       try {
+        downloading = true;
+
         const headers = proxyRes.headers;
         let stream = proxyRes;
         stream = options.decrypt ? stream.pipe(crypto.createDecipher(algorithm, keyProvider())) : stream;
         stream = options.unzip ? stream.pipe(zlib.createGunzip()) : stream;
-        resolve({
-          headers: headers,
-          stream: stream
-        });
+
+        if (!aborted) {
+          resolve({
+            headers: headers,
+            stream: stream
+          });
+        }
       } catch (e) {
-        reject(e);
+        if (!aborted) {
+          reject(e);
+        }
       }
-    }).on('error', reject);
+    })
+    request.on('error', reject);
+    if (timeout) {
+      request.setTimeout(timeout, function() {
+        if (!downloading) {
+          aborted = true;
+          reject(new Error("Request timed out"));
+        }
+      })
+    }
   }.bind(this));
 };
 
