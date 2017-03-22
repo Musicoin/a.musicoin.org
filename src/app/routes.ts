@@ -242,6 +242,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/nav/artist/:address', isLoggedInOrIsPublic, (req, res) => {
+    console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);
+    jsonAPI.getArtist(req.params.address, false, false)
+      .then(artist => {
+        res.render('index-frames.ejs', {
+          artist: artist,
+          mainFrameLocation: req.originalUrl.substr(4)
+        });
+      });
+  });
+
   // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
   // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
   app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
