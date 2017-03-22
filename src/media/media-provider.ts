@@ -8,6 +8,7 @@ const stream = require('stream');
 const algorithm = 'aes-256-ctr';
 const tmp = require('tmp');
 const StreamUtils = require("./stream-utils");
+const IPFSResource = require('../app/models/ipfs-resource');
 
 // Supported formats
 const RAW = "ipfs://";
@@ -128,6 +129,13 @@ MediaProvider.prototype.getIpfsResource = function(resourceUrl, keyProvider) {
   }.bind(this));
 };
 
+MediaProvider.prototype.getKnownIPFSHashes = function(since, offset, limit) {
+  return IPFSResource.find({dateAdded: {$gte: since}})
+    .skip(offset)
+    .limit(limit)
+    .exec();
+}
+
 MediaProvider.prototype.getIpfsUrl = function(hash) {
   return this.ipfsReadEndpoint + '/ipfs/' + hash;
 };
@@ -213,13 +221,19 @@ const _uploadRaw = function(ipfsAddUrl, pathOrStream) {
         const ipfsHash = JSON.parse(body).Hash;
         resolve(ipfsHash);
       }
-    });
-
+    })
     // N.B.  This is strange, but req.form() isn't actually submitted until after we return control
     // to Node's main loop.  So, although it appears we have already posted the request, we haven't
     // and we can still append the file to the form.  I don't like it, but that's how it works.
     req.form().append('file', StreamUtils.asStream(pathOrStream));
-  });
+  })
+    .then(hash => {
+      IPFSResource.create({hash: hash})
+        .catch(err => {
+          console.log("Failed to add item to IPFS Resource list: " + hash + ", err: " + err);
+        });
+      return hash;
+    });
 };
 
 /**
