@@ -9,9 +9,7 @@
         <%=_noContentMessage%>
     </div>
     <% } %>
-    <%
-    var tipsMessages = [];
-    for (var i=0; i < messages.length; i++) {
+    <% for (var i=0; i < messages.length; i++) {
         var message = messages[i];
         var icon = message.tips > 0
                 ? '<i class="fa fa-star message-tip" aria-hidden="true"></i>'
@@ -30,40 +28,13 @@
         if (message.messageType == "donate") {
             messageClass += " message-donate";
         }
-        else if (message.messageType == "tip") {
-            if (tipsMessages.length == 0 || tipsMessages[tipsMessages.length-1].sender.profileAddress != message.sender.profileAddress) {
-                tipsMessages.push(message);
-            }
-        }
     %>
-
-
-    <% if (tipsMessages.length > 0 && (message.messageType != "tip" || i == messages.length -1)) { %>
-    <div class="pad5" style="padding-left: 40px; background-color: #efe">
-    <%
-        for (var tm=0; tm < tipsMessages.length; tm++) {
-            var tipMessage = tipsMessages[tm];
-    %>
-            <%= tipsMessages.length > 2 && tm > 0 ? ", " : "" %>
-            <%= tipsMessages.length > 1 && tm == tipsMessages.length-1 ? "and " : "" %>
-            <a href="/artist/<%=tipMessage.sender.profileAddress%>"><%=tipMessage.sender.name%></a>
-            <%= tm == tipsMessages.length -1 && tipsMessages.length > 1 ? " sent tips" : "" %>
-            <%= tm == tipsMessages.length -1 && tipsMessages.length == 1 ? " sent a tip" : "" %>
-    <%
-         }
-         tipsMessages = [];
-    %>
-    </div>
-    <%
-        }
-    %>
-
-    <% if (message.messageType != "tip") { %>
     <div class="chat-message hover-target <%=messageClass%>"
          releaseid="<%=releaseid%>"
          licenseAddress='<%=licenseAddress%>'
          senderAddress="<%=message.sender.profileAddress%>"
          messageid="<%=message.id%>">
+        <%=message.followReason%>
         <div class="center-text">
             <% if (showThisTrack) { %>
             <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=track.contractAddress%>'>
@@ -119,6 +90,5 @@
             <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
         </div>
     </div>
-    <% } %>
     <%}%>
 </div>
