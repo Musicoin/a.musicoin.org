@@ -186,11 +186,8 @@ export class MusicoinAPI {
               console.log("Failed to parse JSON data: '" + cacheFile + "', " + data + ", err: " + err);
             }
           }
-          // console.log("Expire entry!  " + JSON.stringify(options));
           fs.unlink(cacheFile, err => {
-            if (err) {
-              console.log("unable to unlink cache file: " + err)
-            }
+            // it's ok, this can happen if another thread deleted it first
           });
           MusicoinAPI.makeRequest(options, cacheFile, callback);
         })
@@ -207,9 +204,10 @@ export class MusicoinAPI {
         data: result,
         expiry: Date.now() + options.ttl
       };
-      fs.writeFile(cacheFile + ".tmp", JSON.stringify(entry), 'utf8', function (err) {
+      const tmpFile = cacheFile + "." + Date.now() + ".tmp";
+      fs.writeFile(tmpFile, JSON.stringify(entry), 'utf8', function (err) {
         if (!err) {
-          fs.rename(cacheFile + ".tmp", cacheFile, function (err) {
+          fs.rename(tmpFile, cacheFile, function (err) {
             if (err) console.log("Failed to rename cached file: " + err);
           });
         }
