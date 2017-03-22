@@ -126,17 +126,44 @@
                             <td align="center" class="pr5 subtle-text"></td>
                         </tr>
                         <tr>
-                            <td>
-                                <div id="player-tip-button"
-                                     class="tip-button btn btn-success mt10"
-                                     style="width: 150px"
-                                     recipient="<%=license.address%>"
-                                     amount="1"
-                                     text-success="Thanks! :)"
-                                     context-type="Release"
-                                     text-fail=":("
-                                     text-default="Tip">
-                                    Tip
+                            <td class="mt10">
+                                <div class="mt10"></div>
+                                <div style="background-color: rgba(0,0,0,0.05)" class="pad10">
+                                    <div class="text-large mt10">Send a Tip</div>
+                                    <div class="flex-row">
+                                        <div id="player-tip-button"
+                                             class="tip-button btn btn-success mt10 mr5"
+                                             recipient="<%=license.address%>"
+                                             amount="1"
+                                             text-success="Thanks! :)"
+                                             context-type="Release"
+                                             text-fail=":("
+                                             text-default="1 MC">
+                                            1 MC
+                                        </div>
+                                        <div id="player-tip-button"
+                                             class="tip-button btn btn-success mt10 mr5"
+                                             recipient="<%=license.address%>"
+                                             amount="5"
+                                             text-success="Thanks! :)"
+                                             context-type="Release"
+                                             text-fail=":("
+                                             text-default="5 MC">
+                                            5 MC
+                                        </div>
+                                        <div id="player-tip-button"
+                                             class="tip-button btn btn-success mt10"
+                                             recipient="<%=license.address%>"
+                                             amount="10"
+                                             text-success="Thanks! :)"
+                                             context-type="Release"
+                                             text-fail=":("
+                                             text-default="10 MC">
+                                            10 MC
+                                        </div>
+
+                                    </div>
+
                                 </div>
                             </td>
                         </tr>
