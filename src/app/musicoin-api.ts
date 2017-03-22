@@ -1,9 +1,11 @@
 import {Promise} from 'bluebird';
+import * as fs from 'fs';
 import * as request from 'request';
 import * as os from 'os';
 import ReadableStream = NodeJS.ReadableStream;
 const cachedRequest = require('cached-request')(request);
-cachedRequest.setCacheDirectory(os.tmpdir() + "/request-cache");
+const cacheDir = os.tmpdir() + "/request-cache";
+cachedRequest.setCacheDirectory(cacheDir);
 cachedRequest.setValue('ttl', 30000);
 
 interface MusicoinApiConfig {
@@ -165,8 +167,67 @@ export class MusicoinAPI {
     return this._getJson(url, null, properties);
   }
 
+  private static localImpl(options, callback) {
+    const key = MusicoinAPI.hashKey(JSON.stringify(options));
+    const cacheFile = cacheDir + "/" + key;
+    fs.exists(cacheFile, function(exists) {
+      if (exists) {
+        fs.readFile(cacheFile, 'utf8', function(err, data) {
+          const json = JSON.parse(data);
+          if (Date.now() < json.expiry) {
+            // console.log("Cache hit!  Returning cached content: " + JSON.stringify(options));
+            callback(null, {
+              statusCode: 200,
+            }, json.data)
+          }
+          else {
+            // console.log("Expire entry!  " + JSON.stringify(options));
+            fs.unlink(cacheFile, err => {
+              if (err) {
+                console.log("unable to unlink cache file: " + err)
+              }
+            });
+            MusicoinAPI.makeRequest(options, cacheFile, callback);
+          }
+        })
+      }
+      else {
+        MusicoinAPI.makeRequest(options, cacheFile, callback);
+      }
+    })
+  }
+
+  private static makeRequest(options, cacheFile: string, callback) {
+    console.log("Cache not available, calling through...: " + JSON.stringify(options));
+    request(options, function (error, response, result) {
+      const entry = {
+        data: result,
+        expiry: Date.now() + options.ttl
+      };
+      fs.writeFile(cacheFile + ".tmp", JSON.stringify(entry), 'utf8', function (err) {
+        if (!err) {
+          fs.rename(cacheFile + ".tmp", cacheFile, function (err) {
+            if (err) console.log("Failed to rename cached file: " + err);
+          });
+        }
+      })
+      callback(error, response, result);
+    })
+  }
+
+  private static hashKey(key) {
+    var hash = 0, i, chr, len;
+    if (key.length == 0) return hash;
+    for (i = 0, len = key.length; i < len; i++) {
+      chr   = key.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0;
+    };
+    return hash;
+  };
+
   _getJson(url: string, cacheTTL?: number, properties?: any): Promise<any> {
-    var requestImpl = cacheTTL ? cachedRequest : request;
+    const requestImpl = cacheTTL ? MusicoinAPI.localImpl : request;
     return new Promise(function(resolve, reject) {
       requestImpl({
         url: url,
