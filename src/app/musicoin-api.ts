@@ -173,22 +173,24 @@ export class MusicoinAPI {
     fs.exists(cacheFile, function(exists) {
       if (exists) {
         fs.readFile(cacheFile, 'utf8', function(err, data) {
-          const json = JSON.parse(data);
-          if (Date.now() < json.expiry) {
-            // console.log("Cache hit!  Returning cached content: " + JSON.stringify(options));
-            callback(null, {
-              statusCode: 200,
-            }, json.data)
+          try {
+            const json = JSON.parse(data);
+            if (Date.now() < json.expiry) {
+              // console.log("Cache hit!  Returning cached content: " + JSON.stringify(options));
+              callback(null, {
+                statusCode: 200,
+              }, json.data)
+            }
+          } catch (e) {
+             console.log("Failed to parse JSON data: '" + cacheFile + "', " + data + ", err: " + err);
           }
-          else {
-            // console.log("Expire entry!  " + JSON.stringify(options));
-            fs.unlink(cacheFile, err => {
-              if (err) {
-                console.log("unable to unlink cache file: " + err)
-              }
-            });
-            MusicoinAPI.makeRequest(options, cacheFile, callback);
-          }
+          // console.log("Expire entry!  " + JSON.stringify(options));
+          fs.unlink(cacheFile, err => {
+            if (err) {
+              console.log("unable to unlink cache file: " + err)
+            }
+          });
+          MusicoinAPI.makeRequest(options, cacheFile, callback);
         })
       }
       else {
