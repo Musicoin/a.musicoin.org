@@ -188,7 +188,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     console.log(`Looking for invite: ${req.params.code}`);
     User.findOne({"invite.inviteCode": req.params.code}).exec()
       .then((record) => {
-        console.log(`Invite query complete: ${record}`);
+        // console.log(`Invite query complete: ${record}`);
         delete req.session.inviteCode;
         let inviteClaimed = false;
         if (record) {
@@ -207,7 +207,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             "invitesRemaining": {$gt: 0}
           }).exec()
             .then(inviter => {
-              console.log(`GroupInvite query complete: ${inviter}`);
+              // console.log(`GroupInvite query complete: ${inviter}`);
               if (inviter) {
                 console.log(`Redirecting to welcome page, group invite ok!: ${req.params.code}`);
                 req.session.inviteCode = req.params.code;
