@@ -245,9 +245,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/nav/artist/:address', isLoggedInOrIsPublic, (req, res) => {
     console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);
     jsonAPI.getArtist(req.params.address, false, false)
-      .then(artist => {
+      .then(result => {
         res.render('index-frames.ejs', {
-          artist: artist,
+          artist: result.artist,
           mainFrameLocation: req.originalUrl.substr(4)
         });
       });
