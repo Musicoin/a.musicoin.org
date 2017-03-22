@@ -89,8 +89,10 @@ MediaProvider.prototype.getIpfsResource = function(resourceUrl, keyProvider) {
 
     let downloading = false;
     let aborted = false;
+    console.log("Requesting " + resourceUrl);
     const request = http.get(options.ipfsUrl, function (proxyRes) {
       try {
+        console.log("Downloading " + resourceUrl);
         downloading = true;
 
         const headers = proxyRes.headers;
@@ -114,8 +116,12 @@ MediaProvider.prototype.getIpfsResource = function(resourceUrl, keyProvider) {
     if (timeout) {
       request.setTimeout(timeout, function() {
         if (!downloading) {
+          console.log("Canceling request for IPFS resource: " + resourceUrl);
           aborted = true;
           reject(new Error("Request timed out"));
+        }
+        else {
+          console.log("Timeout for resource expired but downloading started: " + resourceUrl);
         }
       })
     }
