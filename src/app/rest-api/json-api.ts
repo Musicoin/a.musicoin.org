@@ -292,6 +292,26 @@ export class MusicoinOrgJsonAPI {
       .exec();
   }
 
+  getAllReleases(_search: string, start: number, length: number): Promise<any> {
+    let filter = {};
+    if (_search) {
+      const search = _search.trim();
+      filter = {$or: [
+        {"artistName": {"$regex": search, "$options": "i"}},
+        {"title": {"$regex": search, "$options": "i"}},
+        {"contractAddress": {"$regex": search, "$options": "i"}},
+      ]};
+    }
+    const c = Release.count().exec()
+    const rs = this._getLicensesForEntriesByPage(filter, start, length, {"releaseDate": 'desc'});
+    return Promise.join(c, rs, (count, releases) => {
+      return {
+        count: count,
+        releases: releases
+      }
+    });
+  }
+
   getInvitedBy(userId: string, start: number, length: number): Promise<any> {
     return User.find({"invite.invitedBy": userId})
       .sort({"invite.invitedOn": 'desc'})
@@ -576,11 +596,25 @@ export class MusicoinOrgJsonAPI {
     return this.musicoinAPI.getTransactionHistory(address, length, start);
   }
 
+  _getLicensesForEntriesByPage(condition: any, start: number, limit: number, sort: any): Promise<any> {
+    return this._getReleaseEntriesByPage(condition, start, limit, sort)
+      .then(items => items.map(item => this._convertDbRecordToLicense(item)))
+      .then(promises => Promise.all(promises));
+  }
+
+  _getReleaseEntriesByPage(condition: any, start: number, limit: number, sort: any) {
+    let query = Release.find(condition)
+      .limit(limit)
+      .skip(start)
+      .sort(sort);
+    return query.exec();
+  }
+
   _getLicensesForEntries(condition: any, limit?: number, sort?: any): Promise<any> {
     return this._getReleaseEntries(condition, limit, sort)
       .then(items => items.map(item => this._convertDbRecordToLicense(item)))
       .then(promises => Promise.all(promises));
-}
+  }
 
   _getReleaseEntries(condition: any, limit?: number, _sort?: any) {
     let sort = _sort ? _sort : {releaseDate: 'desc'};

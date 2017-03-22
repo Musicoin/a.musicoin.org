@@ -863,6 +863,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/admin/releases', (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start - length);
+    const url = '/admin/releases?search=' + (req.query.search ? req.query.search : '');
+    jsonAPI.getAllReleases(req.query.search, start, length)
+      .then(result => {
+        const releases = result.releases;
+        doRender(req, res, 'admin-releases.ejs', {
+          search: req.query.search,
+          releases: releases,
+          navigation: {
+            show10: `${url}&length=10`,
+            show25: `${url}&length=25`,
+            show50: `${url}&length=50`,
+            description: `Showing ${start + 1} to ${start + releases.length} of ${result.count}`,
+            start: previous > 0 ? `${url}&length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+            next: releases.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+          }
+        });
+      });
+  });
+
   // =====================================
   // EMAIL ==============================
   // =====================================
