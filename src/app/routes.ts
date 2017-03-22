@@ -10,6 +10,7 @@ import {AddressResolver} from "./address-resolver";
 import {MailSender} from "./mail-sender";
 import {PendingTxDaemon} from './tx-daemon';
 import moment = require("moment");
+import Feed = require('feed');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const TrackMessage = require('../app/models/track-message');
@@ -1671,6 +1672,41 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.send(err);
       });
   });
+
+  app.get('/rss/new-releases', (req, res) => {
+    const feedConfig = config.ui.rss.newReleases;
+    const rs = jsonAPI.getNewReleases(feedConfig.items).catchReturn([]);
+    rs.then(newReleases => {
+      const feed = new Feed({
+        title: feedConfig.title,
+        description: feedConfig.description,
+        id: `${config.serverEndpoint}/rss/new-releases`,
+        link: `${config.serverEndpoint}/rss/new-releases`,
+        image: `${config.serverEndpoint}/images/thumbnail.png`,
+        copyright: feedConfig.copyright,
+        updated: newReleases && newReleases.length > 0 ? newReleases[0].releaseDate : Date.now(),
+        author: feedConfig.author
+      });
+
+      newReleases.forEach(release => {
+        feed.addItem({
+          title: release.title,
+          id: `${config.serverEndpoint}/nav/track/${release.address}`,
+          link: `${config.serverEndpoint}/nav/track/${release.address}`,
+          description: `New release by ${release.artistName}`,
+          author: [{
+            name: `${release.artistName}`,
+            link: `${config.serverEndpoint}/nav/artist/${release.artistProfileAddress}`
+          }],
+          date: release.releaseDate,
+          image: `${config.serverEndpoint}${release.image}`
+        });
+      });
+      res.set('Content-Type', 'text/xml');
+      res.send(feed.render('rss-2.0'));
+      res.end();
+    })
+  })
 }
 
 function isAdmin(user) {

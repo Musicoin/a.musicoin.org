@@ -51,6 +51,21 @@ function getStructuredConfig(keyValueConfig) {
         newArtists: 6,
         topPlayLastWeek: 6,
         topTippedLastWeek: 6,
+      },
+      rss: {
+        newReleases: {
+          title: 'Musicoin - New Releases',
+          items: 10,
+          description: 'Find new music on Musicoin.org',
+          id: 'https://musicoin.org/',
+          link: 'https://musicoin.org/',
+          image: 'https://musicoin.org/images/thumbnail.png',
+          copyright: 'All rights reserved 2017, Musicoin.org',
+          author: {
+            name: 'Musicoin.org',
+            link: 'https://musicoin.org'
+          }
+        }
       }
     },
     musicoinApi: {
