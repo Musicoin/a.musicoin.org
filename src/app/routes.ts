@@ -186,7 +186,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return res.redirect("https://musicoin.org/accept/" + req.params.code);
     }
     console.log(`Looking for invite: ${req.params.code}`);
-    User.findOne({"invite.inviteCode": req.params.code}).exec()
+    User.findOne({"invite.inviteCode": req.params.code, "invite.claimed": {$ne: true}}).exec()
       .then((record) => {
         // console.log(`Invite query complete: ${record}`);
         delete req.session.inviteCode;

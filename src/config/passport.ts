@@ -254,7 +254,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         newUser.invite = {
           invitedBy: inviter._id,
           invitedAs: "",
-          inviteCode: inviteCode,
+          groupInviteCode: inviteCode,
           invitedOn: Date.now(),
           claimed: true
         };

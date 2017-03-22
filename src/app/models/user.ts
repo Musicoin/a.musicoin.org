@@ -76,6 +76,7 @@ const userSchema = mongoose.Schema({
       default: Date.now
     },
     inviteCode: String,
+    groupInviteCode: String,
     claimed: {
       type: Boolean,
       default: false
