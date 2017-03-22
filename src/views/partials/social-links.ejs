@@ -1,3 +1,5 @@
+<% if (typeof artist != "undefined") { %>
+
 <div class="social-links">
     <%
     var socialTypes = [
@@ -24,8 +26,9 @@
         }
 
     if (value) { %>
-    <a href="<%=value%>" target="_blank" class="fa <%= icon %> mr5 social-link"></a>
+    <a href="<%=value%>" target="_blank" class="fa mr10 <%= icon %> mr5 social-link"></a>
     <% }
     }
     %>
 </div>
+<% } %>

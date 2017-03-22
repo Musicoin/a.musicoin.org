@@ -33,28 +33,36 @@
 <body>
 <%- include partials/header.ejs %>
 
-<%- include('partials/hero.ejs', {}) %>
+<%- include('partials/hero.ejs', {artist: artist}) %>
 <%
 function formatNumber(value) {
     if (!value || value == 0) return 0;
     const lookup = ["", "k", "M", "B", "T"];
-    var order = Math.min(Math.floor(Math.log10(value)/3), lookup.length-1);
-    var mult = value / Math.pow(10, 3*order);
+    var order = Math.min(Math.floor(Math.log10(value) / 3), lookup.length - 1);
+    var mult = value / Math.pow(10, 3 * order);
     var decimals = order > 0 ? 1 : 0;
     return mult.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + lookup[order];
 }
- %>
+%>
 
-<div class="box-shadow-top white-well pad20">
-    <div class="">
-        <%- include partials/social-links.ejs %>
+<div class="box-shadow-top white-well pad20 columns-2-to-1">
+    <div id=description class="text-justify more col1">
+        <div class="more-content">
+            <%
+            var paragraphs = artist.description ? artist.description.split("\n").map(s => s.trim()).filter(s => s) : [];
+            for (var i = 0; i < paragraphs.length; i++) {
+                var paragraph = paragraphs[i];
+            %>
+            <%= paragraph %>
+            <br><br>
+            <% } %>
+        </div>
+        <a class="morelink clickable">show more</a>
     </div>
-    <div class="subtle-text"><%=artist.genres ? artist.genres.join(", ") : ""%></div>
-    <div class="mb10"></div>
-    <div class="flex-row mb10">
+    <div class="flex-row col2" style="justify-content: flex-end; min-width: 200px; align-items: flex-start">
         <div class="flex-column mr10 center-text">
             <div id="player-tip-button"
-                 class="tip-button btn btn-success tip-button btn-xs"
+                 class="tip-button btn btn-success tip-button"
                  recipient="<%= artist.profileAddress %>"
                  amount="1"
                  context-type="User"
@@ -67,7 +75,7 @@ function formatNumber(value) {
         </div>
 
         <div class="flex-column center-text mr10">
-            <div class="follow-toggle-button btn btn-default btn-xs"
+            <div class="follow-toggle-button btn btn-default"
                  user="<%= artist.id %>"
                  text-following="Following"
                  class-following="btn-success"
@@ -78,23 +86,6 @@ function formatNumber(value) {
             </div>
             <div class="follower-count subtle-text"> - </div>
         </div>
-    </div>
-
-
-    <p></p>
-    <div id=description class="text-justify more">
-        <div class="more-content">
-            <%
-            var paragraphs = artist.description ? artist.description.split("\n").map(s => s.trim()).filter(s => s) : [];
-            for (var i=0; i < paragraphs.length; i++) {
-                var paragraph = paragraphs[i];
-
-            %>
-            <%=paragraph%>
-            <br><br>
-            <%}%>
-        </div>
-        <a class="morelink clickable">show more</a>
     </div>
 </div>
 
@@ -117,9 +108,11 @@ function formatNumber(value) {
     </div>
 
     <div class="pad10">
+        <% if (releases.length > 0) { %>
         <div class="event-header text-center">releases</div>
         <!-- I don't see a reason for this to be a dynamic element -->
         <%- include('partials/release-events.ejs', {releases: releases}) %>
+        <% } %>
     </div>
 </div>
 <script>
