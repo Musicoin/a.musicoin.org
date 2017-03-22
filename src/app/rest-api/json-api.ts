@@ -894,6 +894,7 @@ export class MusicoinOrgJsonAPI {
               .or([
                 {sender: {$in: following}}, // comments by users/artists I follow
                 {sender: userId}, // messages I sent
+                {$and: [{artist: userId}, {messageType: {$in: ["tip", "follow"]}}]}, // anyone followed/tipped me
                 {replyToSender: userId} // messages in reply to my messages
               ])
             .limit(limit))

@@ -148,13 +148,32 @@
                         <% } %>
                     </td>
                     <td class="text-center middle"><%-user.mostRecentReleaseDate ? checked : unchecked%></td>
-                    <td class="text-center middle"><%=user.invitesRemaining%></td>
+                    <td class="text-center middle"><%=user.invitesRemaining%>
+                        <% if(user.profileAddress && user.draftProfile.artistName) { %>
+                        <div class="btn btn-success btn-sm" onclick="addInvites('<%=user.profileAddress%>', 10)">+10</div>
+                        <% } %>
+                    </td>
                 </tr>
                 <%}%>
             </table>
         </div>
     </div>
 </div>
+<script>
+    function addInvites(profileAddress, cnt) {
+      $.post('/admin/invites/add', {
+        profileAddress: profileAddress,
+        count: cnt
+      }, function (data) {
+        if (data.success) {
+          new Message("Invites added!", "success", 3000);
+        }
+        else {
+          new Message("Failed: " + data.reason, 'error', 5000)
+        }
+      })
+    }
+</script>
 <%- include partials/connect-with-us.ejs %>
 </body>
 </html>

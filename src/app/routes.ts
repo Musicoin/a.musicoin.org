@@ -777,6 +777,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   }
 
+  app.post('/admin/invites/add', (req, res) => {
+    if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
+    if (!req.body.count) return res.json({success: false, reason: "Invite count to add not provided"});
+    User.findOne({profileAddress: req.body.profileAddress}).exec()
+      .then(user => {
+        user.invitesRemaining += parseInt(req.body.count);
+        return user.save();
+      })
+      .then(() => {
+        res.json({success: true})
+      })
+  })
+
   app.get('/admin/invite-requests', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
