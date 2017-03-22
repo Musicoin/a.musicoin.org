@@ -198,7 +198,6 @@ export class MusicoinAPI {
   }
 
   private static makeRequest(options, cacheFile: string, callback) {
-    console.log("Cache not available, calling through...: " + JSON.stringify(options));
     request(options, function (error, response, result) {
       const entry = {
         data: result,
