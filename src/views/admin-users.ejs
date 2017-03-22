@@ -4,19 +4,22 @@
     <title>Users - Musicoin</title>
     <%- include partials/page-head.ejs %>
     <style>
-        body        {
-            word-wrap:break-word;
+        body {
+            word-wrap: break-word;
             background-image: url('/images/musician.jpg');
             background-size: cover;
         }
+
         .history {
             padding: 3px;
             min-width: 20px;
         }
+
         .history-nav {
             display: flex;
             justify-content: space-between;
         }
+
         .history-nav-link {
             margin-left: 10px;
             font-size: 14pt;
@@ -29,11 +32,11 @@
         }
 
         tr.claimed {
-            background-color: rgba(0,200,0,0.1);
+            background-color: rgba(0, 200, 0, 0.1);
         }
 
         tr.profile {
-            background-color: rgba(0,200,0,0.2);
+            background-color: rgba(0, 200, 0, 0.2);
         }
 
         .table > tbody > tr > td {
@@ -58,121 +61,119 @@
         </div>
     </div>
 </div>
-<div class="container">
-    <div class="row">
-        <div class="well white-well">
-            <div class="history-nav">
-                <div>
-                    <%=navigation.description%>
-                </div>
-                <div>
-                    Show
-                    <a class="history-nav-link" href="<%=navigation.show10%>">10</a>
-                    <a class="history-nav-link" href="<%=navigation.show25%>">25</a>
-                    <a class="history-nav-link" href="<%=navigation.show50%>">50</a>
-                </div>
-                <div>
-                    <% if (navigation.start) { %>
-                    <a class="history-nav-link" href="<%=navigation.start%>">first</a>
-                    <%}%>
-                    <% if (navigation.back) { %>
-                    <a class="history-nav-link" href="<%=navigation.back%>">back</a>
-                    <%}%>
-                    <% if (navigation.next) { %>
-                    <a class="history-nav-link" href="<%=navigation.next%>">next</a>
-                    <%} else {%>
-                    <span class="history-nav-link-disabled">next</span>
-                    <%}%>
-                </div>
-            </div>
-            <table class="table table-responsive" width="100%">
-                <tr>
-                    <th class="text-center">Invited As</th>
-                    <th class="text-center">Invited By</th>
-                    <th class="text-center">Invite Code</th>
-                    <th class="text-center">Invite<br>Clicked</th>
-                    <th class="text-center">Linked<br>Google</th>
-                    <th class="text-center">Linked<br>Twitter</th>
-                    <th class="text-center">Linked<br>Facebook</th>
-                    <th class="text-center">Linked<br>Local</th>
-                    <th class="text-center">Profile</th>
-                    <th class="text-center">Music<br>Released</th>
-                    <th class="text-center">Invites<br>Left</th>
-                </tr>
-
-                <% for (var ivt=0; ivt < users.length; ivt++) {
-                    var user = users[ivt];
-                    var checked = 'yes';
-                    var unchecked = '-';
-                    var invite = user.invite ? user.invite : {};
-                    var invitedBy = invite.invitedBy || {};
-                    var state = invite.claimed
-                        ? (user.profileAddress && user.draftProfile.artistName) ? "profile" : "claimed"
-                        : "";
-                %>
-                <tr class="<%=state%>">
-                    <td class="text-center middle"><%=invite.invitedAs%></td>
-                    <td class="text-center middle">
-                        <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
-                        <a target="_blank" href="/artist/<%=invitedBy.profileAddress%>"><%=invitedBy.draftProfile.artistName%></a>
-                        <% } %>
-                    </td>
-                    <td class="text-center middle"><%=invite.inviteCode%></td>
-                    <td class="text-center middle"><%-invite.clicked ? checked : unchecked %></td>
-                    <td class="text-center middle">
-                        <%-!!user.google.token ? user.google.name : unchecked %><BR>
-                        <%-!!user.google.token ? user.google.email : "" %>
-                    </td>
-                    <td class="text-center middle">
-                        <%-!!user.twitter.token ? user.twitter.username : unchecked %><BR>
-                        <%-!!user.twitter.token ? user.twitter.displayName : "" %>
-                    </td>
-                    <td class="text-center middle">
-                        <%-!!user.facebook.token ? user.facebook.name : unchecked %> <BR>
-                        <%-!!user.facebook.token ? user.facebook.email : "" %>
-                    </td>
-                    <td class="text-center middle">
-                        <%-!!user.local.id ? user.local.email : unchecked %>
-                    </td>
-                    <td class="text-center middle">
-                        <% if(user.profileAddress && user.draftProfile.artistName) { %>
-                        <a target="_blank" href="/artist/<%=user.profileAddress%>"><%=user.draftProfile.artistName%></a>
-                        <% } else if (user.draftProfile && user.draftProfile.artistName) { %>
-                        <%=user.draftProfile.artistName%>
-                        <% } else { %>
-                        <%=unchecked%>
-                        <% } %>
-
-                        <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") {%>
-                        (v<%=user.draftProfile.version%>)
-                        <% } %>
-                    </td>
-                    <td class="text-center middle"><%-user.mostRecentReleaseDate ? checked : unchecked%></td>
-                    <td class="text-center middle"><%=user.invitesRemaining%>
-                        <% if(user.profileAddress && user.draftProfile.artistName) { %>
-                        <div class="btn btn-success btn-sm" onclick="addInvites('<%=user.profileAddress%>', 10)">+10</div>
-                        <% } %>
-                    </td>
-                </tr>
-                <%}%>
-            </table>
+<div class="m10 white-well pad10">
+    <div class="history-nav ">
+        <div>
+            <%= navigation.description %>
+        </div>
+        <div>
+            Show
+            <a class="history-nav-link" href="<%= navigation.show10 %>">10</a>
+            <a class="history-nav-link" href="<%= navigation.show25 %>">25</a>
+            <a class="history-nav-link" href="<%= navigation.show50 %>">50</a>
+        </div>
+        <div>
+            <% if (navigation.start) { %>
+            <a class="history-nav-link" href="<%= navigation.start %>">first</a>
+            <% } %>
+            <% if (navigation.back) { %>
+            <a class="history-nav-link" href="<%= navigation.back %>">back</a>
+            <% } %>
+            <% if (navigation.next) { %>
+            <a class="history-nav-link" href="<%= navigation.next %>">next</a>
+            <% } else { %>
+            <span class="history-nav-link-disabled">next</span>
+            <% } %>
         </div>
     </div>
+    <table class="table table-responsive white-well">
+        <tr>
+            <th class="text-center">Invited As</th>
+            <th class="text-center">Invited By</th>
+            <th class="text-center">Invite Code</th>
+            <th class="text-center">Invite<br>Clicked</th>
+            <th class="text-center">Linked<br>Google</th>
+            <th class="text-center">Linked<br>Twitter</th>
+            <th class="text-center">Linked<br>Facebook</th>
+            <th class="text-center">Linked<br>Local</th>
+            <th class="text-center">Profile</th>
+            <th class="text-center">Music<br>Released</th>
+            <th class="text-center">Invites<br>Left</th>
+        </tr>
+
+        <% for (var ivt = 0; ivt < users.length; ivt++) {
+            var user = users[ivt];
+            var checked = 'yes';
+            var unchecked = '-';
+            var invite = user.invite ? user.invite : {};
+            var invitedBy = invite.invitedBy || {};
+            var state = invite.claimed
+                    ? (user.profileAddress && user.draftProfile.artistName) ? "profile" : "claimed"
+                    : "";
+        %>
+        <tr class="<%= state %>">
+            <td class="text-center middle"><%= invite.invitedAs %></td>
+            <td class="text-center middle">
+                <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
+                <a target="_blank"
+                   href="/artist/<%= invitedBy.profileAddress %>"><%= invitedBy.draftProfile.artistName %></a>
+                <% } %>
+            </td>
+            <td class="text-center middle"><%= invite.inviteCode %></td>
+            <td class="text-center middle"><%- invite.clicked ? checked : unchecked %></td>
+            <td class="text-center middle">
+                <%- !!user.google.token ? user.google.name : unchecked %><BR>
+                <%- !!user.google.token ? user.google.email : "" %>
+            </td>
+            <td class="text-center middle">
+                <%- !!user.twitter.token ? user.twitter.username : unchecked %><BR>
+                <%- !!user.twitter.token ? user.twitter.displayName : "" %>
+            </td>
+            <td class="text-center middle">
+                <%- !!user.facebook.token ? user.facebook.name : unchecked %> <BR>
+                <%- !!user.facebook.token ? user.facebook.email : "" %>
+            </td>
+            <td class="text-center middle">
+                <%- !!user.local.id ? user.local.email : unchecked %>
+            </td>
+            <td class="text-center middle">
+                <% if(user.profileAddress && user.draftProfile.artistName) { %>
+                <a target="_blank" href="/artist/<%= user.profileAddress %>"><%= user.draftProfile.artistName %></a>
+                <% } else if (user.draftProfile && user.draftProfile.artistName) { %>
+                <%= user.draftProfile.artistName %>
+                <% } else { %>
+                <%= unchecked %>
+                <% } %>
+
+                <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") { %>
+                (v<%= user.draftProfile.version %>)
+                <% } %>
+            </td>
+            <td class="text-center middle"><%- user.mostRecentReleaseDate ? checked : unchecked %></td>
+            <td class="text-center middle"><%= user.invitesRemaining %>
+                <% if(user.profileAddress && user.draftProfile.artistName) { %>
+                <div class="btn btn-success btn-sm" onclick="addInvites('<%= user.profileAddress %>', 10)">+10</div>
+                <% } %>
+            </td>
+        </tr>
+        <% } %>
+    </table>
 </div>
+
 <script>
-    function addInvites(profileAddress, cnt) {
-      $.post('/admin/invites/add', {
-        profileAddress: profileAddress,
-        count: cnt
-      }, function (data) {
-        if (data.success) {
-          new Message("Invites added!", "success", 3000);
-        }
-        else {
-          new Message("Failed: " + data.reason, 'error', 5000)
-        }
-      })
-    }
+  function addInvites(profileAddress, cnt) {
+    $.post('/admin/invites/add', {
+      profileAddress: profileAddress,
+      count: cnt
+    }, function (data) {
+      if (data.success) {
+        new Message("Invites added!", "success", 3000);
+      }
+      else {
+        new Message("Failed: " + data.reason, 'error', 5000)
+      }
+    })
+  }
 </script>
 <%- include partials/connect-with-us.ejs %>
 </body>
