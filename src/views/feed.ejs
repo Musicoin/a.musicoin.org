@@ -25,11 +25,14 @@
 
         .general-post {
             width: 100%;
+            border-radius: 5px;
+            border-color: #eee;
         }
 
         .post-area {
-            padding-left: 80px;
+            padding-left: 40px;
             padding-right: 40px;
+            padding-bottom: 10px;
         }
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
@@ -41,10 +44,15 @@
 
     <%- include partials/donate-banner.ejs %>
 
+    <%
+        var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image"
+    %>
+
     <div class="columns-2-to-1 white-well box-shadow-top">
         <div class="pad10 col1">
             <div class="center-text event-header"><img width=24 height=24 class="mr10" src="/images/chat.png">my feed</div>
-            <div class="post-area mb10">
+            <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
+                <a href="/artist/<%=user.profileAddress%>"><div style="background-image: url('<%=user.profile.image%>')" class="<%=senderClass%>"></div></a>
                 <textarea class="general-post" target="de-track-messages" placeholder="say something..."></textarea>
             </div>
 
