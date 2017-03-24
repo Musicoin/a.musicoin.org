@@ -876,6 +876,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/admin/contacts', (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start - length);
+    const url = '/admin/contacts?search=' + (req.query.search ? req.query.search : '');
+    jsonAPI.getAddressBook(req.query.search, start, length)
+      .then(users => {
+        doRender(req, res, 'admin-contacts.ejs', {
+          search: req.query.search,
+          users: users,
+          navigation: {
+            show10: `${url}&length=10`,
+            show25: `${url}&length=25`,
+            show50: `${url}&length=50`,
+            showAll: `${url}&offset=0&length=0`,
+            description: `Showing ${start + 1} to ${start + users.length}`,
+            start: previous > 0 ? `${url}&length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+            next: users.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+          }
+        });
+      });
+  });
+
   app.get('/admin/releases', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;

@@ -292,6 +292,46 @@ export class MusicoinOrgJsonAPI {
       .exec();
   }
 
+  getAddressBook(_search: string, start: number, length: number): Promise<any> {
+    let filter = {};
+    if (_search) {
+      const search = _search.trim();
+      filter = {$or: [
+        {"draftProfile.artistName": {"$regex": search, "$options": "i"}},
+        {"invite.invitedAs": {"$regex": search, "$options": "i"}},
+        {"google.email": {"$regex": search, "$options": "i"}},
+        {"google.name": {"$regex": search, "$options": "i"}},
+        {"twitter.username": {"$regex": search, "$options": "i"}},
+        {"twitter.displayName": {"$regex": search, "$options": "i"}},
+        {"facebook.email": {"$regex": search, "$options": "i"}},
+        {"facebook.name": {"$regex": search, "$options": "i"}},
+        {"soundcloud.name": {"$regex": search, "$options": "i"}},
+        {"soundcloud.username": {"$regex": search, "$options": "i"}},
+      ]};
+    }
+    let query = User.find(filter)
+      .where({profileAddress: { $exists: true, $ne: null }})
+      .sort({"invite.invitedOn": 'desc'})
+      .skip(start)
+
+    if (length > 0) {
+      query = query.limit(length);
+    }
+
+    return query
+      .exec()
+      .then(allRecords => {
+        return allRecords.map(user => {
+          return {
+            name: this._getUserName(user),
+            email: this._getUserEmail(user),
+            artistName: user.draftProfile ? user.draftProfile.artistName : "",
+            profileAddress: user.profileAddress
+          }
+        })
+      });
+  }
+
   getAllReleases(_search: string, start: number, length: number): Promise<any> {
     let filter = {};
     if (_search) {
@@ -1185,11 +1225,11 @@ export class MusicoinOrgJsonAPI {
 
   private _getUserName(user: any) {
     if (!user) return "New User";
-    if (user.local && this._notBlank(user.local.username)) return user.local.username;
     if (user.google && this._notBlank(user.google.name)) return user.google.name;
     if (user.facebook && this._notBlank(user.facebook.name)) return user.facebook.name;
     if (user.twitter && this._notBlank(user.twitter.displayName)) return user.twitter.displayName;
     if (user.soundcloud && this._notBlank(user.soundcloud.username)) return user.soundcloud.username;
+    if (user.local && this._notBlank(user.local.username)) return user.local.username;
     return "New User";
   }
 
