@@ -911,7 +911,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
         res.charset = "UTF-8";
         res.set({"Content-Disposition":"attachment; filename=contacts.csv", "Content-Type": "text/csv; charset=utf-8"});
-        res.send(BOM + "email,name,artistName\n" + users.map(u => `${u.email},${u.name},${u.artistName}`).join("\n"));
+        res.send(BOM + "email,name,artistName\n" + users.map(u => `${u.email},"${u.name}","${u.artistName}"`).join("\n"));
       });
   });
 
