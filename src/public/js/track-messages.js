@@ -34,6 +34,16 @@ $( document ).ready(function() {
     }
   });
 
+  $(document).on('keyup', '.general-post', function(e) {
+    if(e.keyCode == 13 && !e.shiftKey) {
+      var input = $(this);
+      var messages = $("#" + input.attr('target'));
+      var message = input.val();
+      input.val("");
+      dynamic.refreshElement(messages, {message: message});
+    }
+  });
+
   $(document).on('blur', '.inline-reply-input', function() {
     closeInlineReply($(this));
   })
