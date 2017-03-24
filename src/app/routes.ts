@@ -881,6 +881,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/contacts?search=' + (req.query.search ? req.query.search : '');
+    const downloadUrl = '/admin/contacts/download?search=' + (req.query.search ? req.query.search : '');
     jsonAPI.getAddressBook(req.query.search, start, length)
       .then(users => {
         doRender(req, res, 'admin-contacts.ejs', {
@@ -891,12 +892,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             show25: `${url}&length=25`,
             show50: `${url}&length=50`,
             showAll: `${url}&offset=0&length=0`,
+            download: `${downloadUrl}`,
             description: `Showing ${start + 1} to ${start + users.length}`,
             start: previous > 0 ? `${url}&length=${length}` : null,
             back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
             next: users.length >= length ? `${url}&length=${length}&start=${start + length}` : null
           }
         });
+      });
+  });
+
+  app.get('/admin/contacts/download', (req, res) => {
+    jsonAPI.getAddressBook(req.query.search, 0, -1)
+      .then(users => {
+        res.set({"Content-Disposition":"attachment; filename=contacts.csv", "Content-Type": "text/csv"});
+        res.send("email,name,artistName\n" + users.map(u => `${u.email},${u.name},${u.artistName}`).join("\n"));
       });
   });
 
