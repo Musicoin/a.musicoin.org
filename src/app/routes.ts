@@ -905,8 +905,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/admin/contacts/download', (req, res) => {
     jsonAPI.getAddressBook(req.query.search, 0, -1)
       .then(users => {
-        res.set({"Content-Disposition":"attachment; filename=contacts.csv", "Content-Type": "text/csv"});
-        res.send("email,name,artistName\n" + users.map(u => `${u.email},${u.name},${u.artistName}`).join("\n"));
+        // Handling UTF-8 character set
+        // http://stackoverflow.com/questions/27802123/utf-8-csv-encoding
+        var BOM = String.fromCharCode(0xFEFF);
+
+        res.charset = "UTF-8";
+        res.set({"Content-Disposition":"attachment; filename=contacts.csv", "Content-Type": "text/csv; charset=utf-8"});
+        res.send(BOM + "email,name,artistName\n" + users.map(u => `${u.email},${u.name},${u.artistName}`).join("\n"));
       });
   });
 
