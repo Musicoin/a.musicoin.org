@@ -1,5 +1,8 @@
 var tipModule = {
   tipButtonClicked: function (tipButton) {
+    if (tipButton.attr("text-pending")) {
+      tipButton.html(tipButton.attr("text-pending"))
+    }
     tipModule.sendTip(
       tipButton.attr("recipient"),
       tipButton.attr("amount"),

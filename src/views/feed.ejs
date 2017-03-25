@@ -103,6 +103,11 @@
             </div>
         </div>
     </div>
+    <script>
+      function refreshMessageList() {
+        dynamic.refreshElement($("#de-track-messages"));
+      }
+    </script>
     <%- include partials/player-hook.ejs %>
     <%- include partials/connect-with-us.ejs %>
 </body>

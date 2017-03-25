@@ -13,7 +13,8 @@
         var message = messages[i];
         var icon = message.tips > 0
                 ? '<i class="fa fa-star message-tip" aria-hidden="true"></i>'
-                : '<i class="fa fa-star-o  message-tip" aria-hidden="true"></i>'
+                : '<i class="fa fa-star-o message-tip" aria-hidden="true"></i>'
+        var pendingIcon = '<i class="fa fa-star fa-spin message-tip fa-fw"></i>';
         var textClass = message.tips > 0 ? "text-warning" : "subtle-text";
         var track = message.release;
         var showThisTrack = _showTrack && message.release;
@@ -81,7 +82,8 @@
                  on-success="refreshMessageList()"
                  text-success=':)'
                  text-fail=":("
-                 text-default='icon'
+                 text-default='<%-icon%>'
+                 text-pending='<%-pendingIcon%>'
                  context-type="TrackMessage"
                  title="Send 1 musicoin to <%=message.sender.name%> for this comment"
                  context-id="<%=message.id%>">
