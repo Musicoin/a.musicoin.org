@@ -88,6 +88,7 @@
     </div>
     <table class="table table-responsive white-well">
         <tr>
+            <th class="text-center"></th>
             <th class="text-center">Invited As</th>
             <th class="text-center">Invited By</th>
             <th class="text-center">Invite Code</th>
@@ -110,8 +111,13 @@
             var state = invite.claimed
                     ? (user.profileAddress && user.draftProfile.artistName) ? "profile" : "claimed"
                     : "";
+            var name = user.draftProfile && user.draftProfile.artistName ? user.draftProfile.artistName : "this user";
         %>
         <tr class="<%= state %>">
+            <td class="text-center middle">
+                <div class="btn btn-sm <%= user.blocked ? "btn-success" : "btn-danger" %>"
+                     onclick="blockUser(this, '<%= user.profileAddress %>', '<%= name %>')"><%= user.blocked ? "Unblock" : "Block"%></div>
+            </td>
             <td class="text-center middle"><%= invite.invitedAs %></td>
             <td class="text-center middle">
                 <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
@@ -173,6 +179,35 @@
         new Message("Failed: " + data.reason, 'error', 5000)
       }
     })
+  }
+
+  function blockUser(element, profileAddress, name) {
+    var button= $(element);
+    var block = button.text() == "Block";
+    var msg = block
+        ? "Are you sure you want to block " + name + "?"
+        : "Are you sure you want to enable " + name + "?";
+    var resultMsg = block
+        ? "User blocked"
+        : "User enabled";
+
+    new Message(msg, 'error', 5000)
+      .button("Yes", function() {
+        $.post('/admin/users/block', {
+          profileAddress: profileAddress,
+          block: block
+        }, function (data) {
+          if (data.success) {
+            $(element).text(block ? "Unblock" : "Block");
+            $(element).toggleClass("btn-danger", !block);
+            $(element).toggleClass("btn-success", block);
+            new Message(resultMsg, "success", 3000);
+          }
+          else {
+            new Message("Failed: " + data.reason, 'error', 5000)
+          }
+        })
+      })
   }
 </script>
 <%- include partials/connect-with-us.ejs %>

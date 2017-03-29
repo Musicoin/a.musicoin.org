@@ -790,6 +790,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   })
 
+  app.post('/admin/users/block', (req, res) => {
+    if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
+    User.findOne({profileAddress: req.body.profileAddress}).exec()
+      .then(user => {
+        user.blocked = req.body.block == "true";
+        return user.save();
+      })
+      .then(() => {
+        res.json({success: true})
+      })
+  })
+
   app.get('/admin/invite-requests', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
@@ -1493,6 +1505,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/license/release', isLoggedIn, hasProfile, function (req, res) {
+    if (req.user && req.user.blocked) {
+      return res.redirect("/profile?releaseError=true");
+    }
+
     const form = new Formidable.IncomingForm();
     form.parse(req, (err, fields: any, files: any) => {
       console.log(`Fields: ${JSON.stringify(fields)}`);
