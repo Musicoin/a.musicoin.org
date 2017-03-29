@@ -1130,9 +1130,10 @@ export class MusicoinOrgJsonAPI {
 
   getLicense(contractAddress: string): Promise<any> {
     console.log("Getting license: " + contractAddress);
-    return Release.findOne({contractAddress: contractAddress}).exec()
+    return Release.findOne({contractAddress: contractAddress, state: 'published'}).exec()
       .then(record => {
-        return this._convertDbRecordToLicense(record);
+        if (record) return this._convertDbRecordToLicense(record);
+        return null;
       })
   }
 

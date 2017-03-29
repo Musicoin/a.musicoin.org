@@ -236,6 +236,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     console.log("Got external request for a nav/track page, rendering metadata in the outer frame: " + req.params.address);
     jsonAPI.getLicense(req.params.address)
       .then(license => {
+        if (!license) {
+          console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
+          return res.render('not-found.ejs');
+        }
         res.render('index-frames.ejs', {
           license: license,
           mainFrameLocation: req.originalUrl.substr(4)
@@ -1104,9 +1108,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     console.log("Loading track page for track address: " + req.params.address);
     const ms = jsonAPI.getLicenseMessages(req.params.address, 20);
     const l = jsonAPI.getLicense(req.params.address);
-    const r = Release.findOne({contractAddress: req.params.address});
+    const r = Release.findOne({contractAddress: req.params.address, state: 'published'});
 
     Promise.join(l, ms, r, (license, messages, release) => {
+      if (!license || !release) {
+        console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
+        return res.render('not-found.ejs');
+      }
       jsonAPI.getArtist(license.artistProfileAddress, false, false)
         .then(response => {
           doRender(req, res, "track.ejs", {
