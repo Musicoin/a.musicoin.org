@@ -312,6 +312,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       if (messages.length > 0) {
         console.log("mini: " + req.user.preferences.minimizeHeroInFeed);
         doRender(req, res, "feed.ejs", {
+          showFeedPlayAll: isAdmin(req.user),
           messages: messages,
           releases: releases,
           topPlayedLastWeek: topPlayed,

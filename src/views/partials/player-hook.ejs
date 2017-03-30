@@ -6,23 +6,37 @@
       window.location = '/nav' + window.location.pathname + window.location.search;
     }
 
-    $(document).on('click', '.audio-track', function() {
-      var item = $(this);
-      var that = this;
-      console.log("Getting details for " + item.attr("licenseAddress"))
+    function distinct(array) {
+      var n = {},r=[];
+      for(var i = 0; i < array.length; i++)
+      {
+        if (!n[array[i]])
+        {
+          n[array[i]] = true;
+          r.push(array[i]);
+        }
+      }
+      return r;
+    }
+
+
+    $(document).on('click', '.play-list', function() {
+      var items = $(this).attr('items');
+      if (!items) {
+        var target = $("#" + $(this).attr('target'));
+        var all = target.find('.audio-track').map(function(i, e){return ($(e).attr('licenseAddress'))}).get()
+        items = distinct(all).join();
+      }
+
+      console.log("Playing list: " + items);
       var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      $.get( "/json-api/track/" + item.attr("licenseAddress"), function( data ) {
-        var result = _audioPlayer.playItem(that,
-          data.audioUrl,
-          data.title,
-          data.artistName,
-          data.image,
-          data.playCount,
-          data.tipCount,
-          data.artistProfileAddress,
-          data.address
-        )
-        if (result) {
+      _audioPlayer.playList(items.split(","));
+    })
+
+    $(document).on('click', '.audio-track', function() {
+      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
+      _audioPlayer.playItemById($(this).attr("licenseAddress"), function(started) {
+        if (started) {
           new Message("This playback was paid for by Musicoin.org!", "success", 5000)
             .button("Why?", () => {
               window.location = "/faq#WhyFreePlays";

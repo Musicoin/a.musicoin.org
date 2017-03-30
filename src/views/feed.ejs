@@ -34,6 +34,13 @@
             padding-right: 40px;
             padding-bottom: 10px;
         }
+
+        .party-button {
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -50,7 +57,22 @@
 
     <div class="columns-2-to-1 white-well box-shadow-top">
         <div class="pad10 col1">
-            <div class="center-text event-header"><img width=24 height=24 class="mr10" src="/images/chat.png">my feed</div>
+            <div class="flex-row event-header mr10" style="justify-content: space-between; margin-right: 40px">
+                <div></div>
+                <div>
+                    <img width=24 height=24 class="mr10" src="/images/chat.png">my feed
+                </div>
+                <% if (typeof showFeedPlayAll != "undefined" && showFeedPlayAll) { %>
+                <div class="btn party-button play-list"
+                     target="de-track-messages"
+                     title="Plays all tracks in your timeline">
+                    <i class="fa fa-play-circle text-large mr5" aria-hidden="true"></i> Play all
+                </div>
+                <% } else { %>
+                <div></div>
+                <% } %>
+            </div>
+
             <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
                 <a href="/artist/<%=user.profileAddress%>"><div style="background-image: url('<%=user.profile.image%>')" class="<%=senderClass%>"></div></a>
                 <textarea class="general-post" target="de-track-messages" placeholder="say something..."></textarea>
