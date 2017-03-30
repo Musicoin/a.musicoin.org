@@ -1183,6 +1183,14 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getReleaseByTx(tx) {
+    return Release.findOne({tx: tx})
+      .then(release => {
+        if (release) return this._convertDbRecordToLicenseLite(release);
+        return null;
+      })
+  }
+
   _convertDbRecordToLicenseLite(record) {
     return {
       artistName: record.artistName,
@@ -1194,7 +1202,8 @@ export class MusicoinOrgJsonAPI {
       artistProfileAddress: record.artistAddress,
       title: record.title,
       image: this.mediaProvider.resolveIpfsUrl(record.imageUrl),
-      address: record.contractAddress
+      address: record.contractAddress,
+      tx: record.tx
     }
   }
 
@@ -1210,6 +1219,7 @@ export class MusicoinOrgJsonAPI {
         license.directTipCount = record.directTipCount || 0;
         license.directPlayCount = record.directPlayCount || 0;
         license.releaseDate = record.releaseDate;
+        license.tx = record.tx;
         return license;
       })
   }

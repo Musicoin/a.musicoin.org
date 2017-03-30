@@ -1,0 +1,123 @@
+<% if (typeof release != "undefined") { %>
+<style>
+
+    .pending-item {
+        width: 400px;
+        background-color: white;
+        display: flex;
+        flex-shrink: 0;
+
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        box-shadow: 0 0 8px -4px black;
+    }
+
+    .pulse-release-bg {
+        animation: pulse-release 1s infinite;
+        animation-direction: alternate;
+        animation-timing-function: ease-out;
+    }
+
+    .done-release-bg {
+    }
+
+    @keyframes pulse-release {
+        0% {
+            background-color: rgba(255, 255, 255, 1);
+        }
+        100% {
+            background-color: rgba(240, 240, 240, 1);
+        }
+    }
+
+    .flex-row-center {
+        display: flex;
+        justify-content: center;
+    }
+
+    ul.checkmark {
+        list-style-type:none;
+    }
+    ul.checkmark li.checked:before {
+        content:"\2713\0020";
+        font-family: 'Lucida Sans Unicode', 'Arial Unicode MS', Arial;
+    }
+
+    .very-subtle-text {
+        color: #aaa
+    }
+
+</style>
+
+<%
+    var done = !!release.address;
+ %>
+<div class="flex-row-center">
+    <div class="col-sm-10" style="min-width: 600px">
+        <h2>Great! We're processing your track now...</h2>
+        <div class="subtle-text">
+            <div class="text-center mb10">It should be ready in about 2 minutes.</div>
+            <div class="text-large">Here's what we're doing:</div>
+            <br>
+
+            <ul class="checkmark text-large <%=done ? "very-subtle-text" : ""%>">
+                <li class="checked">Sending your PPP contract to the blockchain</li>
+                <li class="checked">Encrypting your audio file</li>
+                <li class="checked">Sending encrypted audio file to the P2P network</li>
+                <% if (!done) { %>
+                <li>... Waiting for confirmation <a href="http://orbiter.musicoin.org/tx/<%=release.tx%>">(transaction status)</a></li>
+                <% } else { %>
+                <li class="checked text-success">Confirmed! <a href="http://orbiter.musicoin.org/tx/<%=release.tx%>">(view transaction)</a></li>
+                <% }  %>
+            </ul>
+
+        </div>
+
+        <br>
+        <div class="flex-row-center">
+            <div class="pending-item <%=release.address ? "done-release-bg" : "pulse-release-bg"%>">
+                <div class="top-center-text">
+                    <span><div style="background-image: url('<%= release.image %>');"
+                               class="release-image"></div></span>
+                </div>
+                <div class="chat-message-area">
+                    <div class="chat-message-sender">
+                        <span>
+                            <% if (!done) { %>
+                            <i class="fa fa-circle-o-notch fa-spin mr5" aria-hidden="true"> </i>
+                            <% } %>
+                            <%= release.title %>
+                        </span>
+                    </div>
+                    by <span><%= release.artistName %></span>
+                    <div class="subtle-text text-small"><%= release.genres ? release.genres.join(", ") : "" %></div>
+                    <div class="chat-message-body chat-message-preview subtle-text"><%= release.description %></div>
+                    <% if (done) { %>
+                    <a class=text-center href="/nav/track/<%=release.address%>">View track</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <% if (done) { %>
+        <div class="mb20">
+            <h3 class="text-center">Now, share your track on your social networks</h3>
+            <div class="text-center">You can share link:</div>
+            <div class="text-center mb20">https://musicoin.org/nav/track/<%=release.address%></div>
+            <div class="flex-row center-text mb20">
+                <div class="mr5"><a href="https://plus.google.com/" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"><span class="big-screen-only"> Google</span></span></a></div>
+                <div class="mr5"><a href="https://twitter.com" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"><span class="big-screen-only">  Twitter</span></span></a></div>
+                <div class="mr5"><a href="https://facebook.com" class="btn btn-primary btn-sm"><span class="fa fa-facebook text-large"><span class="big-screen-only"> Facebook</span></span></a></div>
+                <!--<div><a href="/auth/soundcloud" class="btn btn-soundcloud btn-sm"><span class="fa fa-soundcloud text-large"> Soundcloud</span></a></div>-->
+            </div>
+            <br>
+            <h4 class="text-center">or <a href="../release-manager">release another track</a></h4>
+        </div>
+        <% } else { %>
+        <div class="subtle-text text-center mb20">This page will automatically refresh</div>
+        <% }  %>
+    </div>
+</div>
+<% } %>

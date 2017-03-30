@@ -11,6 +11,7 @@ import {MailSender} from "./mail-sender";
 import {PendingTxDaemon} from './tx-daemon';
 import moment = require("moment");
 import Feed = require('feed');
+import {ReleaseManagerRouter} from "./release-manager-routes";
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const TrackMessage = require('../app/models/track-message');
@@ -44,6 +45,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   let restAPI = new MusicoinRestAPI(jsonAPI);
   const addressResolver = new AddressResolver();
 
+  const releaseManager = new ReleaseManagerRouter(musicoinApi,
+                                                   jsonAPI,
+                                                   addressResolver,
+                                                   maxImageWidth,
+                                                   mediaProvider,
+                                                   config,
+                                                   doRender);
   const newProfileListener = p => {
     jsonAPI.sendRewardsForInvite(p)
       .then((results) => console.log(`Rewards sent for inviting ${p._id} profile=${p.profileAddress}, txs: ${JSON.stringify(results)}`))
@@ -133,6 +141,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
   app.use('/admin/*', isLoggedIn, adminOnly);
+  app.use('/release-manager', isLoggedIn, adminOnly, releaseManager.getRouter());
 
   function doRender(req, res, view, context) {
     // console.log("Calling doRender in " + view);

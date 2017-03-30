@@ -1,0 +1,34 @@
+<div class="flex-row" style="justify-content: center">
+    <div class="wizard-card-segment">
+        <h2>Account Verification</h2>
+        <p class="text-large subtle-text">Help ensure Musicoin is home to music that benefits the musicians who created it by
+        linking multiple social accounts before releasing music.
+        (<a href="faq#WhyLinkAccounts" class="text-medium-small subtle-text">how does this help?</a>)
+        </p>
+        <div class="flex-row center-text mt20">
+            <% if(!user.google.token) { %>
+            <div class="mr5"><a href="/connect/google" target="_blank" class="btn btn-danger btn-sm"><span
+                            class="fa fa-google-plus"></span></a></div>
+            <% } %>
+
+            <% if(!user.twitter.token) { %>
+            <div class="mr5"><a href="/connect/twitter" target="_blank" class="btn btn-info btn-sm"><span
+                            class="fa fa-twitter"></span></a></div>
+            <% } %>
+
+            <% if(!user.facebook.token) { %>
+            <div class="mr5"><a href="/connect/facebook" target="_blank" class="btn btn-primary btn-sm"><span
+                            class="fa fa-facebook"></span></a></div>
+            <% } %>
+
+            <% if(!user.local.id) { %>
+            <div class="mr5"><a href="/connect/email" target="_blank" class="btn btn-default btn-sm"><span
+                            class="fa fa-envelope-o"></span></a></div>
+            <% } %>
+        </div>
+        <div class="wizard-button-bar">
+            <div class="navNext btn btn-success">Next</div>
+        </div>
+    </div>
+
+</div>

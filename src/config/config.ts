@@ -30,6 +30,7 @@ function getStructuredConfig(keyValueConfig) {
         count: 3
       }
     },
+    termsOfUseVersion: keyValueConfig.termsOfUseVersion,
     database: {
       url : `${keyValueConfig.mongoEndpoint}/musicoin-org`,
       pendingReleaseIntervalMs: 30*1000
@@ -204,7 +205,9 @@ function getDefaultKeyValueConfig() {
         soundcloudClientSecret: env.SOUNDCLOUD_SECRET || "yourClientSecret",
         soundcloudCallbackEndpoint: env.SOUNDCLOUD_CALLBACK_ENDPOINT || `http://alpha.musicoin.org/auth/soundcloud/callback`,
 
-        domains: env.CERTIFICATE_DOMAINS || "alpha.musicoin.org,musicoin.org,orbiter.musicoin.org"
+        domains: env.CERTIFICATE_DOMAINS || "alpha.musicoin.org,musicoin.org,orbiter.musicoin.org",
+
+        termsOfUseVersion: env.TERMS_OF_USE_VERSION || "1.0"
       };
     });
 }

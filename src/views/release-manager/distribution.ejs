@@ -1,0 +1,51 @@
+<div class="flex-column">
+    <div class="flex-row" style="justify-content: center">
+        <div class="flex-column wizard-card-segment">
+            <h2>Automatic Payment Distribution</h2>
+            <p class="text-large subtle-text">If you're part of a group, or you need to pay a portion of your earnings to another person
+                for any reason, you can setup automatic payment distribution here.  By default, your wallet
+                address will receive 100% of the funds.</p>
+            <div>
+                <table class="table table-condensed table-responsive contributors">
+                    <tr>
+                        <th class="col-md-5">recipient <a href="/faq#WhatIsARecipient" target="help">(?)</a></th>
+                        <th class="col-md-1">shares <a href="/faq#WhatAreShares" target="help">(?)</a></th>
+                    </tr>
+                    <tr class="row-template" style="display: none">
+                        <td><input name="address"
+                                   class="no-submit form-control "
+                                   style="color: inherit"
+                                   placeholder="email, wallet, or license address"></td>
+                        <td><input name="value"
+                                   style="color: inherit"
+                                   class="no-submit form-control text-right"
+                                   placeholder=""></td>
+                    </tr>
+                    <tr>
+                        <td><label style="width: 100%"
+                                   class="form-entry">My wallet</label>
+                            <input style="display: none; color: inherit"
+                                   name="recipient.address"
+                                   class="no-submit form-control "
+                                   value="<%= user.profileAddress %>"></td>
+                        <td><input name="recipient.value"
+                                   class="no-submit form-control text-right"
+                                   style="color: inherit"
+                                   value="1"
+                                   placeholder=""></td>
+                    </tr>
+                </table>
+                <div class="text-right">
+                    <div class="btn btn-sm btn-link" onclick="addRow()">
+                        <span class="glyphicon glyphicon-plus" value="Add"></span>
+                        add another entry
+                    </div>
+                </div>
+            </div>
+            <div class="wizard-button-bar">
+                <div class="navNext btn btn-success">Next</div>
+            </div>
+        </div>
+    </div>
+
+</div>

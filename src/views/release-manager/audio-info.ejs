@@ -1,0 +1,67 @@
+<style>
+    .profile-release-item {
+        display: flex;
+        flex-direction: column;
+        min-height: 100px;
+        justify-content: space-around;
+        padding-left: 10px;
+        width: 100%;
+    }
+
+    .profile-release-item > * {
+        margin-bottom: 10px;
+    }
+
+    .rights-section {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<div class="flex-column">
+    <div class="flex-row" style="justify-content: center">
+        <div class="wizard-card-segment">
+            <h2>MP3 Audio</h2>
+            <p class="text-large subtle-text">Select an audio file to upload.  Currently, we only support MP3 files.</p>
+            <div class="profile-release-item">
+                <input style="display: none" onchange="updateAudioLabel('audioLabel', this.id); updateAudioNextButton()"
+                       id="audio" type="file" name="audio">
+                <div class="center-text m20">
+                    <label class="btn btn-warning no-submit form-entry btn-lg" style="max-width: 300px" for="audio" id="audioLabel">click here to choose an MP3 file...</label>
+                </div>
+
+                <div class="rights-section">
+                    <input id=rights name=rights type="checkbox" value="confirmed" style="margin-right: 10px" onchange="updateAudioNextButton()">
+                    <label for="rights" style="text-transform: none; max-width: 400px">
+                        I confirm that I am the exclusive rights holder for the entire work, or I have obtained the
+                        rights necessary to release this work.
+                    </label>
+                </div>
+
+                <div class="center-text">
+                    <div class="subtle-text text-small" style="max-width: 500px">
+                        Releasing content owned by another person or entity without their written permission is a violation of
+                        our terms of service and may result in a disabled account.
+                    </div>
+                </div>
+            </div>
+            <div class="wizard-button-bar">
+                <div id="fromAudioToNext"
+                     condition=""
+                     class="navNext btn btn-success disabled">Next</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+    function updateAudioNextButton() {
+      $('#fromAudioToNext').toggleClass('disabled', !isAudioDone())
+    }
+
+    function isAudioDone() {
+      return $('#rights').prop("checked") && !!$("#audio").val();
+    }
+</script>

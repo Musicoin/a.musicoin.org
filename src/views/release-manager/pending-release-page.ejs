@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    <%- include ../partials/page-head.ejs %>
+    <title>Pending - Musicoin.org</title>
+</head>
+<body>
+<%- include ../partials/header.ejs %>
+<link rel="stylesheet" href="/styles/track-message.css">
+<style>
+    body {
+        color: #333;
+
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: 120%;
+    }
+
+    .background-cover {
+        background-color: rgba(255,255,255,0.8);
+    }
+    .subtle-text {
+        color: #555
+    }
+    textarea.form-control,
+    input.form-control {
+        background-color: rgba(0,0,0,0.02);
+        color: black;
+        border: none;
+    }
+    label {
+        font-family: inherit;
+        font-weight: normal;
+    }
+</style>
+
+<div class="flex-row" style="justify-content: center">
+    <div class="wizard-card-segment">
+        <div class="dynamic-element"
+             id="de-pending-releases"
+             de-refresh-period="10"
+             de-tx="<%=release.tx%>"
+             de-url="/release-manager/pending-release-element">
+            <%- include pending-release-element.ejs %>
+        </div>
+    </div>
+
+</div>
+<%- include ../partials/connect-with-us.ejs %>
+</body>
+</html>

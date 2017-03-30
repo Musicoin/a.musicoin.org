@@ -1,0 +1,358 @@
+<!doctype html>
+<html>
+<head>
+    <%- include ../partials/page-head.ejs %>
+    <title>Release - Musicoin.org</title>
+    <style>
+        body {
+            background-color: white;
+            color: black;
+            font-family: "Lucida Grande", sans-serif;
+        }
+
+        .wizard {
+            background-color: white;
+            color: black;
+            padding: 10px 20px 10px 20px;
+            border-radius: 10px;
+        }
+
+        .wizard-card > img.wizard-icon {
+            position: absolute;
+            top: 5px;
+            right: 20px;
+            height: 96px;
+        }
+
+        .wizard-card {
+            display: none;
+            min-height: 300px;
+            padding: 20px;
+        }
+
+        .wizard-card[selected] {
+            display: block;
+        }
+
+        .upload-image {
+            cursor: pointer;
+            width: 196px;
+            height: 196px;
+            object-fit: contain;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .wizard-card-segment {
+            width: 800px;
+            background-color: rgba(0,0,0,0.01);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 8px -4px black;
+        }
+
+        .wizard-button-bar {
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+<%- include ../partials/header.ejs %>
+<style>
+    .background-cover {
+        /*background-color: rgba(0,0,0,0.5);*/
+        display: none;
+    }
+    .subtle-text {
+        color: #555
+    }
+    textarea.form-control,
+    input.form-control {
+        background-color: rgba(0,0,0,0.02);
+        color: black;
+        border: none;
+    }
+    label {
+        font-family: inherit;
+        font-weight: normal;
+    }
+</style>
+
+<%
+    const selectedTab = showTermsOfUse ? "Terms" : "Verification"
+ %>
+
+<div class="container">
+    <form id=releaseForm action="javascript:;" enctype="multipart/form-data" method="post">
+        <div class="wizard">
+            <ul class="wizard-nav nav nav-tabs">
+            </ul>
+            <div class="wizard-cards">
+                <% if (showTermsOfUse) { %>
+                <div name="Terms" class="wizard-card" <%= selectedTab=="Terms" ? "selected" : ""%>>
+                    <%- include terms.ejs %>
+                </div>
+                <% } %>
+
+                <div name="Verification" class="wizard-card" <%= selectedTab=="Verification" ? "selected" : ""%>>
+                    <%- include social-add.ejs %>
+                </div>
+
+                <div name="Audio" class="wizard-card">
+                    <%- include audio-info.ejs %>
+                </div>
+
+                <div name="Details" class="wizard-card">
+                    <%- include track-details.ejs %>
+                </div>
+
+                <div name="Distribution" class="wizard-card">
+                    <%- include distribution.ejs %>
+                </div>
+
+                <div name="License" class="wizard-card" dynamic-element="de-license-preview">
+                    <div class="dynamic-element"
+                         id="de-license-preview"
+                         de-refresh-period="none"
+                         de-url="/release-manager/license"
+                         context-provider="getLicensePreviewFields()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<%- include ../partials/connect-with-us.ejs %>
+</body>
+<script>
+
+  (function ($) {
+    // prevent dynamically created input elements from submitting the form
+    $('.contributors').on('keydown', '.no-submit', function (e) {
+      if (e.keyCode == 13) {
+        return false;
+      }
+    });
+  })(jQuery);
+
+  $(document).ready(function () {
+    $('#releaseForm').submit(function (event) {
+      event.preventDefault();
+      //grab all form data
+      var formData = new FormData($(this)[0]);;
+
+      $.ajax({
+        url: '/release-manager/release',
+        type: 'POST',
+        data: formData,
+        async: false,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (result) {
+          if (result.success) {
+            window.location = "/release-manager/pending?tx=" + result.tx;
+          }
+          else {
+            new Message(result.reason, 'warning', 5000);
+          }
+        },
+        error: function () {
+          alert("error in ajax form submission");
+        }
+      });
+
+      return false;
+    });
+
+
+    $.fn.exists = function () {
+      return this.length !== 0;
+    }
+
+    var cardsContainer = $(".wizard-cards");
+    var navBar = $(".wizard-nav");
+    cardsContainer.find('.wizard-card').each(function() {
+      var name = $(this).attr('name');
+      var selected = $(this).attr('selected') ? "active" : "";
+      navBar.append("<li class='nav-item " + selected + "' target='" + name + "'><a href=#>" + $(this).attr('name') + "</a></li>");
+    })
+
+    $(document).on('click', '.nav-item', function() {
+      var current = cardsContainer.find("div[selected]");
+      current.removeAttr("selected")
+      var target = cardsContainer.find("[name='" + $(this).attr('target') + "']")
+      target.attr("selected", "true");
+      maybeLoadTarget(target);
+    });
+
+    $(".navPrevious").on('click', function() {
+      var current = cardsContainer.find("div[selected]");
+      var target = current.prev()
+      if (target.exists()) {
+        current.removeAttr("selected")
+        target.attr("selected", "true");
+        maybeLoadTarget(target);
+      }
+    })
+
+    $(".navNext").on('click', function() {
+      if ($(this).hasClass("disabled")) return;
+      var current = cardsContainer.find("div[selected]");
+      var target = current.next();
+      if (target.exists()) {
+        current.removeAttr("selected")
+        target.attr("selected", "true");
+        maybeLoadTarget(target);
+      }
+    })
+
+    function maybeLoadTarget(target) {
+      navBar.find(".nav-item").removeClass('active');
+      navBar.find("[target=" + target.attr('name') + "]").addClass('active')
+      if (target.attr('dynamic-element')) {
+        var context = {};
+        var element = target.find("#" + target.attr('dynamic-element'));
+        if (element.attr('context-provider')) {
+          context = eval(element.attr('context-provider'));
+        }
+        dynamic.refreshElement(element, context);
+      }
+    }
+
+    $("#imageInput").change(function () {
+      readURL('profileImage', this);
+    });
+
+    $("#heroInput").change(function () {
+      readURL('heroImage', this);
+    });
+
+    $("#heroImage").click(function () {
+      $("#heroInput").click();
+    })
+
+    function split(val) {
+      return val.split(/,\s*/);
+    }
+
+    function extractLast(term) {
+      return split(term).pop();
+    }
+
+    var availableTags = [
+      "Alternative Rock",
+      "Ambient",
+      "Classical",
+      "Country",
+      "Dance & EDM",
+      "Dancehall",
+      "Deep House",
+      "Disco",
+      "Drum & Bass",
+      "Electronic",
+      "Folk & Singer-Songwriter",
+      "Hip-hop & Rap",
+      "House",
+      "Indie",
+      "Jazz & Blues",
+      "Latin",
+      "Metal",
+      "Piano",
+      "Pop",
+      "R&B & Soul",
+      "Reggae",
+      "Reggaeton",
+      "Rock",
+      "Soundtrack",
+      "Techno",
+      "Trance",
+      "World"
+    ];
+
+    $(".genre-list")
+      .on("keydown", function (event) {
+        if (event.keyCode === $.ui.keyCode.TAB &&
+          $(this).autocomplete("instance").menu.active) {
+          event.preventDefault();
+        }
+      })
+      .autocomplete({
+        minLength: 0,
+        source: function (request, response) {
+          // delegate back to autocomplete, but extract the last term
+          response($.ui.autocomplete.filter(
+            availableTags, extractLast(request.term)));
+        },
+        focus: function () {
+          // prevent value inserted on focus
+          return false;
+        },
+        select: function (event, ui) {
+          var terms = split(this.value);
+          // remove the current input
+          terms.pop();
+          // add the selected item
+          terms.push(ui.item.value);
+          // add placeholder to get the comma-and-space at the end
+          terms.push("");
+          this.value = terms.join(", ");
+          return false;
+        }
+      });
+  });
+
+  var counter = 0;
+  function addRow() {
+    console.log("Adding row " + counter);
+    var newItem = $(".row-template").clone();
+    newItem.removeClass("row-template");
+    newItem.css("display", "");
+    newItem.find("input[name=address]").attr("name", "recipient" + counter + ".address");
+    newItem.find("input[name=value]").attr("name", "recipient" + counter + ".value");
+    newItem.appendTo(".contributors");
+    counter++;
+  }
+
+  function readURL(targetId, input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        $('#' + targetId).css('background-image', "url('" + e.target.result + "')");
+      }
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function updateImageDisplay(targetId, inputId) {
+    readURL(targetId, $('#' + inputId)[0]);
+  }
+
+  function updateAudioLabel(targetId, inputId) {
+    var fileInput = $('#' + inputId)[0];
+    var fileName = fileInput.files[0].name;
+    var display = $('#' + targetId)[0];
+    if (fileName.endsWith(".mp3") || fileName.endsWith(".mpg") || fileName.endsWith(".mpeg")) {
+      display.innerText = fileName;
+    }
+    else {
+      fileInput.value = "";
+      display.innerText = "Audio...";
+      alert("Currently, Musicoin only supports mp3 format");
+    }
+  }
+
+  function getLicensePreviewFields() {
+    var output = {
+      title: $("input[name=title]").val()
+    }
+    $("input[name^=recipient]").each(function() {
+      output[$(this).attr('name')] = $(this).val();
+    })
+    return output;
+  }
+</script>
+</html>
