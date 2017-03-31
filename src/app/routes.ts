@@ -773,25 +773,49 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     // render the page and pass in any flash data if it exists
     const b = musicoinApi.getMusicoinAccountBalance();
     const o = musicoinApi.getAccountBalances(config.trackingAccounts.map(ta => ta.address));
-    Promise.join(b, o, (mcBalance, balances) => {
-        const output = [];
-        balances.forEach((balance, index) => {
-          const accountDetails = config.trackingAccounts[index];
-          output.push({
-            balance: balance.musicoins,
-            formattedBalance: balance.formattedMusicoins,
-            name: accountDetails.name,
-            address: accountDetails.address,
-          })
-        })
+    const wp = User.count({profileAddress: { $exists: true, $ne: null }}).exec();
+    const wr = User.count({
+      profileAddress: { $exists: true, $ne: null },
+      mostRecentReleaseDate: { $exists: true, $ne: null }
+    }).exec();
+    const tc = Release.count({contractAddress: { $exists: true, $ne: null }, state: "published"}).exec();
+    const dtc = Release.count({contractAddress: { $exists: true, $ne: null }, state: "deleted"}).exec();
+    const au = jsonAPI.getOverallReleaseStats();
+    Promise.join(b, o, wp, wr, tc, dtc, au, (mcBalance, balances, usersWithProfile, usersWithRelease, trackCount, deletedTrackCount, allReleaseStats) => {
+      const output = [];
+      balances.forEach((balance, index) => {
+        const accountDetails = config.trackingAccounts[index];
         output.push({
-          balance: mcBalance.musicoins,
-          formattedBalance: mcBalance.formattedMusicoins,
-          name: "MC Client Balance",
-          address: "",
+          balance: balance.musicoins,
+          formattedBalance: balance.formattedMusicoins,
+          name: accountDetails.name,
+          address: accountDetails.address,
         })
-        return doRender(req, res, 'admin-overview.ejs', {accounts: output});
       })
+      output.push({
+        balance: mcBalance.musicoins,
+        formattedBalance: mcBalance.formattedMusicoins,
+        name: "MC Client Balance",
+        address: "",
+      })
+
+      const userMetrics = [];
+      userMetrics.push({name: "Users", value: _formatNumber(usersWithProfile)});
+      userMetrics.push({name: "Musicians", value: _formatNumber(usersWithRelease)});
+
+      const trackMetrics = [];
+      trackMetrics.push({name: "Tracks", value: _formatNumber(trackCount)});
+      trackMetrics.push({name: "Deleted Tracks", value: _formatNumber(deletedTrackCount)});
+      trackMetrics.push({name: "totalPlays", value: _formatNumber(allReleaseStats[0].totalPlays)});
+      trackMetrics.push({name: "totalTips", value: _formatNumber(allReleaseStats[0].totalTips)});
+      trackMetrics.push({name: "totalComments", value: _formatNumber(allReleaseStats[0].totalComments)});
+
+      return doRender(req, res, 'admin-overview.ejs', {
+        accounts: output,
+        userMetrics: userMetrics,
+        trackMetrics: trackMetrics
+      });
+    })
   });
 
   app.get('/admin/mail/confirm', isLoggedIn, adminOnly, function (req, res) {

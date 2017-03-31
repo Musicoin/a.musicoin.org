@@ -1134,11 +1134,27 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getOverallReleaseStats(): Promise<any> {
+    return ReleaseStats.aggregate([
+      {
+        $match: { duration: "all" }
+      },
+      {
+        $group: {
+          _id: null,
+          totalTips: { $sum: '$tipCount' },
+          totalPlays: { $sum: '$playCount' },
+          totalComments: { $sum: '$commentCount' }
+        }
+      }
+    ]).exec();
+  }
+
   getUserStatsReport(profileAddress: string, date: number, duration: string): Promise<any> {
     const u = User.findOne({profileAddress: profileAddress}).exec()
     const rs = Release.find({artistAddress: profileAddress}).exec()
     return Promise.join(u, rs, (user, releases) => {
-      var uStatsCondition = MusicoinOrgJsonAPI._getUserStatsCondition(user._id, date, duration);
+      const uStatsCondition = MusicoinOrgJsonAPI._getUserStatsCondition(user._id, date, duration);
       const ustats = UserStats.findOne(uStatsCondition)
         .then(userStats => {
           return userStats ? userStats : {
@@ -1151,7 +1167,7 @@ export class MusicoinOrgJsonAPI {
             }
         });
       const rstats = releases.map(release => {
-        var rStatsCondition = MusicoinOrgJsonAPI._getReleaseStatsCondition(release._id, date, duration);
+        const rStatsCondition = MusicoinOrgJsonAPI._getReleaseStatsCondition(release._id, date, duration);
         return ReleaseStats.findOne(rStatsCondition)
           .then(stats => {
             if (!stats) {
