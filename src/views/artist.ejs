@@ -109,9 +109,22 @@ function formatNumber(value) {
 
     <div class="pad10">
         <% if (releases.length > 0) { %>
-        <div class="event-header text-center">releases</div>
+        <div class="event-header text-center">
+            releases
+            <% if (typeof showPlayAll != "undefined" && showPlayAll) { %>
+            <div>
+                <div class="btn btn-success party-button play-list pad5"
+                     style="border-radius: 20px; padding-right: 10px; padding-left: 10px; width: 150px"
+                     target="artistReleases"
+                     title="Play all tracks by this artist">
+                    <i class="fa fa-play text-large mr5 text-default" aria-hidden="true"></i> PLAY ALL
+                </div>
+            </div>
+            <% } %>
+        </div>
+
         <!-- I don't see a reason for this to be a dynamic element -->
-        <%- include('partials/release-events.ejs', {releases: releases}) %>
+        <%- include('partials/release-events.ejs', {releases: releases, elementId: "artistReleases"}) %>
         <% } %>
     </div>
 </div>

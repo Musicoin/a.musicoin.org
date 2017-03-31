@@ -1,5 +1,9 @@
 
-<div class="chat-messages">
+<div
+        <% if (typeof elementId != "undefined" && elementId) { %>
+        id = "<%=elementId%>"
+        <% } %>
+        class="chat-messages">
     <%
     var periodTexts = {
         day: "yesterday",

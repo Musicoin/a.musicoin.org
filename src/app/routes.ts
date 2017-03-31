@@ -1172,6 +1172,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         output.messages = messages;
         hero.description = output.artist.description;
         output.hero = hero;
+        output.showPlayAll = req.user ? isAdmin(req.user) : false;
         doRender(req, res, "artist.ejs", output);
       })
   });
