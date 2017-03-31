@@ -40,6 +40,9 @@ function getStructuredConfig(keyValueConfig) {
       ipfsAddUrl: `${keyValueConfig.ipfsAddEndpoint}/api/v0/add`,
     },
     ui: {
+      thread: {
+        newMessages: 100,
+      },
       feed: {
         newMessages: 24,
         newReleases: 9,

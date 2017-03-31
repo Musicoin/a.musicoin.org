@@ -59,7 +59,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   };
 
   const newReleaseListener = r => {
-    jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, "New release!", MESSAGE_TYPES.release)
+    jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, "New release!", MESSAGE_TYPES.release, null)
       .catch(err => {
         console.log(`Failed to post a message about a new release: ${err}`)
       });
@@ -452,17 +452,84 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  function handleMessagePost(req) {
+    if (req.isAuthenticated() && req.user.profileAddress) {
+      if (req.body.message) {
+        if (req.body.message.length < MAX_MESSAGE_LENGTH) {
+          return jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, MESSAGE_TYPES.comment, req.body.replyto, req.body.thread)
+            .then((post) => {
+              if (!req.body.address) return post;
+              return jsonAPI.addToReleaseCommentCount(req.body.address)
+                .then(() => post);
+            })
+        }
+      }
+      else if (req.body.repostMessage) {
+        return jsonAPI.repostMessages(req.user.profileAddress,req.body.repostMessage);
+      }
+    }
+
+    return Promise.resolve(null);
+  }
+
+  app.get('/thread-page', function (req, res) {
+    // don't redirect if they aren't logged in, this is just page section
+    const limit = req.query.limit && req.query.limit > 0 && req.query.limit < MAX_MESSAGES ? parseInt(req.query.limit) : config.ui.thread.newMessages;
+    const showTrack = req.query.showtrack ? req.query.showtrack == "true" : false;
+    handleMessagePost(req).then(() => jsonAPI.getThreadMessages(req.query.thread, limit))
+      .then(messages => {
+        doRender(req, res, "thread.ejs", {
+          messages: messages,
+          threadId: req.query.thread,
+          showTrack: showTrack,
+          ui: config.ui.thread
+        });
+      })
+      .catch(err => {
+        console.log("Failed to load thread messages: " + err);
+        doRender(req, res, "thread.ejs", {messages: []});
+      })
+  });
+
+  app.post('/thread-view', function (req, res) {
+    // don't redirect if they aren't logged in, this is just page section
+    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : config.ui.thread.newMessages;
+    const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
+    handleMessagePost(req).then(() => jsonAPI.getThreadMessages(req.query.thread, limit))
+      .then(messages => {
+        doRender(req, res, "thread-view.ejs", {
+          messages: messages,
+          threadId: req.query.thread,
+          showTrack: showTrack,
+          ui: config.ui.thread
+        });
+      })
+      .catch(err => {
+        console.log("Failed to load thread messages: " + err);
+        doRender(req, res, "thread-view.ejs", {messages: []});
+      })
+  });
+
+  app.post('/elements/thread', function (req, res) {
+    // don't redirect if they aren't logged in, this is just page section
+    const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : config.ui.thread.newMessages;
+    const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
+    handleMessagePost(req).then(() => jsonAPI.getThreadMessages(req.body.thread, limit))
+      .then(messages => {
+        doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
+      })
+      .catch(err => {
+        console.log("Failed to load track messages: " + err);
+        doRender(req, res, "partials/track-messages.ejs", {messages: []});
+      })
+  });
+
+
   app.post('/elements/track-messages', function (req, res) {
     // don't redirect if they aren't logged in, this is just page section
-    const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, MESSAGE_TYPES.comment, req.body.replyto)
-        .then(() => {
-          return jsonAPI.addToReleaseCommentCount(req.body.address);
-        })
-      : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
-    post.then(() => jsonAPI.getLicenseMessages(req.body.address, limit))
+    handleMessagePost(req).then(() => jsonAPI.getLicenseMessages(req.body.address, limit))
       .then(messages => {
         doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
       })
@@ -473,16 +540,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/elements/user-messages', function (req, res) {
-    const post = (req.isAuthenticated() && req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, req.body.replyto)
-        .then(() => {
-          return jsonAPI.addToReleaseCommentCount(req.body.address);
-        })
-      : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     const noContentMessage = req.body.nocontentmessage ? req.body.nocontentmessage : "No messages";
-    post.then(() => jsonAPI.getUserMessages(req.body.user, limit))
+    handleMessagePost(req).then(() => jsonAPI.getUserMessages(req.body.user, limit))
       .then(messages => {
         doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack, noContentMessage: noContentMessage});
       })
@@ -498,12 +559,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return doRender(req, res, "partials/track-messages.ejs", {messages: []});
     }
 
-    const post = (req.body.message && req.user.profileAddress && req.body.message.length < MAX_MESSAGE_LENGTH)
-      ? jsonAPI.postLicenseMessages(req.body.address, null, req.user.profileAddress, req.body.message, req.body.replyto)
-      : Promise.resolve(null);
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
-    post.then(() => jsonAPI.getFeedMessages(req.user._id, limit))
+    handleMessagePost(req).then(() => jsonAPI.getFeedMessages(req.user._id, limit))
       .then(messages => {
         return doRender(req, res, "partials/track-messages.ejs", {
           messages: messages,
@@ -1256,7 +1314,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                     null,
                     req.user.profileAddress,
                     `${req.user.draftProfile.artistName} is now following ${release.artistName}`,
-                    MESSAGE_TYPES.follow
+                    MESSAGE_TYPES.follow,
+                    null
                   )
                 }
                 return null;
@@ -1273,7 +1332,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   followedUser.profileAddress,
                   req.user.profileAddress,
                   `${req.user.draftProfile.artistName} is now following ${followedUser.draftProfile.artistName}`,
-                  MESSAGE_TYPES.follow)
+                  MESSAGE_TYPES.follow,
+                  null)
               })
           }
         }
@@ -1309,7 +1369,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   null,
                   req.user.profileAddress,
                   `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} on "${release.title}"`,
-                  MESSAGE_TYPES.tip)
+                  MESSAGE_TYPES.tip,
+                  null)
               }
             })
         }
@@ -1322,7 +1383,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   tippedUser.profileAddress,
                   req.user.profileAddress,
                   `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} to ${tippedUser.draftProfile.artistName}!`,
-                  MESSAGE_TYPES.tip)
+                  MESSAGE_TYPES.tip,
+                  null)
               }
             });
         }
@@ -1336,7 +1398,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             null,
             req.user.profileAddress,
             msg,
-            MESSAGE_TYPES.donate)
+            MESSAGE_TYPES.donate,
+            null)
         }
       })
       .catch(function (err) {

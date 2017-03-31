@@ -17,6 +17,7 @@
         var pendingIcon = '<i class="fa fa-star fa-spin message-tip fa-fw"></i>';
         var textClass = message.tips > 0 ? "text-warning" : "subtle-text";
         var track = message.release;
+        var isRepost = message.messageType == "repost";
         var showThisTrack = _showTrack && message.release;
         var showThisArtist = _showTrack && message.artist && message.artist.profileAddress;
         var releaseid = track ? track.id : "";
@@ -29,6 +30,7 @@
         if (message.messageType == "donate") {
             messageClass += " message-donate";
         }
+        var isReply = !!message.replyToMessage;
     %>
     <div class="chat-message hover-target <%=messageClass%>"
          releaseid="<%=releaseid%>"
@@ -36,7 +38,7 @@
          senderAddress="<%=message.sender.profileAddress%>"
          messageid="<%=message.id%>">
         <%=message.followReason%>
-        <div class="center-text">
+        <div class="center-text" style="align-items: flex-start">
             <% if (showThisTrack) { %>
             <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=track.contractAddress%>'>
                 <i class="fa fa-play-circle" aria-hidden="true"></i>
@@ -47,49 +49,95 @@
             </div>
             <% } %>
             <a href="/artist/<%=message.sender.profileAddress%>"><div style="background-image: url('<%=message.sender.image%>')" class="<%=senderClass%>"></div></a>
-            <% if (showThisTrack) { %>
-            <!--<i class="fa fa-long-arrow-right subtle-text big-screen-only" aria-hidden="true"></i>&nbsp;-->
-            <!--<a href="/track/<%=track.contractAddress%>" class="big-screen-only"><div style="background-image: url('<%=track.image%>')" class="sender-image"></div></a>-->
-            <% } %>
         </div>
         <div class="chat-message-area">
-            <div class="chat-message-sender">
-                <a href="/artist/<%=message.sender.profileAddress%>"><%=message.sender.name%></a>
-                <% if (showThisTrack) { %>
-                on
-                <a href="/track/<%=track.contractAddress%>"><%=track.title%></a>
-                <% } else if (showThisArtist) { %>
-                on
-                <a href="/artist/<%=message.artist.profileAddress%>"><%=message.artist.name%></a>
-                <% }  %>
-                <span class="message-time big-screen-only"><%=message.time%></span>
+            <div class="chat-message-sender flex-row" style="justify-content: space-between">
+                <div>
+                    <% if (isRepost) { %>
+                    <i class="fa fa-retweet" aria-hidden="true"></i>
+                    <% } else if (isReply) { %>
+                    <i class="fa fa-reply" aria-hidden="true"></i>
+                    <% } %>
+
+                    <a href="/artist/<%=message.sender.profileAddress%>"><%=message.sender.name%></a>
+
+                    <%= isRepost ? "reposted" : isReply ? "replied" : "" %>
+
+                    <% if (!isRepost) { %>
+                    <% if (showThisTrack) { %>
+                    on
+                    <a href="/track/<%=track.contractAddress%>"><%=track.title%></a>
+                    <% } else if (showThisArtist) { %>
+                    on
+                    <a href="/artist/<%=message.artist.profileAddress%>"><%=message.artist.name%></a>
+                    <% }  %>
+                    <% }  %>
+                    <span class="message-time big-screen-only">&nbsp;<%=message.time%></span>
+                </div>
+                <div class="big-screen-only">
+                    <%- include message-action-area.ejs %>
+                </div>
             </div>
-            <div class="chat-message-body"><%=message.body%></div>
-            <div class="inline-reply" style="display: none">
+            <div class="chat-message-body">
+                <% if (isRepost) { %>
+                <div class="message-repost">
+                    <div>
+                        <a href="/artist/<%=message.repost.profileAddress%>"><%=message.repost.name%></a>
+                        <% if (showThisTrack && isRepost) { %>
+                        on
+                        <a href="/track/<%=track.contractAddress%>"><%=track.title%></a>
+                        <% } else if (showThisArtist && isRepost) { %>
+                        on
+                        <a href="/artist/<%=message.artist.profileAddress%>"><%=message.artist.name%></a>
+                        <% }  %>
+                    </div>
+                    <div><%=message.body%></div>
+                </div>
+                <% } else { %>
+                <%=message.body%>
+                <% } %>
+            </div>
+            <div class="small-screen-only">
+
+                <span class="mobile-action-area">
+                    <% if (isAdmin) { %>
+                    <a target=_blank class="subtle-text" href="/nav/thread-page?thread=<%=message.threadId%>">
+                        <i class="fa fa-comments btn" aria-hidden="true"></i>
+                    </a>
+                    <i class="fa fa-retweet btn subtle-text inline-repost-intent-action" aria-hidden="true" title="repost"></i>
+                    <% } %>
+
+                    <i class="fa fa-reply btn subtle-text inline-reply-action" aria-hidden="true"  title="reply"></i>
+                    <div class="flex-row">
+                        <div id="player-tip-button"
+                             class="tip-button btn-xs clickable <%=textClass%>"
+                             style="padding-right: 12px"
+                             recipient="<%=message.sender.profileAddress%>"
+                             amount="1"
+                             on-success="refreshMessageList()"
+                             text-success=':)'
+                             text-fail=":("
+                             text-default='<%-icon%>'
+                             text-pending='<%-pendingIcon%>'
+                             context-type="TrackMessage"
+                             title="Send 1 musicoin to <%=message.sender.name%> for this comment"
+                             context-id="<%=message.id%>">
+                            <%-icon%>
+                        </div>
+                        <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
+                    </div>
+                </span>
+            </div>
+            <div id="repost_<%=message.id%>" class="text-center">
+                <div class="btn btn-success inline-repost-action" style="display: none" tabindex="0" aria-hidden="true" title="repost"><i class="fa fa-retweet"> repost</i></div>
+            </div>
+            <div class="inline-reply mt10" style="display: none">
                 <% if (isAuthenticated) { %>
                 <input placeholder="reply" class="inline-reply-input text-default-size fill-width">
                 <% } else { %>
                 <div class="text-warning text-center">You can join the conversation after you <a href="/welcome" target="_top">sign in</a></div>
                 <% }  %>
             </div>
-        </div>
-        <div class="action-area">
-            <i class="fa fa-reply btn subtle-text inline-reply-action show-on-hover-target" aria-hidden="true"></i>
-            <div id="player-tip-button"
-                 class="tip-button btn-xs clickable <%=textClass%>"
-                 recipient="<%=message.sender.profileAddress%>"
-                 amount="1"
-                 on-success="refreshMessageList()"
-                 text-success=':)'
-                 text-fail=":("
-                 text-default='<%-icon%>'
-                 text-pending='<%-pendingIcon%>'
-                 context-type="TrackMessage"
-                 title="Send 1 musicoin to <%=message.sender.name%> for this comment"
-                 context-id="<%=message.id%>">
-                <%-icon%>
-            </div>
-            <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
         </div>
     </div>
     <%}%>

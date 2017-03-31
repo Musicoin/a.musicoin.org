@@ -17,6 +17,7 @@ const TrackMessage = require('../../app/models/track-message');
 const Hero = require('../../app/models/hero');
 const ErrorReport = require('../../app/models/error-report');
 const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
+const uuidV4 = require('uuid/v4');
 
 const knownGenres = [
   "Alternative Rock",
@@ -843,7 +844,34 @@ export class MusicoinOrgJsonAPI {
     else throw new Error("Invalid duration specified for stats table: " + duration);
   }
 
-  postLicenseMessages(contractAddress: string, _artistAddress: string, senderAddress: string, message: string, _messageType: string, replyToId?: string): Promise<any[]> {
+  repostMessages(senderAddress: string, messageId: string): Promise<any[]> {
+    if (!messageId || !senderAddress) return Promise.resolve(null);
+    const s = User.findOne({profileAddress: senderAddress}).exec();
+    const m = TrackMessage.findById(messageId).exec();
+    return Promise.join(s, m, (sender, message) => {
+      if (message.repostMessage) {
+        return this.repostMessages(senderAddress, message.repostMessage);
+      }
+
+      return TrackMessage.create({
+        artistAddress: message.artistAddress,
+        contractAddress: message.contractAddress,
+        senderAddress: sender.profileAddress,
+        release: message.release,
+        artist: message.artist,
+        sender: sender._id,
+        message: "",
+        replyToMessage: null,
+        replyToSender: null,
+        threadId: uuidV4(),
+        messageType: "repost",
+        repostMessage: message._id,
+        repostOriginalSender: message.sender
+      })
+    })
+  }
+
+  postLicenseMessages(contractAddress: string, _artistAddress: string, senderAddress: string, message: string, _messageType: string, replyToId: string, _threadId?: string): Promise<any[]> {
     const r = contractAddress ? Release.findOne({contractAddress: contractAddress}).exec() : Promise.resolve(null);
     const a = _artistAddress ? User.findOne({profileAddress: _artistAddress}).exec() : Promise.resolve(null);
     const s = User.findOne({profileAddress: senderAddress}).exec();
@@ -861,7 +889,7 @@ export class MusicoinOrgJsonAPI {
           ? User.findOne({profileAddress: artistAddress}).exec()
           : Promise.resolve(null);
 
-      actualArtist
+      return actualArtist
           .then(a => {
             let sendNotification = true;
             if (!a) {
@@ -906,6 +934,12 @@ export class MusicoinOrgJsonAPI {
               }
             }
 
+            const threadId = _threadId
+              ? _threadId
+              : replyToMessage && replyToMessage.threadId
+                ? replyToMessage.threadId
+                : uuidV4();
+
             return TrackMessage.create({
               artistAddress: artistAddress,
               contractAddress: contractAddress,
@@ -916,6 +950,7 @@ export class MusicoinOrgJsonAPI {
               message: message,
               replyToMessage: replyToId,
               replyToSender: replyToMessage ? replyToMessage.sender : null,
+              threadId: threadId,
               messageType: messageType
             })
           });
@@ -943,6 +978,11 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getThreadMessages(threadId: string, limit: number): Promise<any[]> {
+    if (!threadId) return Promise.resolve([]);
+    return this._executeTrackMessagesQuery(TrackMessage.find({threadId: threadId}).limit(limit));
+  }
+
   getLicenseMessages(contractAddress: string, limit: number): Promise<any[]> {
     const condition = contractAddress && contractAddress.trim().length > 0
       ? {contractAddress: contractAddress}
@@ -963,6 +1003,8 @@ export class MusicoinOrgJsonAPI {
       .populate("sender")
       .populate("release")
       .populate("artist")
+      .populate("repostOriginalSender")
+      .populate("repostMessage")
       .exec()
       .then(records => {
         return records.map(m => {
@@ -991,15 +1033,25 @@ export class MusicoinOrgJsonAPI {
               profileAddress: m.artist.profileAddress
             } : {};
 
+          const isRepost = m.repostMessage && m.repostOriginalSender;
+          const repost = isRepost ? {
+              name: m.repostOriginalSender.draftProfile.artistName,
+              profileAddress: m.repostOriginalSender.profileAddress,
+              body: m.repostMessage.message
+            } : { body: null };
+
           return {
             id: m._id,
             sender: sender,
             release: release,
             artist: artist,
-            body: m.message,
+            body: isRepost ? repost.body : m.message,
             time: this._timeSince(m.timestamp.getTime()),
             tips: m.tips,
-            messageType: m.messageType ? m.messageType : "comment"
+            messageType: m.messageType ? m.messageType : "comment",
+            repost: repost,
+            threadId: m.threadId,
+            replyToMessage: m.replyToMessage
           }
         })
       })

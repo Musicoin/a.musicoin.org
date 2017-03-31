@@ -36,7 +36,6 @@
     align-content: flex-start;
     color: black;
     padding-bottom: 10px;
-    padding-right: 10px;
     overflow-y: auto;
 }
 
@@ -60,19 +59,25 @@
     width: 100%;
 }
 
+.message-donate {
+    border: 1px solid darkgreen;
+    background-color: #f5fff5;
+    border-radius: 10px;
+    margin: 2px;
+}
+
+.message-repost {
+    border-left: 5px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    padding: 5px;
+    margin: 2px;
+}
+
 .chat-message-normal {
     display: flex;
     flex-shrink: 0;
     padding: 5px;
-}
-
-.chat-message-normal:hover {
-    background-color: rgba(0,0,0,0.02);
-}
-
-.message-donate {
-    border: 1px solid darkgreen;
-    background-color: #f5fff5;
     border-radius: 10px;
     margin: 2px;
 }
@@ -81,14 +86,8 @@
     display: flex;
     flex-shrink: 0;
     padding: 5px;
-    background-color: #f5f5ff;
-    border: 1px solid #eee;
     border-radius: 10px;
     margin: 2px;
-}
-
-.chat-message-highlight:hover {
-    background-color: #f3f3ff;
 }
 
 .chat-message-preview {
@@ -129,7 +128,6 @@
 
 .chat-message-body {
     color: #333;
-    margin-bottom: 10px;
 }
 
 .message-time {
@@ -141,6 +139,12 @@
 .action-area {
     display: flex;
     align-items: center;
+}
+
+.mobile-action-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .message-scroller {
@@ -164,4 +168,16 @@ blockquote {
 
 .message-tip {
     font-size: 14pt;
+}
+
+.general-post {
+    width: 100%;
+    border-radius: 5px;
+    border-color: #eee;
+}
+
+.post-area {
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 10px;
 }

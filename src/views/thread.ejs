@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <%- include partials/page-head.ejs %>
+    <title>Thread - Musicoin.org</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #eee;
+            background-image: url('/images/musician.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        .home_icon {
+            height: 80px;
+        }
+        .free-play-count {
+            font-size: 72px;
+            line-height: 0.9;
+            text-align: center;
+            margin-top: 20px;
+            color: #e4aa17;
+        }
+
+        .general-post {
+            width: 100%;
+            border-radius: 5px;
+            border-color: #eee;
+        }
+
+        .post-area {
+            padding-left: 40px;
+            padding-right: 40px;
+            padding-bottom: 10px;
+        }
+
+        .party-button {
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+    </style>
+    <link rel="stylesheet" href="/styles/track-message.css">
+</head>
+<body>
+    <%- include partials/header.ejs %>
+    <%- include thread-view.ejs %>
+    <%- include partials/player-hook.ejs %>
+    <%- include partials/connect-with-us.ejs %>
+</body>
+</html>

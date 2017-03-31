@@ -1,0 +1,26 @@
+<%
+var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image"
+%>
+
+<div id=thread-message-container class="white-well">
+    <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
+        <a href="/artist/<%= user.profileAddress %>">
+            <div style="background-image: url('<%= user.profile.image %>')" class="<%= senderClass %>"></div>
+        </a>
+        <textarea class="general-post" target="de-thread-messages" placeholder="say something..."></textarea>
+    </div>
+
+    <div class="dynamic-element message-scroller"
+         data-behavior="chat-message-area"
+         style="min-height: 180px"
+         id="de-thread-messages"
+         de-refresh-period="10"
+         de-refresh-offset="10"
+         de-showtrack="true"
+         de-limit="<%= ui.newMessages %>" ,
+         de-thread="<%= threadId %>"
+         de-nocontent="That's weird. This thread has no messages."
+         de-url="/elements/thread">
+        <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "That's weird. This thread has no messages."}) %>
+    </div>
+</div>
