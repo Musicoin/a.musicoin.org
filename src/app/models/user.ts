@@ -107,7 +107,8 @@ const userSchema = mongoose.Schema({
   },
   termsOfUseVersion: String,
   pendingInitialization: Boolean,
-  blocked: Boolean
+  blocked: Boolean,
+  accountLocked: Boolean
 });
 
 // methods ======================

@@ -115,8 +115,12 @@
         %>
         <tr class="<%= state %>">
             <td class="text-center middle">
-                <div class="btn btn-sm <%= user.blocked ? "btn-success" : "btn-danger" %>"
-                     onclick="blockUser(this, '<%= user.profileAddress %>', '<%= name %>')"><%= user.blocked ? "Unblock" : "Block"%></div>
+                <div class="flex-row">
+                    <div class="btn btn-sm mr5 <%= user.blocked ? "btn-success" : "btn-warning" %>"
+                         onclick="blockUser(this, '<%= user.profileAddress %>', '<%= name %>')"><%= user.blocked ? "Unblock Releases" : "Block Releases"%></div>
+                    <div class="btn btn-sm <%= user.accountLocked ? "btn-success" : "btn-danger" %>"
+                         onclick="lockUserAccount(this, '<%= user.profileAddress %>', '<%= name %>')"><%= user.accountLocked ? "Unlock" : "Lock"%></div>
+                </div>
             </td>
             <td class="text-center middle"><%= invite.invitedAs %></td>
             <td class="text-center middle">
@@ -202,15 +206,44 @@
     })
   }
 
+  function lockUserAccount(element, profileAddress, name) {
+    var button= $(element);
+    var lock = button.text() == "Lock";
+    var msg = lock
+      ? "Are you sure you want to lock " + name + "? The user will not be able to log in."
+      : "Are you sure you want to enable " + name + "? The user will be able to log in again.";
+    var resultMsg = lock
+      ? "User account locked"
+      : "User account unlocked";
+
+    new Message(msg, 'error', 5000)
+      .button("Yes", function() {
+        $.post('/admin/users/lock', {
+          profileAddress: profileAddress,
+          lock: lock
+        }, function (data) {
+          if (data.success) {
+            $(element).text(lock ? "Unlock" : "Lock");
+            $(element).toggleClass("btn-danger", !lock);
+            $(element).toggleClass("btn-success", lock);
+            new Message(resultMsg, "success", 3000);
+          }
+          else {
+            new Message("Failed: " + data.reason, 'error', 5000)
+          }
+        })
+      })
+  }
+
   function blockUser(element, profileAddress, name) {
     var button= $(element);
-    var block = button.text() == "Block";
+    var block = button.text() == "Block Releases";
     var msg = block
-        ? "Are you sure you want to block " + name + "?"
-        : "Are you sure you want to enable " + name + "?";
+        ? "Are you sure you want to block releases " + name + "?"
+        : "Are you sure you want to enable releases" + name + "?";
     var resultMsg = block
-        ? "User blocked"
-        : "User enabled";
+        ? "User releases blocked"
+        : "User releases enabled";
 
     new Message(msg, 'error', 5000)
       .button("Yes", function() {
@@ -219,8 +252,8 @@
           block: block
         }, function (data) {
           if (data.success) {
-            $(element).text(block ? "Unblock" : "Block");
-            $(element).toggleClass("btn-danger", !block);
+            $(element).text(block ? "Unblock Releases" : "Block Releases");
+            $(element).toggleClass("btn-warning", !block);
             $(element).toggleClass("btn-success", block);
             new Message(resultMsg, "success", 3000);
           }

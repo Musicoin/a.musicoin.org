@@ -26,6 +26,13 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
     }
   }
 
+  class AccountDisabled extends Error {
+    constructor(message) {
+      super(message);
+      this.name = 'AccountDisabled';
+    }
+  }
+
   // =========================================================================
   // passport session setup ==================================================
   // =========================================================================
@@ -283,6 +290,9 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
          if(user && validation && !validation(user)) {
            throw new LoginFailed("Password");
          }
+         if (user && user.accountLocked) {
+           throw new AccountDisabled("Account disabled");
+         }
          return user;
        });
 
@@ -383,6 +393,10 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
            if (err instanceof LoginFailed) {
              console.log(`Login attempt failed due to invalid password ${authProvider}: ${err}`);
              return done(null, false, req.flash('loginMessage', 'Oops! User not found or invalid password.'));
+           }
+           else if (err instanceof AccountDisabled) {
+             console.log(`Login attempt failed because the account is locked ${authProvider}: ${err}`);
+             return done(null, false, req.flash('loginMessage', 'This account has been disabled.'));
            }
            else {
              console.log(`Failed while trying to login with ${authProvider}: ${err}`);

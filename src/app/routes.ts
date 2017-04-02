@@ -911,6 +911,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   })
 
+  app.post('/admin/users/lock', (req, res) => {
+    if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
+    if (typeof req.body.lock == "undefined") return res.json({success: false, reason: "specify true/false for 'lock' parameter"});
+    User.findOne({profileAddress: req.body.profileAddress}).exec()
+      .then(user => {
+        user.accountLocked = req.body.lock == "true";
+        return user.save();
+      })
+      .then(() => {
+        res.json({success: true})
+      })
+  })
+
   app.get('/admin/invite-requests', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
