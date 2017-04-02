@@ -23,11 +23,6 @@
             color: #e4aa17;
         }
 
-        .party-button {
-            padding: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
 
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
@@ -51,10 +46,10 @@
                     <img width=24 height=24 class="mr10" src="/images/chat.png">my feed
                 </div>
                 <% if (typeof showFeedPlayAll != "undefined" && showFeedPlayAll) { %>
-                <div class="btn party-button play-list"
+                <div class="btn btn-success play-list pad5 play-all-button"
                      target="de-track-messages"
                      title="Plays all tracks in your timeline">
-                    <i class="fa fa-play-circle text-large mr5" aria-hidden="true"></i> Play all
+                    <i class="fa fa-play text-large mr5 text-default" aria-hidden="true"></i> PLAY ALL
                 </div>
                 <% } else { %>
                 <div></div>

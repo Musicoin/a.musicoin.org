@@ -12,7 +12,7 @@ body {
     color: #eee;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    font-family: medium-content-serif-font,Georgia,Cambria,"Times New Roman",Times,serif;
+    font-family: 'Noto Sans', sans-serif;
 }
 
 label {
@@ -431,4 +431,12 @@ a.morelink {
 .option-button[selected] {
     color: #88f;
     text-decoration: underline;
+}
+
+.play-all-button {
+    font-family: 'Noto Sans', sans-serif;
+    border-radius: 20px;
+    padding-right: 10px;
+    padding-left: 10px;
+    width: 150px
 }

@@ -105,7 +105,17 @@
         <div class="mb20">
             <h3 class="text-center">Now, share your track on your social networks</h3>
             <div class="text-center">You can share this link:</div>
-            <div class="text-center mb20"><span style="float: left">https://musicoin.org/nav/track/<%=release.address%></span></div>
+
+            <div class="flex-row" style="border: 1px solid #ddd; border-radius: 2px; padding-left: 5px">
+                <input id="trackUrl" type="text" value="https://musicoin.org/nav/track/<%=release.address%>" style="width: 100%; border: none; font-size: 12px">
+                <span class="input-group-button">
+                    <span class="btn btn-default btn-sm"
+                          title="Copy to clipboard"
+                          type="button" data-clipboard-target="#trackUrl">
+                        <img class="clippy" src="/images/clippy.svg" width="13" alt="Copy to clipboard">
+                    </span>
+                </span>
+            </div>
             <BR>
             <div class="flex-row center-text mb20">
                 <div class="mr5"><a href="https://plus.google.com/" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"><span class="big-screen-only"> Google</span></span></a></div>
@@ -121,4 +131,18 @@
         <% }  %>
     </div>
 </div>
+<script src="/js/clipboard.min.js"></script>
+<script>
+  $( document ).ready(function() {
+    if (!window.clippy) {
+      window.clippy = new Clipboard('.btn');
+
+      window.clippy.on('success', function(e) {
+        new Message("Copied!", "success", 2000);
+
+        e.clearSelection();
+      });
+    }
+  });
+</script>
 <% } %>

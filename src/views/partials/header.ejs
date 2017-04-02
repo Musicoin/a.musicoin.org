@@ -25,8 +25,15 @@
     .header-menu-item {
         margin-left: 10px;
         margin-right: 10px;
-        font-size: 1.5em;
         color: #aaa;
+        font-size: 1.5em;
+        cursor: pointer;
+    }
+    .header-admin-item {
+        margin-left: 10px;
+        margin-right: 10px;
+        color: #aaa;
+        font-size: 1.1em;
         cursor: pointer;
     }
     .header-menu-item-personal {
@@ -176,12 +183,12 @@
                         <div class="admin-area">
                             <div class="text-normal text-center">Admin Functions</div>
                             <div class="flex-row">
-                                <a href="/admin/errors" class="header-menu-item text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></a>
-                                <a href="/admin/invite-requests" class="header-menu-item text-danger"><i class="fa fa-list" aria-hidden="true" title="waiting list"></i></a>
-                                <a href="/admin/users" class="header-menu-item text-danger"><i class="fa fa-users" aria-hidden="true" title="users"></i></a>
-                                <a href="/admin/contacts" class="header-menu-item text-danger"><i class="fa fa-address-card" aria-hidden="true"></i></a>
-                                <a href="/admin/overview" class="header-menu-item text-danger" title="admin"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>
-                                <a href="/admin/su" class="header-menu-item text-danger" title="log in as...">su</a>
+                                <a href="/admin/errors" class="header-admin-item text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></a>
+                                <a href="/admin/invite-requests" class="header-admin-item text-danger"><i class="fa fa-list" aria-hidden="true" title="waiting list"></i></a>
+                                <a href="/admin/users" class="header-admin-item text-danger"><i class="fa fa-users" aria-hidden="true" title="users"></i></a>
+                                <a href="/admin/contacts" class="header-admin-item text-danger"><i class="fa fa-address-card" aria-hidden="true"></i></a>
+                                <a href="/admin/overview" class="header-admin-item text-danger" title="admin"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>
+                                <a href="/admin/su" class="header-admin-item text-danger" title="log in as...">su</a>
                             </div>
                         </div>
                         <% } %>
