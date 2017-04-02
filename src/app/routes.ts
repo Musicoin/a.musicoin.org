@@ -884,6 +884,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(() => {
         res.json({success: true})
       })
+  });
+
+  app.post('/admin/invites/blacklist', (req, res) => {
+    if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
+    if (typeof req.body.blacklist == "undefined") return res.json({success: false, reason: "specify true/false for 'blacklist' parameter"});
+    User.findOne({profileAddress: req.body.profileAddress}).exec()
+      .then(user => {
+        user.invite.noReward = !!req.body.blacklist;
+        return user.save();
+      })
+      .then(() => {
+        res.json({success: true})
+      })
   })
 
   app.post('/admin/users/block', (req, res) => {

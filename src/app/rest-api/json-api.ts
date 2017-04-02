@@ -157,6 +157,14 @@ export class MusicoinOrgJsonAPI {
 
     return User.findById(p.invite.invitedBy).exec()
       .then(sender => {
+        if (!sender || !sender.invite) {
+          console.log("Not sending reward because there is no sender or not sender invite field")
+          return {};
+        }
+        if (sender.invite.noReward) {
+          console.log("Not sending reward because the sender was blacklisted, or inherited blacklist status");
+          return {};
+        }
         const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, this.config.rewards.forAcceptingInvite);
         const sendRewardToInviter = this.musicoinAPI.sendReward(sender.profileAddress, this.config.rewards.forInviteeJoining);
         return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
@@ -191,6 +199,7 @@ export class MusicoinOrgJsonAPI {
         const newUser = new User();
         const inviteCode = crypto.randomBytes(4).toString('hex');
         newUser.invite = {
+          noReward: sender.invite ? !!sender.invite.noReward : false,
           invitedBy: sender._id,
           invitedAs: email,
           inviteCode: inviteCode,
@@ -553,7 +562,8 @@ export class MusicoinOrgJsonAPI {
     const search = this._sanitize(_search);
     const genre = this._sanitize(_genre);
 
-    let query = User.find({profileAddress: {$ne: null}});
+    let query = User.find({profileAddress: { $exists: true, $ne: null }})
+      .where({mostRecentReleaseDate: { $exists: true, $ne: null }});
 
     if (search) {
       query = query.where({"draftProfile.artistName": {"$regex": search, "$options": "i"}})

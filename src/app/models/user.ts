@@ -66,6 +66,10 @@ const userSchema = mongoose.Schema({
   reusableInviteCode: String,
   following: [String],
   invite: {
+    noReward: {
+      type: Boolean,
+      default: false
+    },
     invitedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'

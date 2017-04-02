@@ -252,6 +252,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         const newUser = new User();
         const inviteCode = req.session.inviteCode;
         newUser.invite = {
+          noReward: inviter.invite ? !!inviter.invite.noReward : false,
           invitedBy: inviter._id,
           invitedAs: "",
           groupInviteCode: inviteCode,
@@ -372,16 +373,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
            }
 
            else {
-             // no user or unclaimed invite was found
-             var query = {username: localProfile.username, source: authProvider},
-               update = {expire: new Date()},
-               options = {upsert: true, new: true, setDefaultsOnInsert: true};
-
-             // Find the document
-             InviteRequest.findOneAndUpdate(query, update, options, function (error, result) {
-               if (error) return;
-               console.log("Created invite request for user: " + localProfile.username);
-             });
              if (req.session && req.session.inviteCode) {
                return done(null, false, req.flash('loginMessage', 'The invite code you are using has already been claimed'));
              }
