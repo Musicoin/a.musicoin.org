@@ -162,9 +162,11 @@ export class MusicoinOrgJsonAPI {
           return {};
         }
         if (sender.invite.noReward) {
-          console.log("Not sending reward because the sender was blacklisted, or inherited blacklist status");
+          console.log("Not sending reward because the sender was blacklisted, or inherited blacklist status: " + sender.profileAddress);
           return {};
         }
+
+        console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}'`);
         const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, this.config.rewards.forAcceptingInvite);
         const sendRewardToInviter = this.musicoinAPI.sendReward(sender.profileAddress, this.config.rewards.forInviteeJoining);
         return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
