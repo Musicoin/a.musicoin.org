@@ -141,7 +141,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
   app.use('/admin/*', isLoggedIn, adminOnly);
-  app.use('/release-manager', isLoggedIn, adminOnly, releaseManager.getRouter());
+  app.use('/release-manager', isLoggedIn, releaseManager.getRouter());
 
   function doRender(req, res, view, context) {
     // console.log("Calling doRender in " + view);
@@ -312,7 +312,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       if (messages.length > 0) {
         console.log("mini: " + req.user.preferences.minimizeHeroInFeed);
         doRender(req, res, "feed.ejs", {
-          showFeedPlayAll: isAdmin(req.user),
+          showFeedPlayAll: true,
           messages: messages,
           releases: releases,
           topPlayedLastWeek: topPlayed,
@@ -612,7 +612,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
-  app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => doRender(req, res, 'welcome.ejs', {}));
+  // app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => doRender(req, res, 'welcome.ejs', {}));
+  app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => {
+    if (req.user) {
+      console.log("User is already logged in, redirecting away from login page");
+      return res.redirect(loginRedirect);
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    req.session.falsh = [];
+    doRender(req, res, 'signup.ejs', {message: message});
+  });
   app.get('/invite', (req, res) => {
     const musician = req.query.type == "musician";
     doRender(req, res, 'invite.ejs', {
@@ -897,7 +907,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(() => {
         res.json({success: true})
       })
-  })
+  });
 
   app.post('/admin/users/block', (req, res) => {
     if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
@@ -909,7 +919,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(() => {
         res.json({success: true})
       })
-  })
+  });
 
   app.post('/admin/users/lock', (req, res) => {
     if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
@@ -922,7 +932,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(() => {
         res.json({success: true})
       })
-  })
+  });
 
   app.get('/admin/invite-requests', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
@@ -1125,63 +1135,113 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
   });
 
-  function validateLoginEmail(req, res, next) {
-    if (req.body.email) req.body.email = req.body.email.trim();
-    if (!FormUtils.validateEmail(req.body.email)) {
-      doRender(req, res, 'login.ejs', {
-        message: `The email address you entered '${req.body.email}' does not appear to be valid`,
-      });
-    }
-
-    // in cases where the user is creating/linking an email address, check the password
-    const isLinking = req.isAuthenticated();
-    const isNewAccount = (!req.isAuthenticated() && req.session && req.session.inviteCode);
-    if (isLinking || isNewAccount) {
-      // passwords must match (also check client side, but don't count on it)
-      if (req.body.password != req.body.password2) {
-        return doRender(req, res, 'login.ejs', {
-          message: `Your passwords did not match`,
-        });
+  function validateLoginEmail(errRedirect) {
+    return function (req, res, next) {
+      if (req.body.email) req.body.email = req.body.email.trim();
+      if (!FormUtils.validateEmail(req.body.email)) {
+        req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
+        return res.redirect(errRedirect);
       }
 
-      if (isNewAccount && (!req.body.name || req.body.name.trim().length == 0)) {
-        return doRender(req, res, 'login.ejs', {
-          message: `Please enter a screen name`,
-        });
+      // in cases where the user is creating/linking an email address, check the password
+      const isLinking = req.isAuthenticated();
+      if (isLinking) {
+        // passwords must match (also check client side, but don't count on it)
+        if (req.body.password != req.body.password2) {
+          req.flash('loginMessage', `Your passwords did not match`);
+          return res.redirect(errRedirect);
+        }
+
+        // minimum password strength
+        const error = FormUtils.checkPasswordStrength(req.body.password);
+        if (error) {
+          req.flash('loginMessage', error);
+          return res.redirect(errRedirect);
+        }
+
+        return EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation})
+          .then(record => {
+            if (record) {
+              next();
+            }
+            else {
+              req.flash('loginMessage', "The confirmation code provided did not match the email address provided.");
+              return res.redirect(errRedirect);
+            }
+          })
+      }
+      return next();
+    }
+  }
+
+  function validateNewAccount(errRedirect) {
+    return function (req, res, next) {
+      if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
+      if (!FormUtils.validateEmail(req.body.email)) {
+        req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
+        return res.redirect(errRedirect);
+      }
+
+      // in cases where the user is creating/linking an email address, check the password
+      // passwords must match (also check client side, but don't count on it)
+      if (req.body.password != req.body.password2) {
+        req.flash('loginMessage', `Your passwords did not match`);
+        return res.redirect(errRedirect);
+      }
+
+      if ((!req.body.name || req.body.name.trim().length == 0)) {
+        req.flash('loginMessage', `Please enter a screen name`);
+        return res.redirect(errRedirect);
       }
 
       // minimum password strength
       const error = FormUtils.checkPasswordStrength(req.body.password);
       if (error) {
-        return doRender(req, res, 'login.ejs', {
-          message: error,
-        });
+        req.flash('loginMessage', error);
+        return res.redirect(errRedirect);
       }
 
-      return EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation})
-        .then(record => {
-          if (record) {
-            next();
-          }
-          else {
-            return doRender(req, res, 'login.ejs', {
-              message: "The confirmation code provided did not match the email address provided.",
-            });
-          }
-        })
+      const cc = EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation});
+      const eu = User.findOne({"local.email": req.body.email});
+
+      return Promise.join(cc, eu, function(confirmation, existingUser) {
+        if (existingUser) {
+          req.flash('loginMessage', "An account already exists with this email address");
+          return res.redirect(errRedirect);
+        }
+
+        if (confirmation) {
+          next();
+        }
+        else {
+          req.flash('loginMessage', "The confirmation code provided did not match the email address provided.");
+          return res.redirect(errRedirect);
+        }
+      });
     }
-    return next();
   }
 
-  app.post('/connect/email', validateLoginEmail, passport.authenticate('local', {
+  app.post('/connect/email', validateLoginEmail('/connect/email'), passport.authenticate('local', {
     successRedirect : loginRedirect, // redirect to the secure profile section
     failureRedirect : '/connect/email', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
 
-  app.post('/login', validateLoginEmail, passport.authenticate('local', {
+  app.post('/login', validateLoginEmail('/login'), passport.authenticate('local', {
     successRedirect : loginRedirect, // redirect to the secure profile section
     failureRedirect : '/login', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+  }));
+
+  app.post('/signin', validateLoginEmail('/welcome'), passport.authenticate('local', {
+    successRedirect : loginRedirect, // redirect to the secure profile section
+    failureRedirect : '/welcome', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+  }));
+
+  app.post('/signup', validateNewAccount('/welcome'), passport.authenticate('local', {
+    successRedirect : loginRedirect, // redirect to the secure profile section
+    failureRedirect : '/welcome', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
 
@@ -1198,7 +1258,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         output.messages = messages;
         hero.description = output.artist.description;
         output.hero = hero;
-        output.showPlayAll = req.user ? isAdmin(req.user) : false;
+        output.showPlayAll = true;
         doRender(req, res, "artist.ejs", output);
       })
   });

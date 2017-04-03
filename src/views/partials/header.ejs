@@ -138,8 +138,12 @@
         <% if (isAuthenticated) { %>
             <div style="width:20px"></div>
             <!--<a href="/faq" class="header-menu-item"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>-->
-            <a href="/main" class="header-menu-item"><i class="fa fa-compass" aria-hidden="true"></i></a>
-            <a href="/browse" class="header-menu-item"><i class="fa fa-search" aria-hidden="true"></i></a>
+
+            <% if (user.profileAddress) { %>
+            <a href="/release-manager" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a>
+            <% } %>
+            <a href="/main" class="header-menu-item" title="discover"><i class="fa fa-compass" aria-hidden="true"></i></a>
+            <a href="/browse" class="header-menu-item" title="browse"><i class="fa fa-search" aria-hidden="true"></i></a>
             <div style="width:20px"></div>
 
             <div class="popover-markup" style="display:inline;">

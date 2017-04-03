@@ -248,6 +248,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
     }));
 
   function createUserWithReusableInvite(req) {
+    if (!req.session.inviteCode) return Promise.resolve(null);
     return User.findOne({
       $and: [
         {reusableInviteCode: req.session.inviteCode},
@@ -277,25 +278,28 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       })
   }
 
+  function createUserWithNoInvite() {
+    const newUser = new User();
+    newUser.invite = {
+      noReward: false,
+      invitedBy: null,
+      invitedAs: "",
+      groupInviteCode: "",
+      invitedOn: Date.now(),
+      claimed: true
+    };
+    return newUser.save()
+      .catch(err => {
+        console.log("Failed to create new user from reusable invite code: " + err);
+        return null;
+      })
+  }
+
   function doStandardLogin(authProvider: string,
                            req,
                            localProfile,
                            done,
                            validation?) {
-    // check if the user is already logged in
-    const condition = {};
-    condition[authProvider + ".id"] = localProfile.id;
-     const userQuery = User.findOne(condition).exec()
-       .then((user) => {
-         if(user && validation && !validation(user)) {
-           throw new LoginFailed("Password");
-         }
-         if (user && user.accountLocked) {
-           throw new AccountDisabled("Account disabled");
-         }
-         return user;
-       });
-
      // if the user is already logged in, see if the account can be linked
      if (req.user) {
        const user = req.user;
@@ -322,22 +326,34 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
            }
          })
          .catch(function (err) {
-           if (err instanceof LoginFailed) {
-             console.log(`Link attempt failed due to invalid password ${authProvider}: ${err}`);
-             return done(null, false, req.flash('loginMessage', 'This address is already linked to another account'));
-           }
-           else {
-             console.log(`Failed while trying to link an account ${authProvider}: ${err}`);
-             done(err);
-           }
+           console.log(`Failed while trying to link an account ${authProvider}: ${err}`);
+           done(err);
          });
      }
      else {
+       // check if the user is already logged in
+       const condition = {};
+       condition[authProvider + ".id"] = localProfile.id;
+       const userQuery = User.findOne(condition).exec()
+         .then((user) => {
+           if(user && validation && !validation(user)) {
+             throw new LoginFailed("Password");
+           }
+           if (user && user.accountLocked) {
+             throw new AccountDisabled("Account disabled");
+           }
+           return user;
+         });
+
        // first, check if this user already exists
        userQuery
          .then(function (user) {
+           // existing user, just return
            if (user) return user;
-           if (!req.session || !req.session.inviteCode) return null;
+
+           // only allow a new user to be created when coming from the signup page
+           // this is ugly
+           if (req.originalUrl != "/signup") return null;
 
            // if not, look for an unclaimed invite
            return User.findOne({
@@ -356,6 +372,12 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
                if (!user) {
                  // now check to see if this is a reusable invite
                  return createUserWithReusableInvite(req);
+               }
+               return user;
+             })
+             .then(user => {
+               if (!user) {
+                 return createUserWithNoInvite();
                }
                return user;
              })
@@ -386,7 +408,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
              if (req.session && req.session.inviteCode) {
                return done(null, false, req.flash('loginMessage', 'The invite code you are using has already been claimed'));
              }
-             return done(null, false, req.flash('loginMessage', 'An invite is required'));
+             return done(null, false, req.flash('loginMessage', 'Oops! User not found or invalid password'));
            }
          })
          .catch(function (err) {

@@ -1,47 +1,228 @@
-<!-- views/signup.ejs -->
 <!doctype html>
 <html>
 <head>
-<title>Node Authentication</title>
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
-<style>
-body        { padding-top:80px; }
-</style>
+    <title>Signup - Musicoin.org</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body {
+            word-wrap:break-word;
+            background-image: url(images/waitlist.png);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            color: white
+        }
+
+        a {
+            text-shadow: none;
+        }
+
+        a:hover {
+            color: inherit;
+        }
+
+
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .email {
+            width: 300px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        h1, h3 {
+            text-shadow: 1px 2px rgba(0,0,0,0.5);
+        }
+        .expand {
+            flex-grow: 1;
+        }
+    </style>
 </head>
 <body>
+<%- include('partials/header.ejs', {isAuthenticated: false}) %>
+<style>
+    .background-cover {
+        display: none;
+    }
+    .subtle-text {
+        color: white;
+    }
+
+    input.form-control {
+        color: black
+    }
+
+    label {
+        font-family: inherit;
+    }
+</style>
 <div class="container">
+    <div class="col-sm-6 col-sm-offset-3 mt20" style="margin-top: 40px">
+        <div class="well white-well">
+            <%
+            var action = "/welcome";
+            %>
 
-  <div class="col-sm-6 col-sm-offset-3">
+            <div class="text-large flex-column center-text">
+                <img src="/images/logo.png" width="300px">
+            </div>
 
-  <h1><span class="fa fa-sign-in"></span> Signup</h1>
+            <div class="text-center mt20">Sign in or sign up using one of these services </div>
 
-  <!-- show any messages that come back with authentication -->
-<% if (message.length > 0) { %>
-<div class="alert alert-danger"><%= message %></div>
-    <% } %>
+            <div class="flex-row center-text mt20">
+                <div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus text-large"><span class="big-screen-only"> Google</span></span></a></div>
+                <div class="mr5"><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter text-large"><span class="big-screen-only">  Twitter</span></span></a></div>
+                <div class="mr5"><a href="/auth/facebook" class="btn btn-primary btn-sm"><span class="fa fa-facebook text-large"><span class="big-screen-only"> Facebook</span></span></a></div>
+            </div>
 
-<!-- LOGIN FORM -->
-<form action="/signup" method="post">
-  <div class="form-group">
-  <label>Email</label>
-  <input type="text" class="form-control" name="email">
-  </div>
-  <div class="form-group">
-  <label>Password</label>
-  <input type="password" class="form-control" name="password">
-  </div>
+            <div class="mt20 text-center">or,
+                <span onclick="$('#signinEmailForm').show(); $('#signupEmailForm').hide();" class="text-primary clickable">sign in</span>
+                or
+                <span onclick="$('#signupEmailForm').show(); $('#signinEmailForm').hide()" class="text-primary clickable">sign up</span>
+                with an email address
+            </div>
 
-  <button type="submit" class="btn btn-warning btn-lg">Signup</button>
-  </form>
+            <% if (message.length > 0) { %>
+            <div class="alert alert-danger"><%= message %></div>
+            <% } %>
 
-  <hr>
+            <div id="signupEmailForm" style="display: none">
+                <!-- LOGIN FORM -->
+                <form name="singupForm" action="/signup" method="post" onsubmit="return validateSignupFields()">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" name="email" placeholder="Enter your email, then click 'Get a code'">
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="name" placeholder="Choose a screen name">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" name="password">
+                    </div>
+                    <div class="form-group">
+                        <label>Repeat Password</label>
+                        <input type="password" class="form-control" name="password2">
+                    </div>
 
-  <p>Already have an account? <a href="/login">Login</a></p>
-  <p>Or go <a href="/">home</a>.</p>
+                    <div class="form-group">
+                        <label>Email confirmation code</label>
+                        <div style="display: flex">
+                            <input type="text" class="form-control expand" name="confirmation">
+                            <span id=confirm class="btn btn-success">Get a code</span>
+                        </div>
+                    </div>
 
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-warning btn-lg">Sign up</button>
+                    </div>
+
+                </form>
+            </div>
+
+            <div id="signinEmailForm" style="display: none">
+                <!-- LOGIN FORM -->
+                <form name="loginForm" action="/signin" method="post" onsubmit="return validateSigninFields()">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" name="email" placeholder="Enter your email, then click 'Get a code'">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" name="password">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-warning btn-lg">Sign in</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+<%- include partials/connect-with-us.ejs %>
+<script>
 
-</div>
+  $( document ).ready(function() {
+    $("#confirm").on('click', function () {
+      var email = document.forms["singupForm"]["email"].value;
+      if (!email || email.trim().length == 0) {
+        new Message("Enter your email address, then you can request a code", 'warning', 5000);
+      }
+      else {
+        $.post('/login/confirm', {
+            email: email
+          },
+          function (data) {
+            if (data.success) {
+              new Message("A confirmation code was sent to " + data.email, 'success', 5000);
+            }
+            else {
+              new Message("Failed to send confirmation: " + data.reason, 'error', 5000);
+            }
+          })
+      }
+    })
+  })
+
+  var validatePassword = true;
+  var validateCode = true;
+  var validateUsername = true;
+
+  function validateSigninFields() {
+    var email = document.forms["loginForm"]["email"].value;
+    if (!email || email.trim().length == 0) {
+      new Message("Please provide an email address", 'error', 5000);
+      return false;
+    }
+
+    var pwd = document.forms["loginForm"]["password"].value;
+    if (!pwd || pwd.trim().length == 0) {
+      new Message("A password is required", 'error', 5000);
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateSignupFields() {
+    var email = document.forms["singupForm"]["email"].value;
+    if (!email || email.trim().length == 0) {
+      alert("Please provide an email address");
+      return false;
+    }
+
+    var pwd = document.forms["singupForm"]["password"].value;
+    if (!pwd || pwd.trim().length == 0) {
+      new Message("A password is required", 'error', 5000);
+      return false;
+    }
+
+    if (validateUsername && document.forms["singupForm"]["name"].value.trim().length == 0) {
+      new Message("Please enter a screen name", 'error', 5000);
+      return false;
+    }
+
+    if (validatePassword && document.forms["singupForm"]["password2"].value != pwd) {
+      new Message("Passwords do not match!", 'error', 5000);
+      return false;
+    }
+
+    if (validateCode && document.forms["singupForm"]["confirmation"].value.trim().length == 0) {
+      new Message("Please enter the confirmation code", 'error', 5000);
+      return false;
+    }
+  }
+</script>
 </body>
 </html>

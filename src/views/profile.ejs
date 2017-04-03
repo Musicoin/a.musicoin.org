@@ -411,89 +411,13 @@
     <div class="col-sm-6">
         <div class="well">
             <h3 class="section-title">Release</h3>
-            <form id=releaseForm action="/license/release" enctype="multipart/form-data" method="post">
-                <% for (let i = 0; i < 1; i++) {
-                    const rowId = `track${i}`;
-                    const displayId = rowId + "_imageDisplay";
-                %>
-                <div class="flex-row">
-                    <div class="flex-column clickable" onclick="<%= rowId %>_image.click()">
-                        <img src="<%= user.profile.image %>" id="<%= displayId %>" class="upload-image">
-                        <div class="text-center small">
-                            (click to change)
-                        </div>
-                    </div>
-
-                    <div class="profile-release-item">
-                        <input class="no-submit form-control" type="text" name="<%= rowId %>.title" placeholder="title">
-                        <label class="no-submit form-entry" for="<%= rowId %>_audio" id="<%= rowId %>_audioLabel">Audio...</label>
-                        <input name="<%= rowId %>.genres" class="form-control no-submit genre-list"
-                               placeholder="e.g. Rock, Country, etc"
-                               value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
-                        <input style="display: none" onchange="updateAudioLabel('<%= rowId %>_audioLabel', this.id)"
-                               id="<%= rowId %>_audio" type="file" name="<%= rowId %>.audio">
-                        <input style="display: none" onchange="updateImageDisplay('<%= displayId %>', this.id)"
-                               id="<%= rowId %>_image" type="file" name="<%= rowId %>.image">
-                    </div>
-                </div>
-
-                <div class="release-distribution" style="display: none">
-                    <table class="table table-condensed table-responsive contributors">
-                        <tr>
-                            <th class="col-md-5">recipient <a href="/faq#WhatIsARecipient" target="help">(?)</a></th>
-                            <th class="col-md-1">shares <a href="/faq#WhatAreShares" target="help">(?)</a></th>
-                        </tr>
-                        <tr class="row-template" style="display: none">
-                            <td><input name="address"
-                                       class="no-submit form-control"
-                                       placeholder="email, wallet, or license address"></td>
-                            <td><input name="value"
-                                       class="no-submit form-control text-right"
-                                       placeholder=""></td>
-                        </tr>
-                        <tr>
-                            <td><label style="width: 100%"
-                                       class="form-entry">My wallet</label>
-                                <input style="display: none"
-                                       name="track0.recipient.address"
-                                       class="no-submit form-control"
-                                       value="<%= user.profileAddress %>"></td>
-                            <td><input name="track0.recipient.value"
-                                       class="no-submit form-control text-right"
-                                       value="1"
-                                       placeholder=""></td>
-                        </tr>
-                    </table>
-                    <div class="text-right">
-                        <div class="btn btn-sm btn-link" onclick="addRow()">
-                            <span class="glyphicon glyphicon-plus" value="Add"></span>
-                            add another entry
-                        </div>
-                    </div>
-                </div>
-                <div id="licensePreview"></div>
-                <% } %>
-
-                <button id=releaseButton style="display: none" type="submit"></button>
-                <div style="display:flex; justify-content: flex-end">
-                    <div onclick='$( "#licensePreview" ).load( "/license/preview", loadLicenseFields() ); $("#licensePreview").show()'
-                         class="btn btn-success">
-                        Release...
-                    </div>
-                </div>
-                <div class="wallet-action-toggle subtle-text"
-                     onclick='$(".release-distribution").toggle()'>
-                    <div class="release-distribution">not a solo act? show distribution options</div>
-                    <div class="release-distribution" style="display: none">hide distribution options</div>
-                </div>
-            </form>
+            <div class="center-text">
+                Now you can release using the&nbsp;<a href="/release-manager"> release wizard</a>!
+            </div>
+            <div class="center-text">
+                Look for the&nbsp;<i class="fa fa-cloud-upload" aria-hidden="true"></i>&nbsp;icon in the top menu.
+            </div>
         </div>
-
-        <% if (typeof releaseError != "undefined" && releaseError) { %>
-        <div class="text-center text-danger">
-            Release failed! Please try again later.
-        </div>
-        <% } %>
     </div>
     <% } %>
 
