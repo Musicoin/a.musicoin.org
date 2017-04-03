@@ -428,7 +428,9 @@ export class MusicoinOrgJsonAPI {
       .limit(limit)
       .exec()
       .then(statsRecords => {
-        return statsRecords.map(sr => {
+        return statsRecords
+          .filter(sr => sr.release)
+          .map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
               output.stats = {

@@ -104,7 +104,7 @@ function getStructuredConfig(keyValueConfig) {
       {name: "Miner-6 (bb)", address: "0x7ef7dc5f996b21588fa6cb726a29a8296b28bf08"},
       {name: "Hot wallet (PPP)", address: "0xfef55843244453abc7e183d13139a528bdfbcbed"},
       {name: "Publisher", address: "0x6e1d33f195e7fadcc6da8ca9e36d6d4d717cf504"},
-      {name: "Dev. Publisher and Hot Wallet", address: "0xf527a9a52b77f6c04471914ad57c31a8ae104d71"},
+      {name: "Test Publisher and Hot Wallet", address: "0xf527a9a52b77f6c04471914ad57c31a8ae104d71"},
 
     ],
     auth: {
