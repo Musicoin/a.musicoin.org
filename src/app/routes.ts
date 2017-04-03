@@ -2064,6 +2064,10 @@ function preProcessUser(mediaProvider, jsonAPI) {
   return function preProcessUser(req, res, next) {
     const user = req.user;
     if (user) {
+      // force locked accounts to log out immediately
+      if (!!user.accountLocked && req.originalUrl != "/logout") {
+        return res.redirect("/logout");
+      }
       if(req.user.pendingInitialization) {
         return jsonAPI.setupNewUser(user)
           .then(() => {
