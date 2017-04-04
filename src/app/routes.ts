@@ -1941,13 +1941,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     next();
   }
 
-  app.get('/ppp/:address', checkPlaybackFrequency, (req, res, next) => {
+  app.get('/ppp/:address', (req, res, next) => {
     const address = req.params ? req.params.address : "";
     const sessionId = req.session ? req.session.id : "";
     console.log(`Got ppp request for ${address}, ip: ${req.ip}, session: ${sessionId}`);
     next();
   }, isLoggedInOrIsPublic, function (req, res) {
-    console.log("Got ppp request for " + req.params.address);
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
     const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
