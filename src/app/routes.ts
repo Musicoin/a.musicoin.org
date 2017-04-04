@@ -823,7 +823,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return doRender(req, res, 'admin-overview.ejs', {
         accounts: output,
         userMetrics: userMetrics,
-        trackMetrics: trackMetrics
+        trackMetrics: trackMetrics,
+        bootSessions: bootSession
       });
     })
   });
@@ -922,7 +923,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/admin/session/boot', (req, res) => {
-    bootSession.push(req.body.session);
+    const idx = bootSession.indexOf(req.body.session);
+    if (idx < 0) {
+      console.log(`Adding ${req.body.session} to blacklist`)
+      bootSession.push(req.body.session);
+    }
+    res.redirect("/admin/overview");
+  });
+
+  app.post('/admin/session/unboot', (req, res) => {
+    const idx = bootSession.indexOf(req.body.session);
+    if (idx >= 0) {
+      console.log(`Removing ${req.body.session} from blacklist`)
+      bootSession.splice(idx, 1);
+    }
+    res.redirect("/admin/overview");
   });
 
   app.post('/admin/users/lock', (req, res) => {

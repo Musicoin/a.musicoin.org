@@ -56,9 +56,15 @@
 
         <div class="col-sm-4">
             <div class="well white-well">
+                <h3>Blacklist</h3>
                 <form action="/admin/session/boot" method="post">
-                    <input id="boot" name=session placeholder="session">
+                    <input id="boot" name=session placeholder="blacklist session">
                 </form>
+
+                <form action="/admin/session/unboot" method="post">
+                    <input id="boot" name=session placeholder="un-blacklist session">
+                </form>
+                <%= bootSessions %>
             </div>
         </div>
     </div>
