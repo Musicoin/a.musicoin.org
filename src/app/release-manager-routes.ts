@@ -66,6 +66,10 @@ export class ReleaseManagerRouter {
     }
 
     router.post('/release', function (req, res) {
+      if (req.user && req.user.blocked) {
+        return res.redirect("/profile?releaseError=true");
+      }
+
       const form = new Formidable.IncomingForm();
       form.parse(req, (err, fields: any, files: any) => {
         console.log(`Fields: ${JSON.stringify(fields)}`);
