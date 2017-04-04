@@ -26,6 +26,7 @@ const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D3
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
+const bootSession = [];
 
 const MESSAGE_TYPES = {
   comment: "comment",
@@ -918,6 +919,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(() => {
         res.json({success: true})
       })
+  });
+
+  app.post('/admin/session/boot', (req, res) => {
+    bootSession.push(req.body.session);
   });
 
   app.post('/admin/users/lock', (req, res) => {
@@ -2143,7 +2148,7 @@ function checkInviteCode(req, res, next) {
 
 function preProcessUser(mediaProvider, jsonAPI) {
   return function preProcessUser(req, res, next) {
-    if (req.session && req.session.id == "4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k" && req.originalUrl != "/logout") {
+    if (req.session && bootSession.indexOf(req.session.id) >= 0 && req.originalUrl != "/logout") {
       console.log("Redirecting banned session");
       return res.redirect("/logout");
     }

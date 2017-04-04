@@ -56,17 +56,9 @@
 
         <div class="col-sm-4">
             <div class="well white-well">
-                <h3>Track Stats</h3>
-                <table class="table table-responsive table-striped table-condensed">
-                    <% for (var m=0; m < trackMetrics.length; m++) {
-                        const metric = trackMetrics[m];
-                    %>
-                    <tr>
-                        <td class="text-right middle"><%=metric.name%></td>
-                        <td class="text-left middle"><%=metric.value%></td>
-                    </tr>
-                    <%}%>
-                </table>
+                <form action="/admin/session/boot" method="post">
+                    <input id="boot" name=session placeholder="session">
+                </form>
             </div>
         </div>
     </div>
