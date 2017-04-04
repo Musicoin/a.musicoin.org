@@ -406,6 +406,7 @@ export class MusicoinOrgJsonAPI {
       .then(statsRecords => {
         return statsRecords
           .filter(sr => sr.release)
+          .filter(sr => sr.release.state == "published")
           .map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
@@ -430,6 +431,7 @@ export class MusicoinOrgJsonAPI {
       .then(statsRecords => {
         return statsRecords
           .filter(sr => sr.release)
+          .filter(sr => sr.release.state == "published")
           .map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
