@@ -2144,6 +2144,7 @@ function checkInviteCode(req, res, next) {
 function preProcessUser(mediaProvider, jsonAPI) {
   return function preProcessUser(req, res, next) {
     if (req.session && req.session.id == "4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k" && req.originalUrl != "/logout") {
+      console.log("Redirecting banned session");
       return res.redirect("/logout");
     }
     const user = req.user;
