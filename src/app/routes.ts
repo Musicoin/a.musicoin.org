@@ -624,10 +624,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     doRender(req, res, 'signup.ejs', {message: message});
   });
   app.get('/invite', (req, res) => {
-    const musician = req.query.type == "musician";
-    doRender(req, res, 'invite.ejs', {
-      musician: musician
-    });
+    res.redirect('/welcome');
   });
 
   app.post('/admin/waitlist/remove', (req, res) => {
@@ -649,6 +646,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
 
+  /*
   app.post('/waitlist/add', (req, res) => {
     if (!req.body) {
       console.log(`Waitlist request failed because no body was included`);
@@ -678,6 +676,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         })
       })
   });
+  */
 
 
   app.get('/new-user', (req, res) => {
@@ -1819,7 +1818,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/auth/google/callback',
     passport.authenticate('google', {
       successRedirect: loginRedirect,
-      failureRedirect: '/invite'
+      failureRedirect: '/welcome'
     }));
 
   app.get('/connect/google/callback',
@@ -1835,7 +1834,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/auth/soundcloud/callback',
     passport.authenticate('soundcloud', {
       successRedirect: loginRedirect,
-      failureRedirect: '/invite'
+      failureRedirect: '/welcome'
     }));
 
   app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
@@ -1845,14 +1844,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
       successRedirect: loginRedirect,
-      failureRedirect: '/invite'
+      failureRedirect: '/welcome'
     }));
 
   // handle the callback after twitter has authenticated the user
   app.get('/connect/facebook/callback',
     passport.authenticate('facebook', {
       successRedirect: loginRedirect,
-      failureRedirect: '/invite'
+      failureRedirect: '/welcome'
     }));
 
   app.get('/auth/twitter', passport.authenticate('twitter', {scope: 'email'}));
@@ -1862,13 +1861,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/auth/twitter/callback',
     passport.authenticate('twitter', {
       successRedirect: loginRedirect,
-      failureRedirect: '/invite'
+      failureRedirect: '/welcome'
     }));
 
   app.get('/connect/twitter/callback',
     passport.authenticate('twitter', {
       successRedirect: loginRedirect,
-      failureRedirect: '/invite'
+      failureRedirect: '/welcome'
     }));
 
   // =============================================================================

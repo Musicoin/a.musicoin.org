@@ -353,7 +353,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
 
            // only allow a new user to be created when coming from the signup page
            // this is ugly
-           if (req.originalUrl != "/signup") return null;
+           if (authProvider == "local" && req.originalUrl != "/signup") return null;
 
            // if not, look for an unclaimed invite
            return User.findOne({
