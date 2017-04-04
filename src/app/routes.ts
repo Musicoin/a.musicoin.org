@@ -1905,7 +1905,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (!req.session) {
       console.error("Not allowing playback without session");
       res.status(500);
-      res.send(new Error("Not allowing playback without session"));
+      return res.send(new Error("Not allowing playback without session"));
     }
     const now = Date.now();
     if (req.session.lastPlayback && (now - req.session.lastPlayback) < 60000) {
@@ -1913,7 +1913,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const sessionId = req.session ? req.session.id : "";
       console.log(`Not allow playback, too frequent: ${address}, ip: ${req.ip}, session: ${sessionId}`);
       res.status(500);
-      res.send(new Error("Not allowing playback, too frequent: " + req.session.id));
+      return res.send(new Error("Not allowing playback, too frequent: " + req.session.id));
     }
     req.session.lastPlayback = now;
     next();
