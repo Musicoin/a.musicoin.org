@@ -285,7 +285,7 @@
     },
 
     playItem: function (e, url, title, artist, img, playCount, tipCount, artistProfileAddress, licenseAddress) {
-      if (url == audioPlayer.nowPlayingUrl) return false;
+      if (licenseAddress == audioPlayer.nowPlayingLicenseAddress) return false;
 
       var now = new Date().getTime();
       if (now - audioPlayer.previousTime < audioPlayer.minMillisBetweenPlays) {

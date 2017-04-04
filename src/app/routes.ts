@@ -4,6 +4,7 @@ import * as Formidable from 'formidable';
 import * as crypto from 'crypto';
 import {MusicoinHelper} from "./musicoin-helper";
 import * as FormUtils from "./form-utils";
+import * as UrlUtils from "./url-utils";
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 import {AddressResolver} from "./address-resolver";
@@ -112,28 +113,28 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.end();
   });
 
-  app.get('/eplayer', isLoggedInOrIsPublic, (req, res) => {
-    if (req.query.track) {
-      const l = jsonAPI.getLicense(req.query.track);
-      const r = Release.findOne({contractAddress: req.query.track});
-
-      Promise.join(l, r, (license, release) => {
-        return User.findOne({profileAddress: license.artistProfileAddress}).exec()
-          .then(artist => {
-            doRender(req, res, "eplayer.ejs", {
-              artist: artist,
-              license: license,
-              releaseId: release._id,
-              description: release.description,
-            });
-          })
-      })
-        .catch(err => {
-          console.log(`Failed to load embedded player for license: ${req.params.address}, err: ${err}`);
-          res.render('not-found.ejs');
-        });
-    }
-  });
+  // app.get('/eplayer', isLoggedInOrIsPublic, (req, res) => {
+  //   if (req.query.track) {
+  //     const l = jsonAPI.getLicense(req.query.track);
+  //     const r = Release.findOne({contractAddress: req.query.track});
+  //
+  //     Promise.join(l, r, (license, release) => {
+  //       return User.findOne({profileAddress: license.artistProfileAddress}).exec()
+  //         .then(artist => {
+  //           doRender(req, res, "eplayer.ejs", {
+  //             artist: artist,
+  //             license: license,
+  //             releaseId: release._id,
+  //             description: release.description,
+  //           });
+  //         })
+  //     })
+  //       .catch(err => {
+  //         console.log(`Failed to load embedded player for license: ${req.params.address}, err: ${err}`);
+  //         res.render('not-found.ejs');
+  //       });
+  //   }
+  // });
 
   app.use('/health/shallow', (req, res) => {
     res.json({ok: true})
@@ -1947,6 +1948,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     console.log(`Got ppp request for ${address}, ip: ${req.ip}, session: ${sessionId}`);
     next();
   }, isLoggedInOrIsPublic, function (req, res) {
+    const resolved = UrlUtils.resolveExpiringLink(req.params.address);
+    if (!resolved) {
+      console.log("Got ppp request for expired URL");
+      return res.send(new Error("Expired linked: " + req.session.id));
+    }
+    req.params.address = resolved;
     const k = musicoinApi.getKey(req.params.address);
     const l = musicoinApi.getLicenseDetails(req.params.address);
     const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();

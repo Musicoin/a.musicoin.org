@@ -1,5 +1,6 @@
 import {Promise} from 'bluebird';
 import {MusicoinAPI} from "./musicoin-api";
+import * as UrlUtils from "./url-utils";
 
 export class MusicoinHelper {
   constructor(public musicoinApi: MusicoinAPI, public mediaProvider: any) {
@@ -24,7 +25,7 @@ export class MusicoinHelper {
     return this.musicoinApi.getLicenseDetails(address)
       .then(license => {
         license.image = this.mediaProvider.resolveIpfsUrl(license.imageUrl);
-        license.audioUrl = "/ppp/" + license.address;
+        license.audioUrl = "/ppp/" + UrlUtils.createExpiringLink(license.address, 1000);
         return license;
       })
   }
