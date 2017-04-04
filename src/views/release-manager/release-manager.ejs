@@ -127,6 +127,7 @@
 </body>
 <script>
 
+    var attemptingRelease = false;
   (function ($) {
     // prevent dynamically created input elements from submitting the form
     $('.contributors').on('keydown', '.no-submit', function (e) {
@@ -139,6 +140,9 @@
   $(document).ready(function () {
     $('#releaseForm').submit(function (event) {
       event.preventDefault();
+
+      if (attemptingRelease) return false;
+      attemptingRelease = true;
       //grab all form data
       var formData = new FormData($(this)[0]);;
 
@@ -155,10 +159,12 @@
             window.location = "/release-manager/pending?tx=" + result.tx;
           }
           else {
+            attemptingRelease = false;
             new Message(result.reason, 'warning', 5000);
           }
         },
         error: function () {
+          attemptingRelease = false;
           alert("error in ajax form submission");
         }
       });
