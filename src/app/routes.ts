@@ -1908,13 +1908,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return res.send(new Error("Not allowing playback without session"));
     }
     const now = Date.now();
-    if (req.session.lastPlayback && (now - req.session.lastPlayback) < 60000) {
-      const address = req.params ? req.params.address : "";
-      const sessionId = req.session ? req.session.id : "";
+    const since = (now - req.session.lastPlayback);
+    const address = req.params ? req.params.address : "";
+    const sessionId = req.session ? req.session.id : "";
+    if (req.session.lastPlayback && since < 60000) {
       console.log(`Not allow playback, too frequent: ${address}, ip: ${req.ip}, session: ${sessionId}`);
       res.status(500);
       return res.send(new Error("Not allowing playback, too frequent: " + req.session.id));
     }
+    console.log(`Allowing playback: since=${since}, ${address}, ip: ${req.ip}, session: ${sessionId}`);
     req.session.lastPlayback = now;
     next();
   }
