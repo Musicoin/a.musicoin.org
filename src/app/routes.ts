@@ -1902,7 +1902,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/ppp/:address', (req, res, next) => {
-    console.log("(pre login check): Got ppp request for " + req.params.address);
+    const address = req.req.params ? req.params.address : "";
+    const sessionId = req.session ? req.session.id : "";
+    console.log(`Got ppp request for ${address}, ip: ${req.ip}, session: ${sessionId}`);
     next();
   }, isLoggedInOrIsPublic, function (req, res) {
     console.log("Got ppp request for " + req.params.address);
