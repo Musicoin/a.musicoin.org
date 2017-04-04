@@ -25,7 +25,7 @@ export class MusicoinHelper {
     return this.musicoinApi.getLicenseDetails(address)
       .then(license => {
         license.image = this.mediaProvider.resolveIpfsUrl(license.imageUrl);
-        license.audioUrl = "/ppp/" + UrlUtils.createExpiringLink(license.address, 1000);
+        license.audioUrl = "/ppp/" + UrlUtils.createExpiringLink(license.address, 5000);
         return license;
       })
   }
