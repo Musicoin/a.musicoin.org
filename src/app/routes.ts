@@ -647,6 +647,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.post('/admin/release/abuse', (req, res) => {
+    const markAsAbuse = req.body.abuse == "true";
+    const msg = markAsAbuse ? "Marked as abuse" : "Removed abuse label";
+    jsonAPI.markAsAbuse(req.body.licenseAddress, markAsAbuse)
+      .then(result => res.json(result))
+      .then(() => {
+        jsonAPI.postLicenseMessages(req.body.licenseAddress, null, req.user.profileAddress, msg, MESSAGE_TYPES.comment, null, null);
+      })
+      .catch(err => {
+        console.log("failed to mark track as abuse: " + err);
+        res.json({success: false, reason: "error"});
+      });
+  });
+
+
 
   /*
   app.post('/waitlist/add', (req, res) => {
@@ -1968,6 +1983,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const context = {contentType: "audio/mpeg"};
     Promise.join(k, l, r, function (keyResponse, license, release) {
       if (!release) throw new Error("Could not find contract in database (maybe it was deleted)");
+      if (release.markedAsAbuce) {
+        console.log("Not playing track that has been marked as abuse: " + resolved);
+        throw new Error("Could not find contract in database (maybe it was deleted)");
+      };
       console.log("Content type from license: " + license.contentType);
       // context.contentType = license.contentType && !license.contentType.startsWith("0x") ? license.contentType : context.contentType;
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)

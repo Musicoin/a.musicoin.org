@@ -35,8 +35,11 @@
 
     $(document).on('click', '.audio-track', function() {
       var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.playItemById($(this).attr("licenseAddress"), function(started) {
-        if (started) {
+      _audioPlayer.playItemById($(this).attr("licenseAddress"), function(err, started) {
+        if (err) {
+          new Message("Playback failed: " + err, "error", 5000);
+        }
+        else if (started) {
           new Message("This playback was paid for by Musicoin.org!", "success", 5000)
             .button("Why?", () => {
               window.location = "/faq#WhyFreePlays";

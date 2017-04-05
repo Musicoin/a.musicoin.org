@@ -175,6 +175,14 @@
                             Set as Artist of the Week
                         </div>
                     </div>
+
+                    <div class="center-text mt20">
+                        <div class="mark-track-as-abuse btn btn-sm <%=license.markedAsAbuse ? "btn-success" : "btn-danger"%>"
+                             abuse="<%=license.markedAsAbuse%>"
+                             address="<%=license.address%>">
+                            <%= license.markedAsAbuse ? "Mark as ok" : "Mark as abuse"%>
+                        </div>
+                    </div>
                     <%}%>
                 </div>
                 <div class="flex-column mb20 <%= isArtist ? "private-view" : ""%>">
@@ -207,6 +215,9 @@
                 <% } else  { %>
                 <div class="text-warning text-center">You can join the conversation after you <a href="/welcome" target="_top">sign in</a></div>
                 <% } %>
+            </div>
+            <div class="alert alert-danger abuse-alert" style="<%= license.markedAsAbuse ? "" : "display:none" %>  ">
+                This track has been marked as abuse
             </div>
             <div class="dynamic-element"
                  data-behavior="chat-message-area"
@@ -250,6 +261,38 @@
             },
             function(data) {
               if (data.success) {
+                new Message("Success!", 'success', 3000);
+              }
+              else {
+                new Message("Failed: " + data.reason, 'error', 5000);
+              }
+            })
+        })
+        .button('No', () => {
+
+        });
+    })
+
+    $(".mark-track-as-abuse").on('click', function() {
+      var element = $(this);
+      var markAsAbuse = element.attr("abuse") !== "true";
+      var licenseAddress = $(this).attr("address");
+      var msg = markAsAbuse
+        ? "Are you sure you want to mark this as abuse?"
+        : "Are you sure you want to mark this as ok?"
+      new Message(msg, 'warning', 5000)
+        .button('Yes', () => {
+          $.post("/admin/release/abuse", {
+              licenseAddress: licenseAddress,
+              abuse: markAsAbuse
+            },
+            function(data) {
+              if (data.success) {
+                element.attr("abuse", markAsAbuse ? "true" : "false");
+                element.text(markAsAbuse ? "Mark as ok" : "Mark as abuse")
+                element.toggleClass("btn-danger", !markAsAbuse);
+                element.toggleClass("btn-success", markAsAbuse);
+                $(".abuse-alert").toggle();
                 new Message("Success!", 'success', 3000);
               }
               else {

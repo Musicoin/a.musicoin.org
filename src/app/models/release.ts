@@ -26,5 +26,6 @@ module.exports = mongoose.model('Release', mongoose.Schema({
     default: Date.now
   },
   contractAddress: String, // non-null iff state=published
-  errorMessage: String // non-null iff state=error
+  errorMessage: String, // non-null iff state=error
+  markedAsAbuse: Boolean
 }));

@@ -257,17 +257,24 @@
     playItemById: function (licenseAddress, callback) {
       console.log("Getting details for " + licenseAddress);
       $.get( "/json-api/track/" + licenseAddress, function( data ) {
-        var result = audioPlayer.playItem(null,
-          data.audioUrl,
-          data.title,
-          data.artistName,
-          data.image,
-          data.playCount,
-          data.tipCount,
-          data.artistProfileAddress,
-          data.address
-        )
-        if (callback) callback(result);
+        if (data.markedAsAbuse) {
+          console.log("Cannot play track, marked as abuse")
+          callback(new Error("Cannot play track, marked as abuse"),  false);
+          return false;
+        }
+        else {
+          var result = audioPlayer.playItem(null,
+            data.audioUrl,
+            data.title,
+            data.artistName,
+            data.image,
+            data.playCount,
+            data.tipCount,
+            data.artistProfileAddress,
+            data.address
+          )
+          if (callback) callback(null, result);
+        }
       });
     },
 
@@ -279,8 +286,8 @@
     },
 
     playNextItem: function() {
-      if (audioPlayer.currentPlaylist.length > 0) {
-        audioPlayer.playItemById(audioPlayer.currentPlaylist.shift());
+      while (audioPlayer.currentPlaylist.length > 0) {
+        if (audioPlayer.playItemById(audioPlayer.currentPlaylist.shift())) break;
       }
     },
 

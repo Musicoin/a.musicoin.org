@@ -503,6 +503,26 @@ export class MusicoinOrgJsonAPI {
     }
   }
 
+  markAsAbuse(licenseAddress: string, isAbuse: boolean): Promise<any> {
+    return Release.findOne({contractAddress: licenseAddress}).exec()
+      .then(release => {
+        if (release) {
+          release.markedAsAbuse = isAbuse;
+          return release.save()
+        }
+      })
+      .then(() => {
+        return {success: true}
+      })
+      .catch(err => {
+        console.log("Failed to mark track as abuse: " + err);
+        return {
+          success: false,
+          reason: "Failed to mark track as abuse"
+        }
+      })
+  }
+
   promoteTrackToHero(licenseAddress: string): Promise<any> {
     return Release.findOne({contractAddress: licenseAddress}).exec()
       .then(release => {
@@ -1305,6 +1325,7 @@ export class MusicoinOrgJsonAPI {
         license.directPlayCount = record.directPlayCount || 0;
         license.releaseDate = record.releaseDate;
         license.tx = record.tx;
+        license.markedAsAbuse = record.markedAsAbuse;
         return license;
       })
   }
