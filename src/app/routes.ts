@@ -1948,14 +1948,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     console.log(`Got ppp request for ${address}, ip: ${req.ip}, session: ${sessionId}`);
     next();
   }, isLoggedInOrIsPublic, function (req, res) {
-    if (!req.isAuthenticated()) return res.send(new Error("Not logged in: " + req.session.id));
+    if (!req.isAuthenticated()) {
+      console.log("Rejecting unauthorized user: " + req.session.id);
+      return res.send(new Error("Not logged in: " + req.session.id));
+    }
     const resolved = UrlUtils.resolveExpiringLink(req.params.address);
     if (!resolved) {
       console.log("Got ppp request for expired URL");
       return res.send(new Error("Expired linked: " + req.session.id));
     }
     else {
-      console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}`);
+      const userName = req.user.draftProfile ? req.user.draftProfile.artistName : "";
+      console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}, user: ${req.user.profileAddress} (${userName})`);
     }
     req.params.address = resolved;
     const k = musicoinApi.getKey(req.params.address);
