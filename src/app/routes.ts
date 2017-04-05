@@ -27,7 +27,7 @@ const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D3
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
-const bootSession = [];
+const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k"];
 
 const MESSAGE_TYPES = {
   comment: "comment",
@@ -1952,6 +1952,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (!resolved) {
       console.log("Got ppp request for expired URL");
       return res.send(new Error("Expired linked: " + req.session.id));
+    }
+    else {
+      console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}`);
     }
     req.params.address = resolved;
     const k = musicoinApi.getKey(req.params.address);
