@@ -294,6 +294,7 @@ export class MusicoinOrgJsonAPI {
         {"facebook.name": {"$regex": search, "$options": "i"}},
         {"soundcloud.name": {"$regex": search, "$options": "i"}},
         {"soundcloud.username": {"$regex": search, "$options": "i"}},
+        {"local.email": {"$regex": search, "$options": "i"}},
       ]};
     }
     return User.find(filter)

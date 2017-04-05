@@ -103,8 +103,8 @@
                     <a target=_blank class="subtle-text" href="/nav/thread-page?thread=<%=message.threadId%>">
                         <i class="fa fa-comments btn" aria-hidden="true"></i>
                     </a>
+                    <% if (isAuthenticated && user.profileAddress) { %>
                     <i class="fa fa-retweet btn subtle-text inline-repost-intent-action" aria-hidden="true" title="repost"></i>
-
                     <i class="fa fa-reply btn subtle-text inline-reply-action" aria-hidden="true"  title="reply"></i>
                     <div class="flex-row">
                         <div id="player-tip-button"
@@ -124,6 +124,7 @@
                         </div>
                         <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
                     </div>
+                    <% } %>
                 </span>
             </div>
             <div id="repost_<%=message.id%>" class="text-center">

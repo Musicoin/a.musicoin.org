@@ -1,14 +1,18 @@
-<%
-var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image"
-%>
-
 <div id=thread-message-container class="white-well">
+    <% if (isAuthenticated && user.profileAddress) {
+        var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image"
+    %>
     <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
         <a href="/artist/<%= user.profileAddress %>">
             <div style="background-image: url('<%= user.profile.image %>')" class="<%= senderClass %>"></div>
         </a>
         <textarea class="general-post" target="de-thread-messages" placeholder="say something..."></textarea>
     </div>
+    <% } else if (isAuthenticated) { %>
+    <div class="text-warning text-center">You can join the conversation after you save your <a href="/profile">profile</a></div>
+    <% } else  { %>
+    <div class="text-warning text-center">You can join the conversation after you <a href="/welcome" target="_top">sign in</a></div>
+    <% } %>
 
     <div class="dynamic-element message-scroller"
          data-behavior="chat-message-area"
