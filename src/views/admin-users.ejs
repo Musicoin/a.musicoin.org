@@ -117,9 +117,9 @@
             <td class="text-center middle">
                 <div class="flex-row">
                     <div class="btn btn-sm mr5 <%= user.blocked ? "btn-success" : "btn-warning" %>"
-                         onclick="blockUser(this, '<%= user.profileAddress %>', '<%= name %>')"><%= user.blocked ? "Unblock Releases" : "Block Releases"%></div>
+                         onclick="blockUser(this, '<%= user._id %>', '<%= name %>')"><%= user.blocked ? "Unblock Releases" : "Block Releases"%></div>
                     <div class="btn btn-sm <%= user.accountLocked ? "btn-success" : "btn-danger" %>"
-                         onclick="lockUserAccount(this, '<%= user.profileAddress %>', '<%= name %>')"><%= user.accountLocked ? "Unlock" : "Lock"%></div>
+                         onclick="lockUserAccount(this, '<%= user._id %>', '<%= name %>')"><%= user.accountLocked ? "Unlock" : "Lock"%></div>
                 </div>
             </td>
             <td class="text-center middle"><%= invite.invitedAs %></td>
@@ -163,11 +163,11 @@
             <td class="text-center middle"><%= user.invitesRemaining %>
                 <% if(user.profileAddress && user.draftProfile.artistName) { %>
                 <div class="flex-row">
-                    <div class="btn btn-success btn-sm" onclick="addInvites('<%= user.profileAddress %>', 10)">+10</div>
+                    <div class="btn btn-success btn-sm" onclick="addInvites('<%= user._id %>', 10)">+10</div>
                     <% if (user.invite.noReward) { %>
-                    <div class="btn btn-warning btn-sm" onclick="blacklist('<%= user.profileAddress %>', false)">De-Blacklist</div>
+                    <div class="btn btn-warning btn-sm" onclick="blacklist('<%= user._id %>', false)">De-Blacklist</div>
                     <% } else { %>
-                    <div class="btn btn-danger btn-sm" onclick="blacklist('<%= user.profileAddress %>', true)">Blacklist</div>
+                    <div class="btn btn-danger btn-sm" onclick="blacklist('<%= user._id %>', true)">Blacklist</div>
                     <% } %>
                 </div>
                 <% } %>
@@ -178,9 +178,9 @@
 </div>
 
 <script>
-  function addInvites(profileAddress, cnt) {
+  function addInvites(id, cnt) {
     $.post('/admin/invites/add', {
-      profileAddress: profileAddress,
+      id: id,
       count: cnt
     }, function (data) {
       if (data.success) {
@@ -192,13 +192,13 @@
     })
   }
 
-  function blacklist(profileAddress, blacklist) {
+  function blacklist(id, blacklist) {
     $.post('/admin/invites/blacklist', {
-      profileAddress: profileAddress,
+      id: id,
       blacklist: blacklist
     }, function (data) {
       if (data.success) {
-        new Message("User blacklisted!", "success", 3000);
+        new Message(blacklist ? "User blacklisted!" : "User de-blacklisted", "success", 3000);
       }
       else {
         new Message("Failed: " + data.reason, 'error', 5000)
@@ -206,7 +206,7 @@
     })
   }
 
-  function lockUserAccount(element, profileAddress, name) {
+  function lockUserAccount(element, id, name) {
     var button= $(element);
     var lock = button.text() == "Lock";
     var msg = lock
@@ -219,7 +219,7 @@
     new Message(msg, 'error', 5000)
       .button("Yes", function() {
         $.post('/admin/users/lock', {
-          profileAddress: profileAddress,
+          id: id,
           lock: lock
         }, function (data) {
           if (data.success) {
@@ -235,7 +235,7 @@
       })
   }
 
-  function blockUser(element, profileAddress, name) {
+  function blockUser(element, id, name) {
     var button= $(element);
     var block = button.text() == "Block Releases";
     var msg = block
@@ -248,7 +248,7 @@
     new Message(msg, 'error', 5000)
       .button("Yes", function() {
         $.post('/admin/users/block', {
-          profileAddress: profileAddress,
+          id: id,
           block: block
         }, function (data) {
           if (data.success) {

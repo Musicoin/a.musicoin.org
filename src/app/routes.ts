@@ -886,9 +886,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 
   app.post('/admin/invites/add', (req, res) => {
-    if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
+    if (!req.body.id) return res.json({success: false, reason: "No id"});
     if (!req.body.count) return res.json({success: false, reason: "Invite count to add not provided"});
-    User.findOne({profileAddress: req.body.profileAddress}).exec()
+    User.findById(req.body.id).exec()
       .then(user => {
         user.invitesRemaining += parseInt(req.body.count);
         return user.save();
@@ -899,11 +899,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/admin/invites/blacklist', (req, res) => {
-    if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
+    if (!req.body.id) return res.json({success: false, reason: "No id"});
     if (typeof req.body.blacklist == "undefined") return res.json({success: false, reason: "specify true/false for 'blacklist' parameter"});
-    User.findOne({profileAddress: req.body.profileAddress}).exec()
+    User.findById(req.body.id).exec()
       .then(user => {
-        user.invite.noReward = !!req.body.blacklist;
+        user.invite.noReward = req.body.blacklist == "true";
         return user.save();
       })
       .then(() => {
@@ -912,8 +912,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/admin/users/block', (req, res) => {
-    if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
-    User.findOne({profileAddress: req.body.profileAddress}).exec()
+    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    User.findById(req.body.id).exec()
       .then(user => {
         user.blocked = req.body.block == "true";
         return user.save();
@@ -942,9 +942,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/admin/users/lock', (req, res) => {
-    if (!req.body.profileAddress) return res.json({success: false, reason: "No profile address"});
+    if (!req.body.id) return res.json({success: false, reason: "No id"});
     if (typeof req.body.lock == "undefined") return res.json({success: false, reason: "specify true/false for 'lock' parameter"});
-    User.findOne({profileAddress: req.body.profileAddress}).exec()
+    User.findById(req.body.id).exec()
       .then(user => {
         user.accountLocked = req.body.lock == "true";
         return user.save();
