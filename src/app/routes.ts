@@ -1948,6 +1948,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     console.log(`Got ppp request for ${address}, ip: ${req.ip}, session: ${sessionId}`);
     next();
   }, isLoggedInOrIsPublic, function (req, res) {
+    if (!req.isAuthenticated()) return res.send(new Error("Not logged in: " + req.session.id));
     const resolved = UrlUtils.resolveExpiringLink(req.params.address);
     if (!resolved) {
       console.log("Got ppp request for expired URL");
