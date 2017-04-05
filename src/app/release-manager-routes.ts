@@ -65,7 +65,12 @@ export class ReleaseManagerRouter {
         })
     }
 
-    router.post('/release', function (req, res) {
+    function hasSocialLinks(user) {
+      if (!user) return false;
+      return (user.twitter && user.twitter.id) || (user.facebook && user.facebook.id);
+    }
+
+    router.post('/release', function (req: any, res) {
       if (req.user && req.user.blocked) {
         return res.redirect("/profile?releaseError=true");
       }
@@ -76,6 +81,7 @@ export class ReleaseManagerRouter {
         console.log(`Files: ${JSON.stringify(files)}`);
 
         const selfAddress = req.user.profileAddress;
+        if (!hasSocialLinks(req.user)) return res.json({success: false, reason: "You must link a twitter or facebook account to release music"});
         if (!fields.title) return res.json({success: false, reason: "You must profile a title"});
         if (!files.audio || files.audio.size == 0) return res.json({success: false, reason: "You must provide an audio file"});
         if (fields.rights != "confirmed") return res.json({success: false, reason: "You must confirm that you have rights to release this work."});
@@ -104,7 +110,8 @@ export class ReleaseManagerRouter {
 
         track.metadata = {genres: track.genreArray};
 
-        console.log("Would release: " + JSON.stringify(track, null, 2));
+        const sessionID = req.session ? req.session.id : "";
+        console.log(`Releasing Track: session=${sessionID} ${JSON.stringify(track, null, 2)}`);
 
         const m = mediaProvider.uploadText(JSON.stringify(track.metadata));
         const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
