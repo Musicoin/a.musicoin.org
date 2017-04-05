@@ -1334,7 +1334,7 @@ export class MusicoinOrgJsonAPI {
   }
 
   _sanitize(s: string) {
-    return s ? s.replace(/[^a-zA-Z0-9]/g, ' ').trim() : s;
+    return s ? s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&").trim() : s;
   }
 
   _timeSince(date) {
