@@ -21,6 +21,7 @@ function MediaProvider(ipfsHost, ipfsAddUrl) {
 
   // private functions
   this._parseIpfsUrl = function(resourceUrl) {
+    if (!resourceUrl) return {err: new Error("Resource URL is empty: " + resourceUrl)};
     if (resourceUrl.startsWith(ZIP_ENCRYPTED)) {
       return this._createIpfsProxyOptions(resourceUrl, ZIP_ENCRYPTED);
     }
@@ -50,6 +51,7 @@ MediaProvider.prototype.getRawIpfsResource = function(hash) {
 };
 
 MediaProvider.prototype.resolveIpfsUrl = function(url) {
+  if (!url || url.trim().length == 0) return "";
   const parsed = this._parseIpfsUrl(url);
   if (parsed.err) throw new Error("Could not parse URL: " + url);
 

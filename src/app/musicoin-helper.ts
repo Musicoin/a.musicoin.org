@@ -12,7 +12,7 @@ export class MusicoinHelper {
         const s = this.mediaProvider.readJsonFromIpfs(profile.socialUrl).catchReturn({});
         const d = this.mediaProvider.readTextFromIpfs(profile.descriptionUrl).catchReturn("");
         return Promise.join(s, d, function(social, description){
-          profile.image = this.mediaProvider.resolveIpfsUrl(profile.imageUrl);
+          profile.image = profile.imageUrl ? this.mediaProvider.resolveIpfsUrl(profile.imageUrl) : "";
           profile.social = social;
           profile.description = description;
           profile.profileAddress = profileAddress;
