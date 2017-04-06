@@ -259,8 +259,10 @@
       $.get( "/json-api/track/" + licenseAddress, function( data ) {
         if (data.markedAsAbuse) {
           console.log("Cannot play track, marked as abuse")
-          callback(new Error("Cannot play track, marked as abuse"),  false);
-          return false;
+          if (callback) callback(new Error("Cannot play track, marked as abuse"),  false);
+          window.setTimeout(function() {
+            audioPlayer.playNextItem();
+          }, 0);
         }
         else {
           var result = audioPlayer.playItem(null,
@@ -286,8 +288,8 @@
     },
 
     playNextItem: function() {
-      while (audioPlayer.currentPlaylist.length > 0) {
-        if (audioPlayer.playItemById(audioPlayer.currentPlaylist.shift())) break;
+      if (audioPlayer.currentPlaylist.length > 0) {
+        audioPlayer.playItemById(audioPlayer.currentPlaylist.shift());
       }
     },
 
