@@ -622,7 +622,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    req.session.falsh = [];
     doRender(req, res, 'signup.ejs', {message: message});
   });
   app.get('/invite', (req, res) => {
@@ -653,7 +652,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     jsonAPI.markAsAbuse(req.body.licenseAddress, markAsAbuse)
       .then(result => res.json(result))
       .then(() => {
-        jsonAPI.postLicenseMessages(req.body.licenseAddress, null, req.user.profileAddress, msg, MESSAGE_TYPES.comment, null, null);
+        jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.comment, null, null);
       })
       .catch(err => {
         console.log("failed to mark track as abuse: " + err);
