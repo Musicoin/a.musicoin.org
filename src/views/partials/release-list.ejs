@@ -74,7 +74,6 @@
             padding: 2px;
             padding-right: 5px;
             padding-left: 5px;
-            margin-left: 10px;
         }
     </style>
 
@@ -101,15 +100,15 @@
                 <div class="flex-column pad10">
                     <div class="description track-title" title="<%=release.title%>"><a href="/track/<%=release.address%>"><%=release.title%></a></div>
                     <div class="description track-artist"><%=release.playCount%> plays</div>
-                    <div class="description track-artist mr10"><%=release.balance%> balance
-                        <% if(release.balance > 0) { %>
+                    <div class="description track-artist"><%=release.totalEarnedCoins%> earned</div>
+                    <% if(release.balance > 0) { %>
+                    <div class="track-artist mr10 mt10"><%=release.balance%> MC pending distribution
                         <div class="flex-column">
                             <a class="btn btn-primary btn-sm distribute"
                                onclick="distributeBalance('<%=release.address%>')">distribute</a>
                         </div>
-                        <% } %>
                     </div>
-                    <div class="description track-artist"><%=release.totalEarnedCoins%> earned</div>
+                    <% } %>
                 </div>
 
                 <div class="flex-column release-actions">
