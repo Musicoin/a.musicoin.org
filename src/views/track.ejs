@@ -129,7 +129,7 @@
                                 <div class="mt10"></div>
                                 <div style="background-color: rgba(0,0,0,0.05)" class="pad10">
                                     <div class="text-large mt10">Send a Tip</div>
-                                    <div class="flex-row">
+                                    <div class="center-text">
                                         <div id="player-tip-button"
                                              class="tip-button btn btn-success mt10 mr5"
                                              recipient="<%=license.address%>"
@@ -162,8 +162,35 @@
                                         </div>
 
                                     </div>
-
                                 </div>
+
+                                <% if (license.artistProfileAddress == "0x83730788de5b08c7c6993f9beca714f340216fcf") { %>
+                                <div style="background-color: rgba(0,0,0,0.05)" class="pad10 mt20">
+                                    <div class="text-large mt10">Help Amaray fund her new video!</div>
+                                    <div class="center-text">
+                                        <div id="player-tip-button"
+                                             class="tip-button btn btn-primary mt10 mr5"
+                                             recipient="<%=license.artistProfileAddress%>"
+                                             amount="1000"
+                                             text-success="Thanks! :)"
+                                             context-type="Release"
+                                             text-fail=":("
+                                             text-default="1,000 MC">
+                                            1,000 MC
+                                        </div>
+                                        <div id="player-tip-button"
+                                             class="tip-button btn btn-primary mt10 mr5"
+                                             recipient="<%=license.artistProfileAddress%>"
+                                             amount="10000"
+                                             text-success="Thanks! :)"
+                                             context-type="Release"
+                                             text-fail=":("
+                                             text-default="10,000 MC">
+                                            10,000 MC
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
                             </td>
                         </tr>
                     </table>
