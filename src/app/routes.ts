@@ -1963,27 +1963,42 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
+  app.post('/user/nextFreePlayback', function (req, res) {
+    if (req.user) {
+      res.json({
+        success: true,
+        ready: typeof req.user.nextFreePlayback == "undefined" || new Date(req.user.nextFreePlayback).getTime() < Date.now()
+      })
+    }
+    else {
+      res.json({
+        success: false,
+        message: "You need to be logged in to play music"
+      })
+    }
+  });
+
   function checkPlaybackFrequency(req, res, next) {
-    if (!req.session) {
-      console.error("Not allowing playback without session");
-      res.status(500);
-      return res.send(new Error("Not allowing playback without session"));
+    if (req.user) {
+      const now = Date.now();
+      const address = req.params ? req.params.address : "";
+      const sessionId = req.session ? req.session.id : "";
+      if (new Date(req.user.nextFreePlayback).getTime() > now) {
+        console.log(`Not allowing playback, too frequent: ${address}, ip: ${req.ip}, session: ${sessionId}`);
+        res.status(500);
+        return res.send(new Error("Not allowing playback, too frequent: " + sessionId));
+      }
+      console.log(`Allowing playback: since=${now - req.user.nextFreePlayback}, ${address}, ip: ${req.ip}, session: ${sessionId}`);
+      const ttl = 60000;
+      req.user.nextFreePlayback = now + ttl;
+      req.user.save()
+        .then(() => {
+          next();
+        });
     }
-    const now = Date.now();
-    const since = (now - req.session.lastPlayback);
-    const address = req.params ? req.params.address : "";
-    const sessionId = req.session ? req.session.id : "";
-    if (req.session.lastPlayback && since < 60000) {
-      console.log(`Not allow playback, too frequent: ${address}, ip: ${req.ip}, session: ${sessionId}`);
-      res.status(500);
-      return res.send(new Error("Not allowing playback, too frequent: " + req.session.id));
-    }
-    console.log(`Allowing playback: since=${since}, ${address}, ip: ${req.ip}, session: ${sessionId}`);
-    req.session.lastPlayback = now;
-    next();
   }
 
-  app.get('/ppp/:address', (req, res, next) => {
+  app.get('/ppp/:address', checkPlaybackFrequency, (req, res, next) => {
     const address = req.params ? req.params.address : "";
     const sessionId = req.session ? req.session.id : "";
     console.log(`Got ppp request for ${address}, ip: ${req.ip}, session: ${sessionId}`);

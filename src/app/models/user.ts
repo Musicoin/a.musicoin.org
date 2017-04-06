@@ -108,7 +108,8 @@ const userSchema = mongoose.Schema({
   termsOfUseVersion: String,
   pendingInitialization: Boolean,
   blocked: Boolean,
-  accountLocked: Boolean
+  accountLocked: Boolean,
+  nextFreePlayback: Date
 });
 
 // methods ======================
