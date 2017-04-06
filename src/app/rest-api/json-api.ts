@@ -408,6 +408,7 @@ export class MusicoinOrgJsonAPI {
         return statsRecords
           .filter(sr => sr.release)
           .filter(sr => sr.release.state == "published")
+          .filter(sr => !sr.release.markedAsAbuse)
           .map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
@@ -433,6 +434,7 @@ export class MusicoinOrgJsonAPI {
         return statsRecords
           .filter(sr => sr.release)
           .filter(sr => sr.release.state == "published")
+          .filter(sr => !sr.release.markedAsAbuse)
           .map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
@@ -606,7 +608,7 @@ export class MusicoinOrgJsonAPI {
   }
 
   getNewReleases(limit: number, genre?: string): Promise<any> {
-    const filter = genre ? {state: 'published', genres: genre} : {state: 'published'};
+    const filter = genre ? {state: 'published', genres: genre, markedAsAbuse: {$ne: true}} : {state: 'published', markedAsAbuse: {$ne: true}};
     return this._getLicensesForEntries(filter, limit);
   }
 
