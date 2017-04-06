@@ -17,6 +17,7 @@ interface MusicoinApiConfig {
   getProfile: string,
   getLicenseDetails: string,
   getTransactionStatus: string,
+  distributeLicenseBalance: string,
   getClientBalance: string,
   getAccountBalance: string,
   getTransactionHistory: string,
@@ -107,6 +108,12 @@ export class MusicoinAPI {
       profileAddress: profileAddress,
       recipientAddress: recipientAddress,
       musicoins: musicoins
+    }).then(body => body.tx);
+  }
+
+  distributeBalance(licenseAddress: string): Promise<string> {
+    return this.postJson(this.apiConfig.distributeLicenseBalance, {
+      address: licenseAddress
     }).then(body => body.tx);
   }
 

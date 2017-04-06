@@ -66,6 +66,16 @@
         .release-container[selected] .release-actions {
             display: flex;
         }
+
+        .distribute {
+            background-color: #337ab7;
+            color: white;
+            border-radius: 2px;
+            padding: 2px;
+            padding-right: 5px;
+            padding-left: 5px;
+            margin-left: 10px;
+        }
     </style>
 
 <div class="well">
@@ -91,7 +101,14 @@
                 <div class="flex-column pad10">
                     <div class="description track-title" title="<%=release.title%>"><a href="/track/<%=release.address%>"><%=release.title%></a></div>
                     <div class="description track-artist"><%=release.playCount%> plays</div>
-                    <div class="description track-artist"><%=release.tipCount%> tips</div>
+                    <div class="description track-artist mr10"><%=release.balance%> balance
+                        <% if(release.balance > 0) { %>
+                        <div class="flex-column">
+                            <a class="btn btn-primary btn-sm distribute"
+                               onclick="distributeBalance('<%=release.address%>')">distribute</a>
+                        </div>
+                        <% } %>
+                    </div>
                     <div class="description track-artist"><%=release.totalEarnedCoins%> earned</div>
                 </div>
 
@@ -129,6 +146,17 @@
     else {
       return false;
     }
+  }
+
+  function distributeBalance(address) {
+  $.post('/license/distributeBalance', {contractAddress: address}, function(data) {
+    if (data.success) {
+      new Message("Transaction sent, your balance will be distributed as designated by the PPP contract", "success", 5000);
+    }
+    else {
+      new Message("Failed to distribute: " + data.message, "error", 5000);
+    }
+  })
   }
 </script>
 <%}%>

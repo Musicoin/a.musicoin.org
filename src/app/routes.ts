@@ -1716,6 +1716,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return errors;
   }
 
+  app.post('/license/distributeBalance', isLoggedIn, hasProfile, function (req, res) {
+    const contractAddress = req.body.contractAddress;
+    musicoinApi.distributeBalance(contractAddress)
+      .then(tx => {
+        console.log(`distributed balance: ${tx}`);
+        res.json({success: true});
+      })
+      .catch(function (err) {
+        res.json({success: false, message: err.message});
+      });
+  })
+
   app.post('/license/delete', isLoggedIn, hasProfile, function (req, res) {
     // mark release status as deleted
     // remove from playbacks
