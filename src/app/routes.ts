@@ -19,7 +19,8 @@ const TrackMessage = require('../app/models/track-message');
 const EmailConfirmation = require('../app/models/email-confirmation');
 const User = require('../app/models/user');
 const ErrorReport = require('../app/models/error-report');
-const loginRedirect = "/nav/feed";
+const loginRedirect = "/loginRedirect";
+const defaultPage = "/nav/feed";
 const notLoggedInRedirect = "/welcome"
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
@@ -144,6 +145,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
   app.use('/admin/*', isLoggedIn, adminOnly);
   app.use('/release-manager', isLoggedIn, releaseManager.getRouter());
+
+  app.get('/loginRedirect', (req, res) => {
+    if (req.session && req.session.destinationUrl) {
+      console.log("Found login redirect override: " + req.session.destinationUrl);
+      var url = req.session.destinationUrl
+      req.session.destinationUrl = null;
+      return res.redirect(url);
+    }
+    res.redirect(defaultPage);
+  })
 
   function doRender(req, res, view, context) {
     // console.log("Calling doRender in " + view);
@@ -621,6 +632,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return res.redirect(loginRedirect);
     }
     // render the page and pass in any flash data if it exists
+    if (req.query.redirect) {
+      console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`)
+      req.session.destinationUrl = req.query.redirect;
+    }
     const message = req.flash('loginMessage');
     doRender(req, res, 'signup.ejs', {message: message});
   });

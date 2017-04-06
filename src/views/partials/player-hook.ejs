@@ -1,5 +1,7 @@
+
 <div class="hearts"></div>
 <script>
+  var isAuthenticated = "<%=isAuthenticated%>";
   $( document ).ready(function() {
     var _audioPlayer = parent.document.getElementById("playerFrame");
     if (!_audioPlayer && !window.location.pathname.startsWith("/nav")) {
@@ -21,6 +23,14 @@
 
 
     $(document).on('click', '.play-list', function() {
+      if (isAuthenticated !== "true") {
+        new Message("You need to log in before you can play", "warning", 5000)
+          .button("Login", () => {
+            window.top.location = "/welcome?redirect=" + window.location.pathname;
+          })
+        return;
+      }
+
       var items = $(this).attr('items');
       if (!items) {
         var target = $("#" + $(this).attr('target'));
@@ -34,6 +44,13 @@
     })
 
     $(document).on('click', '.audio-track', function() {
+      if (isAuthenticated !== "true") {
+        new Message("You need to log in before you can play", "warning", 5000)
+          .button("Login", () => {
+            window.top.location = "/welcome?redirect=" + window.top.location.pathname;
+          })
+        return;
+      }
       var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
       _audioPlayer.playItemById($(this).attr("licenseAddress"), function(err, started) {
         if (err) {
