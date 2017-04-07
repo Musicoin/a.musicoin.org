@@ -47,6 +47,7 @@
             <table class="table table-responsive" width="100%">
                 <tr>
                     <th class="text-center">Request Date</th>
+                    <th class="text-center">Next Playback</th>
                     <th class="text-center">Username</th>
                     <th class="text-center">Track</th>
                     <th class="text-center">Track Plays</th>
@@ -59,11 +60,16 @@
                 %>
                 <tr id="<%=playback._id%>">
                     <td class="text-center middle"><%=playback.playbackDateDisplay%></td>
+                    <td class="text-center middle"><%=playback.nextPlaybackDateDisplay%></td>
                     <td class="text-center middle">
-                        <a href="/admin/playback-history/?user=<%=playback.user._id%>" title="filter by user"><%=playback.user.draftProfile.artistName%></a>
+                        <a href="/admin/playback-history/?user=<%=playback.user._id%>"
+                           class="<%= playback.user.accountLocked ? "text-danger" : ""%>"
+                           title="filter by user"><%=playback.user.draftProfile.artistName%></a>
                     </td>
                     <td class="text-center middle">
-                        <a href="/admin/playback-history/?release=<%=playback.release._id%>"  title="filter by track"><%=playback.release.title%></a>
+                        <a href="/admin/playback-history/?release=<%=playback.release._id%>"
+                           class="<%= playback.release.markedAsAbuse ? "text-danger" : ""%>"
+                           title="filter by track"><%=playback.release.title%></a>
                     </td>
                     <td class="text-center middle"><%=playback.release.directPlayCount%></td>
                     <td class="text-center middle"><%=playback.release.directTipCount%></td>
