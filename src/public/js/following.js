@@ -64,13 +64,13 @@ $( document ).ready(function() {
       handleResponse(element, data);
       if (data.authenticated == false) {
         new Message("You need to login to follow a user", "warning", 5000)
-          .button("Login", () => {
+          .button("Login", function() {
             window.top.location = "/welcome";
           });
       }
       else if (data.profile == false) {
         new Message("You need to save your profile before you can tip", "warning", 5000)
-          .button("Go to my profile", () => {
+          .button("Go to my profile", function() {
             window.location = "/profile";
           });
       }

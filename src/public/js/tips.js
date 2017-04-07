@@ -13,13 +13,13 @@ var tipModule = {
           tipButton.html(tipButton.attr("text-fail"));
           if (result.authenticated == false) {
             new Message("You need to login to send a tip", "warning", 5000)
-              .button("Login", () => {
+              .button("Login", function() {
                 window.top.location = "/welcome";
               });
           }
           else if (result.profile == false) {
             new Message("You need to save your profile before you can tip", "warning", 5000)
-              .button("Go to my profile", () => {
+              .button("Go to my profile", function() {
                 window.location = "/profile";
               });
           }
@@ -31,7 +31,7 @@ var tipModule = {
             window.eval(successCallback);
           }
         }
-        window.setTimeout(() => tipButton.html(tipButton.attr("text-default")), 3000);
+        window.setTimeout(function() {tipButton.html(tipButton.attr("text-default"))}, 3000);
       }
     )
   },
@@ -119,10 +119,10 @@ $( document ).ready(function() {
   $(document).on('click', '.tip-button', function() {
     if ($(this).attr('confirm-message')) {
       new Message($(this).attr('confirm-message'), 'success', 5000)
-        .button('Yes!', () => {
+        .button('Yes!', function() {
           tipModule.tipButtonClicked($(this))
         })
-        .button('No', () => {
+        .button('No', function() {
           new Message("Ok, maybe next time", 'success', 1000)
         })
     }

@@ -117,7 +117,7 @@
       var _id = $(this).attr("errorid");
       var row = $("#" + _id);
       new Message("Are you sure?", 'warning', 5000)
-        .button('Yes', () => {
+        .button('Yes', function() {
           $.post('/admin/errors/remove', {
             _id: _id
           }, function(data) {
@@ -129,7 +129,7 @@
             }
           });
         })
-        .button('No', () => {
+        .button('No', function() {
 
         });
     })

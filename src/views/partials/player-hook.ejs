@@ -25,7 +25,7 @@
     $(document).on('click', '.play-list', function() {
       if (isAuthenticated !== "true") {
         new Message("You need to log in before you can play", "warning", 5000)
-          .button("Login", () => {
+          .button("Login", function() {
             window.top.location = "/welcome?redirect=" + window.location.pathname;
           })
         return;
@@ -46,7 +46,7 @@
     $(document).on('click', '.audio-track', function() {
       if (isAuthenticated !== "true") {
         new Message("You need to log in before you can play", "warning", 5000)
-          .button("Login", () => {
+          .button("Login", function() {
             window.top.location = "/welcome?redirect=" + window.top.location.pathname;
           })
         return;
@@ -58,7 +58,7 @@
         }
         else if (started) {
           new Message("This playback was paid for by Musicoin.org!", "success", 5000)
-            .button("Why?", () => {
+            .button("Why?", function() {
               window.location = "/faq#WhyFreePlays";
             })
         }

@@ -320,12 +320,12 @@
       var messageArea = $("#player-message");
       messageArea.show();
       messageArea.text("musicoin.org is sending 1 coin to '" + title + "'...");
-      window.setTimeout(() => {
+      window.setTimeout(function() {
         if (thisPlay == audioPlayer.playbackId) {
           messageArea.text("musicoin.org sent 1 coin to '" + title + "'");
         }
       }, 20000);
-      window.setTimeout(() => {
+      window.setTimeout(function() {
         if (thisPlay == audioPlayer.playbackId) {
           messageArea.hide();
         }

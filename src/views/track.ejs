@@ -283,7 +283,7 @@
     $(".promote-hero-track").on('click', function() {
       var licenseAddress = $(this).attr("address");
       new Message("Are you sure?", 'warning', 5000)
-        .button('Yes', () => {
+        .button('Yes', function() {
           $.post("/admin/hero/select", {
               licenseAddress: licenseAddress
             },
@@ -296,7 +296,7 @@
               }
             })
         })
-        .button('No', () => {
+        .button('No', function() {
 
         });
     })
@@ -309,7 +309,7 @@
         ? "Are you sure you want to mark this as abuse?"
         : "Are you sure you want to mark this as ok?"
       new Message(msg, 'warning', 5000)
-        .button('Yes', () => {
+        .button('Yes', function() {
           $.post("/admin/release/abuse", {
               licenseAddress: licenseAddress,
               abuse: markAsAbuse
@@ -328,7 +328,7 @@
               }
             })
         })
-        .button('No', () => {
+        .button('No', function() {
 
         });
     })
@@ -342,7 +342,7 @@
     }, function (data) {
       console.log("Saved");
       $("#btnSave").text("Saved!");
-      window.setTimeout(() => $("#btnSave").text("Save"), 3000);
+      window.setTimeout(function(){ $("#btnSave").text("Save")}, 3000);
     })
   }
 
