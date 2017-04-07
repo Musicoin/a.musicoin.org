@@ -145,7 +145,7 @@
                     <% if (!!user.google.token) { %>
                     <tr>
                         <td><span class="btn fa fa-google-plus"></span></td>
-                        <td><%- user.google.name %>, <%- user.google.name %></td>
+                        <td class="text-left"><%- user.google.name %>, <%- user.google.email %></td>
                     </tr>
                     <% } %>
 
@@ -159,14 +159,14 @@
                     <% if (!!user.facebook.token) { %>
                     <tr>
                         <td class=""><span class="btn fa fa-facebook"></span></td>
-                        <td><%- user.facebook.name %>, <%- user.facebook.email %></td>
+                        <td class="text-left"><%- user.facebook.name %>, <%- user.facebook.email %></td>
                     </tr>
                     <% } %>
 
                     <% if (!!user.local.id) { %>
                     <tr>
                         <td><span class="btn fa fa-envelope-o"></span></td>
-                        <td><%- user.local.email %></td>
+                        <td class="text-left"><%- user.local.email %></td>
                     </tr>
                     <% } %>
                 </table>
