@@ -89,15 +89,10 @@
     <table class="table table-responsive white-well">
         <tr>
             <th class="text-center"></th>
-            <th class="text-center">Invited As</th>
-            <th class="text-center">Invited By</th>
-            <th class="text-center">Invite Code</th>
-            <th class="text-center">Invite<br>Clicked</th>
-            <th class="text-center">Linked<br>Google</th>
-            <th class="text-center">Linked<br>Twitter</th>
-            <th class="text-center">Linked<br>Facebook</th>
-            <th class="text-center">Linked<br>Local</th>
             <th class="text-center">Profile</th>
+            <th class="text-center">Invited</th>
+            <th class="text-center">Invite<br>Clicked</th>
+            <th class="text-center">Linked</th>
             <th class="text-center">Music<br>Released</th>
             <th class="text-center">Invites<br>Left</th>
         </tr>
@@ -122,30 +117,6 @@
                          onclick="lockUserAccount(this, '<%= user._id %>', '<%= name %>')"><%= user.accountLocked ? "Unlock" : "Lock"%></div>
                 </div>
             </td>
-            <td class="text-center middle"><%= invite.invitedAs %></td>
-            <td class="text-center middle">
-                <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
-                <a target="_blank"
-                   href="/artist/<%= invitedBy.profileAddress %>"><%= invitedBy.draftProfile.artistName %></a>
-                <% } %>
-            </td>
-            <td class="text-center middle"><%= invite.inviteCode %></td>
-            <td class="text-center middle"><%- invite.clicked ? checked : unchecked %></td>
-            <td class="text-center middle">
-                <%- !!user.google.token ? user.google.name : unchecked %><BR>
-                <%- !!user.google.token ? user.google.email : "" %>
-            </td>
-            <td class="text-center middle">
-                <%- !!user.twitter.token ? user.twitter.username : unchecked %><BR>
-                <%- !!user.twitter.token ? user.twitter.displayName : "" %>
-            </td>
-            <td class="text-center middle">
-                <%- !!user.facebook.token ? user.facebook.name : unchecked %> <BR>
-                <%- !!user.facebook.token ? user.facebook.email : "" %>
-            </td>
-            <td class="text-center middle">
-                <%- !!user.local.id ? user.local.email : unchecked %>
-            </td>
             <td class="text-center middle">
                 <% if(user.profileAddress && user.draftProfile.artistName) { %>
                 <a target="_blank" href="/artist/<%= user.profileAddress %>"><%= user.draftProfile.artistName %></a>
@@ -158,6 +129,47 @@
                 <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") { %>
                 (v<%= user.draftProfile.version %>)
                 <% } %>
+            </td>
+            <td class="text-left middle">
+                <%= invite.invitedAs %><br>
+                <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
+                by <a target="_blank"
+                   href="/artist/<%= invitedBy.profileAddress %>"><%= invitedBy.draftProfile.artistName %></a>
+                <% } %>
+                <BR>
+                <%= invite.inviteCode %>
+            </td>
+            <td class="text-center middle"><%- invite.clicked ? checked : unchecked %></td>
+            <td class="text-center middle">
+                <table cellpadding="2">
+                    <% if (!!user.google.token) { %>
+                    <tr>
+                        <td><span class="btn fa fa-google-plus"></span></td>
+                        <td><%- user.google.name %>, <%- user.google.name %></td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.twitter.token) { %>
+                    <tr>
+                        <td><span class="btn fa fa-twitter"></span></td>
+                        <td class="text-left"><%- user.twitter.username %>, <%- user.twitter.displayName %></td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.facebook.token) { %>
+                    <tr>
+                        <td class=""><span class="btn fa fa-facebook"></span></td>
+                        <td><%- user.facebook.name %>, <%- user.facebook.email %></td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.local.id) { %>
+                    <tr>
+                        <td><span class="btn fa fa-envelope-o"></span></td>
+                        <td><%- user.local.email %></td>
+                    </tr>
+                    <% } %>
+                </table>
             </td>
             <td class="text-center middle"><%- user.mostRecentReleaseDate ? checked : unchecked %></td>
             <td class="text-center middle"><%= user.invitesRemaining %>
