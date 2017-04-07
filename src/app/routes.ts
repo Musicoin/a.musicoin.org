@@ -1015,7 +1015,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/playback-history?search=' + (req.query.search ? req.query.search : '');
-    var options = {year: 'numeric', month: 'short', day: 'numeric'};
+    var options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
 
     jsonAPI.getPlaybackHistory(req.query.user, req.query.release, start, length)
       .then(output => {
