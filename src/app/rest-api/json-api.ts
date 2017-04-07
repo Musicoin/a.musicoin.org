@@ -12,6 +12,7 @@ const Follow = require('../../app/models/follow');
 const Release = require('../../app/models/release');
 const ReleaseStats = require('../../app/models/release-stats');
 const Playback = require('../../app/models/playback');
+const UserPlayback = require('../../app/models/user-playback');
 const InviteRequest = require('../../app/models/invite-request');
 const TrackMessage = require('../../app/models/track-message');
 const Hero = require('../../app/models/hero');
@@ -261,6 +262,29 @@ export class MusicoinOrgJsonAPI {
           reason: "error"
         }
       });
+  }
+
+  getPlaybackHistory(userId: string, releaseId: string, start: number, length: number): Promise<any> {
+    let conditions = [];
+    if (userId) conditions.push({user: userId});
+    if (releaseId) conditions.push({release: releaseId});
+
+
+    const rs = UserPlayback.find(conditions.length > 0 ? {$or: conditions} : {})
+      .sort({"playbackDate": 'desc'})
+      .skip(start)
+      .limit(length)
+      .populate("user")
+      .populate("release")
+      .exec();
+
+    const t = UserPlayback.count();
+    return Promise.join(rs, t, (records, total) => {
+      return {
+        records: records,
+        total: total
+      }
+    })
   }
 
   getAllInviteRequests(_search: string, start: number, length: number): Promise<any> {
@@ -1135,16 +1159,16 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
-  addToReleasePlayCount(contractAddress: string): Promise<any> {
-    // async, not checking result
-    Playback.create({contractAddress: contractAddress});
-
-    return Release.findOne({contractAddress: contractAddress}).exec()
+  addToReleasePlayCount(userId: string, releaseId: string): Promise<any> {
+    return Release.findById(releaseId).exec()
       .then(release => {
         release.directPlayCount = release.directPlayCount ? release.directPlayCount + 1 : 1;
         return release.save();
       })
       .then(release => {
+        // fire and forget
+        UserPlayback.create({user: userId, release: release.id});
+
         return MusicoinOrgJsonAPI._updateReleaseStats(release.id, Date.now(), {$inc: {playCount: 1}})
           .catch(err => {
             console.log(`Failed to update reporting stats for release: ${err}`);

@@ -1010,6 +1010,38 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/admin/playback-history', (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start - length);
+    const url = '/admin/playback-history?search=' + (req.query.search ? req.query.search : '');
+    var options = {year: 'numeric', month: 'short', day: 'numeric'};
+
+    jsonAPI.getPlaybackHistory(req.query.user, req.query.release, start, length)
+      .then(output => {
+        output.records.forEach(r => {
+          r.playbackDateDisplay = r.playbackDate.toLocaleDateString('en-US', options);
+        });
+        return output;
+      })
+      .then(output => {
+        const playbacks = output.records;
+        doRender(req, res, 'admin-playback-history.ejs', {
+          search: req.query.search,
+          playbacks: playbacks,
+          navigation: {
+            show10: `${url}&length=10`,
+            show25: `${url}&length=25`,
+            show50: `${url}&length=50`,
+            description: `Showing ${start + 1} to ${start + playbacks.length} of ${output.total}`,
+            start: previous > 0 ? `${url}&length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+            next: playbacks.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+          }
+        });
+      });
+  });
+
   app.post('/admin/errors/remove', (req, res) => {
     jsonAPI.removeError(req.body._id)
       .then(result => res.json(result))
@@ -2033,7 +2065,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
         .then(function (result) {
           // try to update stats, but don't fail if update fails
-          return jsonAPI.addToReleasePlayCount(release.contractAddress)
+          return jsonAPI.addToReleasePlayCount(req.user._id, release._id)
             .then(() => result)
             .catch(err => {
               console.log(`Failed to update stats for release: ${err}`);

@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+    <title>Users - Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body        {
+            word-wrap:break-word;
+            background-image: url('/images/musician.jpg');
+            background-size: cover;
+        }
+        .history-nav {
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-nav-link {
+            margin-left: 10px;
+            font-size: 14pt;
+        }
+
+        .history-nav-link-disabled {
+            margin-left: 10px;
+            font-size: 14pt;
+            color: #aaa
+        }
+
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<div class="container">
+    <div class="search-area mb20">
+        <div class="col-sm-5">
+            <form action="/admin/playback-history" method="get">
+                <div class="flex-row">
+                    <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
+                    <input class="form-control text-large pl25"
+                           name="search"
+                           value="<%= search %>" placeholder="search users"
+                           autofocus onfocus="this.value = this.value;">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="well white-well">
+            <%- include partials/collection-navigation.ejs %>
+            <table class="table table-responsive" width="100%">
+                <tr>
+                    <th class="text-center">Request Date</th>
+                    <th class="text-center">Username</th>
+                    <th class="text-center">Track</th>
+                    <th class="text-center">Track Plays</th>
+                    <th class="text-center">Track Tips</th>
+                    <th class="text-center">Go to</th>
+                </tr>
+
+                <% for (var p=0; p < playbacks.length; p++) {
+                    var playback = playbacks[p];
+                %>
+                <tr id="<%=playback._id%>">
+                    <td class="text-center middle"><%=playback.playbackDateDisplay%></td>
+                    <td class="text-center middle">
+                        <a href="/admin/playback-history/?user=<%=playback.user._id%>" title="filter by user"><%=playback.user.draftProfile.artistName%></a>
+                    </td>
+                    <td class="text-center middle">
+                        <a href="/admin/playback-history/?release=<%=playback.release._id%>"  title="filter by track"><%=playback.release.title%></a>
+                    </td>
+                    <td class="text-center middle"><%=playback.release.directPlayCount%></td>
+                    <td class="text-center middle"><%=playback.release.directTipCount%></td>
+                    <td class="text-center middle">
+                        <a class="btn btn-sm btn-primary" href="/artist/<%=playback.user.profileAddress%>">user</a>
+                        <a class="btn btn-sm btn-primary" href="/track/<%=playback.release.contractAddress%>">track</a>
+                    </td>
+                </tr>
+                <%}%>
+            </table>
+        </div>
+    </div>
+</div>
+<%- include partials/connect-with-us.ejs %>
+</body>
+</html>
