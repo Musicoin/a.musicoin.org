@@ -426,13 +426,14 @@ export class MusicoinOrgJsonAPI {
     return ReleaseStats.find({startDate: start, duration: period})
       .sort({"playCount": "desc"})
       .populate("release")
-      .limit(limit)
+      .limit(Math.max(20, limit))
       .exec()
       .then(statsRecords => {
         return statsRecords
           .filter(sr => sr.release)
           .filter(sr => sr.release.state == "published")
           .filter(sr => !sr.release.markedAsAbuse)
+          .slice(0, limit)
           .map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
@@ -452,13 +453,14 @@ export class MusicoinOrgJsonAPI {
     return ReleaseStats.find({startDate: start, duration: period})
       .sort({"tipCount": "desc"})
       .populate("release")
-      .limit(limit)
+      .limit(Math.max(20, limit))
       .exec()
       .then(statsRecords => {
         return statsRecords
           .filter(sr => sr.release)
           .filter(sr => sr.release.state == "published")
           .filter(sr => !sr.release.markedAsAbuse)
+          .slice(0, limit)
           .map(sr => {
           return this._convertDbRecordToLicense(sr.release)
             .then(output => {
