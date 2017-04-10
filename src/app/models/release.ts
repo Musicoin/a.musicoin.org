@@ -23,7 +23,8 @@ module.exports = mongoose.model('Release', mongoose.Schema({
   directTipCount: Number,
   releaseDate: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    index: true
   },
   contractAddress: String, // non-null iff state=published
   errorMessage: String, // non-null iff state=error

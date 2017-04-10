@@ -154,7 +154,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return res.redirect(url);
     }
     res.redirect(defaultPage);
-  })
+  });
 
   function doRender(req, res, view, context) {
     // console.log("Calling doRender in " + view);
@@ -745,6 +745,28 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
   });
 
+  app.post('/preferences/urlIsPublic', isLoggedIn, function(req, res) {
+    const urlIsPublic = req.body.urlIsPublic == "true";
+    const provider = req.body.provider;
+    if (provider == "twitter" || provider == "facebook") {
+      const originalValue = req.user.preferences.urlIsPublic || false;
+      req.user[provider].urlIsPublic = urlIsPublic;
+      req.user.save()
+        .then(() => {
+          res.json({
+            success: true
+          });
+        })
+        .catch((err) => {
+          console.log(`Failed to save user preferences: ${err}`);
+          res.json({
+            success: false,
+            urlIsPublic: originalValue
+          });
+        })
+    }
+  });
+
   app.post('/preferences/update', isLoggedIn, function(req, res) {
     if (!req.user.preferences) {
       req.user.preferences = {};
@@ -752,7 +774,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
     const originalValue = req.user.preferences.notifyOnComment || false;
     req.user.preferences.notifyOnComment = req.body.notifyOnComment ? req.body.notifyOnComment == "true" : originalValue;
-    console.log("set: " +  req.body.minimizeHeroInFeed);
     req.user.preferences.minimizeHeroInFeed = req.body.minimizeHeroInFeed ? req.body.minimizeHeroInFeed == "true" : req.user.preferences.minimizeHeroInFeed;
     req.user.save()
       .then(() => {

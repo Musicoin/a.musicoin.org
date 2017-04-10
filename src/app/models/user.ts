@@ -21,20 +21,31 @@ const userSchema = mongoose.Schema({
     token: String,
     email: String,
     username: String,
-    name: String
+    name: String,
+    url: String,
+    urlIsPublic: {
+      type: Boolean,
+      default: true
+    }
   },
   twitter: {
     id: String,
     token: String,
     displayName: String,
     username: String,
-    picture: String
+    picture: String,
+    url: String,
+    urlIsPublic: {
+      type: Boolean,
+      default: true
+    }
   },
   google: {
     id: String,
     token: String,
     email: String,
     name: String,
+    url: String,
     picture: String
   },
   soundcloud: {

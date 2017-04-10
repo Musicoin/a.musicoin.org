@@ -239,13 +239,6 @@
 
     $(document).on('change', '#messagePreference', function () {
       var checked = $("#messagePreference")[0].checked;
-      if (checked) {
-        $("#messagePreference").attr("checked", "true");
-      }
-      else {
-        $("#messagePreference").removeAttr("checked");
-      }
-      var newHTML = $(this).closest('.popover-content').html();
       $.post("/preferences/update", {
         notifyOnComment: checked
       }, function (data) {

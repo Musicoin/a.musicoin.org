@@ -165,7 +165,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
       clientID: configAuth.facebookAuth.clientID,
       clientSecret: configAuth.facebookAuth.clientSecret,
       callbackURL: configAuth.facebookAuth.callbackURL,
-      profileFields: ['id', 'displayName', 'email'],
+      profileFields: ['id', 'displayName', 'email', 'link'],
       passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
     },
     function(req, token, tokenSecret, profile, done) {
@@ -177,6 +177,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           token: token,
           username: profile.displayName,
           name: profile.displayName,
+          url: profile._json.link,
           email: profile.emails && profile.emails.length > 0 ? profile.emails[0].value : profile.email
         };
 
@@ -207,6 +208,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           token: token,
           username: profile.username,
           displayName: profile.displayName,
+          url: "https://twitter.com/" + profile.username,
           picture: profile._json.profile_image_url_https
         };
 

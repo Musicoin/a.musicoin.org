@@ -177,15 +177,60 @@
                     <div class="form-group">
                         <label>social</label>
                         <br>
-                        <p class="subtle-text">Add links to your social network profile pages so your fans can follow
-                            you!</p>
+                        <p class="subtle-text">Link Twitter and Facebook to help confirm your identity</p>
+                        <table class="social-group">
+                            <tr>
+                                <td><span class="fa fa-facebook"></span></td>
+                                <td width="99%">
+                                    <% if (user.facebook.token) { %>
+                                    <div class="flex-row m10" style="justify-content: space-between;">
+                                        <a class="mr10" target=_blank href="<%= user.facebook.url %>"><%= user.facebook.name %></a>
+                                        <div class="flex-row">
+                                            <label class="switch">
+                                                <input id=facebookUrlIsPublic
+                                                       type="checkbox" <%= user.facebook && user.facebook.urlIsPublic ? "checked" : "" %>>
+                                                <div class="slider round"></div>
+                                            </label>
+                                            <div class="center-text clickable" onclick="$('#facebookUrlIsPublic').click()">Show link on my public profile</div>
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                    <div style='margin-left: 3px'><a href="/connect/facebook" target="_blank" class="btn btn-primary btn-sm">Link Facebook</a></div>
+                                    <% } %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="fa fa-twitter"></span></td>
+                                <td width="99%">
+                                    <% if (user.twitter.token) { %>
+                                    <div class="flex-row m10" style="justify-content: space-between;">
+                                        <a class="mr10" target=_blank href="<%= user.twitter.url %>"><%= user.twitter.username %></a>
+                                        <div class="flex-row">
+                                            <label class="switch">
+                                                <input id=twitterUrlIsPublic
+                                                       type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
+                                                <div class="slider round"></div>
+                                            </label>
+                                            <div class="center-text clickable" onclick="$('#twitterUrlIsPublic').click()">Show link on my public profile</div>
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                    <div style='margin-left: 3px'><a href="/connect/twitter" target="_blank" class="btn btn-info btn-sm">Link Twitter</a></div>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="form-group">
+                        <label>other social</label>
+                        <br>
+                        <p class="subtle-text">Add links to your other social pages as well</p>
                         <table class="social-group">
                             <%
                             var socialTypes = [
                                 {id: "website", name: "artist website", icon: "fa-external-link"},
                                 {id: "bandcamp"},
                                 {id: "google", icon: "fa-google-plus"},
-                                "facebook", "twitter",
                                 {id: "soundcloud", name: "sound cloud"}, "linkedin", "youtube",
                                 {id: "reverbnation", icon: "fa-star", name: "reverb nation"},
                                 "pinterest", "instagram", "medium"
@@ -514,6 +559,25 @@
     $("#heroImage").click(function () {
       $("#heroInput").click();
     })
+
+    function updateUrlVisibility(element, provider) {
+      var checked = element[0].checked;
+      $.post("/preferences/urlIsPublic", {
+        provider: provider,
+        urlIsPublic: checked
+      }, function (data) {
+        if (data.success) {
+
+        }
+        else {
+          new Message("Failed to update url prefs for " + provider, "error", 3000);
+          element[0].checked = !checked;
+        }
+      })
+    }
+
+    $("#facebookUrlIsPublic").change(function() { updateUrlVisibility($(this), "facebook") })
+    $("#twitterUrlIsPublic").change(function() { updateUrlVisibility($(this), "twitter") })
 
     var inviteEmail = $("#inviteEmail");
     var btnInvite = $("#btnInvite");
