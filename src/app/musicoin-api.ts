@@ -10,6 +10,7 @@ cachedRequest.setValue('ttl', 30000);
 
 interface MusicoinApiConfig {
   sendFromProfile: string,
+  pppFromProfile: string,
   sendReward: string,
   publishProfile: string,
   releaseLicense: string,
@@ -115,6 +116,17 @@ export class MusicoinAPI {
     return this.postJson(this.apiConfig.distributeLicenseBalance, {
       address: licenseAddress
     }).then(body => body.tx);
+  }
+
+  pppFromProfile(profileAddress: string, licenseAddress: string): Promise<string> {
+    return this.postJson(this.apiConfig.pppFromProfile, {
+      profileAddress: profileAddress,
+      licenseAddress: licenseAddress
+    })
+      .then(function(response) {
+        if (response.err) throw response.err;
+        return response;
+      });
   }
 
   sendReward(recipient: string, musicoins: number): Promise<string> {

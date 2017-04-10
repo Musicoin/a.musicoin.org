@@ -8,6 +8,7 @@ export function createExpiringLink(text: string, ttlMillis: number) {
 }
 
 export function resolveExpiringLink(encrypted: string) {
+  if (!encrypted) return null;
   const decrypted = decryptText(encrypted);
   const idx = decrypted.lastIndexOf(":");
   try {

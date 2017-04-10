@@ -109,7 +109,19 @@ const userSchema = mongoose.Schema({
   pendingInitialization: Boolean,
   blocked: Boolean,
   accountLocked: Boolean,
-  nextFreePlayback: Date
+  freePlaysRemaining: {
+    type: Number,
+    default: 100
+  },
+  nextFreePlayback: Date,
+  currentPlay: {
+    licenseAddress: String,
+    release: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Release'
+    },
+    encryptedKey: String
+  }
 });
 
 // methods ======================

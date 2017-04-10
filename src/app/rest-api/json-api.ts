@@ -10,6 +10,7 @@ const User = require('../../app/models/user');
 const UserStats = require('../../app/models/user-stats');
 const Follow = require('../../app/models/follow');
 const Release = require('../../app/models/release');
+const PendingPlayback = require('../../app/models/pending-playback');
 const ReleaseStats = require('../../app/models/release-stats');
 const Playback = require('../../app/models/playback');
 const UserPlayback = require('../../app/models/user-playback');
@@ -1120,6 +1121,19 @@ export class MusicoinOrgJsonAPI {
           }
         })
       })
+  }
+
+  addPendingPPPTransaction(userId: string, releaseId: string, coinsPerPlay: number, tx: string): Promise<any> {
+    return PendingPlayback.create({
+      release: releaseId,
+      user: userId,
+      coins: coinsPerPlay,
+      tx: tx
+    })
+  }
+
+  getPendingPPPPayments(userId): Promise<any> {
+    return PendingPlayback.find({user: userId}).exec();
   }
 
   addToMessageTipCount(messageId: string, coins: number): Promise<any> {

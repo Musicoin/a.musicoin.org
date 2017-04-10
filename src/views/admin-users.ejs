@@ -95,6 +95,7 @@
             <th class="text-center">Linked</th>
             <th class="text-center">Music<br>Released</th>
             <th class="text-center">Invites<br>Left</th>
+            <th class="text-center">Free<br>plays</th>
         </tr>
 
         <% for (var ivt = 0; ivt < users.length; ivt++) {
@@ -173,16 +174,20 @@
             </td>
             <td class="text-center middle"><%- user.mostRecentReleaseDate ? checked : unchecked %></td>
             <td class="text-center middle"><%= user.invitesRemaining %>
-                <% if(user.profileAddress && user.draftProfile.artistName) { %>
                 <div class="flex-row">
-                    <div class="btn btn-success btn-sm" onclick="addInvites('<%= user._id %>', 10)">+10</div>
+                    <div class="btn btn-success btn-sm mr5" onclick="addInvites('<%= user._id %>', 10)">+10</div>
                     <% if (user.invite.noReward) { %>
                     <div class="btn btn-warning btn-sm" onclick="blacklist('<%= user._id %>', false)">De-Blacklist</div>
                     <% } else { %>
                     <div class="btn btn-danger btn-sm" onclick="blacklist('<%= user._id %>', true)">Blacklist</div>
                     <% } %>
                 </div>
-                <% } %>
+            </td>
+            <td class="text-center middle"><%= user.freePlaysRemaining %>
+                <div class="flex-row">
+                    <div class="btn btn-success btn-sm mr5" onclick="addFreePlays('<%= user._id %>', 10)">+10</div>
+                    <div class="btn btn-danger btn-sm" onclick="clearFreePlays('<%= user._id %>', 0)">Zero</div>
+                </div>
             </td>
         </tr>
         <% } %>
@@ -197,6 +202,33 @@
     }, function (data) {
       if (data.success) {
         new Message("Invites added!", "success", 3000);
+      }
+      else {
+        new Message("Failed: " + data.reason, 'error', 5000)
+      }
+    })
+  }
+
+  function clearFreePlays(id) {
+    $.post('/admin/free-plays/clear', {
+      id: id
+    }, function (data) {
+      if (data.success) {
+        new Message("This user will have no more free plays!", "success", 3000);
+      }
+      else {
+        new Message("Failed: " + data.reason, 'error', 5000)
+      }
+    })
+  }
+
+  function addFreePlays(id, cnt) {
+    $.post('/admin/free-plays/add', {
+      id: id,
+      count: cnt
+    }, function (data) {
+      if (data.success) {
+        new Message("Free plays added!", "success", 3000);
       }
       else {
         new Message("Failed: " + data.reason, 'error', 5000)

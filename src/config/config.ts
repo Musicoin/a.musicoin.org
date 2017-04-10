@@ -84,6 +84,7 @@ function getStructuredConfig(keyValueConfig) {
       getTransactionHistory: `${keyValueConfig.musicoinApiEndpoint}/tx/history`,
       publishProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
       sendFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/send`,
+      pppFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/ppp`,
       sendReward: `${keyValueConfig.musicoinApiEndpoint}/reward`,
       releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,
       getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,

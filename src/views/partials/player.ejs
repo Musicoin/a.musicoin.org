@@ -243,7 +243,6 @@
   var audioPlayer = {
     audioElement: null,
 
-    nowPlayingUrl: null,
     nowPlayingLicenseAddress: null,
     nowPlayingArtistProfile: null,
     playbackId: 0,
@@ -255,39 +254,38 @@
     currentPlaylist: [],
 
     playItemById: function (licenseAddress, callback) {
-      console.log("Getting details for " + licenseAddress);
-      $.post("/user/nextFreePlayback", {}, function(data) {
-        if (data.success) {
-          if (data.ready) {
-            $.get( "/json-api/track/" + licenseAddress, function( data ) {
-              if (data.markedAsAbuse) {
-                console.log("Cannot play track, marked as abuse")
-                if (callback) callback(new Error("Cannot play track, marked as abuse"),  false);
-                window.setTimeout(function() {
-                  audioPlayer.playNextItem();
-                }, 0);
-              }
-              else {
-                var result = audioPlayer.playItem(null,
-                  data.audioUrl,
-                  data.title,
-                  data.artistName,
-                  data.image,
-                  data.playCount,
-                  data.tipCount,
-                  data.artistProfileAddress,
-                  data.address
-                )
-                if (callback) callback(null, result);
-              }
-            });
-          }
-          else {
-            parent.showMessage("Sorry, just wait a few more seconds for your next free play", "warning", 5000);
-          }
+      if (licenseAddress === audioPlayer.nowPlayingLicenseAddress) {
+        if (callback) callback(null, false);
+        return false;
+      }
+
+      console.log("Checking eligibility for " + licenseAddress);
+      $.post("/user/canPlay", {address: licenseAddress}, function(eligibility) {
+        if (eligibility.success) {
+          console.log("Getting details for " + licenseAddress);
+          $.get( "/json-api/track/" + licenseAddress, function( data ) {
+            var result = audioPlayer.playItem(null,
+              data.audioUrl,
+              data.title,
+              data.artistName,
+              data.image,
+              data.playCount,
+              data.tipCount,
+              data.artistProfileAddress,
+              data.address
+            )
+            if (callback) callback(null, result);
+            if (eligibility.message) parent.showMessage(eligibility.message, "success", 5000);
+          })
         }
         else {
-          parent.showMessage("Sorry, an error occurred, please try again later", "error", 5000);
+          parent.showMessage(eligibility.message, "warning", 5000);
+          if (callback) callback(new Error("Cannot play track"),  false);
+          if (eligibility.skip) {
+            window.setTimeout(function() {
+              audioPlayer.playNextItem();
+            }, 0);
+          }
         }
       })
     },
@@ -331,7 +329,6 @@
         }
       }, 22000);
 
-      audioPlayer.nowPlayingUrl = url;
       audioPlayer.previousTime = now;
       audioPlayer.nowPlayingLicenseAddress = licenseAddress;
       audioPlayer.nowPlayingArtistProfile = artistProfileAddress;
@@ -367,7 +364,7 @@
         audioPlayer.audioElement = $('#player')[0];
         audioPlayer.audioElement.style.display = "block";
         audioPlayer.audioElement.addEventListener('error', function (e) {
-          if (audioPlayer.nowPlayingUrl == null) return;
+          if (audioPlayer.nowPlayingLicenseAddress == null) return;
 
           $("#player-message").text("Playback failed!");
           console.log("Old playbackId: " + audioPlayer.playbackId);
@@ -412,7 +409,7 @@
         });
 
         audioPlayer.audioElement.addEventListener('ended', function () {
-          audioPlayer.nowPlayingUrl = null;
+          audioPlayer.nowPlayingLicenseAddress = null;
           audioPlayer.audioElement.src = null;
           audioPlayer.playNextItem();
         })

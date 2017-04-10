@@ -1,6 +1,7 @@
 import * as Timers from 'timers';
 import {MusicoinAPI} from "./musicoin-api";
 const Release = require('../app/models/release');
+const PendingPlayback = require('../app/models/pending-playback');
 const User = require('../app/models/user');
 
 export class PendingTxDaemon {
@@ -14,7 +15,13 @@ export class PendingTxDaemon {
     console.log(`Starting pending profile daemon with interval ${intervalMs}ms`);
     Timers.setTimeout(() => {
       Timers.setInterval(() => this.checkForPendingProfilesUpdates(musicoinApi), intervalMs);
-    }, intervalMs/2);
+    }, intervalMs/3);
+
+    // same interval, but offset from the release check
+    console.log(`Starting pending PPP daemon with interval ${intervalMs}ms`);
+    Timers.setTimeout(() => {
+      Timers.setInterval(() => this.checkForPendingPPPPayments(musicoinApi), intervalMs);
+    }, 2*intervalMs/3);
   }
 
   checkForPendingProfilesUpdates(musicoinApi: MusicoinAPI) {
@@ -76,6 +83,17 @@ export class PendingTxDaemon {
       })
   }
 
+  checkForPendingPPPPayments(musicoinApi: MusicoinAPI) {
+    return PendingPlayback.find({}).exec()
+      .then(results => {
+        console.log(`Found ${results.length} pending playbacks`);
+        return Promise.all(results.map(r => this.updatePendingPlaybackStatus(musicoinApi, r)));
+      })
+      .catch(err => {
+        console.log(`Failed to check for pending playbacks: ${err}`);
+      })
+  }
+
   checkForPendingReleases(musicoinApi: MusicoinAPI) {
     Release.find({state: 'pending'}, function(err, results) {
       if (err) console.log(`Failed to check for pending releases: ${err}`);
@@ -86,6 +104,38 @@ export class PendingTxDaemon {
         results.map(r => this.updatePendingReleaseStatus(musicoinApi, r));
       }
     }.bind(this))
+  }
+
+  updatePendingPlaybackStatus(musicoinApi: MusicoinAPI, r) {
+    return musicoinApi.getTransactionStatus(r.tx)
+      .then((result) => {
+        if (result.status == "pending") {
+          console.log("pending playback tx still pending: " + r.tx);
+          return;
+        }
+
+        if (result.status == "complete") {
+          console.log("pending playback complete: " + r.tx);
+          r.remove();
+        }
+        else if (result.status == "error") {
+          // TODO: Add record to some other table?
+          console.log(`pending playback payment failed!: status=${result.status}, tx=${r.tx}`);
+          r.remove();
+        }
+        else if (result.status == "unknown") {
+          if (r.missingCount > 3) {
+            // TODO: Add record to some other table?
+            console.log(`pending playback payment could not be found after 3 checks!: status=${result.status}, tx=${r.tx}`);
+            return r.remove();
+          }
+          else {
+            console.log(`pending playback tx not found, wating for the next check!: tx=${r.tx}`);
+            r.missingCount++;
+            return r.save();
+          }
+        }
+      });
   }
 
   updatePendingReleaseStatus(musicoinApi: MusicoinAPI, r) {

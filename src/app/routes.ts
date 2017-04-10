@@ -914,6 +914,31 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   }
 
+  app.post('/admin/free-plays/add', (req, res) => {
+    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    if (!req.body.count) return res.json({success: false, reason: "Free plays to add not provided"});
+    User.findById(req.body.id).exec()
+      .then(user => {
+        user.freePlaysRemaining += parseInt(req.body.count);
+        return user.save();
+      })
+      .then(() => {
+        res.json({success: true})
+      })
+  });
+
+  app.post('/admin/free-plays/clear', (req, res) => {
+    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    User.findById(req.body.id).exec()
+      .then(user => {
+        user.freePlaysRemaining = 0;
+        return user.save();
+      })
+      .then(() => {
+        res.json({success: true})
+      })
+  });
+
   app.post('/admin/invites/add', (req, res) => {
     if (!req.body.id) return res.json({success: false, reason: "No id"});
     if (!req.body.count) return res.json({success: false, reason: "Invite count to add not provided"});
@@ -1021,6 +1046,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(output => {
         output.records.forEach(r => {
           r.playbackDateDisplay = r.playbackDate.toLocaleDateString('en-US', options);
+          r.nextPlaybackDateDisplay = r.user.freePlaysRemaining > 0 && r.user.nextFreePlayback
+            ? r.user.nextFreePlayback.toLocaleDateString('en-US', options) + " (" + r.user.freePlaysRemaining + ")"
+            : "N/A";
         });
         return output;
       })
@@ -1995,92 +2023,165 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.post('/user/nextFreePlayback', function (req, res) {
-    if (req.user) {
-      res.json({
-        success: true,
-        ready: typeof req.user.nextFreePlayback == "undefined" || new Date(req.user.nextFreePlayback).getTime() < Date.now()
-      })
+  function getPlaybackEligibility(req) {
+    if (!req.isAuthenticated()) {
+      console.log("Rejecting unauthorized user: " + req.session.id);
+      return Promise.resolve({success: false, message: "You must be logged in"});
     }
     else {
-      res.json({
-        success: false,
-        message: "You need to be logged in to play music"
-      })
-    }
-  });
+      const address = req.body && req.body.address ? req.body.address : req.params.address;
 
-  function checkPlaybackFrequency(req, res, next) {
-    if (req.user) {
-      const now = Date.now();
-      const address = req.params ? req.params.address : "";
-      const sessionId = req.session ? req.session.id : "";
-      if (new Date(req.user.nextFreePlayback).getTime() > now) {
-        console.log(`Not allowing playback, too frequent: ${address}, ip: ${req.ip}, session: ${sessionId}`);
-        res.status(500);
-        return res.send(new Error("Not allowing playback, too frequent: " + sessionId));
-      }
-      console.log(`Allowing playback: since=${now - req.user.nextFreePlayback}, ${address}, ip: ${req.ip}, session: ${sessionId}`);
-      const ttl = 60000;
-      req.user.nextFreePlayback = now + ttl;
-      req.user.save()
-        .then(() => {
-          next();
+      // if the request if for their current track AND the current playback isn't expired
+      // short circuit these checks
+      const canUseCache = req.user.currentPlay
+        && req.user.currentPlay.licenseAddress == address
+        && UrlUtils.resolveExpiringLink(req.user.currentPlay.encryptedKey);
+      if (canUseCache) return Promise.resolve({success: true, canUseCache: true});
+
+      return Release.findOne({contractAddress: address, state: "published"}).exec()
+        .then(release => {
+          if (!release) {
+            return {success: false, skip: true, message: "Sorry, the track you requested was not found"};
+          }
+          if (release.markedAsAbuse) {
+            return {success: false, skip: true, message: "Sorry, this track was marked as abuse"};
+          }
+          const payFromProfile = req.user.freePlaysRemaining <= 0;
+          let p = payFromProfile
+            ? jsonAPI.getPendingPPPPayments(req.user._id)
+            : Promise.resolve([]);
+          const b = payFromProfile
+            ? musicoinApi.getAccountBalance(req.user.profileAddress)
+            : Promise.resolve(null);
+
+          const l = musicoinApi.getLicenseDetails(address);
+          return Promise.join(p, b, l, (pendingPayments, profileBalance, license) => {
+            if (payFromProfile) {
+              let totalCoinsPending = 0;
+              pendingPayments.forEach(r => totalCoinsPending += r.coins);
+              console.log("Pending ppp payments: " + totalCoinsPending);
+              if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
+                return {success: false, skip: false, message: "Sorry, it looks like you don't have enough coins."}
+            }
+            else {
+              if (new Date(req.user.nextFreePlayback).getTime() > Date.now()) {
+                return {success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play."}
+              }
+            }
+            const unit = req.user.freePlaysRemaining-1 == 1 ? "play" : "plays";
+            return {
+              success: true,
+              payFromProfile: payFromProfile,
+              message: payFromProfile
+                ? "This playback was paid for by you. Thanks!"
+                : `This playback was paid for by Musicoin.org, you have ${req.user.freePlaysRemaining-1} free ${unit} left`
+            };
+          })
         });
     }
   }
 
-  app.get('/ppp/:address', checkPlaybackFrequency, (req, res, next) => {
-    const address = req.params ? req.params.address : "";
-    const sessionId = req.session ? req.session.id : "";
-    console.log(`Got ppp request for ${address}, ip: ${req.ip}, session: ${sessionId}`);
-    next();
-  }, isLoggedInOrIsPublic, function (req, res) {
-    if (!req.isAuthenticated()) {
-      console.log("Rejecting unauthorized user: " + req.session.id);
-      return res.send(new Error("Not logged in: " + req.session.id));
-    }
+
+  // convenience method for the UI so it can give a good message to the user about the play
+  // ultimately, the ppp route has the final say about whether the playback
+  app.post('/user/canPlay', function (req, res) {
+    getPlaybackEligibility(req)
+      .then(result => {
+        res.json(result);
+      })
+  });
+
+  function resolveExpiringLink(req, res, next) {
     const resolved = UrlUtils.resolveExpiringLink(req.params.address);
     if (!resolved) {
       console.log("Got ppp request for expired URL");
       return res.send(new Error("Expired linked: " + req.session.id));
     }
     else {
-      const userName = req.user.draftProfile ? req.user.draftProfile.artistName : "";
+      const userName = req.user.draftProfile ? req.user.draftProfile.artistName : req.user._id;
       console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}, user: ${req.user.profileAddress} (${userName})`);
     }
     req.params.address = resolved;
-    const k = musicoinApi.getKey(req.params.address);
-    const l = musicoinApi.getLicenseDetails(req.params.address);
-    const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
-    const context = {contentType: "audio/mpeg"};
-    Promise.join(k, l, r, function (keyResponse, license, release) {
-      if (!release) throw new Error("Could not find contract in database (maybe it was deleted)");
-      if (release.markedAsAbuce) {
-        console.log("Not playing track that has been marked as abuse: " + resolved);
-        throw new Error("Could not find contract in database (maybe it was deleted)");
-      };
-      console.log("Content type from license: " + license.contentType);
-      // context.contentType = license.contentType && !license.contentType.startsWith("0x") ? license.contentType : context.contentType;
-      return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
-        .then(function (result) {
-          // try to update stats, but don't fail if update fails
-          return jsonAPI.addToReleasePlayCount(req.user._id, release._id)
-            .then(() => result)
-            .catch(err => {
-              console.log(`Failed to update stats for release: ${err}`);
+    next();
+  }
+
+  app.get('/ppp/:address', resolveExpiringLink, function (req, res) {
+    getPlaybackEligibility(req)
+      .then(playbackEligibility => {
+        if (!playbackEligibility.success) {
+          console.log("Rejecting ppp request: " + JSON.stringify(playbackEligibility));
+          return res.send(new Error("PPP request failed: " + playbackEligibility.message));
+        }
+
+        const userName = req.user.draftProfile ? req.user.draftProfile.artistName : req.user._id;
+        const l = musicoinApi.getLicenseDetails(req.params.address);
+        const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
+
+        const ttl = 60000;
+        const cachedKey = req.user.currentPlay
+          ? UrlUtils.resolveExpiringLink(req.user.currentPlay.encryptedKey)
+          : null;
+        const k = playbackEligibility.canUseCache && cachedKey
+          ? Promise.resolve({key: cachedKey, cached: true})
+          : playbackEligibility.payFromProfile
+            ? musicoinApi.pppFromProfile(req.user.profileAddress, req.params.address)
+            : musicoinApi.getKey(req.params.address);
+
+        const context = {contentType: "audio/mpeg"};
+        return Promise.join(l, r, k, (license, release, keyResponse) => {
+          // return the stream
+          return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
+            .then(function (result) {
+              // try to update stats, but don't fail if update fails
+              jsonAPI.addToReleasePlayCount(req.user._id, release._id)
+                .catch(err => {
+                  console.log(`Failed to update stats for release: ${err}`);
+                });
+
+              if (!keyResponse.cached) {
+                if (playbackEligibility.payFromProfile) {
+                  console.log("Adding pending tx: " + keyResponse.transactions.paymentToHotWalletTx);
+                  jsonAPI.addPendingPPPTransaction(
+                    req.user._id,
+                    release._id,
+                    license.coinsPerPlay,
+                    keyResponse.transactions.paymentToHotWalletTx)
+                    .catch(err => {
+                      console.log(`Failed to update pending transactions for user: ${err}`);
+                    });
+                }
+                else {
+                  req.user.freePlaysRemaining--;
+                  req.user.nextFreePlayback = Date.now() + ttl;
+                  console.log(`User ${userName} has ${req.user.freePlaysRemaining} free plays remaining, next free play in ${ttl}ms`);
+                }
+                console.log("Caching key for current playback...");
+                req.user.currentPlay = {
+                  licenseAddress: req.params.address,
+                  release: release._id,
+                  encryptedKey: UrlUtils.createExpiringLink(keyResponse.key, ttl),
+                };
+              }
+              else {
+                console.log("Not caching key, current play");
+              }
+
+              req.user.save()
+                .catch(err => {
+                  console.log(`Failed to update remaining plays for user: ${err}`);
+                });
               return result;
-            });
-        });
-    })
-      .then(function (result) {
-        const headers = {};
-        console.log(`Responding with content type ${context.contentType}`);
-        headers['Content-Type'] = context.contentType;
-        headers['Accept-Ranges'] = 'none';
-        headers['Content-Length'] = result.headers['content-length'];
-        res.writeHead(200, headers);
-        result.stream.pipe(res);
+            })
+            .then(function (result) {
+              const headers = {};
+              console.log(`Responding with content type ${context.contentType}`);
+              headers['Content-Type'] = context.contentType;
+              headers['Accept-Ranges'] = 'none';
+              headers['Content-Length'] = result.headers['content-length'];
+              res.writeHead(200, headers);
+              result.stream.pipe(res);
+            })
+        })
       })
       .catch(function (err) {
         console.error(err.stack);
