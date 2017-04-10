@@ -40,8 +40,7 @@ git read-tree --prefix=src/overview -u overview/master
 git commit -m "Adding overview page as a subtree"
 
 # Update
-git fetch overview
-git merge -s subtree --squash overview/master --allow-unrelated-histories
+git fetch overview && git merge -s subtree --squash overview/master --allow-unrelated-histories
 
 
 ## migration process
