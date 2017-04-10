@@ -1234,6 +1234,32 @@ export class MusicoinOrgJsonAPI {
     ]).exec();
   }
 
+  sendUserStatsReport(userId: string, duration: string, durationAdj: string): Promise<any> {
+    const asOf = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), duration);
+    return User.findById(userId).exec()
+      .then(user => {
+        return this.getUserStatsReport(user.profileAddress, asOf, duration)
+          .then(report => {
+            report.actionUrl = "https://musicoin.org/nav/feed";
+            report.baseUrl = "https://musicoin.org/";
+            report.description = `Musicoin ${durationAdj} report`;
+            report.duration = duration;
+
+            const tracksHaveEvents = report.stats.releases
+              .filter(r => r.playCount > 0 || r.tipCount > 0 || r.commentCount > 0)
+              .length > 0;
+            const userHasEvents = report.user.followCount > 0 || report.user.tipCount > 0 || report.user.commentCount;
+            if (tracksHaveEvents || userHasEvents) {
+              return this.mailSender.sendActivityReport(this._getUserEmail(user), report);
+            }
+            else {
+              console.log("Not sending report to user with no events, user: " + user.profileAddress);
+              return Promise.resolve();
+            }
+          })
+      })
+  }
+
   getUserStatsReport(profileAddress: string, date: number, duration: string): Promise<any> {
     const u = User.findOne({profileAddress: profileAddress}).exec()
     const rs = Release.find({artistAddress: profileAddress}).exec()

@@ -937,6 +937,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   }
 
+  app.post('/admin/send-weekly-report', (req, res) => {
+    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    jsonAPI.sendUserStatsReport(req.body.id, "week", "weekly")
+      .then(() => {
+        res.json({success: true})
+      })
+      .catch(err => {
+        res.json({success: false, message: "Failed to send report"})
+      })
+  });
+
   app.post('/admin/free-plays/add', (req, res) => {
     if (!req.body.id) return res.json({success: false, reason: "No id"});
     if (!req.body.count) return res.json({success: false, reason: "Free plays to add not provided"});

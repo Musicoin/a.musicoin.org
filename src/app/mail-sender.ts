@@ -39,6 +39,11 @@ export class MailSender {
     return this.sendTemplate(`${appDir}/views/mail/message.ejs`, recipient, subject, {notification: notification});
   }
 
+  sendActivityReport(recipient: string, report: any): Promise<any> {
+    const subject = report.description;
+    return this.sendTemplate(`${appDir}/views/mail/activity-report.ejs`, recipient, subject, {report: report});
+  }
+
   private sendTemplate(template: string, recipient: string, subject: string, data: any) {
     console.log("Loading template: " + template);
     return renderFile(template, data)
