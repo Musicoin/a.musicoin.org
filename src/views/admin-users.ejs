@@ -153,14 +153,26 @@
                     <% if (!!user.twitter.token) { %>
                     <tr>
                         <td><span class="btn fa fa-twitter"></span></td>
-                        <td class="text-left"><%- user.twitter.username %>, <%- user.twitter.displayName %></td>
+                        <td class="text-left">
+                            <%
+                             const twitterUrl = user.twitter.url ? user.twitter.url : "https://twitter.com/" + user.twitter.username;
+                            %>
+                            <a target=_blank href="<%= twitterUrl %>"> <%- user.twitter.username %>, <%- user.twitter.displayName %> </a>
+                        </td>
                     </tr>
                     <% } %>
 
                     <% if (!!user.facebook.token) { %>
+                    <%
+                        const facebookUrl = user.facebook.url ? user.facebook.url : "https://www.facebook.com/app_scoped_user_id/" + user.facebook.id;
+                    %>
                     <tr>
                         <td class=""><span class="btn fa fa-facebook"></span></td>
-                        <td class="text-left"><%- user.facebook.name %>, <%- user.facebook.email %></td>
+                        <td class="text-left">
+                            <a target=_blank href="<%= facebookUrl %>">
+                            <%- user.facebook.name %>, <%- user.facebook.email %>
+                            </a>
+                        </td>
                     </tr>
                     <% } %>
 
