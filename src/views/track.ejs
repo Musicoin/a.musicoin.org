@@ -204,35 +204,6 @@
             </div>
         </div>
         <div class="col-sm-8 chat-area">
-            <% if (license.address == "0x83730788de5b08c7c6993f9beca714f340216fcf") { %>
-            <div class="alert alert-info" class="pad10 mt20">
-                <div class="text-large mt10 text-center" style="color: black">Help Amaray fund her new video!</div>
-                <div class="center-text">
-                    <div id="player-tip-button"
-                         class="tip-button btn btn-primary mt10 mr5"
-                         recipient="<%=license.address%>"
-                         amount="1000"
-                         text-success="Thanks! :)"
-                         context-type="Release"
-                         confirm-message="Are you sure you want to tip 1,000 coins?"
-                         text-fail=":("
-                         text-default="1,000 MC">
-                        1,000 MC
-                    </div>
-                    <div id="player-tip-button"
-                         class="tip-button btn btn-primary mt10 mr5"
-                         recipient="<%=license.address%>"
-                         amount="10000"
-                         text-success="Thanks! :)"
-                         context-type="Release"
-                         confirm-message="Are you sure you want to tip 10,000 coins?"
-                         text-fail=":("
-                         text-default="10,000 MC">
-                        10,000 MC
-                    </div>
-                </div>
-            </div>
-            <% } %>
             <div class="chat-input-area">
                 <% if (isAuthenticated && user.profileAddress) {%>
                 <div class="chat-input">
