@@ -1,4 +1,4 @@
-<div id=thread-message-container class="white-well">
+<div id=thread-message-container class="white-well well">
     <% if (isAuthenticated && user.profileAddress) {
         var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image"
     %>
@@ -13,7 +13,6 @@
     <% } else  { %>
     <div class="text-warning text-center">You can join the conversation after you <a href="/welcome" target="_top">sign in</a></div>
     <% } %>
-
     <div class="dynamic-element message-scroller"
          data-behavior="chat-message-area"
          style="min-height: 180px"
@@ -26,5 +25,9 @@
          de-nocontent="That's weird. This thread has no messages."
          de-url="/elements/thread">
         <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "That's weird. This thread has no messages."}) %>
+    </div>
+    <div class="text-center subtle-text">
+        You can link to this thread using the following link:<br>
+        <a href="<%= threadUrl %>"><%= threadUrl %></a>
     </div>
 </div>

@@ -494,6 +494,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         doRender(req, res, "thread.ejs", {
           messages: messages,
           threadId: req.query.thread,
+          threadUrl: `${config.serverEndpoint}/thread-page/?thread=${req.query.thread}`,
           showTrack: showTrack,
           ui: config.ui.thread
         });
@@ -513,6 +514,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         doRender(req, res, "thread-view.ejs", {
           messages: messages,
           threadId: req.query.thread,
+          threadUrl: `${config.serverEndpoint}/thread-page/?thread=${req.query.thread}`,
           showTrack: showTrack,
           ui: config.ui.thread
         });
