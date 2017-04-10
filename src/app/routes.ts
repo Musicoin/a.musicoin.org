@@ -2422,13 +2422,18 @@ function preProcessUser(mediaProvider, jsonAPI) {
         }
         user.canInvite = canInvite(user);
         user.isAdmin = isAdmin(user);
-        if (user.following && user.following.length > 0) {
-          return jsonAPI.migrateUserFollowing(user._id)
+        const fixFacebook = (user.facebook.id && !user.facebook.url);
+        const fixTwitter = (user.twitter.id && !user.twitter.url);
+        if (fixFacebook || fixTwitter) {
+          if (fixFacebook) user.facebook.url = `https://www.facebook.com/app_scoped_user_id/${user.facebook.id}/`;
+          if (fixTwitter) user.twitter.url = `https://twitter.com/${user.twitter.username}/`;
+          return user.save()
             .then(() => {
-              console.log("Successfully migrated user");
+              console.log("fixed social urls!");
+              return next();
             })
-            .catch((err) => {
-              console.log("Failed to migrate user: " + err);
+            .catch((err)=> {
+              console.log("failed to update social urls: " + err);
               return next();
             })
         }
