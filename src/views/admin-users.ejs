@@ -144,9 +144,16 @@
             <td class="text-center middle">
                 <table cellpadding="2">
                     <% if (!!user.google.token) { %>
+                    <%
+                        const googleUrl = user.google.url ? user.google.url : "https://plus.google.com/" + user.google.id;
+                    %>
                     <tr>
                         <td><span class="btn fa fa-google-plus"></span></td>
-                        <td class="text-left"><%- user.google.name %>, <%- user.google.email %></td>
+                        <td class="text-left">
+                            <a target=_blank href="<%= googleUrl %>">
+                            <%- user.google.name %>, <%- user.google.email %>
+                            </a>
+                        </td>
                     </tr>
                     <% } %>
 

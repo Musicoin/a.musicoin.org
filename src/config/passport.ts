@@ -148,7 +148,8 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           name: profile.displayName,
           email: profile.emails[0].value,
           username: profile.emails[0].value,
-          picture: profile._json.picture
+          picture: profile._json.picture,
+          url: profile._json.link
         };
 
         doStandardLogin("google",
