@@ -671,12 +671,12 @@ export class MusicoinOrgJsonAPI {
 
         return releaseQuery
           .sort([["directPlayCount", 'desc'], ["releaseDate", 'desc']])
-          .limit(limit)
           .exec()
           .then(items => {
             const genreOrder = [];
             const genreItems = {};
-            for (let i=0; i < items.length; i++) {
+            let itemsIncluded = 0;
+            for (let i=0; i < items.length && itemsIncluded < limit; i++) {
               const item = items[i];
               const itemGenres = item.genres.slice(0);
               itemGenres.push("Other");
@@ -690,6 +690,7 @@ export class MusicoinOrgJsonAPI {
                 if (genreItems[genre].length < maxGroupSize) {
                   item.genres = genre;
                   genreItems[genre].push(item);
+                  itemsIncluded++;
                   break;
                 }
               }

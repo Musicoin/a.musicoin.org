@@ -66,7 +66,7 @@
     for (var genre in groups) {
       var items = groups[genre];
       items = items.slice(0, Math.min(maxItemsPerGroup, items.length));
-      var showMore = genre && genre != "Other" && items.length >= maxItemsPerGroup && !genreFilter;
+      var showMore = true;//genre && genre != "Other" && items.length >= maxItemsPerGroup && !genreFilter;
  %>
     <div class="container">
         <div class="col-sm-12">

@@ -148,7 +148,7 @@ export class ReleaseManagerRouter {
               artistAddress: req.user.profileAddress,
               description: track.description,
               genres: track.genreArray
-            }
+            };
             console.log(`Saving release txs to database ...`);
             return Release.create(release);
           })
