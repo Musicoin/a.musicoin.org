@@ -1325,7 +1325,7 @@ export class MusicoinOrgJsonAPI {
     if (duration != "day" && duration != "week" && duration != "month")
       throw new Error("invalid duration: " + duration);
     const u = User.findOne({profileAddress: profileAddress}).exec();
-    const rs = Release.find({artistAddress: profileAddress}).exec();
+    const rs = Release.find({artistAddress: profileAddress, state: 'published'}).exec();
     return Promise.join(u, rs, (user, releases) => {
       const uStatsCondition = MusicoinOrgJsonAPI._getUserStatsCondition(user._id, date, duration);
       const ustats = UserStats.findOne(uStatsCondition)
