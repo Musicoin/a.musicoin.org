@@ -106,7 +106,11 @@ const userSchema = mongoose.Schema({
       type: Boolean,
       default: true
     },
-    minimizeHeroInFeed: Boolean
+    minimizeHeroInFeed: Boolean,
+    activityReporting: {
+      type: String,
+      default: 'week'
+    }
   },
   directTipCount: {
     type: Number,

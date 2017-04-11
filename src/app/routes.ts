@@ -776,6 +776,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
     const originalValue = req.user.preferences.notifyOnComment || false;
     req.user.preferences.notifyOnComment = req.body.notifyOnComment ? req.body.notifyOnComment == "true" : originalValue;
+    req.user.preferences.activityReporting = req.body.activityReporting ? req.body.activityReporting : req.user.preferences.activityReporting || "week";
     req.user.preferences.minimizeHeroInFeed = req.body.minimizeHeroInFeed ? req.body.minimizeHeroInFeed == "true" : req.user.preferences.minimizeHeroInFeed;
     req.user.save()
       .then(() => {

@@ -1249,16 +1249,19 @@ export class MusicoinOrgJsonAPI {
           console.log(msg);
           return Promise.resolve({success: false, reason: msg});
         }
-        return User.find({accountLocked: {$ne: true}, mostRecentReleaseDate: {$exists: true, $ne: null}})
+        return User.find({
+          accountLocked: {$ne: true},
+          mostRecentReleaseDate: {$exists: true, $ne: null}
+        })
           .then(users => {
             return Promise.all(users.map(user => {
+              const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
               return this._sendUserStatsReport(user, asOf, duration, durationAdj)
                 .then((output) => {
                   sent++;
                   return output;
                 })
                 .catch(err => {
-                  const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
                   console.log(`Failed to send report for user: ${userName}, profile=${user.profileAddress}, id=${user._id}, err: ${err}`)
                   errors++;
                   return null;
@@ -1294,6 +1297,12 @@ export class MusicoinOrgJsonAPI {
   _sendUserStatsReport(user: any, asOf: number, duration: string, durationAdj: string): Promise<any> {
     if (user.accountLocked) {
       console.log("Not sending report to user with locked account: " + user.profileAddress);
+      return Promise.resolve();
+    }
+
+    var preferredFrequency = user.preferences && user.preferences.activityReporting ? user.preferences.activityReporting : "week";
+    if (preferredFrequency != duration) {
+      console.log(`Not sending report to user because this does not match their preferences: ${preferredFrequency} != ${duration} ${user.profileAddress}`);
       return Promise.resolve();
     }
 

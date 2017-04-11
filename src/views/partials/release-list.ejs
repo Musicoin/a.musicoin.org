@@ -82,6 +82,17 @@
     <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover">
         <i class="fa fa-refresh" aria-hidden="true"></i>
     </div>
+    <div class="center-text">
+        <div >
+            Playback reporting frequency
+        </div>
+        <div class="btn-group btn-group-sm m10" id="emailReportOptions">
+            <% var reportingFrequency = user.preferences && user.preferences.activityReporting ? user.preferences.activityReporting : "off" %>
+            <button type="button" frequency=off class="reporting-frequency-option btn <%= reportingFrequency=="off" ? "btn-primary" : "btn-default" %>">Off</button>
+            <button type="button" frequency=week class="reporting-frequency-option btn <%= reportingFrequency=="week" ? "btn-primary" : "btn-default" %>">Weekly</button>
+        </div>
+    </div>
+
     <div class="track-list">
         <%
         var max = typeof maxItems == "undefined" ? releases.length : maxItems;
@@ -131,6 +142,35 @@
 </div>
 
 <script>
+  $(document).ready(function () {
+    $(".reporting-frequency-option").click(function() {
+      var optionGroup = $("#emailReportOptions");
+      var newSelection = $(this);
+      var wasSelected = optionGroup.children("[selected]")
+
+      var frequency = newSelection.attr('frequency');
+      optionGroup.children().removeAttr('selected');
+      optionGroup.children().removeClass('btn-primary');
+      optionGroup.children().addClass('btn-default');
+
+      $.post("/preferences/update", {
+        activityReporting: frequency
+      }, function (data) {
+        var selected;
+        if (data.success) {
+          selected = newSelection;
+        }
+        else {
+          new Message("Failed to update preferences", "error", 3000);
+          selected = wasSelected;
+        }
+        selected.attr('selected', 'true');
+        selected.removeClass('btn-default');
+        selected.addClass('btn-primary');
+      })
+    });
+  });
+
   function promptDelete(elementId, address, name) {
     if(prompt('Type `delete` to confirm that you want to delete `' + name + '`')=='delete') {
       $.post('/license/delete', {contractAddress: address}, function(data) {
