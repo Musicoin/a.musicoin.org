@@ -670,7 +670,7 @@ export class MusicoinOrgJsonAPI {
         }
 
         return releaseQuery
-          .sort([["directPlayCount", 'desc'], ["releaseDate", 'desc']])
+          .sort([["directTipCount", 'desc'], ["directPlayCount", 'desc'], ["releaseDate", 'desc']])
           .exec()
           .then(items => {
             const genreOrder = [];
