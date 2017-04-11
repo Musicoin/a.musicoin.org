@@ -55,6 +55,10 @@
         th {
             font-weight: bold;
         }
+
+        .subtle-text {
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -72,7 +76,9 @@ function formatNumber(value) {
 <img alt="Musicoin.org" height="63"
      src="https://marketing-image-production.s3.amazonaws.com/uploads/fd101f8e53b0fd0718118a98b6d109f76509da8007e528d4d86c41f946f49e524115cdfe40c1a3c92c730fb08239347994b6e9bef05d4cf7382f120d5af8bf8b.png"
      style="width: 64px; height: 63px;" width="64"/> </a> </span></div>
-<h3><%=report.description%> for <%=report.user.draftProfile.artistName%></h3>
+<h3 style="margin-bottom: 0"><%=report.description%> for <%=report.user.draftProfile.artistName%></h3>
+<div class="text-center subtle-text"><%=report.startDate%> to <%=report.endDate%></div>
+<BR>
 <div class="text-center">You earned <%=report.stats.user.tipCount%> musicoins in tips directly to your profile
     <% if (report.stats.user.followCount == 1) { %>
         and gained <%=report.stats.user.followCount%> new follower.

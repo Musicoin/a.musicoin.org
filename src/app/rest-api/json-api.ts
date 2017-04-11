@@ -1238,6 +1238,10 @@ export class MusicoinOrgJsonAPI {
     const asOf = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), duration);
     return User.findById(userId).exec()
       .then(user => {
+        if (user.accountLocked) {
+          console.log("Not sending report to user with locked account: " + user.profileAddress);
+          return Promise.resolve();
+        }
         return this.getUserStatsReport(user.profileAddress, asOf, duration)
           .then(report => {
             report.actionUrl = "https://musicoin.org/nav/feed";
@@ -1261,8 +1265,10 @@ export class MusicoinOrgJsonAPI {
   }
 
   getUserStatsReport(profileAddress: string, date: number, duration: string): Promise<any> {
-    const u = User.findOne({profileAddress: profileAddress}).exec()
-    const rs = Release.find({artistAddress: profileAddress}).exec()
+    if (duration != "day" && duration != "week" && duration != "month")
+      throw new Error("invalid duration: " + duration);
+    const u = User.findOne({profileAddress: profileAddress}).exec();
+    const rs = Release.find({artistAddress: profileAddress}).exec();
     return Promise.join(u, rs, (user, releases) => {
       const uStatsCondition = MusicoinOrgJsonAPI._getUserStatsCondition(user._id, date, duration);
       const ustats = UserStats.findOne(uStatsCondition)
@@ -1294,9 +1300,12 @@ export class MusicoinOrgJsonAPI {
               }
           })
       });
+      var options = {year: 'numeric', month: 'short', day: 'numeric'};
       return Promise.join(ustats, Promise.all(rstats), (userStats, allReleaseStats) => {
         return {
           user: user,
+          startDate: new Date(date).toLocaleDateString('en-US', options),
+          endDate: moment(date).add(1, duration).toDate().toLocaleDateString('en-US', options),
           stats: {
             user: userStats,
             releases: allReleaseStats
