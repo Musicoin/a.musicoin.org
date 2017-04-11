@@ -659,7 +659,7 @@ export class MusicoinOrgJsonAPI {
 
     return artistList
       .then(profiles => {
-        let releaseQuery = Release.find({state: "published"});
+        let releaseQuery = Release.find({state: "published", markedAsAbuse: {$ne: true}});
         if (search) {
           releaseQuery = releaseQuery.where({$or: [
             {artistAddress: {$in: profiles}},
