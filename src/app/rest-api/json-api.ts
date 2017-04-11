@@ -14,6 +14,7 @@ const PendingPlayback = require('../../app/models/pending-playback');
 const ReleaseStats = require('../../app/models/release-stats');
 const Playback = require('../../app/models/playback');
 const UserPlayback = require('../../app/models/user-playback');
+const ReportActivity = require('../../app/models/report-activity');
 const InviteRequest = require('../../app/models/invite-request');
 const TrackMessage = require('../../app/models/track-message');
 const Hero = require('../../app/models/hero');
@@ -1234,33 +1235,89 @@ export class MusicoinOrgJsonAPI {
     ]).exec();
   }
 
+  sendAllUserReports(duration: string, durationAdj: string) {
+    let sent = 0;
+    let errors = 0;
+    const asOf = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), duration);
+    return ReportActivity.findOne({
+      startDate: new Date(asOf),
+      duration: duration,
+      sent: true})
+      .then(finishedReport => {
+        if (finishedReport) {
+          const msg = `Not sending report, already sent for ${new Date(asOf)}, duration: ${duration}`;
+          console.log(msg);
+          return Promise.resolve({success: false, reason: msg});
+        }
+        return User.find({accountLocked: {$ne: true}, mostRecentReleaseDate: {$exists: true, $ne: null}})
+          .then(users => {
+            return Promise.all(users.map(user => {
+              return this._sendUserStatsReport(user, asOf, duration, durationAdj)
+                .then((output) => {
+                  sent++;
+                  return output;
+                })
+                .catch(err => {
+                  const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
+                  console.log(`Failed to send report for user: ${userName}, profile=${user.profileAddress}, id=${user._id}, err: ${err}`)
+                  errors++;
+                  return null;
+                })
+            }));
+          })
+          .then((results) => {
+            return ReportActivity.create({
+              startDate: new Date(asOf),
+              duration: duration,
+              totalSent: sent,
+              totalErrors: errors,
+              sent: true
+            })
+              .then((record) => {
+                return {
+                  success: true,
+                  results: record
+                };
+              })
+          })
+      });
+  }
+
   sendUserStatsReport(userId: string, duration: string, durationAdj: string): Promise<any> {
     const asOf = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), duration);
     return User.findById(userId).exec()
       .then(user => {
-        if (user.accountLocked) {
-          console.log("Not sending report to user with locked account: " + user.profileAddress);
+        return this._sendUserStatsReport(user, asOf, duration, durationAdj);
+      })
+  }
+
+  _sendUserStatsReport(user: any, asOf: number, duration: string, durationAdj: string): Promise<any> {
+    if (user.accountLocked) {
+      console.log("Not sending report to user with locked account: " + user.profileAddress);
+      return Promise.resolve();
+    }
+
+    return this.getUserStatsReport(user.profileAddress, asOf, duration)
+      .then(report => {
+        report.actionUrl = "https://musicoin.org/nav/feed";
+        report.baseUrl = "https://musicoin.org";
+        report.description = `Musicoin ${durationAdj} report`;
+        report.duration = duration;
+
+        const tracksHaveEvents = report.stats.releases
+            .filter(r => r.playCount > 0 || r.tipCount > 0 || r.commentCount > 0)
+            .length > 0;
+
+        const userHasEvents = report.user.followCount > 0 || report.user.tipCount > 0 || report.user.commentCount;
+        if (report.stats.releases.length > 0 && (tracksHaveEvents || userHasEvents)) {
+          const userName =  user.draftProfile ? user.draftProfile.artistName : user._id;
+          console.log(`Sending report to user: ${userName}, ${this._getUserEmail(user)}, ${user.profileAddress}`);
+          return this.mailSender.sendActivityReport(this._getUserEmail(user), report);
+        }
+        else {
+          console.log("Not sending report to user with no events, user: " + user.profileAddress);
           return Promise.resolve();
         }
-        return this.getUserStatsReport(user.profileAddress, asOf, duration)
-          .then(report => {
-            report.actionUrl = "https://musicoin.org/nav/feed";
-            report.baseUrl = "https://musicoin.org/";
-            report.description = `Musicoin ${durationAdj} report`;
-            report.duration = duration;
-
-            const tracksHaveEvents = report.stats.releases
-              .filter(r => r.playCount > 0 || r.tipCount > 0 || r.commentCount > 0)
-              .length > 0;
-            const userHasEvents = report.user.followCount > 0 || report.user.tipCount > 0 || report.user.commentCount;
-            if (tracksHaveEvents || userHasEvents) {
-              return this.mailSender.sendActivityReport(this._getUserEmail(user), report);
-            }
-            else {
-              console.log("Not sending report to user with no events, user: " + user.profileAddress);
-              return Promise.resolve();
-            }
-          })
       })
   }
 

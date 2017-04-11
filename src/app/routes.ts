@@ -944,6 +944,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.json({success: true})
       })
       .catch(err => {
+        console.log("Failed to send report: " + err);
+        res.json({success: false, message: "Failed to send report"})
+      })
+  });
+
+  app.post('/admin/send-all-weekly-reports', (req, res) => {
+    jsonAPI.sendAllUserReports("week", "weekly")
+      .then((result) => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.log("Failed to send reports: " + err);
         res.json({success: false, message: "Failed to send report"})
       })
   });

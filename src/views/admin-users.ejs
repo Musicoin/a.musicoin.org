@@ -86,6 +86,7 @@
             <% } %>
         </div>
     </div>
+    <div class="btn btn-success btn-sm mr5" onclick="sendWeeklyReports()">Send Weekly Reports</div>
     <table class="table table-responsive white-well">
         <tr>
             <th class="text-center"></th>
@@ -247,7 +248,23 @@
     })
   }
 
-  function sendWeeklyReport(id, cnt) {
+  function sendWeeklyReports() {
+    new Message("Are you sure you want to send a weekly reports to all user?", 'error', 5000)
+      .button("Yes", function () {
+          $.post('/admin/send-all-weekly-reports', {}, function (data) {
+            if (data.success) {
+              new Message("Sent!", "success", 3000);
+            }
+            else {
+              new Message("Failed: " + data.reason, 'error', 5000)
+            }
+          })
+        }
+      )
+  }
+
+
+  function sendWeeklyReport(id) {
     new Message("Are you sure you want to send a weekly report to this user?", 'error', 5000)
       .button("Yes", function () {
           $.post('/admin/send-weekly-report', {
