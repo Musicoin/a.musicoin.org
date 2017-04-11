@@ -348,7 +348,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   function handleBrowseRequest(req, res, search, genre) {
     const maxGroupSize = req.query.maxGroupSize ? parseInt(req.query.maxGroupSize) : 8;
-    const rs = jsonAPI.getNewReleasesByGenre(100, maxGroupSize, search, genre).catchReturn([]);
+    const rs = jsonAPI.getNewReleasesByGenre(150, maxGroupSize, search, genre).catchReturn([]);
     const as = jsonAPI.getNewArtists(maxGroupSize, search, genre).catchReturn([]);
     Promise.join(rs, as, function (releases, artists) {
       doRender(req, res, "browse.ejs", {
