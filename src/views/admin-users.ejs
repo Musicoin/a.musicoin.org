@@ -97,7 +97,6 @@
             <th class="text-center">Music<br>Released</th>
             <th class="text-center">Invites<br>Left</th>
             <th class="text-center">Free<br>plays</th>
-            <th class="text-center">Reports</th>
         </tr>
 
         <% for (var ivt = 0; ivt < users.length; ivt++) {
@@ -210,11 +209,6 @@
                     <div class="btn btn-danger btn-sm" onclick="clearFreePlays('<%= user._id %>', 0)">Zero</div>
                 </div>
             </td>
-            <td class="text-center middle">
-                <div class="flex-row">
-                    <div class="btn btn-success btn-sm mr5" onclick="sendWeeklyReport('<%= user._id %>')">Weekly</div>
-                </div>
-            </td>
         </tr>
         <% } %>
     </table>
@@ -262,25 +256,6 @@
         }
       )
   }
-
-
-  function sendWeeklyReport(id) {
-    new Message("Are you sure you want to send a weekly report to this user?", 'error', 5000)
-      .button("Yes", function () {
-          $.post('/admin/send-weekly-report', {
-            id: id
-          }, function (data) {
-            if (data.success) {
-              new Message("Sent!", "success", 3000);
-            }
-            else {
-              new Message("Failed: " + data.reason, 'error', 5000)
-            }
-          })
-        }
-      )
-  }
-
 
   function addFreePlays(id, cnt) {
     $.post('/admin/free-plays/add', {
