@@ -335,6 +335,7 @@
 
   function updateImageDisplay(targetId, inputId) {
     readURL(targetId, $('#' + inputId)[0]);
+    $('#' + targetId).css('border', 'none');
   }
 
   function updateAudioLabel(targetId, inputId) {

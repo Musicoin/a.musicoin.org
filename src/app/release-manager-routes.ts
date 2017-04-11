@@ -9,6 +9,9 @@ import {MusicoinAPI} from "./musicoin-api";
 const Release = require('../app/models/release');
 const User = require('../app/models/user');
 import * as crypto from 'crypto';
+const defaultTrackImage = "ipfs://QmRsPLxCAgDZLfujibUF8EwYY9uZVU9vRq73rpAotiAsdf";
+const defaultProfileIPFSImage = "ipfs://QmR8mmsMn9TUdJiA6Ja3SYcQ4ckBdky1v5KGRimC7LkhGF";
+const defaultProfileIPFSImageOld = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 
 export class ReleaseManagerRouter {
   constructor(musicoinApi: MusicoinAPI,
@@ -103,10 +106,15 @@ export class ReleaseManagerRouter {
         };
 
         const a = mediaProvider.upload(track.audio.path, () => key); // encrypted
+        const profileHasDefaultImage = !req.user.draftProfile.ipfsImageUrl
+          || req.user.draftProfile.ipfsImageUrl == defaultProfileIPFSImage
+          || req.user.draftProfile.ipfsImageUrl == defaultProfileIPFSImageOld;
         const i = track.image && track.image.size > 0
           ? FormUtils.resizeImage(track.image.path, maxImageWidth)
             .then((newPath) => mediaProvider.upload(newPath))
-          : Promise.resolve(req.user.draftProfile.ipfsImageUrl);
+          : profileHasDefaultImage
+            ? defaultTrackImage
+            : req.user.draftProfile.ipfsImageUrl;
 
         track.metadata = {genres: track.genreArray};
 

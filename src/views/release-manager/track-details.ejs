@@ -16,12 +16,17 @@
             <p class="text-large subtle-text">You put a lot of work into making your music sound great -- but the first thing potential fans will encounter
                 is your track name and artwork.</p>
             <div class="flex-row ">
-                <div id="imageDisplay"
-                     onclick="image.click()"
-                     style="background-image: url('<%= user.profile.image %>');position: relative;"
-                     class="track-image clickable">
-                    <div style="position: absolute; top:5px; right:5px" title="Select an image...">
-                        <i class="fa fa-pencil text-large btn btn-default" aria-hidden="true"></i>
+                <div class="flex-column">
+                    <div id="imageDisplay"
+                         onclick="image.click()"
+                         style="border: 1px dashed #ccc; position: relative;"
+                         class="track-image clickable">
+                        <div style="position: absolute; top:5px; right:5px" title="Select an image...">
+                            <i class="fa fa-pencil text-large btn btn-default" aria-hidden="true"></i>
+                        </div>
+                        <div class="center-text" style="width: 256px; height: 256px">
+                            Select a track image
+                        </div>
                     </div>
                 </div>
                 <div class="profile-release-item">
