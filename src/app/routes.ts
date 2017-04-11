@@ -2139,6 +2139,70 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     next();
   }
 
+  function payForPPPKey(user, release, license, payFromProfile) : Promise<any> {
+    const ttl = 60000;
+    const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
+    const licenseAddress = release.contractAddress;
+    let paymentPromise;
+
+    if (payFromProfile) {
+      // user pays.  In this case, we need to track the payment tx to make sure they don't double spend
+      paymentPromise = musicoinApi.pppFromProfile(user.profileAddress, licenseAddress)
+        .then(keyResponse => {
+          console.log("Adding pending tx: " + keyResponse.transactions.paymentToHotWalletTx);
+          return jsonAPI.addPendingPPPTransaction(
+            user._id,
+            release._id,
+            license.coinsPerPlay,
+            keyResponse.transactions.paymentToHotWalletTx)
+            .then(() => {
+              return keyResponse;
+            });
+        })
+    }
+    else {
+      // free play.  in this case, just deduct 1 from the number of remaining free plays
+      paymentPromise = musicoinApi.getKey(licenseAddress)
+        .then(keyResponse => {
+          user.freePlaysRemaining--;
+          user.nextFreePlayback = Date.now() + ttl;
+          console.log(`User ${userName} has ${user.freePlaysRemaining} free plays remaining, next free play in ${ttl}ms`);
+          return keyResponse;
+        });
+    }
+
+    // once the payment is initiated, update the release stats
+    return paymentPromise.then(keyResponse => {
+      return jsonAPI.addToReleasePlayCount(user._id, release._id)
+        .then(() => {
+          console.log("Caching key for current playback...");
+          user.currentPlay = {
+            licenseAddress: licenseAddress,
+            release: release._id,
+            encryptedKey: UrlUtils.createExpiringLink(keyResponse.key, ttl),
+          };
+          return user.save()
+        })
+        .then(() => {
+          return keyResponse;
+        })
+        .catch(err => {
+          console.log(`Failed to update playback stats : ${err}`);
+          throw err;
+        })
+    })
+  }
+
+  function getPPPKeyForUser(user, release, license, playbackEligibility) {
+    const cachedKey = user.currentPlay
+      ? UrlUtils.resolveExpiringLink(user.currentPlay.encryptedKey)
+      : null;
+
+    return playbackEligibility.canUseCache && cachedKey
+      ? Promise.resolve({key: cachedKey, cached: true})
+      : payForPPPKey(user, release, license, playbackEligibility.payFromProfile);
+  }
+
   app.get('/ppp/:address', resolveExpiringLink, function (req, res) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
@@ -2147,80 +2211,29 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           return res.send(new Error("PPP request failed: " + playbackEligibility.message));
         }
 
-        const userName = req.user.draftProfile ? req.user.draftProfile.artistName : req.user._id;
+        const context = {contentType: "audio/mpeg"};
         const l = musicoinApi.getLicenseDetails(req.params.address);
         const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
 
-        const ttl = 60000;
-        const cachedKey = req.user.currentPlay
-          ? UrlUtils.resolveExpiringLink(req.user.currentPlay.encryptedKey)
-          : null;
-        const k = playbackEligibility.canUseCache && cachedKey
-          ? Promise.resolve({key: cachedKey, cached: true})
-          : playbackEligibility.payFromProfile
-            ? musicoinApi.pppFromProfile(req.user.profileAddress, req.params.address)
-            : musicoinApi.getKey(req.params.address);
-
-        const context = {contentType: "audio/mpeg"};
-        return Promise.join(l, r, k, (license, release, keyResponse) => {
-          // return the stream
-          return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
-            .then(function (result) {
-              // try to update stats, but don't fail if update fails
-              jsonAPI.addToReleasePlayCount(req.user._id, release._id)
-                .catch(err => {
-                  console.log(`Failed to update stats for release: ${err}`);
-                });
-
-              if (!keyResponse.cached) {
-                if (playbackEligibility.payFromProfile) {
-                  console.log("Adding pending tx: " + keyResponse.transactions.paymentToHotWalletTx);
-                  jsonAPI.addPendingPPPTransaction(
-                    req.user._id,
-                    release._id,
-                    license.coinsPerPlay,
-                    keyResponse.transactions.paymentToHotWalletTx)
-                    .catch(err => {
-                      console.log(`Failed to update pending transactions for user: ${err}`);
-                    });
-                }
-                else {
-                  req.user.freePlaysRemaining--;
-                  req.user.nextFreePlayback = Date.now() + ttl;
-                  console.log(`User ${userName} has ${req.user.freePlaysRemaining} free plays remaining, next free play in ${ttl}ms`);
-                }
-                console.log("Caching key for current playback...");
-                req.user.currentPlay = {
-                  licenseAddress: req.params.address,
-                  release: release._id,
-                  encryptedKey: UrlUtils.createExpiringLink(keyResponse.key, ttl),
-                };
-              }
-              else {
-                console.log("Not caching key, current play");
-              }
-
-              req.user.save()
-                .catch(err => {
-                  console.log(`Failed to update remaining plays for user: ${err}`);
-                });
-              return result;
-            })
-            .then(function (result) {
-              const headers = {};
-              console.log(`Responding with content type ${context.contentType}`);
-              headers['Content-Type'] = context.contentType;
-              headers['Accept-Ranges'] = 'none';
-              headers['Content-Length'] = result.headers['content-length'];
-              res.writeHead(200, headers);
-              result.stream.pipe(res);
+        return Promise.join(l, r, (license, release) => {
+          return getPPPKeyForUser(req.user, release, license, playbackEligibility)
+            .then(keyResponse => {
+              return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
+                .then(function (result) {
+                  const headers = {};
+                  headers['Content-Type'] = context.contentType;
+                  headers['Accept-Ranges'] = 'none';
+                  headers['Content-Length'] = result.headers['content-length'];
+                  res.writeHead(200, headers);
+                  result.stream.pipe(res);
+                })
             })
         })
       })
       .catch(function (err) {
         console.error(err.stack);
         res.status(500);
-        res.send(err);
+        res.send("Failed to play track");
       });
   });
 
