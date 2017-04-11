@@ -184,18 +184,24 @@
                                 <td width="99%">
                                     <% if (user.facebook.token) { %>
                                     <div class="flex-row m10" style="justify-content: space-between;">
-                                        <a class="mr10" target=_blank href="<%= user.facebook.url %>"><%= user.facebook.name %></a>
+                                        <a class="mr10" target=_blank
+                                           href="<%= user.facebook.url %>"><%= user.facebook.name %></a>
                                         <div class="flex-row">
                                             <label class="switch">
                                                 <input id=facebookUrlIsPublic
                                                        type="checkbox" <%= user.facebook && user.facebook.urlIsPublic ? "checked" : "" %>>
                                                 <div class="slider round"></div>
                                             </label>
-                                            <div class="center-text clickable" onclick="$('#facebookUrlIsPublic').click()">Show link on my public profile</div>
+                                            <div class="center-text clickable"
+                                                 onclick="$('#facebookUrlIsPublic').click()">Show link on my public
+                                                profile
+                                            </div>
                                         </div>
                                     </div>
                                     <% } else { %>
-                                    <div style='margin-left: 3px'><a href="/connect/facebook" target="_blank" class="btn btn-primary btn-sm">Link Facebook</a></div>
+                                    <div style='margin-left: 3px'><a href="/connect/facebook" target="_blank"
+                                                                     class="btn btn-primary btn-sm">Link Facebook</a>
+                                    </div>
                                     <% } %>
                                 </td>
                             </tr>
@@ -204,18 +210,23 @@
                                 <td width="99%">
                                     <% if (user.twitter.token) { %>
                                     <div class="flex-row m10" style="justify-content: space-between;">
-                                        <a class="mr10" target=_blank href="<%= user.twitter.url %>"><%= user.twitter.username %></a>
+                                        <a class="mr10" target=_blank
+                                           href="<%= user.twitter.url %>"><%= user.twitter.username %></a>
                                         <div class="flex-row">
                                             <label class="switch">
                                                 <input id=twitterUrlIsPublic
                                                        type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
                                                 <div class="slider round"></div>
                                             </label>
-                                            <div class="center-text clickable" onclick="$('#twitterUrlIsPublic').click()">Show link on my public profile</div>
+                                            <div class="center-text clickable"
+                                                 onclick="$('#twitterUrlIsPublic').click()">Show link on my public
+                                                profile
+                                            </div>
                                         </div>
                                     </div>
                                     <% } else { %>
-                                    <div style='margin-left: 3px'><a href="/connect/twitter" target="_blank" class="btn btn-info btn-sm">Link Twitter</a></div>
+                                    <div style='margin-left: 3px'><a href="/connect/twitter" target="_blank"
+                                                                     class="btn btn-info btn-sm">Link Twitter</a></div>
                                     <% } %>
                                 </td>
                             </tr>
@@ -247,7 +258,8 @@
                             <tr>
                                 <td><span class="fa <%= icon %>"></span></td>
                                 <td width="99%"><input type="text" class="form-control" name="social.<%= item.id %>"
-                                                       value="<%= value %>" placeholder="<%= name %> profile page url"></td>
+                                                       value="<%= value %>" placeholder="<%= name %> profile page url">
+                                </td>
                             </tr>
                             <% } %>
                         </table>
@@ -362,170 +374,171 @@
                                                                                             aria-hidden="true"></i></a>
                 </div>
                 <% if (typeof sendResult != "undefined") { %>
-                    <% if (sendResult.sendError) { %>
-                        <div class="text-center text-danger">
-                            Send failed!
-                        </div>
-                    <% } else { %>
-                        <div class="text-center">
-                            Payment sent!
-                        </div>
-                    <% } %>
+                <% if (sendResult.sendError) { %>
+                <div class="text-center text-danger">
+                    Send failed!
+                </div>
+                <% } else { %>
+                <div class="text-center">
+                    Payment sent!
+                </div>
+                <% } %>
                 <% } %>
             </div>
         </div>
 
-    <% if (user.canInvite) { %>
-    <div class="col-sm-6">
-        <div class="well">
-            <h3 class="section-title">Invites</h3>
-            <div>
-                <div class="balance"><%= user.invitesRemaining %></div>
-                <div class="text-center subtle-text">invites left</div>
+        <% if (user.canInvite) { %>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">Invites</h3>
+                <div>
+                    <div class="balance"><%= user.invitesRemaining %></div>
+                    <div class="text-center subtle-text">invites left</div>
+                </div>
+                <div class="invite-options" style="<%= invited.inviteUrl ? "" : "display: none" %>">
+                    <h4>Referral Link</h4>
+                    <p class="subtle-text">
+                        Your referral link is reusable! When some one signs up with your referral link, your
+                        invites remaining will go down by one and you will get your reward.
+                    <div class="text-success center-text">
+                        Your referral link
+                    </div>
+                    <div class="center-text">
+                        https://musicoin.org/accept/<%= user.reusableInviteCode %>
+                    </div>
+                    <br>
+                    <h4>Individual Invite Link</h4>
+                    <p class="subtle-text">
+                        If you want to create an invite for a <em>specific person</em>, enter an address below and we'll
+                        send an invite to that address. You can also copy and paste the generated link and send it to
+                        them separately. However, this type invite can only be used once.
+                    </p>
+                    <form action="/invite" method="post">
+                        <table cellpadding="3">
+                            <tr>
+                                <td class="text-nowrap">e-mail</td>
+                                <td width="99%"><input id=inviteEmail name=email type="text" class="form-control"
+                                                       placeholder="email address"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="text-right">
+                                    <button id=btnInvite type="submit" class="btn btn-success">
+                                        Create invite link
+                                    </button>
+                                </td>
+                            </tr>
+                            <% if (invited.inviteUrl) { %>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <% if (invited.success) { %>
+                                    <div class="text-center">
+                                        <%= invited.email ? "An invite was sent to " + invited.email : "" %><br>
+                                        You can send this link via social media: <br>
+                                        <%= invited.inviteUrl %>
+                                    </div>
+                                    <% } else if (invited.reason == "exists"){ %>
+                                    <div class="text-warning"><%= invited.email %> already has an invite.</div>
+                                    <% } else if (invited.reason == "invalid"){ %>
+                                    <div class="text-danger"><%= invited.email %> is not a valid email address.</div>
+                                    <% } else { %>
+                                    <div class="text-danger">Failed to invite <%= invited.email %>, try again later
+                                    </div>
+                                    <% } %>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </table>
+                    </form>
+
+                </div>
+                <div class="flex-row wallet-action-bar">
+                    <div class="wallet-action-toggle subtle-text"
+                         onclick='$(".invite-options").toggle()'>
+                        <div class="invite-options">send an invite</div>
+                        <div class="invite-options" style="display: none">hide</div>
+                    </div>
+                    <a class="subtle-text" href="/invite-history"><i title="invite history" class="fa fa-list-ul"
+                                                                     aria-hidden="true"></i></a>
+                </div>
             </div>
-            <div class="invite-options" style="<%= invited.inviteUrl ? "" : "display: none" %>">
-                <h4>Referral Link</h4>
-                <p class="subtle-text">
-                    Your referral link is reusable! When some one signs up with your referral link, your
-                    invites remaining will go down by one and you will get your reward.
-                <div class="text-success center-text">
-                    Your referral link
+        </div>
+        <% } %>
+
+        <% if (!user.hideProfile) { %>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">Release</h3>
+                <div class="center-text">
+                    Now you can release using the&nbsp;<a href="/release-manager"> release wizard</a>!
                 </div>
                 <div class="center-text">
-                    https://musicoin.org/accept/<%= user.reusableInviteCode %>
+                    Look for the&nbsp;<i class="fa fa-cloud-upload" aria-hidden="true"></i>&nbsp;icon in the top menu.
                 </div>
-                <br>
-                <h4>Individual Invite Link</h4>
-                <p class="subtle-text">
-                    If you want to create an invite for a <em>specific person</em>, enter an address below and we'll
-                    send an invite to that address. You can also copy and paste the generated link and send it to
-                    them separately. However, this type invite can only be used once.
-                </p>
-                <form action="/invite" method="post">
-                    <table cellpadding="3">
-                        <tr>
-                            <td class="text-nowrap">e-mail</td>
-                            <td width="99%"><input id=inviteEmail name=email type="text" class="form-control"
-                                                   placeholder="email address"></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td class="text-right">
-                                <button id=btnInvite type="submit" class="btn btn-success">
-                                    Create invite link
-                                </button>
-                            </td>
-                        </tr>
-                        <% if (invited.inviteUrl) { %>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <% if (invited.success) { %>
-                                <div class="text-center">
-                                    <%= invited.email ? "An invite was sent to " + invited.email : "" %><br>
-                                    You can send this link via social media: <br>
-                                    <%= invited.inviteUrl %>
-                                </div>
-                                <% } else if (invited.reason == "exists"){ %>
-                                <div class="text-warning"><%= invited.email %> already has an invite.</div>
-                                <% } else if (invited.reason == "invalid"){ %>
-                                <div class="text-danger"><%= invited.email %> is not a valid email address.</div>
-                                <% } else { %>
-                                <div class="text-danger">Failed to invite <%= invited.email %>, try again later</div>
-                                <% } %>
-                            </td>
-                        </tr>
-                        <% } %>
-                    </table>
-                </form>
-
-            </div>
-            <div class="flex-row wallet-action-bar">
-                <div class="wallet-action-toggle subtle-text"
-                     onclick='$(".invite-options").toggle()'>
-                    <div class="invite-options">send an invite</div>
-                    <div class="invite-options" style="display: none">hide</div>
-                </div>
-                <a class="subtle-text" href="/invite-history"><i title="invite history" class="fa fa-list-ul"
-                                                                 aria-hidden="true"></i></a>
             </div>
         </div>
-    </div>
-    <% } %>
+        <% } %>
 
-    <% if (!user.hideProfile) { %>
-    <div class="col-sm-6">
-        <div class="well">
-            <h3 class="section-title">Release</h3>
-            <div class="center-text">
-                Now you can release using the&nbsp;<a href="/release-manager"> release wizard</a>!
+        <div class="dynamic-element col-sm-6"
+             id="de-pending-releases"
+             de-refresh-period="none"
+             de-url="/elements/pending-releases">
+            <%- include partials/pending-releases.ejs %>
+        </div>
+
+        <div class="dynamic-element col-sm-6"
+             id="de-release-list"
+             de-refresh-period="none"
+             de-url="/elements/release-list">
+            <%- include partials/release-list.ejs %>
+        </div>
+
+        <%
+            // I don't want to have this page constantly refreshing the pending releases unless
+            // we have reason to believe there is likely to be a change.  When the user posts a
+            // new release, the page will refresh.  At which point, we should see an pending release.
+            // So, in those cases, set up two checks: 1min and 2mins from now.  After than, they user
+            // will have to user the manual refresh option on the widget, or refresh the page.
+        if (pendingReleases.length > 0) { %>
+        <script>
+          console.log("Setting up two auto-refreshes...");
+          window.setTimeout(function () {
+            console.log("auto-refreshes 1 ...");
+            dynamic.refreshElement($("#de-release-list"));
+            dynamic.refreshElement($("#de-pending-releases"));
+          }, 60 * 1000)
+          window.setTimeout(function () {
+            console.log("auto-refreshes 2 ...");
+            dynamic.refreshElement($("#de-release-list"));
+            dynamic.refreshElement($("#de-pending-releases"));
+          }, 120 * 1000)
+        </script>
+        <% } %>
+
+        <% } else { %>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">wallet</h3>
+                Once you publish a profile, you can check your balance here and send coins to other users.
             </div>
-            <div class="center-text">
-                Look for the&nbsp;<i class="fa fa-cloud-upload" aria-hidden="true"></i>&nbsp;icon in the top menu.
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">invite</h3>
+                Once you publish a profile, you can invite other users to join here.
             </div>
         </div>
-    </div>
-    <% } %>
 
-    <div class="dynamic-element col-sm-6"
-         id="de-pending-releases"
-         de-refresh-period="none"
-         de-url="/elements/pending-releases">
-        <%- include partials/pending-releases.ejs %>
-    </div>
-
-    <div class="dynamic-element col-sm-6"
-         id="de-release-list"
-         de-refresh-period="none"
-         de-url="/elements/release-list">
-        <%- include partials/release-list.ejs %>
-    </div>
-
-    <%
-        // I don't want to have this page constantly refreshing the pending releases unless
-        // we have reason to believe there is likely to be a change.  When the user posts a
-        // new release, the page will refresh.  At which point, we should see an pending release.
-        // So, in those cases, set up two checks: 1min and 2mins from now.  After than, they user
-        // will have to user the manual refresh option on the widget, or refresh the page.
-    if (pendingReleases.length > 0) { %>
-    <script>
-      console.log("Setting up two auto-refreshes...");
-      window.setTimeout(function () {
-        console.log("auto-refreshes 1 ...");
-        dynamic.refreshElement($("#de-release-list"));
-        dynamic.refreshElement($("#de-pending-releases"));
-      }, 60 * 1000)
-      window.setTimeout(function () {
-        console.log("auto-refreshes 2 ...");
-        dynamic.refreshElement($("#de-release-list"));
-        dynamic.refreshElement($("#de-pending-releases"));
-      }, 120 * 1000)
-    </script>
-    <% } %>
-
-    <% } else { %>
-    <div class="col-sm-6">
-        <div class="well">
-            <h3 class="section-title">wallet</h3>
-            Once you publish a profile, you can check your balance here and send coins to other users.
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">release</h3>
+                Once you publish a profile, you can release songs here.
+            </div>
         </div>
+        <% } %>
     </div>
-
-    <div class="col-sm-6">
-        <div class="well">
-            <h3 class="section-title">invite</h3>
-            Once you publish a profile, you can invite other users to join here.
-        </div>
-    </div>
-
-    <div class="col-sm-6">
-        <div class="well">
-            <h3 class="section-title">release</h3>
-            Once you publish a profile, you can release songs here.
-        </div>
-    </div>
-    <% } %>
-</div>
 
 </div>
 <%- include partials/player-hook.ejs %>
@@ -576,8 +589,12 @@
       })
     }
 
-    $("#facebookUrlIsPublic").change(function() { updateUrlVisibility($(this), "facebook") })
-    $("#twitterUrlIsPublic").change(function() { updateUrlVisibility($(this), "twitter") })
+    $("#facebookUrlIsPublic").change(function () {
+      updateUrlVisibility($(this), "facebook")
+    })
+    $("#twitterUrlIsPublic").change(function () {
+      updateUrlVisibility($(this), "twitter")
+    })
 
     var inviteEmail = $("#inviteEmail");
     var btnInvite = $("#btnInvite");
