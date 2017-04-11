@@ -87,7 +87,16 @@
             Playback reporting frequency
         </div>
         <div class="btn-group btn-group-sm m10" id="emailReportOptions">
-            <% var reportingFrequency = user.preferences && user.preferences.activityReporting ? user.preferences.activityReporting : "off" %>
+            <%
+                var reportingFrequency = "none";
+                if (typeof user != "undefined"
+                        && typeof user.preferences != "undefined"
+                        && user.preferences
+                        && typeof user.preferences.activityReporting != "undefined"
+                        && user.preferences.activityReporting) {
+                    reportingFrequency = user.preferences.activityReporting;
+                }
+            %>
             <button type="button" frequency=off class="reporting-frequency-option btn <%= reportingFrequency=="off" ? "btn-primary" : "btn-default" %>">Off</button>
             <button type="button" frequency=week class="reporting-frequency-option btn <%= reportingFrequency=="week" ? "btn-primary" : "btn-default" %>">Weekly</button>
         </div>
