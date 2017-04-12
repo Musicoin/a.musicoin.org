@@ -1459,7 +1459,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             releaseId: release._id,
             description: release.description,
             messages: messages,
-            isArtist: req.user && req.user.profileAddress == license.artistProfileAddress
+            isArtist: req.user && req.user.profileAddress == license.artistProfileAddress,
+            abuseMessage: config.ui.admin.markAsAbuse
           });
         })
     })

@@ -216,7 +216,7 @@
                 <% } %>
             </div>
             <div class="alert alert-danger abuse-alert" style="<%= license.markedAsAbuse ? "" : "display:none" %>  ">
-                This track has been marked as abuse
+                <%= abuseMessage %>
             </div>
             <div class="dynamic-element"
                  data-behavior="chat-message-area"
