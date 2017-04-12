@@ -159,7 +159,7 @@
                         </div>
 
                         <% if(!user.google.token || !user.twitter.token || !user.facebook.token) { %>
-                        <div class="center-text subtle-text flex-column mb5">
+                        <div class="center-text subtle-text flex-column mb5 mt10">
                             <div>Link another account (<a class=text-small href="/faq#WhyLinkAccounts">why?</a>)</div>
                             <div class="flex-row center-text">
                                 <% if(!user.google.token) { %>
@@ -183,6 +183,35 @@
                         </div>
                         <% } %>
 
+                        <% if(user.google.id || user.twitter.id || user.facebook.id) { %>
+                        <div class="center-text subtle-text flex-column mt20">
+                            <a onclick='$("#unlink").toggle()' class="clickable">Want to unlink an account?</a>
+                            <div id=unlink  style="display: none" class="alert alert-danger">
+                                <div class="flex-row center-text mt10">
+                                    <% if(user.google.token) { %>
+                                    <div class="mr5"><div onclick="unlink('google')" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></div></div>
+                                    <% } %>
+
+                                    <% if(user.twitter.token) { %>
+                                    <div class="mr5"><div onclick="unlink('twitter')" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></div></div>
+                                    <% } %>
+
+                                    <% if(user.facebook.token) { %>
+                                    <div class="mr5"><div onclick="unlink('facebook')" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></div></div>
+                                    <% } %>
+
+                                    <% if(user.local.id) { %>
+                                    <div class="mr5"><div onclick="unlink('local')" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></div></div>
+                                    <% } %>
+                                </div>
+                                <div class="center-text">
+                                    Select an account to unlink
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+
+
                         <% if (typeof isAdmin != "undefined" && isAdmin) { %>
                         <div class="admin-area">
                             <div class="text-normal text-center">Admin Functions</div>
@@ -196,25 +225,6 @@
                             </div>
                         </div>
                         <% } %>
-
-                        <!--<% if(user.google.id || user.twitter.id || user.facebook.id) { %>-->
-                        <!--<div class="center-text subtle-text flex-column">-->
-                            <!--<a onclick='$("#unlink").toggle()' class="clickable">Want to unlink an account?</a>-->
-                            <!--<div id=unlink class="flex-row center-text" style="display: none">-->
-                                <!--<% if(user.google.token) { %>-->
-                                <!--<div class="mr5"><a href="/unlink/google" target="_top" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>-->
-                                <!--<% } %>-->
-
-                                <!--<% if(user.twitter.token) { %>-->
-                                <!--<div class="mr5"><a href="/unlink/twitter" target="_top" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>-->
-                                <!--<% } %>-->
-
-                                <!--<% if(user.facebook.token) { %>-->
-                                <!--<div class="mr5"><a href="/unlink/facebook" target="_top" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>-->
-                                <!--<% } %>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<% } %>-->
                     </div>
                 </div>
             </div>
@@ -223,17 +233,27 @@
                     <span class="text-large"><%= user.formattedBalance%></span> <span class="subtle-text">MC</span>
                 </a>
             </div>
-        <% } else { %>
-        <!--<div class="mr5 text-middle">Sign in</div>-->
-        <!--<div class="mr5"><a href="/auth/google" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>-->
-        <!--<div class="mr5"><a href="/auth/twitter" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>-->
-        <!--<div class="mr5"><a href="/auth/facebook" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>-->
-        <!--<div class="mr5"><a href="/auth/soundcloud" class="btn btn-soundcloud btn-sm"><span class="fa fa-soundcloud"></span></a></div>-->
         <% } %>
     </div>
 </div>
 
 <script>
+
+    function unlink(method) {
+      var type = method == "local" ? "email" : method;
+      new Message("Are you sure you want to unlink your " + type + " account?", "warning", 5000)
+        .button('ok', function() {
+          $.post("/unlink/" + method, {}, function (data) {
+            if (data.success) {
+              new Message(data.message, "success", 3000);
+            }
+            else {
+              new Message(data.message, "error", 3000);
+            }
+          })
+        })
+    }
+
   $( document ).ready(function() {
     $('.optionView').hide();
 

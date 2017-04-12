@@ -2062,29 +2062,47 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // for local account, remove email and password
   // user account will stay active in case they want to reconnect in the future
   // google ---------------------------------
-  app.get('/unlink/google', function (req, res) {
-    var user = req.user;
-    user.google.token = undefined;
-    user.save(function (err) {
-      res.redirect('/profile');
-    });
+  app.post('/unlink/google', function (req, res) {
+    unlinkProvider('google', req, res);
   });
 
-  app.get('/unlink/twitter', function (req, res) {
-    var user = req.user;
-    user.twitter.token = undefined;
-    user.save(function (err) {
-      res.redirect('/profile');
-    });
+  app.post('/unlink/twitter', function (req, res) {
+    unlinkProvider('twitter', req, res);
   });
 
-  app.get('/unlink/facebook', function (req, res) {
-    var user = req.user;
-    user.facebook.token = undefined;
-    user.save(function (err) {
-      res.redirect('/profile');
-    });
+  app.post('/unlink/facebook', function (req, res) {
+    unlinkProvider('facebook', req, res);
   });
+
+  app.post('/unlink/local', function (req, res) {
+    unlinkProvider('local', req, res);
+  });
+
+  function unlinkProvider(provider, req, res) {
+    if (!req.isAuthenticated()) {
+      return res.json({success: false, message: "You must be logged in to unlink an account"});
+    }
+    if (!req.user[provider] || !req.user[provider].id) {
+      return res.json({success: false, message: `No ${provider} account is linked.`});
+    }
+    if (getLoginMethodCount(req.user) < 2) {
+      return res.json({success: false, message: "You cannot remove your only authentication method."});
+    }
+
+    req.user[provider] = {};
+    req.user.save(function (err) {
+      return res.json({success: true, message: `Your ${provider} account has been unlinked from this account`});
+    });
+  }
+
+  function getLoginMethodCount(user) {
+    let total = 0;
+    if (user.google.id) total++;
+    if (user.facebook.id) total++;
+    if (user.twitter.id) total++;
+    if (user.local.id) total++;
+    return total;
+  }
 
   function getPlaybackEligibility(req) {
     if (!req.isAuthenticated()) {
