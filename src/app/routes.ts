@@ -31,6 +31,7 @@ let publicPagesEnabled = false;
 const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k"];
 
 const MESSAGE_TYPES = {
+  admin: "admin",
   comment: "comment",
   release: "release",
   donate: "donate",
@@ -665,11 +666,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.post('/admin/release/abuse', (req, res) => {
     const markAsAbuse = req.body.abuse == "true";
-    const msg = markAsAbuse ? "Marked as abuse" : "Removed abuse label";
+    const msg = markAsAbuse ? config.ui.admin.markAsAbuse : config.ui.admin.unmarkAsAbuse;
     jsonAPI.markAsAbuse(req.body.licenseAddress, markAsAbuse)
       .then(result => res.json(result))
       .then(() => {
-        jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.comment, null, null);
+        jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
       })
       .catch(err => {
         console.log("failed to mark track as abuse: " + err);

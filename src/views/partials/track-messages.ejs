@@ -30,6 +30,9 @@
         if (message.messageType == "donate") {
             messageClass += " message-donate";
         }
+        else if (message.messageType == "admin") {
+            messageClass += " message-admin";
+        }
         var isReply = !!message.replyToMessage;
     %>
     <div class="chat-message hover-target <%=messageClass%>"

@@ -41,6 +41,10 @@ function getStructuredConfig(keyValueConfig) {
       ipfsAddUrl: `${keyValueConfig.ipfsAddEndpoint}/api/v0/add`,
     },
     ui: {
+      admin: {
+        markAsAbuse: `This track was reported as abuse and is temporarily locked.  Please contact copyright@berry.ai with any relevant documentation to resolve.`,
+        unmarkAsAbuse: `The abuse flag on this track has been removed.`
+      },
       thread: {
         newMessages: 100,
       },
