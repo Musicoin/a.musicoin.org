@@ -147,17 +147,14 @@
         justify-content: space-between;
     }
 
-    .player-control:hover {
-        background-color: rgba(255, 255, 255, 0.2);
+    .player-control {
+        color: white;
+        font-size: 36px;
+        cursor: pointer;
     }
 
-    .player-control {
-        border-radius: 50% !important;
-        width: 48px;
-        height: 48px;
-        margin-left: 10px;
-        margin-right: 10px;
-        cursor: pointer;
+    .player-control.disabled {
+        color: rgba(255,255,255,0.2);
     }
 
     .player-control-large {
@@ -215,8 +212,14 @@
             <div id="player-artist" class="player-artist-name clickable">Artist name which styupidly long that will cause some sort of snafu</div>
         </div>
 
-        <img id="player-play-button" onclick="audioPlayer.togglePlayState()" src="/images/player/play.png"
-             class="player-control player-control-large">
+        <i id="player-play-button" class="fa fa-play btn btn-plain player-control"
+           onclick="audioPlayer.togglePlayState()"
+           style="margin-right: 5px"
+           aria-hidden="true"></i>
+
+        <img id="player-pause-button" onclick="audioPlayer.togglePlayState()" src="/images/player/pause.png"
+             style="width: 55px; height: 55px; padding-right: 5px; margin-right: 4px"
+             class="player-control">
 
         <div class="player-progress mr5">
             <div class="progress-bar progress-background"></div>
@@ -227,14 +230,24 @@
             </div>
         </div>
 
+        <i id="player-next-button" class="fa fa-step-forward btn btn-plain player-control"
+           onclick="audioPlayer.playNextItem()"
+           aria-hidden="true"></i>
+
         <div id="player-tip-button"
              title="Send a tip"
              class="clickable text-large mr10"
              context-type="Release"
              recipient="">
-            <i class="fa fa-heart btn btn-plain btn-sm" aria-hidden="true"></i>
+            <i class="fa fa-heart btn btn-plain btn-sm"
+               style="padding: 5px"
+               aria-hidden="true"></i>
         </div>
-        <img class="clickable title-link" width=24 height=24 src="/images/chat.png">
+        <div class="clickable title-link text-large mr10">
+            <i class="fa fa-comments btn-plain btn-sm"
+               style="padding: 5px"
+               aria-hidden="true"></i>
+        </div>
     </div>
     <div id="player-background" class="player-background" style="background-image: url('')"></div>
 </div>
@@ -344,6 +357,7 @@
       $("#player")[0].src = url + "?" + new Date().getTime();
       $("#player-background")[0].style.backgroundImage = "url('" + img + "')";
       $("#player-badge-image")[0].src = img;
+      $("#player-next-button").toggleClass("disabled", audioPlayer.currentPlaylist.length == 0);
 //      $("#player-plays")[0].innerHTML = playCount;
 //      $("#player-tips")[0].innerHTML = tipCount;
 
@@ -415,11 +429,13 @@
         })
 
         audioPlayer.audioElement.addEventListener('play', function () {
-          $("#player-play-button")[0].src = "/images/player/pause.png";
+          $("#player-play-button").hide();
+          $("#player-pause-button").show();
         })
 
         audioPlayer.audioElement.addEventListener('pause', function () {
-          $("#player-play-button")[0].src = "/images/player/play.png";
+          $("#player-play-button").show();
+          $("#player-pause-button").hide();
         })
 
         $("#player-artist").on('click', function() {
