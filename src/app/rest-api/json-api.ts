@@ -1333,7 +1333,7 @@ export class MusicoinOrgJsonAPI {
   }
 
   getUserStatsReport(profileAddress: string, date: number, duration: string): Promise<any> {
-    if (duration != "day" && duration != "week" && duration != "month")
+    if (duration != "day" && duration != "week" && duration != "month" && duration != "all")
       throw new Error("invalid duration: " + duration);
     const u = User.findOne({profileAddress: profileAddress}).exec();
     const rs = Release.find({artistAddress: profileAddress, state: 'published'}).exec();
@@ -1373,7 +1373,7 @@ export class MusicoinOrgJsonAPI {
         return {
           user: user,
           startDate: new Date(date).toLocaleDateString('en-US', options),
-          endDate: moment(date).add(1, duration).toDate().toLocaleDateString('en-US', options),
+          endDate: duration != "all" ?  moment(date).add(1, duration).toDate().toLocaleDateString('en-US', options) : null,
           stats: {
             user: userStats,
             releases: allReleaseStats

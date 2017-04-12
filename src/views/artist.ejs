@@ -60,20 +60,6 @@ function formatNumber(value) {
         <a class="morelink clickable">show more</a>
     </div>
     <div class="flex-row col2" style="justify-content: flex-end; min-width: 200px; align-items: flex-start">
-        <div class="flex-column mr10 center-text">
-            <div id="player-tip-button"
-                 class="tip-button btn btn-success tip-button"
-                 recipient="<%= artist.profileAddress %>"
-                 amount="1"
-                 context-type="User"
-                 text-success="Thanks! :)"
-                 text-fail=":("
-                 text-default="Tip">
-                Tip
-            </div>
-            <div class="subtle-text"><%= formatNumber(artist.directTipCount)%> tipped</div>
-        </div>
-
         <div class="flex-column center-text mr10">
             <div class="follow-toggle-button btn btn-default"
                  user="<%= artist.id %>"
@@ -86,12 +72,33 @@ function formatNumber(value) {
             </div>
             <div class="follower-count subtle-text"> - </div>
         </div>
+
+        <div class="flex-column mr10 center-text">
+            <div id="player-tip-button"
+                 class="tip-button btn btn-success tip-button"
+                 recipient="<%= artist.profileAddress %>"
+                 amount="1"
+                 context-type="User"
+                 text-success="Thanks! :)"
+                 text-fail=":("
+                 text-default="Tip">
+                Tip
+            </div>
+            <div class="subtle-text"><%= formatNumber(artistStats.tipCount)%> tipped</div>
+        </div>
+
+        <div class="text-large flex-column center-text mr10">
+            <div style="top: -6px; position: relative;">
+                <span class="text-large"><%=formatNumber(artistStats.totalEarned)%></span><span class="text-medium-small">MC</span>
+            </div>
+            <span class="text-medium-small subtle-text" style="position: relative; top: -11px;">earned</span>
+        </div>
     </div>
 </div>
 
 <div class="two-columns white-well">
     <div class="pad10">
-        <div class="center-text event-header"><img width=24 height=24 class="mr10" src="/images/chat.png">posts</div>
+        <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i> posts</div>
         <div class="dynamic-element message-scroller"
              data-behavior="chat-message-area"
              style="min-height: 180px"

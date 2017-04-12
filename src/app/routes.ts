@@ -1410,12 +1410,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const m = jsonAPI.getUserMessages(req.params.address, 30);
     const a = jsonAPI.getArtist(req.params.address, true, false);
     const h = jsonAPI.getUserHero(req.params.address);
-    Promise.join(a, m, h, (output, messages, hero) => {
+    const r = jsonAPI.getUserStatsReport(req.params.address, Date.now(), 'all');
+    Promise.join(a, m, h, r, (output, messages, hero, statsReport) => {
         if (!output) return res.redirect("/not-found");
+
+        let totalTips = statsReport.stats.user.tipCount;
+        let totalPlays = 0;
+        statsReport.stats.releases.forEach(rs => {
+          totalPlays += rs.playCount;
+          totalTips += rs.tipCount;
+        });
+
         output.messages = messages;
         hero.description = output.artist.description;
         output.hero = hero;
         output.showPlayAll = true;
+        output.artistStats = {
+          playCount: totalPlays,
+          tipCount: totalTips,
+          totalEarned: (totalPlays + totalTips)
+        };
         doRender(req, res, "artist.ejs", output);
       })
   });
