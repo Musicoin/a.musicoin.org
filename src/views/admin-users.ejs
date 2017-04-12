@@ -131,6 +131,8 @@
                 <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") { %>
                 (v<%= user.draftProfile.version %>)
                 <% } %>
+                <br>
+                <%=user.timeSinceJoining%>
             </td>
             <td class="text-left middle">
                 <%= invite.invitedAs %><br>

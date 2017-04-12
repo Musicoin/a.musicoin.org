@@ -329,7 +329,12 @@ export class MusicoinOrgJsonAPI {
       .skip(start)
       .limit(length)
       .populate("invite.invitedBy")
-      .exec();
+      .exec()
+      .map(user => {
+        user.timeSinceJoining = this._timeSince(user.joinDate);
+        return user;
+      });
+
   }
 
   getAddressBook(_search: string, start: number, length: number): Promise<any> {
