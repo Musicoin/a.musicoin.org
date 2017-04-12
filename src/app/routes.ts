@@ -2141,7 +2141,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   function resolveExpiringLink(req, res, next) {
     const resolved = UrlUtils.resolveExpiringLink(req.params.address);
     if (!resolved) {
-      console.log(`Got ppp request for expired URL: authenticated=${req.isAuthenticated}, profile: ${req.isAuthenticated() ? req.user.profileAddress : ""}, session: ${req.session.id}`);
+      console.log(`Got ppp request for expired URL: authenticated=${req.isAuthenticated()}, profile: ${req.isAuthenticated() ? req.user.profileAddress : ""}, session: ${req.session.id}`);
       return res.send(new Error("Expired linked: " + req.session.id));
     }
     else {
