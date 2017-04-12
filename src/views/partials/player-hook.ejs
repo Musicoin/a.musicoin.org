@@ -36,7 +36,7 @@
 
     $(document).on('click', '.audio-track', function() {
       var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.playItemById($(this).attr("licenseAddress"), function(err, started) {});
+      _audioPlayer.playList([$(this).attr("licenseAddress")]);
     });
   });
 </script>
