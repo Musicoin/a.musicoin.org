@@ -387,6 +387,11 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
              .then(user => {
                if (user) {
                  user.pendingInitialization = true;
+                 if (authProvider == "local") {
+                   if (localProfile.email.trim().endsWith("wimsg.com") || localProfile.email.trim().endsWith("vmani.com")) {
+                     user.freePlaysRemaining = 10;
+                   }
+                 }
                }
                return user;
              })
