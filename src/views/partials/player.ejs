@@ -201,6 +201,17 @@
         -ms-user-select: none; /* IE10+ */
     }
 
+    .progress-thumb {
+        position: absolute;
+        border-radius: 50%;
+        background-color: white;
+        width: 16px;
+        height: 16px;
+        top: -6px;
+        left: -8px;
+        transition: none;
+    }
+
 </style>
 <div id="player-section" class="fixed-footer player show-on-play">
     <div class="player-foreground no_selection">
@@ -221,13 +232,15 @@
              style="width: 55px; height: 55px; padding-right: 5px; margin-right: 4px"
              class="player-control">
 
-        <div class="player-progress mr5">
+        <div id=player-progress class="player-progress mr5">
             <div class="progress-bar progress-background"></div>
-            <div id="player-progress-div" class="progress-bar progress-foreground"></div>
+            <div id="player-progress-div" class="progress-bar progress-foreground">
+            </div>
             <div class="spread mt5">
                 <div id="player-time-played" class="player-time-field big-screen-only">00:00</div>
                 <div id="player-time-left" class="player-time-field">00:00</div>
             </div>
+            <div id=progress-thumb class="progress-thumb draggable ui-widget-content"></div>
         </div>
 
         <i id="player-next-button" class="fa fa-step-forward btn btn-plain player-control"
@@ -263,6 +276,10 @@
     minMillisBetweenPlays: 2000,
 
     previouslySelectedTrack: null,
+
+    progressThumb: null,
+    progressArea: null,
+    progressForeground: null,
 
     currentPlaylist: [],
 
@@ -370,6 +387,7 @@
       heartButton.attr("recipient", licenseAddress);
 
       audioPlayer.audioElement.play();
+      audioPlayer.resetProgressNow();
       return true;
     },
 
@@ -377,6 +395,9 @@
       if (!audioPlayer.audioElement) {
         audioPlayer.audioElement = $('#player')[0];
         audioPlayer.audioElement.style.display = "block";
+        audioPlayer.progressThumb = $("#progress-thumb");
+        audioPlayer.progressArea = $("#player-progress");
+        audioPlayer.progressForeground = $("#player-progress-div");
         audioPlayer.audioElement.addEventListener('error', function (e) {
           if (audioPlayer.nowPlayingLicenseAddress == null) return;
 
@@ -416,10 +437,21 @@
         });
 
         audioPlayer.audioElement.addEventListener('timeupdate', function () {
-          var progress_percent = audioPlayer.audioElement.currentTime / audioPlayer.audioElement.duration * 100;
-          $("#player-progress-div").css("width", progress_percent + "%");
-          $("#player-time-played")[0].innerText = audioPlayer.formatTime(audioPlayer.audioElement.currentTime);
-          $("#player-time-left")[0].innerText = audioPlayer.formatTime(audioPlayer.audioElement.duration);
+          if (!isNaN(audioPlayer.audioElement.currentTime) && !isNaN(audioPlayer.audioElement.duration)) {
+            $("#player-time-played")[0].innerText = audioPlayer.formatTime(audioPlayer.audioElement.currentTime);
+            $("#player-time-left")[0].innerText = audioPlayer.formatTime(audioPlayer.audioElement.duration);
+
+            // tell the progress bar to get to the end at the time the track will end
+            console.log("tracking progress bars... " + audioPlayer.audioElement.currentTime + " of " + audioPlayer.audioElement.duration);
+            var secondsLeft = audioPlayer.audioElement.duration - audioPlayer.audioElement.currentTime;
+            audioPlayer.progressForeground.css('transition', 'width ' + parseInt(secondsLeft) + 's linear');
+            audioPlayer.progressForeground.css('width', audioPlayer.progressArea.width());
+
+            if (!audioPlayer.seeking) {
+              audioPlayer.progressThumb.css('transition', 'left ' + parseInt(secondsLeft) + 's linear');
+              audioPlayer.progressThumb.css('left', audioPlayer.progressArea.width() - 8);
+            }
+          }
         });
 
         audioPlayer.audioElement.addEventListener('ended', function () {
@@ -429,13 +461,19 @@
         })
 
         audioPlayer.audioElement.addEventListener('play', function () {
+          audioPlayer.syncProgressNow();
           $("#player-play-button").hide();
           $("#player-pause-button").show();
         })
 
         audioPlayer.audioElement.addEventListener('pause', function () {
+          audioPlayer.syncProgressNow();
           $("#player-play-button").show();
           $("#player-pause-button").hide();
+        })
+
+        audioPlayer.audioElement.addEventListener('canplay', function () {
+          audioPlayer.syncProgressNow();
         })
 
         $("#player-artist").on('click', function() {
@@ -451,7 +489,24 @@
       return audioPlayer.audioElement;
     },
 
+    resetProgressNow: function() {
+      audioPlayer.progressThumb.css('left', -8);
+      audioPlayer.progressForeground.css('width', 0);
+      audioPlayer.progressThumb.css('transition', 'none');
+      audioPlayer.progressForeground.css('transition', 'none');
+    },
+
+    syncProgressNow: function() {
+      var progress_fraction = audioPlayer.audioElement.currentTime / audioPlayer.audioElement.duration;
+      audioPlayer.progressThumb.css('left', progress_fraction * audioPlayer.progressArea.width() - 8);
+      audioPlayer.progressForeground.css('width', progress_fraction * audioPlayer.progressArea.width());
+
+      audioPlayer.progressThumb.css('transition', 'none');
+      audioPlayer.progressForeground.css('transition', 'none');
+    },
+
     formatTime: function (seconds) {
+      if (isNaN(seconds)) return "";
       var output = new Date(seconds * 1000).toISOString().substr(11, 8);
       if (output.startsWith("00:")) return output.substr(3);
       return output;
@@ -471,6 +526,26 @@
 
   $(document).ready(function () {
     audioPlayer.initialize();
+
+    audioPlayer.progressThumb.draggable({ axis: "x", containment: "#player-progress" });
+    audioPlayer.progressThumb.draggable({
+      start: function() {
+        audioPlayer.seeking = true;
+        audioPlayer.progressThumb.css('transition', 'none');
+      },
+      drag: function() {
+      },
+      stop: function() {
+        audioPlayer.seeking = false;
+        var position = parseInt(audioPlayer.progressThumb.css('left'));
+        var max = audioPlayer.progressArea.width();
+        var newValue = (position / max) * audioPlayer.audioElement.duration;
+        if (!isNaN(newValue)) {
+          audioPlayer.audioElement.currentTime = newValue;
+          audioPlayer.syncProgressNow();
+        }
+      }
+    });
 
     $("#player-tip-button").on('click', function() {
       var _tipModule = parent.document.getElementById("mainFrame").contentWindow.tipModule;

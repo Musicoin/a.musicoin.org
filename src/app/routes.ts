@@ -2251,7 +2251,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 .then(function (result) {
                   const headers = {};
                   headers['Content-Type'] = context.contentType;
-                  headers['Accept-Ranges'] = 'none';
+                  headers['Accept-Ranges'] = 'bytes';
                   headers['Content-Length'] = result.headers['content-length'];
                   res.writeHead(200, headers);
                   result.stream.pipe(res);
