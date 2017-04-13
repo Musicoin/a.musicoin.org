@@ -42,6 +42,16 @@
         .white-well.track-info-area {
             background-color: #f0f0f0;
         }
+
+        .genre-tag,
+        a.genre-tag:hover {
+            background-color: #1b95e0;
+            color: #fff;
+            border-radius: 5px;
+            padding: 5px;
+            margin: 2px;
+            white-space: nowrap;
+        }
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -80,7 +90,7 @@
     </div>
     <div class="row">
         <div class="col-sm-4 flex-column mb20">
-            <div class="m5 well white-well track-info-area">
+            <div class="well white-well track-info-area">
                 <div class="flex-column center-text">
                     <div class="flex-column track-artist-badge-area">
                         <div class="flex-row track-artist-badge">
@@ -126,7 +136,7 @@
                         </div>
                     </div>
 
-                    <table class="mb5">
+                    <table class="mb5" style="width: 100%">
                         <tr>
                             <td align="center" class="pr5">
                                 <div class="text-large">
@@ -137,14 +147,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <td align="center" class="pr5 subtle-text"></td>
-                        </tr>
-                        <% if (!isArtist && !license.markedAsAbuse) { %>
-                        <tr>
-                            <td class="mt10">
-                                <div class="mt10"></div>
+                            <td align="center" class="pr5 subtle-text">
                                 <div style="background-color: rgba(0,0,0,0.05)" class="pad10">
-                                    <div class="text-large mt10">Send a Tip</div>
                                     <div class="center-text">
                                         <div id="player-tip-button"
                                              class="tip-button btn btn-success mt10 mr5"
@@ -179,6 +183,25 @@
 
                                     </div>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                <div class="mt20">Genres</div>
+                                <div class="m5 flex-row" style="flex-wrap: wrap">
+                                    <% for (var g=0; g < license.genres.length; g++) {
+                                        var genre = license.genres[g];
+                                    %>
+                                    <a href="/browse?genre=<%=encodeURIComponent(genre)%>" class="genre-tag"><%=genre%></a>
+                                    <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                        <% if (!isArtist && !license.markedAsAbuse) { %>
+                        <tr>
+                            <td class="mt10">
+                                <div class="mt10"></div>
+
                             </td>
                         </tr>
                         <% } %>
