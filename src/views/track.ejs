@@ -124,7 +124,7 @@
                         <tr>
                             <td align="center" class="pr5 subtle-text"></td>
                         </tr>
-                        <% if (!isArtist) { %>
+                        <% if (!isArtist && !license.markedAsAbuse) { %>
                         <tr>
                             <td class="mt10">
                                 <div class="mt10"></div>
@@ -170,12 +170,14 @@
                     </table>
 
                     <% if (typeof isAdmin != "undefined" && isAdmin) { %>
+                    <% if (!license.markedAsAbuse) { %>
                     <div class="center-text mt20">
                         <div class="promote-hero-track btn btn-danger btn-sm"
                              address="<%=license.address%>">
                             Set as Artist of the Week
                         </div>
                     </div>
+                    <% } %>
 
                     <div class="center-text mt20">
                         <div class="mark-track-as-abuse btn btn-sm <%=license.markedAsAbuse ? "btn-success" : "btn-danger"%>"
