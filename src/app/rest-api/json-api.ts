@@ -929,6 +929,16 @@ export class MusicoinOrgJsonAPI {
     else throw new Error("Invalid duration specified for stats table: " + duration);
   }
 
+  deleteMessage(callerAddress: string, messageId: string): Promise<any[]> {
+    return TrackMessage.findById(messageId).exec()
+      .then(message => {
+        if (message && message.senderAddress == callerAddress) {
+          return message.remove();
+        }
+        return null;
+      })
+  }
+
   repostMessages(senderAddress: string, messageId: string): Promise<any[]> {
     if (!messageId || !senderAddress) return Promise.resolve(null);
     const s = User.findOne({profileAddress: senderAddress}).exec();

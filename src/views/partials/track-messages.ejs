@@ -107,7 +107,23 @@
                         <i class="fa fa-comments btn" aria-hidden="true"></i>
                     </a>
                     <% if (isAuthenticated && user.profileAddress) { %>
-                    <i class="fa fa-retweet btn subtle-text inline-repost-intent-action" aria-hidden="true" title="repost"></i>
+
+                    <% if (message.sender.profileAddress == user.profileAddress) { %>
+                        <% if (message.messageType == "repost") { %>
+                        <div class="btn inline-delete-action" title="Un-repost" style="position: relative">
+                            <i class="fa fa-retweet subtle-text" aria-hidden="true"></i>
+                            <i class="fa fa-times text-danger"
+                               aria-hidden="true"
+                               style="position: absolute; bottom: 4px; right: 7px;"></i>
+                        </div>
+                        <% } else { %>
+                        <i class="fa fa-trash-o text-danger btn inline-delete-action" aria-hidden="true" title="delete"></i>
+                        <% } %>
+                        <% } else { %>
+                        <i class="fa fa-retweet btn subtle-text inline-repost-intent-action" aria-hidden="true" title="repost"></i>
+                    <% } %>
+
+
                     <i class="fa fa-reply btn subtle-text inline-reply-action" aria-hidden="true"  title="reply"></i>
                     <div class="flex-row">
                         <div id="player-tip-button"

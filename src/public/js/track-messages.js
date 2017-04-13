@@ -21,6 +21,14 @@ $( document ).ready(function() {
     chatMessage.find('.inline-repost-action').focus();
   });
 
+  $(document).on('click', '.inline-delete-action', function() {
+    var chatMessage = $(this).closest('.chat-message');
+    var messages = $(this).closest('[data-behavior~=chat-message-area]');
+    var repostMessage = chatMessage.attr("messageid");
+    dynamic.refreshElement(messages, {
+      deleteMessage: repostMessage});
+  });
+
   $(document).on('click', '.inline-repost-action', function() {
     var chatMessage = $(this).closest('.chat-message');
     var messages = $(this).closest('[data-behavior~=chat-message-area]');

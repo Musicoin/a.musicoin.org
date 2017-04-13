@@ -1,11 +1,26 @@
 <span class="action-area">
+    <% if (typeof user != "undefined") { %>
     <a class="subtle-text show-on-hover-target modal-trigger"
        target="thread-modal"
        source="/thread-view?thread=<%=message.threadId%>"
        title="view conversation">
         <i class="fa fa-comments btn" aria-hidden="true"></i>
     </a>
-    <i class="fa fa-retweet btn subtle-text inline-repost-intent-action show-on-hover-target" aria-hidden="true" title="repost"></i>
+
+    <% if (message.sender.profileAddress == user.profileAddress) { %>
+        <% if (message.messageType == "repost") { %>
+        <div class="btn inline-delete-action show-on-hover-target" title="Un-repost" style="position: relative">
+            <i class="fa fa-retweet subtle-text" aria-hidden="true"></i>
+            <i class="fa fa-times text-danger"
+               aria-hidden="true"
+               style="position: absolute; bottom: 4px; right: 7px;"></i>
+        </div>
+        <% } else { %>
+        <i class="fa fa-trash-o text-danger btn inline-delete-action show-on-hover-target" aria-hidden="true" title="delete"></i>
+        <% } %>
+    <% } else { %>
+        <i class="fa fa-retweet btn subtle-text inline-repost-intent-action show-on-hover-target" aria-hidden="true" title="repost"></i>
+    <% } %>
 
     <i class="fa fa-reply btn subtle-text inline-reply-action show-on-hover-target" aria-hidden="true"  title="reply"></i>
     <div class="flex-row">
@@ -26,4 +41,5 @@
         </div>
         <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
     </div>
+    <% } %>
 </span>

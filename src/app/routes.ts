@@ -483,6 +483,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       else if (req.body.repostMessage) {
         return jsonAPI.repostMessages(req.user.profileAddress,req.body.repostMessage);
       }
+      else if (req.body.deleteMessage) {
+        return jsonAPI.deleteMessage(req.user.profileAddress,req.body.deleteMessage);
+      }
     }
 
     return Promise.resolve(null);
