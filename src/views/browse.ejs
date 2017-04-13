@@ -82,7 +82,7 @@
     </div>
 </div>
 <% } %>
-<% if (artists && artists.length > 0) { %>
+<% if (artists && artists.length > 0 && (searchTerm || genreFilter)) { %>
 <div class="col-sm-12">
     <div class="text-large browse-header">Artists</div>
     <%- include('partials/featured-artist-list.ejs', {artists: artists}) %>
