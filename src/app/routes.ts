@@ -1634,62 +1634,70 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (req.user.profileAddress == req.body.recipient) return res.json({success: false, authenticated: true, profile: true, self: true});
     const units = req.body.amount == 1 ? " coin" : "coins";
     const amount = parseInt(req.body.amount);
-    musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
-      .then(function (tx) {
-        console.log(`Payment submitted! tx : ${tx}`);
-        res.json({success: true, tx: tx});
-      })
-      .then(() => {
-        // if this was a tip to a track, add a message to the track saying the user tipped it
-        // fire and forget (don't fail if this fails)
-        if (req.body.contextType == "TrackMessage") {
-          return jsonAPI.addToMessageTipCount(req.body.contextId, amount);
-        }
-        else if (req.body.contextType == "Release") {
-          return jsonAPI.addToReleaseTipCount(req.body.recipient, amount)
-            .then(release => {
-              if (release) {
-                return jsonAPI.postLicenseMessages(
-                  req.body.recipient,
-                  null,
-                  req.user.profileAddress,
-                  `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} on "${release.title}"`,
-                  MESSAGE_TYPES.tip,
-                  null)
-              }
-            })
-        }
-        else if (req.body.contextType == "User") {
-          return jsonAPI.addToUserTipCount(req.body.recipient, amount)
-            .then(tippedUser => {
-              if (tippedUser) {
-                return jsonAPI.postLicenseMessages(
-                  null,
-                  tippedUser.profileAddress,
-                  req.user.profileAddress,
-                  `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} to ${tippedUser.draftProfile.artistName}!`,
-                  MESSAGE_TYPES.tip,
-                  null)
-              }
-            });
-        }
-        else if (req.body.contextType == "Donate") {
-          const msg = req.body.recipient == "0xfef55843244453abc7e183d13139a528bdfbcbed"
-            ? `${req.user.draftProfile.artistName} sponsored ${req.body.amount} plays!`
-            : `${req.user.draftProfile.artistName} donated ${req.body.amount} ${units} to Musicoin.org!`;
 
-          return jsonAPI.postLicenseMessages(
-            null,
-            null,
-            req.user.profileAddress,
-            msg,
-            MESSAGE_TYPES.donate,
-            null)
+    return Release.findOne({contractAddress: req.body.recipient})
+      .then(r => {
+        if (r && r.artistAddress == req.user.profileAddress) {
+          return res.json({success: false, authenticated: true, profile: true, self: true});
         }
-      })
-      .catch(function (err) {
-        console.log(err);
-        res.json({success: false});
+
+        return musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
+          .then(function (tx) {
+            console.log(`Payment submitted! tx : ${tx}`);
+            res.json({success: true, tx: tx});
+          })
+          .then(() => {
+            // if this was a tip to a track, add a message to the track saying the user tipped it
+            // fire and forget (don't fail if this fails)
+            if (req.body.contextType == "TrackMessage") {
+              return jsonAPI.addToMessageTipCount(req.body.contextId, amount);
+            }
+            else if (req.body.contextType == "Release") {
+              return jsonAPI.addToReleaseTipCount(req.body.recipient, amount)
+                .then(release => {
+                  if (release) {
+                    return jsonAPI.postLicenseMessages(
+                      req.body.recipient,
+                      null,
+                      req.user.profileAddress,
+                      `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} on "${release.title}"`,
+                      MESSAGE_TYPES.tip,
+                      null)
+                  }
+                })
+            }
+            else if (req.body.contextType == "User") {
+              return jsonAPI.addToUserTipCount(req.body.recipient, amount)
+                .then(tippedUser => {
+                  if (tippedUser) {
+                    return jsonAPI.postLicenseMessages(
+                      null,
+                      tippedUser.profileAddress,
+                      req.user.profileAddress,
+                      `${req.user.draftProfile.artistName} tipped ${req.body.amount} ${units} to ${tippedUser.draftProfile.artistName}!`,
+                      MESSAGE_TYPES.tip,
+                      null)
+                  }
+                });
+            }
+            else if (req.body.contextType == "Donate") {
+              const msg = req.body.recipient == "0xfef55843244453abc7e183d13139a528bdfbcbed"
+                ? `${req.user.draftProfile.artistName} sponsored ${req.body.amount} plays!`
+                : `${req.user.draftProfile.artistName} donated ${req.body.amount} ${units} to Musicoin.org!`;
+
+              return jsonAPI.postLicenseMessages(
+                null,
+                null,
+                req.user.profileAddress,
+                msg,
+                MESSAGE_TYPES.donate,
+                null)
+            }
+          })
+          .catch(function (err) {
+            console.log(err);
+            res.json({success: false});
+          })
       })
   });
 

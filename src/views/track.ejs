@@ -124,6 +124,7 @@
                         <tr>
                             <td align="center" class="pr5 subtle-text"></td>
                         </tr>
+                        <% if (!isArtist) { %>
                         <tr>
                             <td class="mt10">
                                 <div class="mt10"></div>
@@ -165,6 +166,7 @@
                                 </div>
                             </td>
                         </tr>
+                        <% } %>
                     </table>
 
                     <% if (typeof isAdmin != "undefined" && isAdmin) { %>
