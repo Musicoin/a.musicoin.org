@@ -316,24 +316,20 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/feed', isLoggedIn, function (req, res) {
     const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages);
-    const rs = jsonAPI.getNewReleases(config.ui.feed.newReleases).catchReturn([]);
     const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.feed.topPlayLastWeek, "week").catchReturn([]);
     const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.feed.topTippedLastWeek, "week").catchReturn([]);
-    const fa = jsonAPI.getFeaturedArtists(config.ui.feed.newArtists).catchReturn([]);
     const h  = jsonAPI.getHero();
 
-    Promise.join(m, rs, h, fa, tpw, ttw, function (messages, releases, hero, artists, topPlayed, topTipped) {
+    Promise.join(m, h, tpw, ttw, function (messages, hero, topPlayed, topTipped) {
       if (messages.length > 0) {
         console.log("mini: " + req.user.preferences.minimizeHeroInFeed);
         doRender(req, res, "feed.ejs", {
           showFeedPlayAll: true,
           messages: messages,
-          releases: releases,
           topPlayedLastWeek: topPlayed,
           topTippedLastWeek: topTipped,
           hero: hero,
           minimizeHeroInFeed: !!req.user.preferences.minimizeHeroInFeed,
-          featuredArtists: artists,
           ui: config.ui.feed
         });
       }
@@ -2312,6 +2308,41 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/rss/daily-top-tipped', (req, res) => {
+    const feedConfig = config.ui.rss.dailyTopTipped;
+    const tpd = jsonAPI.getTopPlayedLastPeriod(feedConfig.items, "day").catchReturn([]);
+    tpd.then(topTipped => {
+      const feed = new Feed({
+        title: feedConfig.title,
+        description: feedConfig.description,
+        id: `${config.serverEndpoint}/rss/daily-top-tipped`,
+        link: `${config.serverEndpoint}/rss/daily-top-tipped`,
+        image: `${config.serverEndpoint}/images/thumbnail.png`,
+        copyright: feedConfig.copyright,
+        updated: topTipped && topTipped.length > 0 ? topTipped[0].releaseDate : Date.now(),
+        author: feedConfig.author
+      });
+
+      topTipped.forEach(release => {
+        feed.addItem({
+          title: release.title,
+          id: `${config.serverEndpoint}/nav/track/${release.address}`,
+          link: `${config.serverEndpoint}/nav/track/${release.address}`,
+          description: `${release.artistName} is a top-tipped track!`,
+          author: [{
+            name: `${release.artistName}`,
+            link: `${config.serverEndpoint}/nav/artist/${release.artistProfileAddress}`
+          }],
+          date: release.releaseDate,
+          image: `${config.serverEndpoint}${release.image}`
+        });
+      });
+      res.set('Content-Type', 'text/xml');
+      res.send(feed.render('rss-2.0'));
+      res.end();
+    })
+  });
+
   app.get('/rss/new-releases', (req, res) => {
     const feedConfig = config.ui.rss.newReleases;
     const rs = jsonAPI.getNewReleases(feedConfig.items).catchReturn([]);
@@ -2345,7 +2376,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       res.send(feed.render('rss-2.0'));
       res.end();
     })
-  })
+  });
 
   app.get('/ipfs/hashes', function(req, res) {
     const since = new Date(parseInt(req.query.since));
