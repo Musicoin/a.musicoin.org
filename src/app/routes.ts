@@ -2310,8 +2310,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/rss/daily-top-tipped', (req, res) => {
     const feedConfig = config.ui.rss.dailyTopTipped;
-    const tpd = jsonAPI.getTopPlayedLastPeriod(feedConfig.items, "day").catchReturn([]);
-    tpd.then(topTipped => {
+    const dtt = jsonAPI.getTopTippedLastPeriod(feedConfig.items, "day").catchReturn([]);
+    dtt.then(topTipped => {
       const feed = new Feed({
         title: feedConfig.title,
         description: feedConfig.description,
