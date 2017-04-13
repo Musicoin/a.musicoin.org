@@ -244,7 +244,7 @@
         </div>
 
         <i id="player-next-button" class="fa fa-step-forward btn btn-plain player-control"
-           onclick="audioPlayer.playNextItem()"
+           onclick="audioPlayer.skipTrack()"
            aria-hidden="true"></i>
 
         <div id="player-tip-button"
@@ -284,7 +284,7 @@
     currentPlaylist: [],
 
     playItemById: function (licenseAddress, callback) {
-      if (licenseAddress === audioPlayer.nowPlayingLicenseAddress) {
+      if (licenseAddress == audioPlayer.nowPlayingLicenseAddress) {
         if (callback) callback(null, false);
         return false;
       }
@@ -320,9 +320,24 @@
       })
     },
 
+    queueTrack: function(licenseAddress) {
+      audioPlayer.currentPlaylist.push(licenseAddress);
+      if (!audioPlayer.nowPlayingLicenseAddress) {
+        audioPlayer.playNextItem();
+      }
+      $("#player-next-button").toggleClass("disabled", audioPlayer.currentPlaylist.length == 0);
+    },
+
     playList: function(licenseIds) {
       if (licenseIds) {
         audioPlayer.currentPlaylist = licenseIds.slice();
+        audioPlayer.playNextItem();
+      }
+    },
+
+    skipTrack: function() {
+      if (audioPlayer.currentPlaylist.length > 0) {
+        audioPlayer.nowPlayingLicenseAddress = null; // force skip
         audioPlayer.playNextItem();
       }
     },

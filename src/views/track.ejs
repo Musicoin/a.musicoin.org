@@ -75,6 +75,9 @@
            data-show-count="true">Tweet</a>
         <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
     </h1>
+    <div class="big-screen-only subtle-text ml10 mb10">
+        address: <%=license.address%>
+    </div>
     <div class="row">
         <div class="col-sm-4 flex-column mb20">
             <div class="m5 well white-well track-info-area">
@@ -104,10 +107,22 @@
                          style="background-image: url('<%=license.image%>')">
                     </div>
 
-                    <div class="flex-row" style="justify-content: space-between">
-                        <div class="audio-track clickable text-large btn"
+                    <div class="flex-row" style="justify-content: space-between; width: 100%">
+                        <div style="width: 44px"></div>
+                        <div class="audio-track clickable text-large btn mt5"
                              licenseAddress='<%=license.address%>'>
                             <i class="fa fa-play-circle" aria-hidden="true"></i> Play
+                        </div>
+                        <div class="btn queue-audio-track"
+                             licenseAddress='<%=license.address%>'
+                             title="Add to now-playing queue"
+                             style="position: relative">
+                            <i class="fa fa-list subtle-text"
+                               aria-hidden="true"></i>
+                            <i class="fa fa-plus"
+                                aria-hidden="true"
+                                style="position: absolute; position: absolute; bottom: 4px; right: 7px;"></i>
+
                         </div>
                     </div>
 
