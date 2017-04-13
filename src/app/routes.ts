@@ -349,7 +349,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   function handleBrowseRequest(req, res, search, genre) {
     const maxGroupSize = req.query.maxGroupSize ? parseInt(req.query.maxGroupSize) : 8;
-    const rs = jsonAPI.getNewReleasesByGenre(150, maxGroupSize, search, genre).catchReturn([]);
+    const sort = req.query.sort || "tips";
+    const rs = jsonAPI.getNewReleasesByGenre(150, maxGroupSize, search, genre, sort).catchReturn([]);
     const as = jsonAPI.getNewArtists(maxGroupSize, search, genre).catchReturn([]);
     Promise.join(rs, as, function (releases, artists) {
       doRender(req, res, "browse.ejs", {
@@ -358,6 +359,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         releases: releases,
         maxItemsPerGroup: maxGroupSize,
         artists: artists,
+        sort: sort
       });
     })
       .catch(function (err) {

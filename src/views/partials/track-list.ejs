@@ -9,7 +9,7 @@
             flex-direction: column;
         }
         .track-container {
-            padding: 10px;
+            padding: 5px;
             margin-bottom: 5px;
             display: flex;
             border-radius: 4px;
@@ -18,10 +18,10 @@
             margin-right: 20px;
         }
         .track-title {
-
+            color: #333;
         }
         .track-artist {
-            color: #aaa;
+            color: #888;
         }
         .track-list {
             display: flex;
@@ -32,6 +32,7 @@
             display: inline-flex;
             white-space: nowrap;
             overflow-x: hidden;
+            color: #888;
         }
         .track-image {
             background-size: cover;
@@ -63,23 +64,28 @@
             var release = releases[i];
         %>
         <div class="track-container tracks-flex-col">
-            <div class="audio-track track-image show-off-container shadow clickable"
+            <div class="audio-track track-image clickable"
                  licenseAddress='<%=release.address%>'
                  style="background-image: url('<%=release.image%>')">
-                <div class="show-off"></div>
             </div>
 
-            <div class="description track-title clickable" title="<%=release.title%>">
-                <a href="/track/<%=release.address%>" class="subtle-text">
+            <div class="description clickable" title="<%=release.title%>">
+                <a href="/track/<%=release.address%>" class="track-title ">
                     <%=release.title%>
                 </a>
             </div>
-            <div class="description track-artist">
-                <a href="/artist/<%=release.artistProfileAddress%>" class="subtle-text">
+            <div class="description">
+                <a href="/artist/<%=release.artistProfileAddress%>" class="track-artist">
                     <%=release.artistName%>
                 </a>
             </div>
+            <% if (sort == "tips") { %>
             <div class="description track-artist"><%=release.directTipCount%> tips</div>
+            <% } else if (sort == "plays") { %>
+            <div class="description track-artist"><%=release.directPlayCount%> plays</div>
+            <% } else { %>
+            <div class="description track-artist"><%=release.timeSince%></div>
+            <% } %>
         </div>
         <%}%>
 

@@ -5,16 +5,18 @@
     <title>Browse - Musicoin.org</title>
     <style>
         body {
-            background-color: #333;
-            color: #eee;
-            background-image: url('/images/musician.jpg');
+            background-color: whitesmoke;
             background-repeat: no-repeat;
             background-attachment: fixed;
+            color: black;
+            background-color: #333;
             background-size: cover;
         }
+
         .home_icon {
             height: 80px;
         }
+
         .free-play-count {
             font-size: 72px;
             line-height: 0.9;
@@ -22,79 +24,104 @@
             margin-top: 20px;
             color: #e4aa17;
         }
+
+        browse-header,
+        a.browse-header:link,
+        a.browse-header:visited,
+        a.browse-header:hover,
+        a.browse-header:active {
+            color: #337ab7;
+            text-decoration: none;
+        }
+
     </style>
 </head>
 <body>
-    <%- include partials/header.ejs %>
-    <div class="container">
-        <div class="search-area mb20">
-            <div class="col-sm-5">
-                <form action="/browse?genre=<%=genreFilter%>" method="post">
-                    <div class="flex-row">
-                        <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
-                        <input class="form-control text-large pl25"
-                               name="search"
-                               value="<%= searchTerm %>" placeholder=""
-                               autofocus onfocus="this.value = this.value;">
-                    </div>
-                </form>
-            </div>
-        </div>
-        <h3><%=genreFilter%></h3>
-    </div>
-
-    <%if (artists && artists.length > 0) {%>
-    <div class="container">
-        <div class="col-sm-12">
-            <div class="well">
-                <h3 class="section-header">artists</h3>
-                <%- include('partials/featured-artist-list.ejs', {artists: artists}) %>
-            </div>
-        </div>
-    </div>
-    <%}%>
-
-    <%
-    var groups = {};
-    for (var g=0; g < releases.length; g++) {
-        var release = releases[g];
-        if (!groups[release.genres])
-            groups[release.genres] = [];
-        groups[release.genres].push(release)
+<%- include partials/header.ejs %>
+<style>
+    .background-cover {
+        display: none;
     }
-
-    for (var genre in groups) {
-      var items = groups[genre];
-      items = items.slice(0, Math.min(maxItemsPerGroup, items.length));
-      var showMore = true;//genre && genre != "Other" && items.length >= maxItemsPerGroup && !genreFilter;
- %>
-    <div class="container">
-        <div class="col-sm-12">
-            <div class="well">
-                <h3 class="section-header"><%=genre%></h3>
-                <%- include('partials/track-list.ejs', {releases: items}) %>
-            </div>
-
-            <% if (showMore) {%>
-            <div class="abs-top-right subtle-text clickable"
-                 de-target-id="de-featured-artists">
-                <a class="subtle-text" href="<%=createMoreLink(genre, searchTerm, 20)%>">more</a>
-            </div>
-            <% } %>
+    body {
+        background-color: whitesmoke;
+    }
+</style>
+<div class="container">
+    <div class="search-area mb20">
+        <div class="col-sm-5">
+            <form action="/browse?genre=<%= genreFilter %>&sort=<%= sort %>" method="post">
+                <div class="flex-row">
+                    <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
+                    <input class="form-control text-large pl25"
+                           name="search"
+                           style="color:black"
+                           value="<%= searchTerm %>" placeholder=""
+                           autofocus onfocus="this.value = this.value;">
+                </div>
+            </form>
         </div>
     </div>
-    <%}%>
-    <%- include partials/player-hook.ejs %>
-    <%- include partials/connect-with-us.ejs %>
+</div>
+
+<div class="col-sm-12">
+    <div class="center-text btn-group">
+        <a href="/browse?sort=tips&genre=<%= genreFilter %>&search=<%= searchTerm %>"
+           class="btn <%= sort == "tips" ? "btn-primary" : "btn-default" %>">Tips</a>
+        <a href="/browse?sort=plays&genre=<%= genreFilter %>&search=<%= searchTerm %>"
+           class="btn <%= sort == "plays" ? "btn-primary" : "btn-default" %>">Plays</a>
+        <a href="/browse?sort=date&genre=<%= genreFilter %>&search=<%= searchTerm %>"
+           class="btn <%= sort == "date" ? "btn-primary" : "btn-default" %>">Release Date</a>
+    </div>
+    <div class="text-center subtle-text">sort order</div>
+</div>
+
+<% if (genreFilter) { %>
+<div class="col-sm-12 mt10 mb20">
+    <div class="flex-row">
+        <div style="background-color: #eee; border-radius: 5px; border: 1px solid #ddd" class="pad10"><%= genreFilter %></div>
+    </div>
+</div>
+<% } %>
+<% if (artists && artists.length > 0) { %>
+<div class="col-sm-12">
+    <div class="text-large browse-header">Artists</div>
+    <%- include('partials/featured-artist-list.ejs', {artists: artists}) %>
+</div>
+<% } %>
+
+<%
+var groups = {};
+for (var g = 0; g < releases.length; g++) {
+    var release = releases[g];
+    if (!groups[release.genres])
+        groups[release.genres] = [];
+    groups[release.genres].push(release)
+}
+
+        for (var genre in groups) {
+    var items = groups[genre];
+    items = items.slice(0, Math.min(maxItemsPerGroup, items.length));
+    var showMore = genre != "Other";
+%>
+<div class="col-sm-12 mb20">
+    <% if (showMore) { %>
+    <a href="<%= createMoreLink(genre, searchTerm, 20) %>" class="text-large browse-header"><%= genre %></a>
+    <% } else { %>
+    <div class="text-large browse-header"><%= genre %></div>
+    <% } %>
+    <%- include('partials/track-list.ejs', {releases: items}) %>
+</div>
+<% } %>
+<%- include partials/player-hook.ejs %>
+<%- include partials/connect-with-us.ejs %>
 </body>
 </html>
 
 <%
- function createMoreLink(_genre, _search, _size) {
-   var size = _size ? _size : 20;
-   var encodeGenre = _genre ? encodeURIComponent(_genre) : "";
-   var encodeSearch = _search ? encodeURIComponent(_search) : "";
-   return `/browse?genre=${encodeGenre}&search=${encodeSearch}&maxGroupSize=${size}`;
- }
-
- %>
+function createMoreLink(_genre, _search, _size) {
+    var size = _size ? _size : 20;
+    var encodeGenre = _genre ? encodeURIComponent(_genre) : "";
+    var encodeSearch = _search ? encodeURIComponent(_search) : "";
+    return `/browse?genre=${encodeGenre}&search=${encodeSearch}&maxGroupSize=${size}`;
+}
+%>

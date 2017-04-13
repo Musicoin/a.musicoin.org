@@ -651,10 +651,16 @@ export class MusicoinOrgJsonAPI {
     return this._getLicensesForEntries(filter, 99999999);
   }
 
-  getNewReleasesByGenre(limit: number, maxGroupSize: number, _search?: string, _genre?:string): Promise<any> {
+  getNewReleasesByGenre(limit: number, maxGroupSize: number, _search?: string, _genre?:string, _sort?:string): Promise<any> {
     const search = this._sanitize(_search);
     const genre = _genre;
     const flatten = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+    const sort = _sort == "plays"
+      ? [["directPlayCount", 'desc'], ["directTipCount", 'desc'], ["releaseDate", 'desc']]
+      : _sort == "date"
+        ? [["releaseDate", 'desc'], ["directTipCount", 'desc'], ["directPlayCount", 'desc']]
+        : [["directTipCount", 'desc'], ["directPlayCount", 'desc'], ["releaseDate", 'desc']];
+
     const artistList = search
       ? User.find({"draftProfile.artistName": {"$regex": search, "$options": "i"}})
         .where({mostRecentReleaseDate: {$ne: null}})
@@ -675,7 +681,7 @@ export class MusicoinOrgJsonAPI {
         }
 
         return releaseQuery
-          .sort([["directTipCount", 'desc'], ["directPlayCount", 'desc'], ["releaseDate", 'desc']])
+          .sort(sort)
           .exec()
           .then(items => {
             const genreOrder = [];
