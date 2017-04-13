@@ -1070,7 +1070,7 @@ export class MusicoinOrgJsonAPI {
 
   getLicenseMessages(contractAddress: string, limit: number): Promise<any[]> {
     const condition = contractAddress && contractAddress.trim().length > 0
-      ? {contractAddress: contractAddress}
+      ? {contractAddress: contractAddress, messageType: {$ne: "repost"}}
       : {};
     return this._executeTrackMessagesQuery(TrackMessage.find(condition).limit(limit));
   }
