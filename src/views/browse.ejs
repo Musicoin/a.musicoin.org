@@ -65,11 +65,11 @@
 
 <div class="col-sm-12">
     <div class="center-text btn-group">
-        <a href="/browse?sort=tips&genre=<%= encodeURIComponent(genreFilter) %>&search=<%= encodeURIComponent(searchTerm) %>"
+        <a href="/browse?sort=tips&genre=<%= encodeParam(genreFilter) %>&search=<%= encodeParam(searchTerm) %>"
            class="btn <%= sort == "tips" ? "btn-primary" : "btn-default" %>">Tips</a>
-        <a href="/browse?sort=plays&genre=<%= encodeURIComponent(genreFilter) %>&search=<%= encodeURIComponent(searchTerm) %>"
+        <a href="/browse?sort=plays&genre=<%= encodeParam(genreFilter) %>&search=<%= encodeParam(searchTerm) %>"
            class="btn <%= sort == "plays" ? "btn-primary" : "btn-default" %>">Plays</a>
-        <a href="/browse?sort=date&genre=<%= encodeURIComponent(genreFilter) %>&search=<%= encodeURIComponent(searchTerm) %>"
+        <a href="/browse?sort=date&genre=<%= encodeParam(genreFilter) %>&search=<%= encodeParam(searchTerm) %>"
            class="btn <%= sort == "date" ? "btn-primary" : "btn-default" %>">Release Date</a>
     </div>
     <div class="text-center subtle-text">sort order</div>
@@ -118,6 +118,11 @@ for (var g = 0; g < releases.length; g++) {
 </html>
 
 <%
+function encodeParam(s) {
+  return s ? encodeURIComponent(s) : "";
+}
+
+
 function createMoreLink(_genre, _search, _size) {
     var size = _size ? _size : 20;
     var encodeGenre = _genre ? encodeURIComponent(_genre) : "";
