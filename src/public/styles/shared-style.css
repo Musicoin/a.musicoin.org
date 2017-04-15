@@ -439,3 +439,18 @@ a.morelink {
     padding-left: 10px;
     width: 150px
 }
+
+.party-mode-button {
+    font-family: 'Noto Sans', sans-serif;
+    border-radius: 20px;
+    padding-right: 10px;
+    padding-left: 10px;
+    width: 150px;
+    border: none;
+    background: rgba(68,184,116,1);
+    background: -moz-linear-gradient(left, rgba(68,184,116,1) 0%, rgba(68,184,116,1) 17%, rgba(219,95,250,1) 79%, rgba(219,95,250,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(68,184,116,1)), color-stop(17%, rgba(68,184,116,1)), color-stop(79%, rgba(219,95,250,1)), color-stop(100%, rgba(219,95,250,1)));
+    background: -webkit-linear-gradient(left, rgba(68,184,116,1) 0%, rgba(68,184,116,1) 17%, rgba(219,95,250,1) 79%, rgba(219,95,250,1) 100%);
+    background: -o-linear-gradient(left, rgba(68,184,116,1) 0%, rgba(68,184,116,1) 17%, rgba(219,95,250,1) 79%, rgba(219,95,250,1) 100%);
+    background: -ms-linear-gradient(left, rgba(68,184,116,1) 0%, rgba(68,184,116,1) 17%, rgba(219,95,250,1) 79%, rgba(219,95,250,1) 100%);
+}
