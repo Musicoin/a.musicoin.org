@@ -117,10 +117,11 @@ var tipModule = {
 
 $( document ).ready(function() {
   $(document).on('click', '.tip-button', function() {
+    var tipButton = $(this);
     if ($(this).attr('confirm-message')) {
       new Message($(this).attr('confirm-message'), 'success', 5000)
         .button('Yes!', function() {
-          tipModule.tipButtonClicked($(this))
+          tipModule.tipButtonClicked(tipButton)
         })
         .button('No', function() {
           new Message("Ok, maybe next time", 'success', 1000)
