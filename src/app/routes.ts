@@ -13,6 +13,7 @@ import {PendingTxDaemon} from './tx-daemon';
 import moment = require("moment");
 import Feed = require('feed');
 import {ReleaseManagerRouter} from "./release-manager-routes";
+const sendSeekable = require('send-seekable');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
 const TrackMessage = require('../app/models/track-message');
@@ -2259,7 +2260,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       : payForPPPKey(user, release, license, playbackEligibility.payFromProfile);
   }
 
-  app.get('/ppp/:address', resolveExpiringLink, function (req, res) {
+  app.get('/ppp/:address', (req, res, next) => {
+    console.log("Range: " + req.headers.range);
+    next();
+  }, sendSeekable, resolveExpiringLink, function (req, res) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
@@ -2276,12 +2280,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             .then(keyResponse => {
               return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
                 .then(function (result) {
-                  const headers = {};
-                  headers['Content-Type'] = context.contentType;
-                  headers['Accept-Ranges'] = 'bytes';
-                  headers['Content-Length'] = result.headers['content-length'];
-                  res.writeHead(200, headers);
-                  result.stream.pipe(res);
+                  res.sendSeekable(result.stream, {
+                    type: context.contentType,
+                    length: result.headers['content-length']
+                  });
                 })
             })
         })
