@@ -44,7 +44,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   const serverEndpoint = config.serverEndpoint;
   publicPagesEnabled = config.publicPagesEnabled;
-  let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider);
+  let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider, config.playbackLinkTTLMillis);
   const mailSender = new MailSender();
   let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider, mailSender, config);
   let restAPI = new MusicoinRestAPI(jsonAPI);
@@ -2197,7 +2197,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 
   function payForPPPKey(user, release, license, payFromProfile) : Promise<any> {
-    const ttl = 60000;
+    const ttl = config.playbackLinkTTLMillis;
     const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
     const licenseAddress = release.contractAddress;
     let paymentPromise;

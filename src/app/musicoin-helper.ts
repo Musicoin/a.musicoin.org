@@ -3,7 +3,7 @@ import {MusicoinAPI} from "./musicoin-api";
 import * as UrlUtils from "./url-utils";
 
 export class MusicoinHelper {
-  constructor(public musicoinApi: MusicoinAPI, public mediaProvider: any) {
+  constructor(public musicoinApi: MusicoinAPI, public mediaProvider: any, public playbackLinkTTLMillis: number) {
   }
 
   getArtistProfile(profileAddress: string) {
@@ -25,7 +25,7 @@ export class MusicoinHelper {
     return this.musicoinApi.getLicenseDetails(address)
       .then(license => {
         license.image = this.mediaProvider.resolveIpfsUrl(license.imageUrl);
-        license.audioUrl = "/ppp/" + UrlUtils.createExpiringLink(license.address, 60000);
+        license.audioUrl = "/ppp/" + UrlUtils.createExpiringLink(license.address, this.playbackLinkTTLMillis);
         return license;
       })
   }

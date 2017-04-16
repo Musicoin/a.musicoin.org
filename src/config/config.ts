@@ -30,6 +30,7 @@ function getStructuredConfig(keyValueConfig) {
         count: 3
       }
     },
+    playbackLinkTTLMillis: 1000*60*30,
     musicoinAdminProfile: keyValueConfig.musicoinAdminProfile,
     termsOfUseVersion: keyValueConfig.termsOfUseVersion,
     database: {
