@@ -457,6 +457,11 @@
             $("#player-time-left")[0].innerText = audioPlayer.formatTime(audioPlayer.audioElement.duration);
 
             // tell the progress bar to get to the end at the time the track will end
+            if (audioPlayer.audioElement.paused) {
+              audioPlayer.syncProgressNow();
+              return;
+            }
+
             var secondsLeft = audioPlayer.audioElement.duration - audioPlayer.audioElement.currentTime;
             audioPlayer.progressForeground.css('transition', 'width ' + parseInt(secondsLeft) + 's linear');
             audioPlayer.progressForeground.css('width', audioPlayer.progressArea.width());
