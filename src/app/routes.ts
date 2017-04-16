@@ -2155,7 +2155,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 return {success: false, skip: false, message: "Sorry, it looks like you don't have enough coins."}
             }
             else {
-              if (new Date(req.user.nextFreePlayback).getTime() > Date.now()) {
+              const diff = new Date(req.user.nextFreePlayback).getTime() - Date.now();
+              if (diff > 0 && diff < config.freePlayDelay) {
                 return {success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play."}
               }
             }
@@ -2222,7 +2223,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       paymentPromise = musicoinApi.getKey(licenseAddress)
         .then(keyResponse => {
           user.freePlaysRemaining--;
-          user.nextFreePlayback = Date.now() + ttl;
+          user.nextFreePlayback = Date.now() + config.freePlayDelay;
           console.log(`User ${userName} has ${user.freePlaysRemaining} free plays remaining, next free play in ${ttl}ms`);
           return keyResponse;
         });

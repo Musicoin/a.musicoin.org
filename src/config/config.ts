@@ -31,6 +31,7 @@ function getStructuredConfig(keyValueConfig) {
       }
     },
     playbackLinkTTLMillis: 1000*60*30,
+    freePlayDelay: 1000*60,
     musicoinAdminProfile: keyValueConfig.musicoinAdminProfile,
     termsOfUseVersion: keyValueConfig.termsOfUseVersion,
     database: {
