@@ -70,7 +70,7 @@
         <a href="/browse?sort=plays&genre=<%= encodeParam(genreFilter) %>&search=<%= encodeParam(searchTerm) %>"
            class="btn <%= sort == "plays" ? "btn-primary" : "btn-default" %>">Plays</a>
         <a href="/browse?sort=date&genre=<%= encodeParam(genreFilter) %>&search=<%= encodeParam(searchTerm) %>"
-           class="btn <%= sort == "date" ? "btn-primary" : "btn-default" %>">Release Date</a>
+           class="btn <%= sort == "date" ? "btn-primary" : "btn-default" %>">Recent</a>
     </div>
     <div class="text-center subtle-text">sort order</div>
 </div>
@@ -89,29 +89,32 @@
 </div>
 <% } %>
 
-<%
-var groups = {};
-for (var g = 0; g < releases.length; g++) {
-    var release = releases[g];
-    if (!groups[release.genres])
-        groups[release.genres] = [];
-    groups[release.genres].push(release)
-}
+<div class="container">
+    <%
+    var groups = {};
+    for (var g = 0; g < releases.length; g++) {
+        var release = releases[g];
+        if (!groups[release.genres])
+            groups[release.genres] = [];
+        groups[release.genres].push(release)
+    }
 
-        for (var genre in groups) {
-    var items = groups[genre];
-    items = items.slice(0, Math.min(maxItemsPerGroup, items.length));
-    var showMore = genre != "Other";
-%>
-<div class="col-sm-12 mb20">
-    <% if (showMore) { %>
-    <a href="<%= createMoreLink(genre, searchTerm, 20) %>" class="text-large browse-header"><%= genre %></a>
-    <% } else { %>
-    <div class="text-large browse-header"><%= genre %></div>
+            for (var genre in groups) {
+        var items = groups[genre];
+        items = items.slice(0, Math.min(maxItemsPerGroup, items.length));
+        var showMore = genre != "Other";
+    %>
+
+    <div class="col-sm-12 mb20">
+        <% if (showMore) { %>
+        <a href="<%= createMoreLink(genre, searchTerm, 20) %>" class="text-large browse-header"><%= genre %></a>
+        <% } else { %>
+        <div class="text-large browse-header"><%= genre %></div>
+        <% } %>
+        <%- include('partials/track-list.ejs', {releases: items}) %>
+    </div>
     <% } %>
-    <%- include('partials/track-list.ejs', {releases: items}) %>
 </div>
-<% } %>
 <%- include partials/player-hook.ejs %>
 <%- include partials/connect-with-us.ejs %>
 </body>
