@@ -630,7 +630,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
-  // app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => doRender(req, res, 'welcome.ejs', {}));
+  // app.get('/landing',  (req, res) => doRender(req, res, 'landing.ejs', {}));
   app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => {
     if (req.user) {
       console.log("User is already logged in, redirecting away from login page");
@@ -642,7 +642,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       req.session.destinationUrl = req.query.redirect;
     }
     const message = req.flash('loginMessage');
-    doRender(req, res, 'signup.ejs', {message: message});
+    doRender(req, res, 'landing.ejs', {
+      message: message,
+      code: req.session.inviteCode
+    });
   });
   app.get('/invite', (req, res) => {
     res.redirect('/welcome');

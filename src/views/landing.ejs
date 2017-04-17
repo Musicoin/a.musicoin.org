@@ -1,0 +1,386 @@
+<!doctype html>
+<html>
+<head>
+    <title>Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body {
+            word-wrap:break-word;
+            background-image: url(images/landing.jpg);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: top;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            color: black;
+            background-color: black;
+        }
+
+        .landing-header {
+            color: white;
+            font-size: 16pt;
+            font-weight: 600;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .login-section {
+            background-color: rgba(255,255,255, 0.6);
+            background-blend-mode: multiply;
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            color: #484945;
+            padding: 30px;
+        }
+
+        input.landing {
+            min-width: 320px;
+        }
+
+        @media screen and (max-width: 800px) {
+            .login-section {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            input.landing {
+                min-width: 250px;
+            }
+        }
+
+        .signin-instructions {
+            font-weight: 800;
+        }
+
+        .login-forms {
+            padding: 20px;
+        }
+
+        .landing {
+            width: 100%;
+            border: 2px solid rgba(0,0,0,0.1);
+            font-size: 18px;
+            padding: 5px;
+            background-color: transparent;
+            padding-left: 40px;
+        }
+
+        .text-light {
+            color: rgba(0,0,0,0.4);
+        }
+
+        .shift-r25 {
+            position: absolute;
+            left: 25px;
+        }
+
+        .shift-r10 {
+            position: absolute;
+            left: 10px;
+        }
+
+        .mt25 {
+            margin-top: 25px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            width: 16px;
+        }
+
+
+
+        input.landing:focus{
+            box-shadow: 0 0 5px rgba(0, 112, 0, 0.5);
+            border: 2px solid rgba(0, 112, 0, 0.5);
+        }
+
+        .login-button {
+            background-blend-mode: multiply;
+            border: 1px solid rgba(0,0,0,0.2);
+            position: relative;
+            font-family: Arial, sans-serif;
+        }
+
+        .social-login {
+            width: 100%;
+        }
+
+        .text-social-login {
+            color: rgba(255,255,255,0.8);
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+        }
+
+        .social-login-icon {
+            font-size: 18pt;
+            width: 30px;
+        }
+
+        .mr20 {
+            margin-right: 20px;
+        }
+
+        .mt40 {   margin-top: 40px;  }
+        .mb40 {   margin-bottom: 40px;  }
+        .mt80 {   margin-top: 80px;  }
+
+        .divider {
+            position: absolute;
+            border-right: 1px solid rgba(0,0,0,0.2);
+            height: 80%;
+        }
+
+        .text-login {
+            color: rgba(0,116,115,0.8);
+            font-weight: bold;
+        }
+
+        .btn-login {
+            color: #ffffff;
+            background-color: rgba(0,116,115,0.5);
+            border-color: rgba(0,116,115,0.5);
+            background-blend-mode: multiply;
+        }
+
+        .btn-login:hover,
+        .btn-login:focus,
+        .btn-login.active {
+            color: #ffffff;
+            background-color: rgba(0,116,115,0.6);
+            border-color: rgba(0,116,115,0.6);
+        }
+
+        .btn-confirm-code {
+            color: #ffffff;
+            background-color: rgba(0, 0, 115,0.5);
+            border-color: rgba(0,0,101,0.5);
+            background-blend-mode: multiply;
+        }
+
+        .btn-confirm-code:hover,
+        .btn-confirm-code:focus,
+        .btn-confirm-code.active {
+            color: #ffffff;
+            background-color: rgba(0, 0,115,0.6);
+            border-color: rgba(0,0,101,0.6);
+        }
+
+        @media screen and (min-width: 800px) {
+            .big-screen-ml30 { margin-left: 30px;}
+            .big-screen-mr30 { margin-right: 30px;}
+        }
+
+
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<style>
+    .background-cover {
+        display: none;
+    }
+
+    .subtle-text {
+        color: white;
+    }
+
+
+</style>
+
+<div class="flex-column mt25">
+    <div class="mt40 big-screen-only"></div>
+    <div class="center-text landing-header">
+        Create your first $MUSIC wallet and join the global revolution
+    </div>
+    <div class="center-text mt40 flex-column">
+        <div class="login-section">
+            <!-- Row 1 -->
+            <div class="signin-instructions signin">
+                sign in or sign up using one of these services:
+                <% if (code) { %>
+                <div style="color:#888">Invite Code: <%=code%></div>
+                <% } %>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="login-forms two-columns signin">
+                <div class="email-login flex-column big-screen-mr30">
+                    <form name="loginForm" action="/signin" method="post" onsubmit="return validateSigninFields()">
+                        <div class="flex-row input-with-icon">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="text" name="email" class="landing" placeholder="Email">
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="password" name="password" class="landing" placeholder="Password">
+                        </div>
+
+                        <div class="flex-row mt20" style="justify-content: space-between">
+                            <button type="submit" class="btn btn-login login-button">LOG IN</button>
+                            <a class="clickable text-login" onclick="$('.signin').hide(); $('.signup').show(); $('#screenname').focus()">Sign up with e-mail</a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="small-screen-only mb40"></div>
+
+                <div class="flex-column big-screen-ml30">
+                    <a href="/auth/google" class="flex-row btn btn-danger social-login login-button">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Google</div>
+                    </a>
+
+                    <a href="/auth/twitter" class="flex-row btn btn-info social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Twitter</div>
+                    </a>
+
+                    <a href="/auth/facebook" class="flex-row btn btn-primary social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Facebook</div>
+                    </a>
+                </div>
+            </div>
+
+
+            <!-- Row 3 -->
+            <div id="signupEmailForm" class="signup" style="display: none">
+                <!-- LOGIN FORM -->
+                <form name="singupForm" action="/signup" method="post" onsubmit="return validateSignupFields()">
+                    <div class="flex-row input-with-icon">
+                        <div class="divider" style="left: 33px"></div>
+                        <i class="fa fa-user shift-r10 text-light input-icon" aria-hidden="true"></i>
+                        <input id=screenname type="text" class="landing" name="name" placeholder="Choose a screen name">
+                    </div>
+
+                    <div class="flex-row input-with-icon mt20">
+                        <div class="divider" style="left: 33px"></div>
+                        <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
+                        <input type="text" name="email" class="landing" placeholder="Email">
+                    </div>
+
+                    <div class="flex-row input-with-icon mt20">
+                        <div class="divider" style="left: 33px"></div>
+                        <i class="fa fa-check-circle shift-r10 text-light input-icon" aria-hidden="true"></i>
+                        <input type="text" name="confirmation" class="landing" placeholder="Email confirmation code">
+                        <span id=confirm class="btn btn-confirm-code">Get a code</span>
+                    </div>
+
+                    <div class="flex-row input-with-icon mt20">
+                        <div class="divider" style="left: 33px"></div>
+                        <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
+                        <input type="password" name="password" class="landing" placeholder="Password">
+                    </div>
+
+                    <div class="flex-row input-with-icon mt20">
+                        <div class="divider" style="left: 33px"></div>
+                        <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
+                        <input type="password" name="password2" class="landing" placeholder="Repeat Password">
+                    </div>
+
+                    <div class="flex-row mt20" style="justify-content: space-between">
+                        <button type="submit" class="btn btn-login login-button">SIGN UP</button>
+                        <a class="clickable text-login" onclick="$('.signin').show(); $('.signup').hide()">Have an account? Sign in</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="center-text mt80">
+    <%- include partials/connect-with-us.ejs %>
+</footer>
+
+
+
+<script>
+
+    <% if (message.length > 0) { %>
+        new Message("<%=message%>", 'warning', 5000);
+    <% } %>
+
+  $( document ).ready(function() {
+    $("#confirm").on('click', function () {
+      var email = document.forms["singupForm"]["email"].value;
+      if (!email || email.trim().length == 0) {
+        new Message("Enter your email address, then you can request a code", 'warning', 5000);
+      }
+      else {
+        $.post('/login/confirm', {
+            email: email
+          },
+          function (data) {
+            if (data.success) {
+              new Message("A confirmation code was sent to " + data.email, 'success', 5000);
+            }
+            else {
+              new Message("Failed to send confirmation: " + data.reason, 'error', 5000);
+            }
+          })
+      }
+    })
+  })
+
+  var validatePassword = true;
+  var validateCode = true;
+  var validateUsername = true;
+
+  function validateSigninFields() {
+    var email = document.forms["loginForm"]["email"].value;
+    if (!email || email.trim().length == 0) {
+      new Message("Please provide an email address", 'error', 5000);
+      return false;
+    }
+
+    var pwd = document.forms["loginForm"]["password"].value;
+    if (!pwd || pwd.trim().length == 0) {
+      new Message("A password is required", 'error', 5000);
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateSignupFields() {
+    var email = document.forms["singupForm"]["email"].value;
+    if (!email || email.trim().length == 0) {
+      alert("Please provide an email address");
+      return false;
+    }
+
+    var pwd = document.forms["singupForm"]["password"].value;
+    if (!pwd || pwd.trim().length == 0) {
+      new Message("A password is required", 'error', 5000);
+      return false;
+    }
+
+    if (validateUsername && document.forms["singupForm"]["name"].value.trim().length == 0) {
+      new Message("Please enter a screen name", 'error', 5000);
+      return false;
+    }
+
+    if (validatePassword && document.forms["singupForm"]["password2"].value != pwd) {
+      new Message("Passwords do not match!", 'error', 5000);
+      return false;
+    }
+
+    if (validateCode && document.forms["singupForm"]["confirmation"].value.trim().length == 0) {
+      new Message("Please enter the confirmation code", 'error', 5000);
+      return false;
+    }
+  }
+</script>
+</body>
+</html>
