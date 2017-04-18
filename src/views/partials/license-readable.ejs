@@ -37,7 +37,10 @@
 </style>
 <div class="license-container">
     This is a human-readable summary of the Pay Per Play license for
-    <span class="<%= license.title ? "" : "missing"%> parameter"><%= license.title %>&nbsp;</span> by <span class="parameter"><%= license.artistName %></span>.
+    <span class="<%= license.title ? "" : "missing"%> parameter"><%= license.title %>&nbsp;</span> by <span class="parameter"><%= license.artistName %></span>
+    <% if (license.address) { %>
+    , with license address  <span class="parameter"><%=license.address%></span>
+    <%}%>.
     <br><br>
     By listening to this work, the listener agrees to:
     <ul>

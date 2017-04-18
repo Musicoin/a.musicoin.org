@@ -1,3 +1,12 @@
+var modalUtils = {
+  showModal: function(modalId, url, params) {
+    var modal = $("#" + modalId);
+    modal.find(".modal-content").load(url, params, function() {
+      modal.show();
+    });
+  }
+};
+
 $( document ).ready(function() {
 
   $(document).on('click', '.modal-trigger', function() {

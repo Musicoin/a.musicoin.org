@@ -1470,11 +1470,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
         return res.render('not-found.ejs');
       }
-      jsonAPI.getArtist(license.artistProfileAddress, false, false)
-        .then(response => {
+
+      const ras = addressResolver.resolveAddresses("", license.contributors);
+      const a = jsonAPI.getArtist(license.artistProfileAddress, false, false);
+      Promise.join(a, ras, (response, resolvedAddresses) => {
+          let totalShares = 0;
+          resolvedAddresses.forEach(r => totalShares += parseInt(r.shares));
+          resolvedAddresses.forEach(r => r.percentage = _formatNumber(100 * r.shares / totalShares, 1));
           doRender(req, res, "track.ejs", {
             artist: response.artist,
             license: license,
+            contributors: resolvedAddresses,
             releaseId: release._id,
             description: release.description,
             messages: messages,
@@ -1813,13 +1819,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/license/view/', (req, res) => {
+    const hideButtonBar = req.body.hideButtonBar == "true";
     jsonAPI.getLicense(req.body.address)
       .then(function (license) {
         return Promise.join(
           addressResolver.resolveAddresses(req.user.profileAddress, license.contributors),
           function (contributors) {
             license.contributors = contributors;
-            doRender(req, res, 'license.ejs', {showRelease: false, license: license});
+            doRender(req, res, 'license.ejs', {showRelease: false, license: license, hideButtonBar: hideButtonBar});
           });
       })
   });

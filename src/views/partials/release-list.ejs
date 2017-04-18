@@ -133,8 +133,9 @@
 
                 <div class="flex-column release-actions">
                     <div class="flex-column">
-                        <a class="mb5 clickable subtle-text"
-                           onclick='$( "#licensePreview" ).load( "/license/view/", {address: "<%=release.address%>"} ); $("#licensePreview").show()'>show license</a>
+                        <a href="javascript:void(0)" onclick="modalUtils.showModal('thread-modal', '/license/view/', {address: '<%=release.address%>', hideButtonBar: true})">
+                            show license
+                        </a>
                         <a class="mb5 subtle-text" href="/tx/history/<%=release.address%>">show history</a>
                     </div>
                     <div class="flex-column">

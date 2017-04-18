@@ -199,6 +199,56 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <td align="left">
+                                <div class="clickable trackDetails mt20 text-info" onclick="$('.trackDetails').toggle()">
+                                    License Details <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                </div>
+                                <div class="trackDetails clickable mt20 text-info"
+                                     style="display: none"
+                                     onclick="$('.trackDetails').toggle()">
+                                    Hide Details <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                                </div>
+                                <div class="trackDetails mt10" style="display: none">
+                                    <table>
+                                        <tr>
+                                            <td align="right"><strong>Released</strong></td>
+                                            <td style="padding-left: 10px"><%=license.timeSince%></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right"><strong>License</strong></td>
+                                            <td style="padding-left: 10px">
+                                                <a href="javascript:void(0)" onclick="modalUtils.showModal('thread-modal', '/license/view/', {address: '<%=license.address%>', hideButtonBar: true})">
+                                                    PPP (Pay Per Play)
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <div class="mt20"><strong>Payment Distribution</strong></div>
+                                    <table class="table">
+                                        <% for (var c=0; c < contributors.length; c++) {
+                                            var contributor = contributors[c];
+                                            var url = contributor.type == "artist"
+                                                    ? "/artist/" + contributor.address
+                                                    :  contributor.type == "license"
+                                                            ? "/track/" + contributor.address
+                                                            : "http://orbiter.musicoin.org/addr/" + contributor.address;
+                                            var name = contributor.type == "artist" || contributor.type == "license"
+                                                    ? contributor.alternateAddress
+                                                    : "Unregisterd address";
+                                        %>
+                                        <tr>
+                                            <td><a href="<%=url%>"><%=name%></a></td>
+                                            <td><%=contributor.percentage%>%</td>
+                                        </tr>
+                                        <% } %>
+                                    </table>
+
+                                </div>
+                            </td>
+                        </tr>
                         <% if (!isArtist && !license.markedAsAbuse) { %>
                         <tr>
                             <td class="mt10">
@@ -210,20 +260,21 @@
                     </table>
 
                     <% if (typeof isAdmin != "undefined" && isAdmin) { %>
-                    <% if (!license.markedAsAbuse) { %>
-                    <div class="center-text mt20">
-                        <div class="promote-hero-track btn btn-danger btn-sm"
-                             address="<%=license.address%>">
-                            Set as Artist of the Week
-                        </div>
-                    </div>
-                    <% } %>
 
-                    <div class="center-text mt20">
-                        <div class="mark-track-as-abuse btn btn-sm <%=license.markedAsAbuse ? "btn-success" : "btn-danger"%>"
-                             abuse="<%=license.markedAsAbuse%>"
-                             address="<%=license.address%>">
-                            <%= license.markedAsAbuse ? "Mark as ok" : "Mark as abuse"%>
+                    <div class="alert alert-danger mt20">
+                        <div>Admin Tools</div>
+                        <div class="center-text">
+                            <% if (!license.markedAsAbuse) { %>
+                            <div class="promote-hero-track btn btn-success btn-sm mr10"
+                                 address="<%=license.address%>">
+                                Set as Artist of the Week
+                            </div>
+                            <% } %>
+                            <div class="mark-track-as-abuse btn btn-sm <%=license.markedAsAbuse ? "btn-success" : "btn-danger"%>"
+                                 abuse="<%=license.markedAsAbuse%>"
+                                 address="<%=license.address%>">
+                                <%= license.markedAsAbuse ? "Mark as ok" : "Mark as abuse"%>
+                            </div>
                         </div>
                     </div>
                     <%}%>

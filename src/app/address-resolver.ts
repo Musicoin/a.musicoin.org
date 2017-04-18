@@ -31,6 +31,7 @@ export class AddressResolver {
     if (recipient.address.startsWith("0x")) {
       if (recipient.address.trim() == selfAddress) {
         recipient.alternateAddress = "my wallet";
+        recipient.type = "artist";
         return Promise.resolve(recipient);
       }
       const u = User.findOne({"profileAddress": recipient.address}).exec();
@@ -39,10 +40,12 @@ export class AddressResolver {
         if (user) {
           if (user.draftProfile && user.draftProfile.artistName)
             recipient.alternateAddress = user.draftProfile.artistName;
+          recipient.type = "artist";
         }
         else if (contract) {
           if (contract.canReceiveFunds) {
             recipient.alternateAddress = contract.title;
+            recipient.type = "license";
           }
           else {
             recipient.invalid = true;
