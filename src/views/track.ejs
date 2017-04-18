@@ -101,6 +101,7 @@
                             <% } %>
                             <div class="flex-column text-left">
                                 <a class="mb5" href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
+                                <% if (!isArtist) { %>
                                 <div class="follow-toggle-button btn btn-default btn-xs mr10"
                                      user="<%=artist.id%>"
                                      licenseAddress="<%=license.address%>"
@@ -110,6 +111,7 @@
                                      class-not-following="btn-default">
                                     Follow
                                 </div>
+                                <% } %>
                             </div>
                         </div>
                     </div>

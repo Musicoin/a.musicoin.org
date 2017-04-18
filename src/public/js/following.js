@@ -53,9 +53,12 @@ $( document ).ready(function() {
 
   $(document).on('click', '.follow-toggle-button', function() {
     var element = $(this);
+    if (element.hasClass("disabled")) return false;
+
     var toFollow = element.attr('user');
     var licenseAddress = element.attr('licenseAddress');
     var follow = element.attr('following') != "true";
+
     $.post('/follow', {toFollow: toFollow, licenseAddress: licenseAddress, follow: follow}, function(data) {
       var oldCount = parseInt(element.attr('follower-count'));
       if (data.success) {

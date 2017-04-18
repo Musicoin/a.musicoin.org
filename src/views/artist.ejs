@@ -35,6 +35,8 @@
 
 <%- include('partials/hero.ejs', {artist: artist}) %>
 <%
+
+const isArtist = user.profileAddress == artist.profileAddress;
 function formatNumber(value) {
     if (!value || value == 0) return 0;
     const lookup = ["", "k", "M", "B", "T"];
@@ -64,9 +66,9 @@ function formatNumber(value) {
             <div class="follow-toggle-button btn btn-default"
                  user="<%= artist.id %>"
                  text-following="Following"
-                 class-following="btn-success"
+                 class-following="<%= isArtist ? "disabled" : "btn-success"%>"
                  text-not-following="Follow"
-                 class-not-following="btn-default"
+                 class-not-following="<%= isArtist ? "disabled" : "btn-default"%>"
                  follower-count="<%=artist.followerCount%>">
                 Follow
             </div>

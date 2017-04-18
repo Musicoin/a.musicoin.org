@@ -166,7 +166,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         req.user.formattedBalance = balance ? balance.formattedMusicoinsShort : "0";
       }
       const defaultContext = {
-        user: req.user,
+        user: req.user || {},
         isAuthenticated: req.isAuthenticated(),
         isAdmin: isAdmin(req.user),
         hasInvite: !req.isAuthenticated()
