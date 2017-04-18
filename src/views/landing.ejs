@@ -210,7 +210,7 @@
             <!-- Row 2 -->
             <div class="login-forms two-columns signin">
                 <div class="email-login flex-column big-screen-mr30">
-                    <form name="loginForm" action="/signin" method="post" onsubmit="return validateSigninFields()">
+                    <form name="loginForm" action="/signin" target=_top method="post" onsubmit="return validateSigninFields()">
                         <div class="flex-row input-with-icon">
                             <div class="divider" style="left: 33px"></div>
                             <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
@@ -233,19 +233,19 @@
                 <div class="small-screen-only mb40"></div>
 
                 <div class="flex-column big-screen-ml30">
-                    <a href="/auth/google" class="flex-row btn btn-danger social-login login-button">
+                    <a href="/auth/google" target=_top class="flex-row btn btn-danger social-login login-button">
                         <div class="divider" style="left: 50px"></div>
                         <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
                         <div class="text-social-login">Sign in with Google</div>
                     </a>
 
-                    <a href="/auth/twitter" class="flex-row btn btn-info social-login login-button mt20">
+                    <a href="/auth/twitter" target=_top class="flex-row btn btn-info social-login login-button mt20">
                         <div class="divider" style="left: 50px"></div>
                         <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
                         <div class="text-social-login">Sign in with Twitter</div>
                     </a>
 
-                    <a href="/auth/facebook" class="flex-row btn btn-primary social-login login-button mt20">
+                    <a href="/auth/facebook" target=_top class="flex-row btn btn-primary social-login login-button mt20">
                         <div class="divider" style="left: 50px"></div>
                         <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
                         <div class="text-social-login">Sign in with Facebook</div>
@@ -257,7 +257,7 @@
             <!-- Row 3 -->
             <div id="signupEmailForm" class="signup" style="display: none">
                 <!-- LOGIN FORM -->
-                <form name="singupForm" action="/signup" method="post" onsubmit="return validateSignupFields()">
+                <form name="singupForm" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
                     <div class="flex-row input-with-icon">
                         <div class="divider" style="left: 33px"></div>
                         <i class="fa fa-user shift-r10 text-light input-icon" aria-hidden="true"></i>
