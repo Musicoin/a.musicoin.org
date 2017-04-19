@@ -20,6 +20,8 @@ export class MusicoinRestAPI {
     jsonRouter.get('/tracks/recent', (req) => jsonAPI.getRecentPlays(this._getLimit(req)));
     jsonRouter.get('/tracks/top', req => jsonAPI.getTopPlayed(this._getLimit(req), req.query.genre));
 
+    jsonRouter.post('/track/earnings/', req => jsonAPI.getTrackEarnings(req.body.releaseid));
+
     jsonRouter.get('/tracks/search', (req) => {
       return jsonAPI.getNewReleasesByGenre(
         this._getLimit(req),

@@ -141,11 +141,18 @@
                     <table class="mb5" style="width: 100%">
                         <tr>
                             <td align="center" class="pr5">
-                                <div class="text-large">
-                                    <span class="text-large"><%=(parseInt(license.playCount) + parseInt(license.directTipCount))%></span><span class="text-medium-small">MC</span><BR>
-                                    <span class="text-medium-small" style="position: relative; top: -10px;">earned</span>
+                                <div class="dynamic-data"
+                                     data-behavior="track-earnings"
+                                     de-refresh-period="10"
+                                     de-releaseId="<%=releaseId%>"
+                                     de-url="/json-api/track/earnings/">
+                                    <div class="text-large">
+                                        <span class="text-large" data-behavior="track-earnings"><%=(parseInt(license.playCount) + parseInt(license.directTipCount))%></span><span class="text-medium-small">MC</span><BR>
+                                        <span class="text-medium-small" style="position: relative; top: -10px;">earned</span>
+                                    </div>
+                                    <div class="subtle-text" style="position:relative; top:-5px">
+                                        <span data-behavior="track-plays"><%=license.playCount%></span> plays + <span data-behavior="track-tips"><%=license.directTipCount%></span> tips</div>
                                 </div>
-                                <div class="subtle-text" style="position:relative; top:-5px"><%=license.playCount%> plays + <%=license.directTipCount%> tips</div>
                             </td>
                         </tr>
                         <tr>
@@ -400,6 +407,17 @@
         .button('No', function() {
 
         });
+    })
+
+    dynamic.addDataHandler("track-earnings", function(element, data) {
+      console.log("Updating dynamic data with " + JSON.stringify(data));
+      var newTotal = parseInt(data.plays) + parseInt(data.tips);
+      if (newTotal !== parseInt(element.find("[data-behavior~=track-earnings]").text())) {
+        element.find("[data-behavior~=track-earnings]").text(parseInt(data.plays) + parseInt(data.tips));
+        element.find("[data-behavior~=track-plays]").text(parseInt(data.plays));
+        element.find("[data-behavior~=track-tips]").text(parseInt(data.tips));
+        element.effect("bounce");
+      }
     })
   });
 

@@ -26,6 +26,12 @@ if (typeof dynamic == "undefined") {
     getPrefix: function() { return "de-"},
     getBasePeriod: function() { return 1000},
 
+    dataHandlers:{},
+    addDataHandler: function(behavior, handler) {
+      if (!dynamic.dataHandlers[behavior]) dynamic.dataHandlers[behavior] = [];
+      dynamic.dataHandlers[behavior].push(handler);
+    },
+
     isReady: function(element, periodIdx) {
       if (element.attr("de-refresh-period") == "none") return false;
       var period = parseInt(element.attr("de-refresh-period"));
@@ -45,9 +51,41 @@ if (typeof dynamic == "undefined") {
           dynamic.refreshElement($(this));
         }
       })
+
+      $(".dynamic-data").each(function(index, element) {
+        if (forceUpdate || dynamic.isReady($(this), periodIdx)) {
+          dynamic.refreshData($(this));
+        }
+      })
+    },
+
+    refreshData: function(element, extraParams) {
+      var behavior = element.attr('data-behavior');
+      var handlers = dynamic.dataHandlers[behavior];
+      if (handlers) {
+        var params = dynamic.getParams(element, extraParams);
+        $.post(params.url, params, function(data) {
+          handlers.forEach(function(handler) {
+            handler(element, data);
+          })
+        })
+      }
+      else {
+        console.log("Skipping update of dynamic-data, no handler found for " + behavior);
+      }
     },
 
     refreshElement: function(element, extraParams) {
+      var params = dynamic.getParams(element, extraParams);
+      console.log("Refreshing element with " + JSON.stringify(params));
+      element.load( params.url, params, function() {
+        if (!!params["auto-scroll"]) {
+          element.scrollTop(element[0].scrollHeight);
+        }
+      })
+    },
+
+    getParams: function(element, extraParams) {
       var params = extraParams || {};
       var prefix = dynamic.getPrefix();
       element.attr().forEach(function(param) {
@@ -55,14 +93,8 @@ if (typeof dynamic == "undefined") {
           params[param.name.substring(prefix.length)] = param.value;
         }
       });
-
-      console.log("Refreshing element with " + JSON.stringify(params));
-      element.load( params.url, params, function() {
-        if (!!params["auto-scroll"]) {
-          element.scrollTop(element[0].scrollHeight);
-        }
-      })
-    }
+      return params;
+    },
   };
 
   $( document ).ready(function() {

@@ -1472,6 +1472,18 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getTrackEarnings(id: string): Promise<any> {
+    return Release.findById(id).exec()
+      .then(release => {
+        if (!release) return {success: false}
+        return {
+          success: true,
+          plays: release.directPlayCount || 0,
+          tips: release.directTipCount || 0
+        }
+      })
+  }
+
   getReleaseByTx(tx) {
     return Release.findOne({tx: tx})
       .then(release => {
