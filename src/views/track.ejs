@@ -422,7 +422,7 @@
     dynamic.addDataHandler("track-earnings", function(element, data) {
       var newPlays = parseInt(data.plays);
       var newTips = parseInt(data.tips)
-      var newTotal = formatNumber(newPlays + newTips);
+      var newTotal = format.formatNumber(newPlays + newTips);
       if (newTotal != element.find("[data-behavior~=track-earnings]").text()) {
         element.find("[data-behavior~=track-earnings]").text(newTotal);
         element.find("[data-behavior~=track-plays]").text(format.formatNumber(newPlays));
