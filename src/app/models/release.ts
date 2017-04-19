@@ -16,7 +16,11 @@ module.exports = mongoose.model('Release', mongoose.Schema({
   description: String,
   title: String,
   imageUrl: String,
+
   genres: [String],
+  languages: [String],
+  moods: [String],
+  regions: [String],
 
   canReceiveFunds: Boolean,
   directPlayCount: Number,

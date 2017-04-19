@@ -62,6 +62,7 @@ const userSchema = mongoose.Schema({
     ipfsImageUrl: String,
     heroImageUrl: String,
     genres: [String],
+    regions: [String],
     version: Number
   },
   hideProfile: Boolean,

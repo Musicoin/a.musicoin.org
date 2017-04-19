@@ -43,15 +43,18 @@
             background-color: #f0f0f0;
         }
 
-        .genre-tag,
-        a.genre-tag:hover {
-            background-color: #1b95e0;
-            color: #fff;
+        .track-tag {
             border-radius: 5px;
             padding: 5px;
             margin: 2px;
             white-space: nowrap;
+            color: #fff;
         }
+
+        .genre-tag, a.genre-tag:hover           {   background-color: #1b95e0;  }
+        .language-tag, a.language-tag:hover     {   background-color: #619dc2;  }
+        .region-tag, a.region-tag:hover         {   background-color: #619dc2;  }
+        .mood-tag, a.mood-tag:hover             {   background-color: #619dc2;  }
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -188,11 +191,14 @@
                             <td align="left">
                                 <div class="mt20">Genres</div>
                                 <div class="m5 flex-row" style="flex-wrap: wrap">
-                                    <% for (var g=0; g < license.genres.length; g++) {
-                                        var genre = license.genres[g];
-                                    %>
-                                    <a href="/browse?genre=<%=encodeURIComponent(genre)%>" class="genre-tag"><%=genre%></a>
-                                    <% } %>
+                                    <%- include('partials/tag-list.ejs', { tags: license.genres, tagType: "genre", "tagClass": "genre-tag" }) %>
+                                </div>
+
+                                <div class="mt20">Tags</div>
+                                <div class="m5 flex-row" style="flex-wrap: wrap">
+                                    <%- include('partials/tag-list.ejs', { tags: license.languages, tagType: "search", "tagClass": "language-tag" }) %>
+                                    <%- include('partials/tag-list.ejs', { tags: license.moods, tagType: "search", "tagClass": "mood-tag" }) %>
+                                    <%- include('partials/tag-list.ejs', { tags: license.regions, tagType: "search", "tagClass": "region-tag" }) %>
                                 </div>
                             </td>
                         </tr>

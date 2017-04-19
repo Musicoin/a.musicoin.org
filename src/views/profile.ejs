@@ -169,7 +169,13 @@
                                   placeholder="let people know who you are"><%= user.profile.description %></textarea>
                     </div>
                     <div class="form-group">
-                        <label>genres</label>
+                        <label>Location</label>
+                        <input name=regions class="form-control no-submit region-list"
+                               placeholder=""
+                               value="<%= user.profile.regions ? user.profile.regions.join(", ") : "" %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Genres</label>
                         <input name=genres class="form-control no-submit genre-list"
                                placeholder="e.g. Rock, Country, etc"
                                value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
@@ -611,74 +617,11 @@
       }
     })
 
-    function split(val) {
-      return val.split(/,\s*/);
-    }
+    var availableGenres = ["<%-metadata.genres.join('","')%>"];
+    var availableRegions = ["<%-metadata.regions.join('","')%>"];
 
-    function extractLast(term) {
-      return split(term).pop();
-    }
-
-    var availableTags = [
-      "Alternative Rock",
-      "Ambient",
-      "Classical",
-      "Country",
-      "Dance & EDM",
-      "Dancehall",
-      "Deep House",
-      "Disco",
-      "Drum & Bass",
-      "Electronic",
-      "Folk & Singer-Songwriter",
-      "Hip-hop & Rap",
-      "House",
-      "Indie",
-      "Jazz & Blues",
-      "Latin",
-      "Metal",
-      "Piano",
-      "Pop",
-      "R&B & Soul",
-      "Reggae",
-      "Reggaeton",
-      "Rock",
-      "Soundtrack",
-      "Techno",
-      "Trance",
-      "World"
-    ];
-
-    $(".genre-list")
-      .on("keydown", function (event) {
-        if (event.keyCode === $.ui.keyCode.TAB &&
-          $(this).autocomplete("instance").menu.active) {
-          event.preventDefault();
-        }
-      })
-      .autocomplete({
-        minLength: 0,
-        source: function (request, response) {
-          // delegate back to autocomplete, but extract the last term
-          response($.ui.autocomplete.filter(
-            availableTags, extractLast(request.term)));
-        },
-        focus: function () {
-          // prevent value inserted on focus
-          return false;
-        },
-        select: function (event, ui) {
-          var terms = split(this.value);
-          // remove the current input
-          terms.pop();
-          // add the selected item
-          terms.push(ui.item.value);
-          // add placeholder to get the comma-and-space at the end
-          terms.push("");
-          this.value = terms.join(", ");
-          return false;
-        }
-      });
+    autocomplete.linkAutoComplete(".genre-list", availableGenres, 0);
+    autocomplete.linkAutoComplete(".region-list", availableRegions, 2);
 
     $.fn.serializeObject = function () {
       var o = {};

@@ -631,7 +631,13 @@ export class MusicoinOrgJsonAPI {
       .where({mostRecentReleaseDate: { $exists: true, $ne: null }});
 
     if (search) {
-      query = query.where({"draftProfile.artistName": {"$regex": search, "$options": "i"}})
+      query = query.where({
+        $or: [
+          {"draftProfile.artistName": {"$regex": search, "$options": "i"}},
+          {"draftProfile.genres": {"$regex": search, "$options": "i"}},
+          {"draftProfile.regions": {"$regex": search, "$options": "i"}}
+        ]
+      })
     }
 
     if (genre) {
@@ -675,8 +681,13 @@ export class MusicoinOrgJsonAPI {
         let releaseQuery = Release.find({state: "published", markedAsAbuse: {$ne: true}});
         if (search) {
           releaseQuery = releaseQuery.where({$or: [
-            {artistAddress: {$in: profiles}},
-            {title: {"$regex": search, "$options": "i"}}]})
+              {artistAddress: {$in: profiles}},
+              {title: {"$regex": search, "$options": "i"}},
+              {genres: {"$regex": search, "$options": "i"}},
+              {languages: {"$regex": search, "$options": "i"}},
+              {moods: {"$regex": search, "$options": "i"}},
+              {regions: {"$regex": search, "$options": "i"}}
+            ]})
         }
         if (genre) {
           releaseQuery = releaseQuery.where({"genres": genre})
@@ -1472,7 +1483,12 @@ export class MusicoinOrgJsonAPI {
   _convertDbRecordToLicenseLite(record) {
     return {
       artistName: record.artistName,
+
       genres: record.genres,
+      languages: record.languages,
+      moods: record.moods,
+      regions: record.regions,
+
       description: record.description,
       timeSince: this._timeSince(record.releaseDate),
       directTipCount: record.directTipCount || 0,
@@ -1491,7 +1507,12 @@ export class MusicoinOrgJsonAPI {
       .then(function(license) {
         if (!license.artistName)
           license.artistName = record.artistName;
+
         license.genres = record.genres;
+        license.languages = record.languages;
+        license.moods =  record.moods;
+        license.regions = record.regions;
+
         license.description = record.description;
         license.timeSince = this._timeSince(record.releaseDate);
         license.directTipCount = record.directTipCount || 0;

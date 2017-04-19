@@ -1,6 +1,7 @@
 import * as express from 'express';
 import {Promise} from 'bluebird';
 import * as Formidable from 'formidable';
+import * as MetadataLists from '../config/metadata-lists';
 const router = express.Router();
 import {AddressResolver} from "./address-resolver";
 import {MusicoinOrgJsonAPI} from "./rest-api/json-api";
@@ -23,7 +24,13 @@ export class ReleaseManagerRouter {
               doRender: any) {
     router.get('/', function(req, res) {
       doRender(req, res, 'release-manager/release-manager.ejs', {
-        showTermsOfUse: config.termsOfUseVersion != req.user.termsOfUseVersion
+        showTermsOfUse: config.termsOfUseVersion != req.user.termsOfUseVersion,
+        metadata: {
+          languages: MetadataLists.languages,
+          moods: MetadataLists.moods,
+          genres: MetadataLists.genres,
+          regions: MetadataLists.regions
+        }
       });
     });
 
@@ -92,12 +99,32 @@ export class ReleaseManagerRouter {
 
         const recipients = FormUtils.extractRecipients(fields);
         const key = crypto.randomBytes(16).toString('base64'); // 128-bits
+
+        const genres = fields.genres || "";
+        const languages = fields.languages || "";
+        const regions = fields.regions;
+        const regionArray = regions
+          ? regions.split(",").map(s => s.trim()).filter(s => s)
+          : req.user.draftProfile.regions
+            ? req.user.draftProfile.regions
+            : [];
+        const moods = fields.moods || "";
+
         const track = {
           title: fields.title,
           audio: files.audio,
           image: files.image,
-          genres: fields.genres,
-          genreArray: fields.genres.split(",").map(s => s.trim()).filter(s => s),
+
+          genres: genres,
+          languages: languages,
+          regions: regions,
+          moods: moods,
+
+          genreArray: genres.split(",").map(s => s.trim()).filter(s => s),
+          languageArray: languages.split(",").map(s => s.trim()).filter(s => s),
+          regionArray: regionArray,
+          moodArray: moods.split(",").map(s => s.trim()).filter(s => s),
+
           contributors: recipients.contributors,
           royalties: recipients.royalties,
           description: fields.description,
@@ -116,7 +143,12 @@ export class ReleaseManagerRouter {
             ? defaultTrackImage
             : req.user.draftProfile.ipfsImageUrl;
 
-        track.metadata = {genres: track.genreArray};
+        track.metadata = {
+          genres: track.genreArray,
+          regions: track.regionArray,
+          languages: track.languageArray,
+          moods: track.moodArray
+        };
 
         const sessionID = req.session ? req.session.id : "";
         console.log(`Releasing Track: session=${sessionID} ${JSON.stringify(track, null, 2)}`);
@@ -147,7 +179,10 @@ export class ReleaseManagerRouter {
               artistName: req.user.draftProfile.artistName,
               artistAddress: req.user.profileAddress,
               description: track.description,
-              genres: track.genreArray
+              genres: track.genreArray,
+              regions: track.regionArray,
+              languages: track.languageArray,
+              moods: track.moodArray
             };
             console.log(`Saving release txs to database ...`);
             return Release.create(release);

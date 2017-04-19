@@ -5,6 +5,7 @@ import * as crypto from 'crypto';
 import {MusicoinHelper} from "./musicoin-helper";
 import * as FormUtils from "./form-utils";
 import * as UrlUtils from "./url-utils";
+import * as MetadataLists from '../config/metadata-lists';
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 import {AddressResolver} from "./address-resolver";
@@ -1564,8 +1565,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       output['releaseError'] = req.query.releaseError;
       if (typeof req.query.sendError != "undefined") {
         output['sendResult'] = {
-          error: req.query.sendError
+          error: req.query.sendError,
         };
+      }
+      output['metadata'] = {
+        languages: MetadataLists.languages,
+        moods: MetadataLists.moods,
+        genres: MetadataLists.genres,
+        regions: MetadataLists.regions
       }
       output.artist.formattedBalance = _formatNumber(output.artist.balance);
       doRender(req, res, "profile.ejs", output);
@@ -1762,6 +1769,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       const version = profile.version ? profile.version : 1;
       const genres = fields.genres || "";
+      const regions = fields.regions || "";
 
       Promise.join(uploadImage, uploadHeroImage, (imageUrl, heroImageUrl) => {
         req.user.draftProfile = {
@@ -1771,6 +1779,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           ipfsImageUrl: imageUrl,
           heroImageUrl: heroImageUrl,
           genres: genres.split(",").map(s => s.trim()).filter(s => s),
+          regions: regions.split(",").map(s => s.trim()).filter(s => s),
           version: version + 1
         };
         console.log(`Saving updated profile to database...`);
@@ -1822,8 +1831,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const hideButtonBar = req.body.hideButtonBar == "true";
     jsonAPI.getLicense(req.body.address)
       .then(function (license) {
+        const address = req.user ? req.user.profileAddress : "";
         return Promise.join(
-          addressResolver.resolveAddresses(req.user.profileAddress, license.contributors),
+          addressResolver.resolveAddresses(address, license.contributors),
           function (contributors) {
             license.contributors = contributors;
             doRender(req, res, 'license.ejs', {showRelease: false, license: license, hideButtonBar: hideButtonBar});

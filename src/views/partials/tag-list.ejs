@@ -1,0 +1,9 @@
+<%
+if (typeof  tags != "undefined" && tags) {
+for (var g = 0; g < tags.length; g++) {
+    var tag = tags[g];
+%>
+<a href="/browse?<%= tagType %>=<%= encodeURIComponent(tag) %>" class="track-tag <%= tagClass %>"><%= tag %></a>
+<% } %>
+<% } %>
+
