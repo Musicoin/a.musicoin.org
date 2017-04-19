@@ -2225,7 +2225,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const userName = req.user && req.user.draftProfile
         ? req.user.draftProfile.artistName
         : req.user ? req.user._id : "(anonymous)";
-      console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}, user: ${req.user.profileAddress} (${userName})`);
+      const profileAddress = req.user.profileAddress ? req.user.profileAddress : "";
+      console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}, user: ${profileAddress} (${userName})`);
     }
     req.params.address = resolved;
     next();
