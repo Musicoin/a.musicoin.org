@@ -15,6 +15,8 @@ export class MusicoinRestAPI {
     jsonRouter.get('/artists/featured', (req) => jsonAPI.getFeaturedArtists(this._getLimit(req)));
     jsonRouter.get('/artists/new', (req) => jsonAPI.getNewArtists(this._getLimit(req)));
 
+    jsonRouter.post('/artists/earnings', (req) => jsonAPI.getArtistEarnings(req.body.artistid));
+
     jsonRouter.get('/track/:address', (req) => jsonAPI.getLicense(req.params.address));
     jsonRouter.get('/tracks/new', (req) => jsonAPI.getNewReleases(this._getLimit(req)));
     jsonRouter.get('/tracks/recent', (req) => jsonAPI.getRecentPlays(this._getLimit(req)));

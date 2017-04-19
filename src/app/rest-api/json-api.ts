@@ -1472,6 +1472,27 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getArtistEarnings(id: string): Promise<any> {
+    return User.findById(id).exec()
+      .then(user => {
+        if (!user) return {success: false};
+        return this.getUserStatsReport(user.profileAddress, Date.now(), "all")
+          .then(statsReport => {
+            let totalTips = statsReport.stats.user.tipCount;
+            let totalPlays = 0;
+            statsReport.stats.releases.forEach(rs => {
+              totalPlays += rs.playCount;
+              totalTips += rs.tipCount;
+            });
+            return {
+              tips: totalTips,
+              plays: totalPlays,
+              followers: user.followerCount
+            }
+          })
+      })
+  }
+
   getTrackEarnings(id: string): Promise<any> {
     return Release.findById(id).exec()
       .then(release => {

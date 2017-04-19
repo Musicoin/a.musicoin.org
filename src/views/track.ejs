@@ -62,6 +62,16 @@
 <%- include partials/header.ejs %>
 
 <%
+    function formatNumber(value) {
+        if (!value || value == 0) return 0;
+        if (value < 1) return parseFloat(value).toFixed(1);
+        const lookup = ["", "k", "M", "B", "T"];
+        var order = Math.min(Math.floor(Math.log10(value) / 3), lookup.length - 1);
+        var mult = value / Math.pow(10, 3 * order);
+        var decimals = order > 0 ? 1 : 0;
+        return mult.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + lookup[order];
+    }
+
     var twitterHandle = license.artistName; // default, just use artist name (without @-prefix, so not a twitter handle)
     if (artist && artist.social && artist.social.twitter) {
       var twitterUrl = artist.social.twitter;
@@ -147,11 +157,11 @@
                                      de-releaseId="<%=releaseId%>"
                                      de-url="/json-api/track/earnings/">
                                     <div class="text-large">
-                                        <span class="text-large" data-behavior="track-earnings"><%=(parseInt(license.playCount) + parseInt(license.directTipCount))%></span><span class="text-medium-small">MC</span><BR>
+                                        <span class="text-large" data-behavior="track-earnings"><%=formatNumber(parseInt(license.directPlayCount) + parseInt(license.directTipCount))%></span><span class="text-medium-small">MC</span><BR>
                                         <span class="text-medium-small" style="position: relative; top: -10px;">earned</span>
                                     </div>
                                     <div class="subtle-text" style="position:relative; top:-5px">
-                                        <span data-behavior="track-plays"><%=license.playCount%></span> plays + <span data-behavior="track-tips"><%=license.directTipCount%></span> tips</div>
+                                        <span data-behavior="track-plays"><%=formatNumber(license.directPlayCount)%></span> plays + <span data-behavior="track-tips"><%=formatNumber(license.directTipCount)%></span> tips</div>
                                 </div>
                             </td>
                         </tr>
@@ -410,12 +420,13 @@
     })
 
     dynamic.addDataHandler("track-earnings", function(element, data) {
-      console.log("Updating dynamic data with " + JSON.stringify(data));
-      var newTotal = parseInt(data.plays) + parseInt(data.tips);
-      if (newTotal !== parseInt(element.find("[data-behavior~=track-earnings]").text())) {
-        element.find("[data-behavior~=track-earnings]").text(parseInt(data.plays) + parseInt(data.tips));
-        element.find("[data-behavior~=track-plays]").text(parseInt(data.plays));
-        element.find("[data-behavior~=track-tips]").text(parseInt(data.tips));
+      var newPlays = parseInt(data.plays);
+      var newTips = parseInt(data.tips)
+      var newTotal = formatNumber(newPlays + newTips);
+      if (newTotal != element.find("[data-behavior~=track-earnings]").text()) {
+        element.find("[data-behavior~=track-earnings]").text(newTotal);
+        element.find("[data-behavior~=track-plays]").text(format.formatNumber(newPlays));
+        element.find("[data-behavior~=track-tips]").text(format.formatNumber(newTips));
         element.effect("bounce");
       }
     })

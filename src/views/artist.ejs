@@ -39,6 +39,7 @@
 const isArtist = user.profileAddress == artist.profileAddress;
 function formatNumber(value) {
     if (!value || value == 0) return 0;
+    if (value < 1) return parseFloat(value).toFixed(1);
     const lookup = ["", "k", "M", "B", "T"];
     var order = Math.min(Math.floor(Math.log10(value) / 3), lookup.length - 1);
     var mult = value / Math.pow(10, 3 * order);
@@ -61,8 +62,13 @@ function formatNumber(value) {
         </div>
         <a class="morelink clickable">show more</a>
     </div>
-    <div class="flex-row col2" style="justify-content: flex-end; min-width: 200px; align-items: flex-start">
-        <div class="flex-column center-text mr10">
+    <div class="flex-row col2 dynamic-data"
+         de-refresh-period="10"
+         de-url="/json-api/artists/earnings"
+         de-artistid="<%=artist.id%>"
+         data-behavior="artist-earnings"
+         style="justify-content: flex-end; min-width: 200px; align-items: flex-start">
+        <div class="flex-column center-text mr10 followers-container">
             <div class="follow-toggle-button btn btn-default"
                  user="<%= artist.id %>"
                  text-following="Following"
@@ -72,10 +78,11 @@ function formatNumber(value) {
                  follower-count="<%=artist.followerCount%>">
                 Follow
             </div>
-            <div class="follower-count subtle-text"> - </div>
+            <div class="follower-count subtle-text"
+                 data-behavior="total-followers"> - </div>
         </div>
 
-        <div class="flex-column mr10 center-text">
+        <div class="flex-column mr10 center-text tips-container">
             <div id="player-tip-button"
                  class="tip-button btn btn-success tip-button"
                  recipient="<%= artist.profileAddress %>"
@@ -86,12 +93,12 @@ function formatNumber(value) {
                  text-default="Tip">
                 Tip
             </div>
-            <div class="subtle-text"><%= formatNumber(artistStats.tipCount)%> tipped</div>
+            <div class="subtle-text"><span data-behavior="total-tips"><%= formatNumber(artistStats.tipCount)%></span> tipped</div>
         </div>
 
-        <div class="text-large flex-column center-text mr10">
+        <div class="text-large flex-column center-text mr10 earnings-container" >
             <div style="top: -6px; position: relative;">
-                <span class="text-large"><%=formatNumber(artistStats.totalEarned)%></span><span class="text-medium-small">MC</span>
+                <span class="text-large" data-behavior="total-earned"><%=formatNumber(artistStats.totalEarned)%></span><span class="text-medium-small">MC</span>
             </div>
             <span class="text-medium-small subtle-text" style="position: relative; top: -11px;">earned</span>
         </div>
@@ -140,6 +147,35 @@ function formatNumber(value) {
   function refreshMessageList() {
     dynamic.refreshElement($("#de-user-messages"));
   }
+
+  $(document).ready(function() {
+    dynamic.addDataHandler("artist-earnings", function(element, data) {
+      var newPlays = parseInt(data.plays);
+      var newTips = parseInt(data.tips);
+
+      var newTotal = format.formatNumber(newPlays + newTips);
+      var earningsElement = element.find("[data-behavior~=total-earned]");
+      var earningsContainer = element.find(".earnings-container");
+      if (newTotal !== earningsElement.text()) {
+        earningsElement.text(newTotal);
+        earningsContainer.effect("bounce");
+      }
+
+      var tipElement = element.find("[data-behavior~=total-tips]");
+      if (format.formatNumber(newTips) != tipElement.text()) {
+        tipElement.text(format.formatNumber(newTips));
+        element.find(".tips-container").effect("bounce");
+      }
+
+      var newFollowers = parseInt(data.followers);
+      var followElement = element.find("[data-behavior~=total-followers]");
+      if (format.formatNumber(newFollowers) != followElement.text()) {
+        followElement.text(format.formatNumber(newFollowers));
+        element.find(".followers-container").effect("bounce");
+      }
+    })
+  })
+
 </script>
 <%- include partials/player-hook.ejs %>
 <%- include partials/connect-with-us.ejs %>
