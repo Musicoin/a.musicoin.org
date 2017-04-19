@@ -75,6 +75,11 @@ export class ReleaseManagerRouter {
         })
     }
 
+    function isVerified(user) {
+      if (!user) return false;
+      return !!user.verified;
+    }
+
     function hasSocialLinks(user) {
       if (!user) return false;
       return (user.twitter && user.twitter.id) || (user.facebook && user.facebook.id);
@@ -91,7 +96,7 @@ export class ReleaseManagerRouter {
         console.log(`Files: ${JSON.stringify(files)}`);
 
         const selfAddress = req.user.profileAddress;
-        if (!hasSocialLinks(req.user)) return res.json({success: false, reason: "You must link a twitter or facebook account to release music"});
+        if (!isVerified(req.user) && !hasSocialLinks(req.user)) return res.json({success: false, reason: "You must link a twitter or facebook account to release music"});
         if (!fields.title) return res.json({success: false, reason: "You must profile a title"});
         if (!files.audio || files.audio.size == 0) return res.json({success: false, reason: "You must provide an audio file"});
         if (fields.rights != "confirmed") return res.json({success: false, reason: "You must confirm that you have rights to release this work."});

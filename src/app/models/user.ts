@@ -124,6 +124,7 @@ const userSchema = mongoose.Schema({
   termsOfUseVersion: String,
   pendingInitialization: Boolean,
   blocked: Boolean,
+  verified: Boolean,
   accountLocked: Boolean,
   freePlaysRemaining: {
     type: Number,

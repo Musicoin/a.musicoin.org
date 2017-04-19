@@ -1031,6 +1031,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.post('/admin/users/verify', (req, res) => {
+    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    User.findById(req.body.id).exec()
+      .then(user => {
+        user.verified = req.body.verified == "true";
+        return user.save();
+      })
+      .then(() => {
+        res.json({success: true})
+      })
+  });
+
   app.post('/admin/session/boot', (req, res) => {
     const idx = bootSession.indexOf(req.body.session);
     if (idx < 0) {
