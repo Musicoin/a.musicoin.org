@@ -2210,7 +2210,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return res.send(new Error("Expired linked: " + req.session.id));
     }
     else {
-      const userName = req.user.draftProfile ? req.user.draftProfile.artistName : req.user._id;
+      const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : req.user._id;
       console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}, user: ${req.user.profileAddress} (${userName})`);
     }
     req.params.address = resolved;
