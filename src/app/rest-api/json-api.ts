@@ -312,6 +312,7 @@ export class MusicoinOrgJsonAPI {
       const search = _search.trim();
       filter = {$or: [
         {"draftProfile.artistName": {"$regex": search, "$options": "i"}},
+        {"profileAddress": {"$regex": search, "$options": "i"}},
         {"invite.invitedAs": {"$regex": search, "$options": "i"}},
         {"invite.inviteCode": {"$regex": search, "$options": "i"}},
         {"invite.groupInviteCode": {"$regex": search, "$options": "i"}},
