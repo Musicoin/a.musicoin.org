@@ -108,16 +108,29 @@ export class DashboardRouter {
       jsonAPI.getAllUsers(req.body.search, start, length)
         .then(results => {
           const users = results.users;
-          doRender(req, res, 'admin/users.ejs', {
-            search: req.body.search,
-            users: users,
-            totalUsers: results.count,
-            navigation: {
-              description: `Showing ${start + 1} to ${start + users.length}`,
-              start: start,
-              length: users.length
-            }
-          });
+          const addresses = users.map(u => u.profileAddress).filter(a => a);
+
+          const balanceMap = {};
+          musicoinApi.getAccountBalances(addresses)
+            .then(balances => {
+              balances.forEach((balance, idx) => {
+                balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
+              })
+
+              users.forEach(u => {
+                u.balance = balanceMap[u.profileAddress];
+              });
+              doRender(req, res, 'admin/users.ejs', {
+                search: req.body.search,
+                users: users,
+                totalUsers: results.count,
+                navigation: {
+                  description: `Showing ${start + 1} to ${start + users.length}`,
+                  start: start,
+                  length: users.length
+                }
+              });
+            });
         });
     });
 
@@ -127,16 +140,31 @@ export class DashboardRouter {
       jsonAPI.getAllReleases(req.body.search, start, length)
         .then(results => {
           const releases = results.releases;
-          doRender(req, res, 'admin/releases.ejs', {
-            search: req.body.search,
-            releases: releases,
-            totalReleases: results.count,
-            navigation: {
-              description: `Showing ${start + 1} to ${start + releases.length}`,
-              length: length,
-              start: start
-            }
-          });
+          const addresses = releases.map(u => u.contractAddress).filter(a => a);
+
+          const balanceMap = {};
+          musicoinApi.getAccountBalances(addresses)
+            .then(balances => {
+              balances.forEach((balance, idx) => {
+                balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
+              });
+              releases.forEach(u => {
+                u.balance = balanceMap[u.contractAddress];
+              });
+              doRender(req, res, 'admin/releases.ejs', {
+                search: req.body.search,
+                releases: releases,
+                totalReleases: results.count,
+                navigation: {
+                  description: `Showing ${start + 1} to ${start + releases.length}`,
+                  length: length,
+                  start: start
+                }
+              });
+            });
+
+
+
         });
     });
 

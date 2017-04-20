@@ -20,6 +20,7 @@
     <table class="table table-responsive table-condensed">
         <tr>
             <th class="text-center">Title</th>
+            <th class="text-center">Balance</th>
             <th class="text-center">Artist</th>
             <th class="text-center">Plays&nbsp;/&nbsp;Tips</th>
             <th class="text-center">Abuse</th>
@@ -30,6 +31,7 @@
         %>
         <tr class="<%= !!release.markedAsAbuse || release.markedAsAbuse == "true" ? "abuse" : ""%>">
             <td class="text-center"><a target=release href="/track/<%=release.address%>"><%= release.title %></a></td>
+            <td class="text-center"><%= release.balance %></td>
             <td class="text-center"><a target=artist href="/track/<%=release.artistProfileAddress%>"><%= release.artistName %></a></td>
             <td class="text-center"><%= release.directPlayCount || 0 %>&nbsp;/&nbsp;<%= release.directTipCount || 0 %></td>
             <td class="text-center"><%= !!release.markedAsAbuse %></td>

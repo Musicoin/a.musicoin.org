@@ -33,6 +33,7 @@
         <tr>
             <th class="text-center"></th>
             <th class="text-center">Profile</th>
+            <th class="text-center">Balance</th>
             <th class="text-center">Invited</th>
             <th class="text-center">Invite<br>Clicked</th>
             <th class="text-center">Linked</th>
@@ -91,6 +92,9 @@
                 <% } %>
                 <br>
                 <%=user.timeSinceJoining%>
+            </td>
+            <td class="text-center middle">
+                <%=user.balance%>
             </td>
             <td class="text-left middle">
                 <%= invite.invitedAs %><br>
