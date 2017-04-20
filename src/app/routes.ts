@@ -2454,8 +2454,6 @@ function canInvite(user) {
 function unauthRedirect(dest: string) {
   return function (req, res, next) {
     // if (true) return next();
-    console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionID}`);
-
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated())
       return next();
@@ -2485,13 +2483,13 @@ function isLoggedInOrIsPublic(req, res, next) {
 function isLoggedIn(req, res, next) {
 
   // if (true) return next();
-  console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionID}`);
+  // console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionID}`);
 
   // if user is authenticated in the session, carry on
   if (req.isAuthenticated())
     return next();
 
-  console.log(`User is not logged in, redirecting`);
+  // console.log(`User is not logged in, redirecting`);
 
   // if they aren't redirect them to the home page
   req.session.destinationUrl = req.originalUrl;
