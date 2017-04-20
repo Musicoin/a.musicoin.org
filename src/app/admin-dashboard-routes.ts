@@ -155,6 +155,10 @@ export class DashboardRouter {
           const releases = results.releases;
           const addresses = releases.map(u => u.contractAddress).filter(a => a);
 
+          releases.forEach(r => {
+            r.timeSince = _timeSince(r.releaseDate);
+          });
+
           const balanceMap = {};
           musicoinApi.getAccountBalances(addresses)
             .then(balances => {
@@ -209,6 +213,40 @@ export class DashboardRouter {
       })
     });
 
+    function _timeSince(date) {
+      const seconds = Math.floor((Date.now() - date) / 1000);
+
+      const intervals = [
+        {value: 60, unit: "min"},
+        {value: 60, unit: "hour"},
+        {value: 24, unit: "day"},
+        {value: 30, unit: "month"},
+        {value: 12, unit: "year"},
+      ]
+
+      let unit = "second";
+      let value = seconds;
+      for (let i=0; i < intervals.length; i++) {
+        const interval = intervals[i];
+        if (value > interval.value) {
+          unit = interval.unit;
+          value = value / interval.value;
+        }
+        else {
+          break;
+        }
+      }
+
+      if (unit == "second") {
+        return "";
+      }
+
+      const rounded = Math.round(value);
+      if (rounded != 1) {
+        unit += "s";
+      }
+      return `${rounded} ${unit} ago`;
+    }
   }
 
   _formatNumber(value: any, decimals?: number) {
