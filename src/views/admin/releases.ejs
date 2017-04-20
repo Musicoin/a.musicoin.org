@@ -1,0 +1,39 @@
+<style>
+    tr.abuse {
+        background-color: rgba(200, 0, 0, 0.2);
+    }
+</style>
+
+<div>
+    <h3 class="text-center flex-row" style="justify-content: space-between">
+        <div style="width: 200px" class="text-left">
+            <%=totalReleases%> <span class="text-medium">total releases</span>
+        </div>
+        <div>Releases</div>
+        <div><input type="text"
+                    class="admin-search de-parameter-input"
+                    de-parameter="search"
+                    de-parameters="start=0"
+                    value="<%=search%>"></div>
+    </h3>
+    <%- include element-nav.ejs %>
+    <table class="table table-responsive table-condensed">
+        <tr>
+            <th class="text-center">Title</th>
+            <th class="text-center">Artist</th>
+            <th class="text-center">Plays&nbsp;/&nbsp;Tips</th>
+            <th class="text-center">Abuse</th>
+        </tr>
+
+        <% for (var ivt = 0; ivt < releases.length; ivt++) {
+            var release = releases[ivt];
+        %>
+        <tr class="<%= !!release.markedAsAbuse || release.markedAsAbuse == "true" ? "abuse" : ""%>">
+            <td class="text-center"><a target=release href="/track/<%=release.address%>"><%= release.title %></a></td>
+            <td class="text-center"><a target=artist href="/track/<%=release.artistProfileAddress%>"><%= release.artistName %></a></td>
+            <td class="text-center"><%= release.directPlayCount || 0 %>&nbsp;/&nbsp;<%= release.directTipCount || 0 %></td>
+            <td class="text-center"><%= !!release.markedAsAbuse %></td>
+        </tr>
+        <% } %>
+    </table>
+</div>

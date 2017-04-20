@@ -326,8 +326,8 @@ export class MusicoinOrgJsonAPI {
         {"local.email": {"$regex": search, "$options": "i"}},
       ]};
     }
-    return User.find(filter)
-      .sort({"invite.invitedOn": 'desc'})
+    const c = User.count().exec()
+    const u = User.find(filter).sort({"invite.invitedOn": 'desc'})
       .skip(start)
       .limit(length)
       .populate("invite.invitedBy")
@@ -336,7 +336,12 @@ export class MusicoinOrgJsonAPI {
         user.timeSinceJoining = this._timeSince(user.joinDate);
         return user;
       });
-
+    return Promise.join(c, u, (count, users) => {
+      return {
+        count: count,
+        users: users
+      }
+    })
   }
 
   getAddressBook(_search: string, start: number, length: number): Promise<any> {
@@ -390,7 +395,7 @@ export class MusicoinOrgJsonAPI {
       ]};
     }
     const c = Release.count().exec()
-    const rs = this._getLicensesForEntriesByPage(filter, start, length, {"releaseDate": 'desc'});
+    const rs = this._getReleaseEntriesByPage(filter, start, length, {"releaseDate": 'desc'});
     return Promise.join(c, rs, (count, releases) => {
       return {
         count: count,

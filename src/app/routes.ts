@@ -14,6 +14,7 @@ import {PendingTxDaemon} from './tx-daemon';
 import moment = require("moment");
 import Feed = require('feed');
 import {ReleaseManagerRouter} from "./release-manager-routes";
+import {DashboardRouter} from "./admin-dashboard-routes";
 const sendSeekable = require('send-seekable');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
@@ -58,6 +59,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                                                    mediaProvider,
                                                    config,
                                                    doRender);
+  const dashboardManager = new DashboardRouter(musicoinApi,
+                                                    jsonAPI,
+                                                    addressResolver,
+                                                    maxImageWidth,
+                                                    mediaProvider,
+                                                    config,
+                                                    doRender);
+
   const newProfileListener = p => {
     jsonAPI.sendRewardsForInvite(p)
       .then((results) => console.log(`Rewards sent for inviting ${p._id} profile=${p.profileAddress}, txs: ${JSON.stringify(results)}`))
@@ -148,6 +157,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
   app.use('/admin/*', isLoggedIn, adminOnly);
   app.use('/release-manager', isLoggedIn, releaseManager.getRouter());
+  app.use('/admin/', dashboardManager.getRouter());
 
   app.get('/loginRedirect', (req, res) => {
     if (req.session && req.session.destinationUrl) {
@@ -1178,7 +1188,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const previous = Math.max(0, start - length);
     const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
     jsonAPI.getAllUsers(req.query.search, start, length)
-      .then(users => {
+      .then(results => {
+        const users = results.users;
         doRender(req, res, 'admin-users.ejs', {
           search: req.query.search,
           users: users,

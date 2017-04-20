@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+<head>
+    <title>Admin - Musicoin</title>
+    <%- include ../partials/page-head.ejs %>
+    <style>
+        body {
+            word-wrap:break-word;
+            background-color: white;
+            color: black;
+        }
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<style>
+    .background-cover {
+        display: none;
+    }
+
+    .placeholder {
+        min-height: 200px;
+    }
+    .history-nav {
+        display: flex;
+        justify-content: space-between;
+    }
+    .history-nav-link {
+        margin-left: 10px;
+        font-size: 14pt;
+        cursor: pointer;
+    }
+
+    .history-nav-link-disabled {
+        margin-left: 10px;
+        font-size: 14pt;
+        color: #aaa
+    }
+    .admin-search {
+        border-radius: 20px;
+        border: 1px solid #aaa;
+        width: 200px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .admin-section {
+        min-height: 600px;
+    }
+</style>
+<%- include ../partials/header.ejs %>
+
+
+<div class="container">
+    <h1 class="alert alert-default">Musicoin Admin Portal</h1>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="alert alert-info small-shadow-no-hover">
+                <div class="dynamic-element"
+                     de-refresh-period="10"
+                     de-refresh-offset="0"
+                     de-url="/admin/elements/user-count">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="alert alert-info small-shadow-no-hover">
+                <div class="dynamic-element"
+                     de-refresh-period="10"
+                     de-refresh-offset="0"
+                     de-url="/admin/elements/release-count">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="alert alert-success small-shadow-no-hover">
+                <div class="dynamic-element"
+                     de-refresh-period="10"
+                     de-refresh-offset="0"
+                     de-url="/admin/elements/play-count">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="alert alert-success small-shadow-no-hover">
+                <div class="dynamic-element"
+                     de-refresh-period="10"
+                     de-refresh-offset="0"
+                     de-url="/admin/elements/tip-count">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-6">
+            <div class="well white-well small-shadow-no-hover admin-section">
+                <div class="dynamic-element"
+                     de-refresh-period="10"
+                     de-refresh-offset="0"
+                     de-url="/admin/elements/account-balances">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well white-well small-shadow-no-hover admin-section">
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-playback-history">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     id="de-playback-history"
+                     de-reset="user=,release=,start=0,length=6"
+                     de-id="de-playback-history"
+                     de-refresh-period="10"
+                     de-refresh-offset="0"
+                     de-start="0"
+                     de-length="6"
+                     de-user=""
+                     de-release=""
+                     de-url="/admin/elements/playback-history">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <div class="well white-well small-shadow-no-hover admin-section">
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-users">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     id="de-users"
+                     de-refresh-period="120"
+                     de-refresh-offset="0"
+                     de-reset="search=,start=0,length=10"
+                     de-start="0"
+                     de-length="10"
+                     de-url="/admin/elements/users">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <div class="well white-well small-shadow-no-hover admin-section">
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-releases">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     id="de-releases"
+                     de-reset="search=,start=0,length=10"
+                     de-refresh-period="120"
+                     de-refresh-offset="0"
+                     de-start="0"
+                     de-length="10"
+                     de-url="/admin/elements/releases">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ../partials/connect-with-us.ejs %>
+<script>
+  $( document ).ready(function() {
+    dynamic.refreshAll(true);
+
+    $(document).on('click', '.de-parameter-setter', function() {
+      var child = $(this);
+      var element = child.closest('.dynamic-element');
+      setParameter(element, child.attr('de-parameter'), child.attr('de-value'), false);
+      setAll(element, child.attr('de-parameters'), child.attr('de-refresh') != "false");
+    });
+
+    $(document).on('click', '.de-parameter-reset', function() {
+      var child = $(this);
+      var element = child.closest('.dynamic-element');
+      setAll(element, element.attr('de-reset'), true);
+    });
+
+    $(document).on('keypress', '.de-parameter-input', function(e) {
+      if(e.which == 13) {
+        var child = $(this);
+        var element = child.closest('.dynamic-element');
+        setParameter(element, child.attr('de-parameter'), child.val(), false);
+        setAll(element, child.attr('de-parameters'), child.attr('de-refresh') != "false");
+      }
+    });
+
+    function setAll(element, params, refresh) {
+      if (params) {
+        params.split(',').forEach(function(p) {
+          var nameValue = p.split("=")
+          element.attr('de-' + nameValue[0], nameValue[1]);
+        });
+      }
+      if (refresh) {
+        dynamic.refreshElement(element);
+      }
+    }
+  });
+
+  function setParameter(element, param, value, refresh) {
+    element.attr("de-" + param, value);
+    if (refresh) {
+      dynamic.refreshElement(element);
+    }
+  }
+</script>
+</body>
+</html>

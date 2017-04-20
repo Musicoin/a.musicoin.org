@@ -1,0 +1,17 @@
+<div class="history-nav">
+    <div>
+        <%=navigation.description%>
+    </div>
+    <div>
+        Show
+        <a class="de-parameter-setter history-nav-link" de-parameter="length" de-value="10">10</a>
+        <a class="de-parameter-setter history-nav-link" de-parameter="length" de-value="25">25</a>
+        <a class="de-parameter-setter history-nav-link" de-parameter="length" de-value="50">50</a>
+    </div>
+    <div>
+        <a class="de-parameter-setter history-nav-link" de-parameter="start" de-value="0"><i class="fa fa-step-backward" aria-hidden="true"></i></a>
+        <a class="de-parameter-setter history-nav-link" de-parameter="start" de-value="<%=(navigation.start - navigation.length)%>"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+        <a class="de-parameter-setter history-nav-link" de-parameter="start" de-value="<%=(navigation.start + navigation.length)%>"><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+        <a class="de-parameter-reset history-nav-link">reset</a>
+    </div>
+</div>
