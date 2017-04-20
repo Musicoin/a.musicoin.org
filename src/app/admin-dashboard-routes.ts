@@ -54,7 +54,7 @@ export class DashboardRouter {
     });
 
     router.post('/elements/release-count', function(req, res) {
-      return Release.count().exec()
+      return Release.count({contractAddress: { $exists: true, $ne: null }, state: "published"}).exec()
         .then(count => {
           doRender(req, res, 'admin/count.ejs', {
             count: count,
@@ -63,8 +63,21 @@ export class DashboardRouter {
         })
     });
 
+    router.post('/elements/artist-count', function(req, res) {
+      return User.count({
+        profileAddress: { $exists: true, $ne: null },
+        mostRecentReleaseDate: { $exists: true, $ne: null }
+      }).exec()
+        .then(count => {
+          doRender(req, res, 'admin/count.ejs', {
+            count: count,
+            type: "Total Artists"
+          });
+        })
+    });
+
     router.post('/elements/user-count', function(req, res) {
-      return User.count().exec()
+      return User.count({profileAddress: { $exists: true, $ne: null }}).exec()
         .then(count => {
           doRender(req, res, 'admin/count.ejs', {
             count: count,
