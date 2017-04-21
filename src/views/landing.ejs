@@ -107,7 +107,11 @@
         }
 
         .social-login {
-            width: 100%;
+            width: 250px;
+        }
+
+        input.landing.confirmation-code {
+            min-width: 200px;
         }
 
         .text-social-login {
@@ -175,7 +179,6 @@
             .big-screen-mr30 { margin-right: 30px;}
         }
 
-
     </style>
 </head>
 <body>
@@ -200,7 +203,7 @@
     <div class="center-text mt40 flex-column">
         <div class="login-section">
             <!-- Row 1 -->
-            <div class="signin-instructions signin">
+            <div class="signin-instructions">
                 sign in or sign up using one of these services:
                 <% if (code) { %>
                 <div style="color:#888">Invite Code: <%=code%></div>
@@ -208,7 +211,29 @@
             </div>
 
             <!-- Row 2 -->
-            <div class="login-forms two-columns signin">
+            <div class="login-forms two-columns signin" style="<%= code ? "display: none" : ""%>">
+                <div class="flex-column big-screen-ml30">
+                    <a href="/auth/twitter" target=_top class="flex-row btn btn-info social-login login-button">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Twitter</div>
+                    </a>
+
+                    <a href="/auth/facebook" target=_top class="flex-row btn btn-primary social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Facebook</div>
+                    </a>
+
+                    <a href="/auth/google" target=_top class="flex-row btn btn-danger social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Google</div>
+                    </a>
+                </div>
+
+                <div class="small-screen-only mb40"></div>
+
                 <div class="email-login flex-column big-screen-mr30">
                     <form name="loginForm" action="/signin" target=_top method="post" onsubmit="return validateSigninFields()">
                         <div class="flex-row input-with-icon">
@@ -225,75 +250,88 @@
 
                         <div class="flex-row mt20" style="justify-content: space-between">
                             <button type="submit" class="btn btn-login login-button">SIGN IN</button>
-                            <a class="clickable text-login" onclick="$('.signin').hide(); $('.signup').show(); $('#screenname').focus()">Sign up with e-mail</a>
+                            <a class="clickable text-login" onclick="$('.signin').hide(); $('.signup').show();">Sign up</a>
                         </div>
                     </form>
-                </div>
-
-                <div class="small-screen-only mb40"></div>
-
-                <div class="flex-column big-screen-ml30">
-                    <a href="/auth/google" target=_top class="flex-row btn btn-danger social-login login-button">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign in with Google</div>
-                    </a>
-
-                    <a href="/auth/twitter" target=_top class="flex-row btn btn-info social-login login-button mt20">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign in with Twitter</div>
-                    </a>
-
-                    <a href="/auth/facebook" target=_top class="flex-row btn btn-primary social-login login-button mt20">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign in with Facebook</div>
-                    </a>
                 </div>
             </div>
 
 
             <!-- Row 3 -->
-            <div id="signupEmailForm" class="signup" style="display: none">
+            <div id="signupEmailForm" class="signup two-columns" style="<%= code ? "" : "display: none"%>">
                 <!-- LOGIN FORM -->
-                <form name="singupForm" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
-                    <div class="flex-row input-with-icon">
-                        <div class="divider" style="left: 33px"></div>
-                        <i class="fa fa-user shift-r10 text-light input-icon" aria-hidden="true"></i>
-                        <input id=screenname type="text" class="landing" name="name" placeholder="Choose a screen name">
+
+                <div class="flex-column big-screen-ml30" style="align-items: center">
+                    <div class="center-text text-large mb10">
+                        Sign up with social
                     </div>
 
-                    <div class="flex-row input-with-icon mt20">
-                        <div class="divider" style="left: 33px"></div>
-                        <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
-                        <input type="text" name="email" class="landing" placeholder="Email">
-                    </div>
+                    <a href="/auth/twitter" target=_top class="flex-row btn btn-info social-login login-button">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign up with Twitter</div>
+                    </a>
 
-                    <div class="flex-row input-with-icon mt20">
-                        <div class="divider" style="left: 33px"></div>
-                        <i class="fa fa-check-circle shift-r10 text-light input-icon" aria-hidden="true"></i>
-                        <input type="text" name="confirmation" class="landing" placeholder="Email confirmation code">
-                        <span id=confirm class="btn btn-confirm-code">Get a code</span>
-                    </div>
+                    <a href="/auth/facebook" target=_top class="flex-row btn btn-primary social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign up with Facebook</div>
+                    </a>
 
-                    <div class="flex-row input-with-icon mt20">
-                        <div class="divider" style="left: 33px"></div>
-                        <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
-                        <input type="password" name="password" class="landing" placeholder="Password">
-                    </div>
+                    <a href="/auth/google" target=_top class="flex-row btn btn-danger social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign up with Google</div>
+                    </a>
+                </div>
 
-                    <div class="flex-row input-with-icon mt20">
-                        <div class="divider" style="left: 33px"></div>
-                        <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
-                        <input type="password" name="password2" class="landing" placeholder="Repeat Password">
-                    </div>
+                <div class="small-screen-only mb40"></div>
 
-                    <div class="flex-row mt20" style="justify-content: space-between">
-                        <button type="submit" class="btn btn-login login-button">SIGN UP</button>
-                        <a class="clickable text-login" onclick="$('.signin').show(); $('.signup').hide()">Have an account? Sign in</a>
-                    </div>
-                </form>
+                <div>
+                    <form name="singupForm" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
+                        <div class="text-center text-large">
+                            or sign up with email
+                        </div>
+
+                        <div class="mb10"></div>
+
+                        <div class="flex-row input-with-icon">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-user shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input id=screenname type="text" class="landing" name="name" placeholder="Choose a screen name">
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="text" name="email" class="landing" placeholder="Email">
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-check-circle shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="text" name="confirmation" class="landing confirmation-code" placeholder="confirmation code">
+                            <span id=confirm class="btn btn-confirm-code">Get a code</span>
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="password" name="password" class="landing" placeholder="Password">
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="password" name="password2" class="landing" placeholder="Repeat Password">
+                        </div>
+
+                        <div class="flex-row mt20" style="justify-content: space-between">
+                            <button type="submit" class="btn btn-login login-button">SIGN UP</button>
+                            <a class="clickable text-login" onclick="$('.signin').show(); $('.signup').hide()">Have an account? Sign in</a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
