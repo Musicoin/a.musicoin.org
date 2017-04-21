@@ -118,7 +118,7 @@ export class DashboardRouter {
     router.post('/elements/users', function(req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
       const start = typeof req.body.start != "undefined" ? parseInt(req.body.start) : 0;
-      jsonAPI.getAllUsers(req.body.search, req.body.invitedby, start, length)
+      jsonAPI.getAllUsers(req.body.search, req.body.invitedby, req.body.verified, req.body.artist, start, length)
         .then(results => {
           const users = results.users;
           const addresses = users.map(u => u.profileAddress).filter(a => a);

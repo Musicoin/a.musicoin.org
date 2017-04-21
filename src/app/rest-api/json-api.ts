@@ -306,7 +306,7 @@ export class MusicoinOrgJsonAPI {
       .exec();
   }
 
-  getAllUsers(_search: string, invitedById: string, start: number, length: number): Promise<any> {
+  getAllUsers(_search: string, invitedById: string, verified: string, artist: string, start: number, length: number): Promise<any> {
     let filter = {};
     if (_search) {
       const search = _search.trim();
@@ -330,6 +330,13 @@ export class MusicoinOrgJsonAPI {
     if (invitedById) {
       filter["invite.invitedBy"] = invitedById;
     }
+    if (verified) {
+      filter["verified"] = verified == "true" ? {$eq: true} : {$ne: true};
+    }
+    if (artist) {
+      filter["mostRecentReleaseDate"] = artist == "true" ? { $exists: true, $ne: null } : {$not: { $exists: true, $ne: null }};
+    }
+
     const c = User.count(filter).exec()
     const u = User.find(filter).sort({"invite.invitedOn": 'desc'})
       .skip(start)

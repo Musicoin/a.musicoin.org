@@ -1187,7 +1187,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
-    jsonAPI.getAllUsers(req.query.search, null, start, length)
+    jsonAPI.getAllUsers(req.query.search, null, null, null, start, length)
       .then(results => {
         const users = results.users;
         doRender(req, res, 'admin-users.ejs', {
