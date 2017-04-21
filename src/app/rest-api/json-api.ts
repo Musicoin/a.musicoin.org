@@ -306,7 +306,7 @@ export class MusicoinOrgJsonAPI {
       .exec();
   }
 
-  getAllUsers(_search: string, start: number, length: number): Promise<any> {
+  getAllUsers(_search: string, invitedById: string, start: number, length: number): Promise<any> {
     let filter = {};
     if (_search) {
       const search = _search.trim();
@@ -326,6 +326,9 @@ export class MusicoinOrgJsonAPI {
         {"soundcloud.username": {"$regex": search, "$options": "i"}},
         {"local.email": {"$regex": search, "$options": "i"}},
       ]};
+    }
+    if (invitedById) {
+      filter["invite.invitedBy"] = invitedById;
     }
     const c = User.count().exec()
     const u = User.find(filter).sort({"invite.invitedOn": 'desc'})

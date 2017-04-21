@@ -90,6 +90,12 @@
                 <% } %>
                 <br>
                 <%=user.timeSinceJoining%>
+                <br>
+                <a class="de-parameter-setter clickable"
+                   de-parameters="invitedby=<%=user._id%>,search=,start=0"
+                   title="show users invited by this user">
+                    show invitees
+                </a>
             </td>
             <td class="text-center middle">
                 <%=user.balance%>
