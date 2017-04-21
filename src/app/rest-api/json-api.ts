@@ -330,7 +330,7 @@ export class MusicoinOrgJsonAPI {
     if (invitedById) {
       filter["invite.invitedBy"] = invitedById;
     }
-    const c = User.count().exec()
+    const c = User.count(filter).exec()
     const u = User.find(filter).sort({"invite.invitedOn": 'desc'})
       .skip(start)
       .limit(length)
@@ -398,7 +398,7 @@ export class MusicoinOrgJsonAPI {
         {"contractAddress": {"$regex": search, "$options": "i"}},
       ]};
     }
-    const c = Release.count().exec()
+    const c = Release.count(filter).exec();
     const rs = this._getReleaseEntriesByPage(filter, start, length, {"releaseDate": 'desc'});
     return Promise.join(c, rs, (count, releases) => {
       return {

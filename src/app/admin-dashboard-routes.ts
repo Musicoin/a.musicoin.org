@@ -124,11 +124,11 @@ export class DashboardRouter {
           const addresses = users.map(u => u.profileAddress).filter(a => a);
 
           const balanceMap = {};
-          musicoinApi.getAccountBalances(addresses)
-            .then(balances => {
+          const ivb = req.body.invitedby ? User.findById(req.body.invitedby).exec() : Promise.resolve(null);
+          Promise.join(musicoinApi.getAccountBalances(addresses), ivb, (balances, invitedBy) => {
               balances.forEach((balance, idx) => {
                 balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
-              })
+              });
 
               users.forEach(u => {
                 u.balance = balanceMap[u.profileAddress];
@@ -136,9 +136,10 @@ export class DashboardRouter {
               doRender(req, res, 'admin/users.ejs', {
                 search: req.body.search,
                 users: users,
+                invitedBy: invitedBy && invitedBy.draftProfile ? invitedBy.draftProfile.artistName : "",
                 totalUsers: results.count,
                 navigation: {
-                  description: `Showing ${start + 1} to ${start + users.length}`,
+                  description: `Showing ${start + 1} to ${start + users.length} of ${results.count}`,
                   start: start,
                   length: users.length
                 }
@@ -173,7 +174,7 @@ export class DashboardRouter {
                 releases: releases,
                 totalReleases: results.count,
                 navigation: {
-                  description: `Showing ${start + 1} to ${start + releases.length}`,
+                  description: `Showing ${start + 1} to ${start + releases.length} of ${results.count}`,
                   length: length,
                   start: start
                 }

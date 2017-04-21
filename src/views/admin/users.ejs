@@ -27,6 +27,7 @@
                     value="<%=search%>"></div>
     </h3>
     <%- include element-nav.ejs %>
+    <%= invitedBy ? "Showing users invited by " + invitedBy : "" %>
     <table class="table table-responsive white-well">
         <tr>
             <th class="text-center"></th>
