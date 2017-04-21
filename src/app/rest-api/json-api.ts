@@ -394,6 +394,7 @@ export class MusicoinOrgJsonAPI {
       const search = _search.trim();
       filter = {$or: [
         {"artistName": {"$regex": search, "$options": "i"}},
+        {"artistAddress": {"$regex": search, "$options": "i"}},
         {"title": {"$regex": search, "$options": "i"}},
         {"contractAddress": {"$regex": search, "$options": "i"}},
       ]};

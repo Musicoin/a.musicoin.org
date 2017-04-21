@@ -190,23 +190,27 @@
   $( document ).ready(function() {
     dynamic.refreshAll(true);
 
+    function findTarget(child) {
+      return child.attr('de-target') ? $("#" + child.attr('de-target')) : child.closest('.dynamic-element');
+    }
+
     $(document).on('click', '.de-parameter-setter', function() {
       var child = $(this);
-      var element = child.closest('.dynamic-element');
+      var element = findTarget(child);
       setParameter(element, child.attr('de-parameter'), child.attr('de-value'), false);
       setAll(element, child.attr('de-parameters'), child.attr('de-refresh') != "false");
     });
 
     $(document).on('click', '.de-parameter-reset', function() {
       var child = $(this);
-      var element = child.closest('.dynamic-element');
+      var element = findTarget(child);
       setAll(element, element.attr('de-reset'), true);
     });
 
     $(document).on('keypress', '.de-parameter-input', function(e) {
       if(e.which == 13) {
         var child = $(this);
-        var element = child.closest('.dynamic-element');
+        var element = findTarget(child);
         setParameter(element, child.attr('de-parameter'), child.val(), false);
         setAll(element, child.attr('de-parameters'), child.attr('de-refresh') != "false");
       }

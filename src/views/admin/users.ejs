@@ -161,7 +161,17 @@
                     <% } %>
                 </table>
             </td>
-            <td class="text-center middle"><%- user.mostRecentReleaseDate ? checked : unchecked %></td>
+            <td class="text-center middle">
+                <% if (user.mostRecentReleaseDate) { %>
+                yes<br>
+                <a class="de-parameter-setter clickable"
+                   de-target="de-releases"
+                   de-parameters="search=<%=user.profileAddress%>,start=0"
+                   title="show users invited by this user">
+                    (view in releases table)
+                </a>
+                <% } %>
+            </td>
             <td class="text-center middle"><%= user.invitesRemaining %></td>
             <td class="text-center middle"><%= user.freePlaysRemaining %></td>
         </tr>
