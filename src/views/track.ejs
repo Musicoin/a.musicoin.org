@@ -110,7 +110,12 @@
                             </a>
                             <% } %>
                             <div class="flex-column text-left">
-                                <a class="mb5" href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
+                                <div class="mb5">
+                                    <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a>
+                                    <% if (artist.verified) { %>
+                                    <i class="verified" title="verified user"></i>
+                                    <% } %>
+                                </div>
                                 <% if (!isArtist) { %>
                                 <div class="follow-toggle-button btn btn-default btn-xs mr10"
                                      user="<%=artist.id%>"

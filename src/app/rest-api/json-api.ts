@@ -778,6 +778,7 @@ export class MusicoinOrgJsonAPI {
         artist.genres = record.draftProfile.genres;
         artist.directTipCount = record.directTipCount || 0;
         artist.followerCount = record.followerCount || 0;
+        artist.verified = record.verified;
 
         // facebook and twitter are special, used for verification, so they have to come from auth objects
         artist.social["facebook"] = record.facebook.urlIsPublic ? record.facebook.url : null;

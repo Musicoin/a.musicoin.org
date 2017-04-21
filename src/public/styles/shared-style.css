@@ -456,11 +456,17 @@ a.morelink {
 }
 
 i.verified {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
     background-image: url("/images/verified.png");
     background-size: contain;
     background-position: center center;
     display: inline-block;
     vertical-align: middle;
+    background-repeat: no-repeat;
+}
+
+i.verified.large {
+    width: 32px;
+    height: 32px;
 }
