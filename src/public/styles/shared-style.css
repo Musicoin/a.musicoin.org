@@ -454,3 +454,13 @@ a.morelink {
     background: -o-linear-gradient(left, rgba(68,184,116,1) 0%, rgba(68,184,116,1) 17%, rgba(219,95,250,1) 79%, rgba(219,95,250,1) 100%);
     background: -ms-linear-gradient(left, rgba(68,184,116,1) 0%, rgba(68,184,116,1) 17%, rgba(219,95,250,1) 79%, rgba(219,95,250,1) 100%);
 }
+
+i.verified {
+    width: 18px;
+    height: 18px;
+    background-image: url("/images/verified.png");
+    background-size: contain;
+    background-position: center center;
+    display: inline-block;
+    vertical-align: middle;
+}

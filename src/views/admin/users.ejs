@@ -89,6 +89,9 @@
                 <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") { %>
                 (v<%= user.draftProfile.version %>)
                 <% } %>
+                <% if (user.verified) { %>
+                <i class="verified" title="verified user"></i>
+                <% } %>
                 <br>
                 <%=user.timeSinceJoining%>
                 <br>
