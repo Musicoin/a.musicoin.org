@@ -155,6 +155,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
+  app.use('/admin', isLoggedIn, adminOnly);
   app.use('/admin/*', isLoggedIn, adminOnly);
   app.use('/release-manager', isLoggedIn, releaseManager.getRouter());
   app.use('/admin/', dashboardManager.getRouter());
