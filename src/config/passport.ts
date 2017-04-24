@@ -73,8 +73,8 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
           ? {'google.email': req.body.gmailAddress}
           : req.body.twitterHandle
             ? {'twitter.username': req.body.twitterHandle.replace("@", "")}
-            : req.body.soundcloudUsername
-              ? {'soundcloud.username': req.body.soundcloudUsername}
+            : req.body.facebookUsername
+              ? {$or: [{'facebook.username': req.body.facebookUsername}, {'facebook.email': req.body.facebookUsername}, {'facebook.name': req.body.facebookUsername}]}
               : req.body.localEmail
                 ? {'local.email': req.body.localEmail}
                 : null;
