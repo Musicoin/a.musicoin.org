@@ -75,7 +75,9 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
             ? {'twitter.username': req.body.twitterHandle.replace("@", "")}
             : req.body.soundcloudUsername
               ? {'soundcloud.username': req.body.soundcloudUsername}
-              : null;
+              : req.body.localEmail
+                ? {'local.email': req.body.localEmail}
+                : null;
 
       if (!condition) {
         return done(null, false, req.flash('loginMessage', 'You must provide a profileAddress, a gmail address, or a twitter handle')); // create the loginMessage and save it to session as flashdata
