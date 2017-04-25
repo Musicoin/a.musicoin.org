@@ -156,7 +156,7 @@ function formatNumber(value) {
       var newTotal = format.formatNumber(newPlays + newTips);
       var earningsElement = element.find("[data-behavior~=total-earned]");
       var earningsContainer = element.find(".earnings-container");
-      if (newTotal !== earningsElement.text()) {
+      if (newTotal != earningsElement.text()) {
         earningsElement.text(newTotal);
         earningsContainer.effect("bounce");
       }
