@@ -1,0 +1,7 @@
+#: src/views/landing.ejs:207
+msgid "sign in or sign up using one of these services:"
+msgstr "Melde dich an oder nutze einen dieser Dienste:"
+
+#: src/overview/index.html:114
+msgid "Tell Me More"
+msgstr "Erzähl mir mehr"
