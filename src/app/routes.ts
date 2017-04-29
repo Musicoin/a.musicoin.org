@@ -1304,7 +1304,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         .then(record => {
           return mailSender.sendEmailConfirmationCode(req.body.email, code)
             .then(() => {
-              console.log(`Sent email confirmation code to ${req.body.email}: ${code}`)
+              console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
               res.json({
                 success: true,
                 email: req.body.email
