@@ -2181,38 +2181,46 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           if (release.markedAsAbuse) {
             return {success: false, skip: true, message: "Sorry, this track was marked as abuse"};
           }
-          const payFromProfile = req.user.freePlaysRemaining <= 0;
-          let p = payFromProfile
-            ? jsonAPI.getPendingPPPPayments(req.user._id)
-            : Promise.resolve([]);
-          const b = payFromProfile
-            ? musicoinApi.getAccountBalance(req.user.profileAddress)
-            : Promise.resolve(null);
 
-          const l = musicoinApi.getLicenseDetails(address);
-          return Promise.join(p, b, l, (pendingPayments, profileBalance, license) => {
-            if (payFromProfile) {
-              let totalCoinsPending = 0;
-              pendingPayments.forEach(r => totalCoinsPending += r.coins);
-              console.log("Pending ppp payments: " + totalCoinsPending);
-              if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
-                return {success: false, skip: false, message: "Sorry, it looks like you don't have enough coins."}
-            }
-            else {
-              const diff = new Date(req.user.nextFreePlayback).getTime() - Date.now();
-              if (diff > 0 && diff < config.freePlayDelay) {
-                return {success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play."}
-              }
-            }
-            const unit = req.user.freePlaysRemaining-1 == 1 ? "play" : "plays";
-            return {
-              success: true,
-              payFromProfile: payFromProfile,
-              message: payFromProfile
-                ? "This playback was paid for by you. Thanks!"
-                : `This playback was paid for by Musicoin.org, you have ${req.user.freePlaysRemaining-1} free ${unit} left`
-            };
-          })
+          return User.findOne({profileAddress: release.artistAddress})
+            .then(artist => {
+              const verifiedArtist = artist && artist.verified;
+              const hasNoFreePlays  = req.user.freePlaysRemaining <= 0;
+              const payFromProfile = hasNoFreePlays || !verifiedArtist;
+              let p = payFromProfile
+                ? jsonAPI.getPendingPPPPayments(req.user._id)
+                : Promise.resolve([]);
+              const b = payFromProfile
+                ? musicoinApi.getAccountBalance(req.user.profileAddress)
+                : Promise.resolve(null);
+
+              const l = musicoinApi.getLicenseDetails(address);
+              return Promise.join(p, b, l, (pendingPayments, profileBalance, license) => {
+                if (payFromProfile) {
+                  let totalCoinsPending = 0;
+                  pendingPayments.forEach(r => totalCoinsPending += r.coins);
+                  console.log("Pending ppp payments: " + totalCoinsPending);
+                  if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
+                    return {success: false, skip: false, message: "Sorry, it looks like you don't have enough coins."}
+                }
+                else {
+                  const diff = new Date(req.user.nextFreePlayback).getTime() - Date.now();
+                  if (diff > 0 && diff < config.freePlayDelay) {
+                    return {success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play."}
+                  }
+                }
+                const unit = req.user.freePlaysRemaining-1 == 1 ? "play" : "plays";
+                return {
+                  success: true,
+                  payFromProfile: payFromProfile,
+                  message: payFromProfile
+                    ? hasNoFreePlays
+                      ? "This playback was paid for by you. Thanks!"
+                      : "This playback was paid for by you, because this artist is not yet verified and is therefore not eligible for free plays."
+                    : `This playback was paid for by Musicoin.org, you have ${req.user.freePlaysRemaining-1} free ${unit} left`
+                };
+              })
+            })
         });
     }
   }
