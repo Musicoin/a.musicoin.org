@@ -227,7 +227,13 @@ export class MusicoinAPI {
       fs.writeFile(tmpFile, JSON.stringify(entry), 'utf8', function (err) {
         if (!err) {
           fs.rename(tmpFile, cacheFile, function (err) {
-            if (err) console.log("Failed to rename cached file: " + err);
+            if (err) {
+              // the file might have already been deleted, which is fine.
+              if (err.code !== 'ENOENT') {
+                // otherwise, log an error.
+                console.log("Failed to rename cached file: " + err);
+              }
+            }
           });
         }
       })
