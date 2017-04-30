@@ -32,7 +32,7 @@ const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D3
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
-const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k"];
+const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"];
 
 const MESSAGE_TYPES = {
   admin: "admin",
@@ -2607,7 +2607,7 @@ function checkInviteCode(req, res, next) {
 function preProcessUser(mediaProvider, jsonAPI) {
   return function preProcessUser(req, res, next) {
     if (req.session && bootSession.indexOf(req.session.id) >= 0 && req.originalUrl != "/logout") {
-      console.log("Redirecting banned session");
+      console.log(`Redirecting banned session: url=${req.originalUrl}`);
       return res.redirect("/logout");
     }
     const user = req.user;
