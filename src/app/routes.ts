@@ -13,6 +13,7 @@ import {MailSender} from "./mail-sender";
 import {PendingTxDaemon} from './tx-daemon';
 import moment = require("moment");
 import Feed = require('feed');
+import * as request from 'request';
 import {ReleaseManagerRouter} from "./release-manager-routes";
 import {DashboardRouter} from "./admin-dashboard-routes";
 const sendSeekable = require('send-seekable');
@@ -1390,8 +1391,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       const cc = EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation});
       const eu = User.findOne({"local.email": req.body.email});
+      const cp = checkCaptcha(req);
 
-      return Promise.join(cc, eu, function(confirmation, existingUser) {
+      return Promise.join(cc, eu, cp, function(confirmation, existingUser, captchaOk) {
+        if (!captchaOk) {
+          req.flash('loginMessage', "The reCAPTCHA validation failed.");
+          return res.redirect(errRedirect);
+        }
+
         if (existingUser) {
           req.flash('loginMessage', "An account already exists with this email address");
           return res.redirect(errRedirect);
@@ -1406,6 +1413,41 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         }
       });
     }
+  }
+
+  function checkCaptcha(req) {
+    const userResponse = req.body['g-recaptcha-response'];
+    const url = config.captcha.url;
+    return new Promise(function (resolve, reject) {
+      var verificationUrl = `${url}?secret=${config.captcha.secret}&response=${userResponse}&remoteip=${req.ip}`;
+      console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
+      const options = {
+        method: 'post',
+        url: verificationUrl
+      };
+      request(options, function (err, res, body) {
+        if (err) {
+          console.log(err);
+          return reject(err);
+        }
+        else if (res.statusCode != 200) {
+          console.log(`reCAPTCHA request failed with status code ${res.statusCode}, url: ${url}`);
+          return reject(new Error(`Request failed with status code ${res.statusCode}, url: ${url}`));
+        }
+        resolve(body);
+      });
+    }.bind(this))
+      .then(captchaResponse => {
+        return JSON.parse(captchaResponse);
+      })
+      .then(captchaResponse => {
+        console.log("reCAPTCHA response from google: " + JSON.stringify(captchaResponse));
+        return captchaResponse && captchaResponse.success;
+      })
+      .catch(err => {
+        console.log("Failed to process captcha: " + err);
+        return false;
+      });
   }
 
   app.post('/connect/email', validateLoginEmail('/connect/email'), passport.authenticate('local', {

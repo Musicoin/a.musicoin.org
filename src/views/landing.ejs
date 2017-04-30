@@ -180,6 +180,7 @@
         }
 
     </style>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 <%- include partials/header.ejs %>
@@ -325,6 +326,8 @@
                             <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
                             <input type="password" name="password2" class="landing" placeholder="Repeat Password">
                         </div>
+
+                        <div class="g-recaptcha mt20" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU"></div>
 
                         <div class="flex-row mt20" style="justify-content: space-between">
                             <button type="submit" class="btn btn-login login-button">SIGN UP</button>
