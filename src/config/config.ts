@@ -151,6 +151,10 @@ function getStructuredConfig(keyValueConfig) {
         'callbackURL' : `${keyValueConfig.authCallbackEndpoint}/auth/facebook/callback`
       }
     },
+    captcha: {
+      secret: keyValueConfig.captchaSecret,
+      url: "https://www.google.com/recaptcha/api/siteverify"
+    },
     certificate: {
       approveDomains: keyValueConfig.domains.split(',').map(s => s.trim()).filter(s => s)
     }
@@ -216,6 +220,8 @@ function getDefaultKeyValueConfig() {
         ipfsAddEndpoint: env.IPFS_ADD_ENDPOINT || 'http://localhost:5001',
 
         sessionSecret: env.SESSION_SECRET || '329nsdvkjns9081234)(*)(*#(',
+
+        captchaSecret: env.CAPTCHA_SECRET || 'captchaSecret',
 
         authCallbackEndpoint: env.AUTH_CALLBACK_ENDPOINT || "http://localhost:3000",
         googleClientId: env.GOOGLE_CLIENT_ID || "yourClientId",
