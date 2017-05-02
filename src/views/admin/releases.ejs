@@ -32,7 +32,11 @@
             <td class="text-center"><a target=release href="/track/<%=release.contractAddress%>"><%= release.title %></a></td>
             <td class="text-center"><%= release.timeSince %></td>
             <td class="text-center"><%= release.balance %></td>
-            <td class="text-center"><a target=artist href="/artist/<%=release.artistAddress%>"><%= release.artistName %></a></td>
+            <td class="text-center">
+                <% if (release.artist) { %>
+                <a target=artist href="/artist/<%=release.artist.profileAddress%>"><%= release.artist.draftProfile.artistName%></a>
+                <% } %>
+            </td>
             <td class="text-center"><%= release.directPlayCount || 0 %>&nbsp;/&nbsp;<%= release.directTipCount || 0 %></td>
             <td class="text-center"><%= !!release.markedAsAbuse %></td>
         </tr>

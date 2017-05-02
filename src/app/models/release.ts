@@ -11,6 +11,11 @@ module.exports = mongoose.model('Release', mongoose.Schema({
     default: 'pending',
     index: true
   },
+  artist: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true
+  },
   artistName: String,
   artistAddress: String,
   description: String,

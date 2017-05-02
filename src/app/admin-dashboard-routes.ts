@@ -53,6 +53,39 @@ export class DashboardRouter {
         });
     });
 
+    router.post('/releases/link', function(req, res) {
+      return Release.find().exec()
+        .then(releases => {
+          return Promise.all(releases.map(r => {
+            return User.findOne({profileAddress: r.artistAddress}).exec()
+              .then(artist => {
+                if (!artist) {
+                  console.log(`Could not find an artist for release: ${r._id}, ${r.title}`);
+                  return Promise.resolve(null);
+                }
+                const name = artist.draftProfile && artist.draftProfile.artistName
+                  ? artist.draftProfile.artistName
+                  : artist.profileAddress;
+                console.log(`Linking ${r.title} to ${name}`);
+                r.artist = artist._id;
+                return r.save();
+              })
+          }))
+        })
+        .then(() => {
+          return {
+            success: true
+          }
+        })
+        .catch(err => {
+          console.log("Failed to link releases: " + err);
+          return {
+            success: true,
+            reason: err
+          }
+        })
+    });
+
     router.post('/elements/release-count', function(req, res) {
       return Release.count({contractAddress: { $exists: true, $ne: null }, state: "published"}).exec()
         .then(count => {

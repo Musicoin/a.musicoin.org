@@ -183,6 +183,7 @@ export class ReleaseManagerRouter {
               imageUrl: track.imageUrl,
               artistName: req.user.draftProfile.artistName,
               artistAddress: req.user.profileAddress,
+              artist: req.user._id,
               description: track.description,
               genres: track.genreArray,
               regions: track.regionArray,

@@ -757,7 +757,8 @@ export class MusicoinOrgJsonAPI {
     let query = Release.find(condition)
       .limit(limit)
       .skip(start)
-      .sort(sort);
+      .sort(sort)
+      .populate("artist");
     return query.exec();
   }
 
