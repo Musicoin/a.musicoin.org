@@ -54,7 +54,7 @@ export class DashboardRouter {
     });
 
     router.post('/releases/link', function(req, res) {
-      return Release.find().exec()
+      return Release.find({artist: {$exists: false}}).limit(10).exec()
         .then(releases => {
           return Promise.all(releases.map(r => {
             return User.findOne({profileAddress: r.artistAddress}).exec()

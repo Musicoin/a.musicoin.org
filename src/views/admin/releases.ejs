@@ -34,7 +34,7 @@
             <td class="text-center"><%= release.balance %></td>
             <td class="text-center">
                 <% if (release.artist) { %>
-                <a target=artist href="/artist/<%=release.artist.profileAddress%>"><%= release.artist.draftProfile.artistName%></a>
+                <a target=artist href="/artist/<%=release.artist.profileAddress%>"><%= release.artist.draftProfile.artistName%> (<%= release.artistName %>)</a>
                 <% } else { %>
                 <a target=artist href="/artist/<%=release.artistAddress%>"><%= release.artistName %></a> *
                 <% } %>
