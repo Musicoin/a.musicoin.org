@@ -183,29 +183,10 @@
                 </div>
             </div>
         </div>
-
-        <div class="col-sm-12">
-            <div class="well white-well small-shadow-no-hover">
-                <h3>Tools</h3>
-                <div class="btn btn-default" onclick="linkReleases()" title="Converts releases in the DB to have a more efficient link to the artist record.  One time conversion.">Link Releases</div>
-            </div>
-        </div>
-
     </div>
 </div>
 <%- include ../partials/connect-with-us.ejs %>
 <script>
-  function linkReleases() {
-    $.post('/admin/releases/link', {}, function (data) {
-      if (data.success) {
-        new Message("Releases linked!", "success", 3000);
-      }
-      else {
-        new Message("Failed: " + data.reason, 'error', 5000)
-      }
-    })
-  }
-
   $( document ).ready(function() {
     dynamic.refreshAll(true);
 
