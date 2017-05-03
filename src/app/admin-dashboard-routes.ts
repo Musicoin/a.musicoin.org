@@ -27,7 +27,7 @@ export class DashboardRouter {
 
     router.post('/elements/playback-history', function(req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 20;
-      const start = typeof req.body.start != "undefined" ? parseInt(req.body.start) : 0;
+      const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       var options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
 
       jsonAPI.getPlaybackHistory(req.body.user, req.body.release, start, length)
@@ -150,7 +150,7 @@ export class DashboardRouter {
 
     router.post('/elements/users', function(req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
-      const start = typeof req.body.start != "undefined" ? parseInt(req.body.start) : 0;
+      const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       jsonAPI.getAllUsers(req.body.search, req.body.invitedby, req.body.verified, req.body.artist, start, length)
         .then(results => {
           const users = results.users;
@@ -183,7 +183,7 @@ export class DashboardRouter {
 
     router.post('/elements/releases', function(req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
-      const start = typeof req.body.start != "undefined" ? parseInt(req.body.start) : 0;
+      const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       jsonAPI.getAllReleases(req.body.search, start, length)
         .then(results => {
           const releases = results.releases;

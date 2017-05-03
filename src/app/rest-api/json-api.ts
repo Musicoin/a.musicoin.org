@@ -170,6 +170,11 @@ export class MusicoinOrgJsonAPI {
           return {};
         }
 
+        if (this._onlyEmailAuth(sender)) {
+          console.log("Not sending reward because the sender does not have a social account linked: " + sender.profileAddress + ", email: " + sender.local.email);
+          return {};
+        }
+
         console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}'`);
         const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, this.config.rewards.forAcceptingInvite);
         const sendRewardToInviter = this.musicoinAPI.sendReward(sender.profileAddress, this.config.rewards.forInviteeJoining);
@@ -1640,5 +1645,14 @@ export class MusicoinOrgJsonAPI {
     return `${rounded} ${unit} ago`;
   }
 
+  private _onlyEmailAuth(user) {
+    return !this._hasAuthMethod(user, "facebook")
+      && !this._hasAuthMethod(user, "twitter")
+      && !this._hasAuthMethod(user, "google")
+      && this._hasAuthMethod(user, "local");
+  }
 
+  private _hasAuthMethod(user: any, method: string): boolean {
+    return user[method] && user[method].id;
+  }
 }
