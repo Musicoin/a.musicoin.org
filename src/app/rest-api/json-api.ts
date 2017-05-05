@@ -676,6 +676,18 @@ export class MusicoinOrgJsonAPI {
     return this._getLicensesForEntries(filter, limit);
   }
 
+  getRandomReleases(limit: number, genre?: string): Promise<any> {
+    const filter = genre ? {state: 'published', genres: genre, markedAsAbuse: {$ne: true}} : {state: 'published', markedAsAbuse: {$ne: true}};
+    if (!limit || limit < 1 || limit > 10) {
+      limit = 1;
+    }
+    let query = Release.find(filter).aggregate({$sample: {size: limit}});
+
+    return query.exec()
+      .then(items => items.map(item => this._convertDbRecordToLicense(item)))
+      .then(promises => Promise.all(promises));
+  }
+
   getAllContracts() {
     const filter = {state: 'published'};
     return this._getLicensesForEntries(filter, 99999999);
@@ -1656,3 +1668,4 @@ export class MusicoinOrgJsonAPI {
     return user[method] && user[method].id;
   }
 }
+

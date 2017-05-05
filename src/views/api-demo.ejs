@@ -165,6 +165,12 @@ function loadAPIs() {
             params: ["limit=10"]
         },
         {
+            description: "Gets a list of random tracks",
+            path: "/json-api/tracks/random",
+            subpath: "",
+            params: ["limit=1"]
+        },
+        {
             description: "Gets a list of recently played tracks",
             path: "/json-api/tracks/recent",
             subpath: "",
