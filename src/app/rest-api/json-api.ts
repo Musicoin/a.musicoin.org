@@ -175,9 +175,14 @@ export class MusicoinOrgJsonAPI {
           return {};
         }
 
+        // rewards for invites sent by verified users are different
         const rewards = sender.verified ? this.config.rewards.verifiedSender : this.config.rewards.unverifiedSender;
+
+        // no reward sent to invitee if they don't link a social (too many scammers)
+        const inviteeReward = this._onlyEmailAuth(p) ? 0 : rewards.forAcceptingInvite;
+
         console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}', rewards=${JSON.stringify(rewards)}`);
-        const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, rewards.forAcceptingInvite);
+        const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, inviteeReward);
         const sendRewardToInviter = this.musicoinAPI.sendReward(sender.profileAddress, rewards.forInviteeJoining);
         return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
           return {
