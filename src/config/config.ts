@@ -112,10 +112,18 @@ function getStructuredConfig(keyValueConfig) {
       clientSecret: keyValueConfig.musicoinApiClientSecret
     },
     rewards: {
-      forSendingInvite: 0,
-      forAcceptingInvite: 10,
-      forInviteeJoining: 10,
-      forInviteeReleasing: 0,
+      verifiedSender: {
+        forSendingInvite: 0,
+        forAcceptingInvite: 10,
+        forInviteeJoining: 10,
+        forInviteeReleasing: 0,
+      },
+      unverifiedSender: {
+        forSendingInvite: 0,
+        forAcceptingInvite: 2,
+        forInviteeJoining: 2,
+        forInviteeReleasing: 0,
+      }
     },
     trackingAccounts: [
       {name: "Miner-1 (Dev Fund)", address: "0x13559ecbdbf8c32d6a86c5a277fd1efbc8409b5b"},

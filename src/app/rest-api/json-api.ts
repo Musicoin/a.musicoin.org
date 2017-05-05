@@ -170,14 +170,15 @@ export class MusicoinOrgJsonAPI {
           return {};
         }
 
-        if (this._onlyEmailAuth(sender)) {
-          console.log("Not sending reward because the sender does not have a social account linked: " + sender.profileAddress + ", email: " + sender.local.email);
+        if (!sender.verified && this._onlyEmailAuth(sender)) {
+          console.log("Not sending reward because the sender does not have a social account linked and is not verified: " + sender.profileAddress + ", email: " + sender.local.email);
           return {};
         }
 
-        console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}'`);
-        const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, this.config.rewards.forAcceptingInvite);
-        const sendRewardToInviter = this.musicoinAPI.sendReward(sender.profileAddress, this.config.rewards.forInviteeJoining);
+        const rewards = sender.verified ? this.config.rewards.verifiedSender : this.config.rewards.unverifiedSender;
+        console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}', rewards=${JSON.stringify(rewards)}`);
+        const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, rewards.forAcceptingInvite);
+        const sendRewardToInviter = this.musicoinAPI.sendReward(sender.profileAddress, rewards.forInviteeJoining);
         return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
           return {
             inviteeRewardTx: tx1,
