@@ -678,9 +678,9 @@ export class MusicoinOrgJsonAPI {
 
   getRandomReleases(limit: number, genre?: string): Promise<any> {
     const filter = genre ? {state: 'published', genres: genre, markedAsAbuse: {$ne: true}} : {state: 'published', markedAsAbuse: {$ne: true}};
-	if (!limit || limit < 1 || limit > 10) {
-	  limit = 1;
-	}
+    if (!limit || limit < 1 || limit > 10) {
+      limit = 1;
+    }
     let query = Release.find(filter).aggregate({$sample: {size: limit}});
 
     return query.exec()
