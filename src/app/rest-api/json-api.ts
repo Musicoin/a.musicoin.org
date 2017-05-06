@@ -343,6 +343,8 @@ export class MusicoinOrgJsonAPI {
     }
     if (verified) {
       filter["verified"] = verified == "true" ? {$eq: true} : {$ne: true};
+      filter["accountLocked"] = {$ne: true};
+      filter["blocked"] = {$ne: true};
     }
     if (artist) {
       filter["mostRecentReleaseDate"] = artist == "true" ? { $exists: true, $ne: null } : {$not: { $exists: true, $ne: null }};

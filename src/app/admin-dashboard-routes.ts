@@ -97,14 +97,24 @@ export class DashboardRouter {
     });
 
     router.post('/elements/artist-count', function(req, res) {
-      return User.count({
-        profileAddress: { $exists: true, $ne: null },
-        mostRecentReleaseDate: { $exists: true, $ne: null }
-      }).exec()
-        .then(count => {
+
+      let a = User.count({
+        profileAddress: {$exists: true, $ne: null},
+        mostRecentReleaseDate: {$exists: true, $ne: null}
+      });
+
+      let v = User.count({
+        profileAddress: {$exists: true, $ne: null},
+        mostRecentReleaseDate: {$exists: true, $ne: null},
+        verified: true
+      });
+
+      return Promise.join(a, v, (artistCount, verifiedCount) => {
           doRender(req, res, 'admin/count.ejs', {
-            count: count,
-            type: "Total Artists"
+            count: artistCount,
+            type: "Total Artists",
+            subcount: verifiedCount,
+            subtype: "verified"
           });
         })
     });

@@ -13,4 +13,9 @@ function formatNumber(value) {
 <div class="flex-column" style="align-items: center">
     <h1><%= formatNumber(count) %></h1>
     <div><%= type %></div>
+    <% if (typeof subcount != "undefined") { %>
+    <div><%= formatNumber(subcount) %> <%= subtype %></div>
+    <% } else { %>
+    <div>&nbsp;</div>
+    <% } %>
 </div>
