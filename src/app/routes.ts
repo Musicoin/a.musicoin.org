@@ -1047,6 +1047,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (!req.body.id) return res.json({success: false, reason: "No id"});
     User.findById(req.body.id).exec()
       .then(user => {
+        console.log(`User verification status changed by ${req.user.draftProfile.artistName}, artist=${user.draftProfile.artistName}, newStatus=${req.body.verified == "true"}`);
         user.verified = req.body.verified == "true";
         return user.save();
       })
