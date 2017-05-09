@@ -14,6 +14,7 @@ interface MusicoinApiConfig {
   sendReward: string,
   publishProfile: string,
   releaseLicense: string,
+  updateLicense: string,
   getKey: string,
   getProfile: string,
   getLicenseDetails: string,
@@ -77,6 +78,23 @@ export class MusicoinAPI {
 
   getLicenseDetails(licenseAddress: string) {
     return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60*1000);
+  }
+
+  updateTrack(
+    contractAddress: string,
+    title: string,
+    imageUrl: string,
+    metadataUrl: string,
+    contributors: any[]
+    ): Promise<string> {
+    console.log(`updating track ${title} @ ${contractAddress}`);
+    return this.postJson(this.apiConfig.updateLicense, {
+      contractAddress: contractAddress,
+      title: title,
+      imageUrl: imageUrl,
+      metadataUrl: metadataUrl,
+      contributors: contributors
+    }).then(body => body.txs);
   }
 
   releaseTrack(profileAddress: string,

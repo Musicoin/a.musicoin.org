@@ -653,6 +653,33 @@ export class MusicoinOrgJsonAPI {
       .then(promises => Promise.all(promises))
   }
 
+  findArtists(limit: number, _search?: string) {
+    const search = this._sanitize(_search);
+
+    let query = User.find({profileAddress: { $exists: true, $ne: null }})
+      .where({mostRecentReleaseDate: { $exists: true, $ne: null }});
+
+    if (search) {
+      query = query.where({
+        $or: [
+          {"draftProfile.artistName": {"$regex": search, "$options": "i"}},
+          {"google.email": {"$regex": search, "$options": "i"}},
+          {"facebook.email": {"$regex": search, "$options": "i"}},
+          {"local.email": {"$regex": search, "$options": "i"}},
+        ]
+      })
+    }
+
+    return query.sort({joinDate: 'desc'}).limit(limit).exec()
+      .then(records => records.map(r => {
+        return {
+            id: r.profileAddress,
+            label: `${r.draftProfile.artistName} (${r.profileAddress})`,
+            value: r.profileAddress
+        }
+      }));
+  }
+
   getNewArtists(limit: number, _search?: string, _genre?: string) {
     const search = this._sanitize(_search);
     const genre = this._sanitize(_genre);
@@ -770,6 +797,10 @@ export class MusicoinOrgJsonAPI {
 
   getTransactionHistory(address: string, length: number, start: number): Promise<any> {
     return this.musicoinAPI.getTransactionHistory(address, length, start);
+  }
+
+  getTransactionStatus(tx: string): Promise<any> {
+    return this.musicoinAPI.getTransactionStatus(tx);
   }
 
   _getLicensesForEntriesByPage(condition: any, start: number, limit: number, sort: any): Promise<any> {
@@ -1597,6 +1628,7 @@ export class MusicoinOrgJsonAPI {
         license.releaseDate = record.releaseDate;
         license.tx = record.tx;
         license.markedAsAbuse = record.markedAsAbuse;
+        license.pendingUpdateTxs = record.pendingUpdateTxs;
         return license;
       })
   }

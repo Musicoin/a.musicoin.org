@@ -69,7 +69,7 @@ export class ReleaseManagerRouter {
             royalties: resolveRoyalties,
             contributors: resolvedContributors,
             errors: []
-          }
+          };
           license.errors = doValidation(license);
           return license;
         })
@@ -85,6 +85,102 @@ export class ReleaseManagerRouter {
       return (user.twitter && user.twitter.id) || (user.facebook && user.facebook.id);
     }
 
+    router.post('/edit', function(req, res) {
+      jsonAPI.getLicense(req.body.contractAddress)
+        .then(license => {
+          if (!license) throw new Error(`Could not find license to update: ${req.body.contractAddress}`);
+          if (req.user.profileAddress != license.artistProfileAddress)
+            throw new Error(`User does not have rights to edit this track: ${req.body.contractAddress}, actualArtist=${license.artistProfileAddress}, requestor=${req.user.profileAddress}`);
+          addressResolver.resolveAddresses("", license.contributors)
+            .then(resolvedContributors => {
+              license.contributors = resolvedContributors;
+              doRender(req, res, 'release-manager/update.ejs', {
+                license: license,
+                metadata: {
+                  languages: MetadataLists.languages,
+                  moods: MetadataLists.moods,
+                  genres: MetadataLists.genres,
+                  regions: MetadataLists.regions
+                }
+              });
+            });
+
+        })
+    });
+
+
+    router.post('/update', function(req: any, res) {
+      if (req.user && req.user.blocked) {
+        return res.redirect("/profile?releaseError=true");
+      }
+
+      const form = new Formidable.IncomingForm();
+      form.parse(req, (err, fields: any, files: any) => {
+        console.log(`Fields: ${JSON.stringify(fields)}`);
+        console.log(`Files: ${JSON.stringify(files)}`);
+
+        jsonAPI.getLicense(fields.contractAddress)
+          .then(license => {
+            if (!license) throw new Error(`Could not find license to update: ${fields.contractAddress}`);
+            if (req.user.profileAddress != license.artistProfileAddress)
+              throw new Error(`User does not have rights to edit this track: ${fields.contractAddress}, actualArtist=${license.artistProfileAddress}, requestor=${req.user.profileAddress}`);
+
+            const track = buildTrackFromForm(req, fields, files);
+            if (!fields.title) return res.json({success: false, reason: "You must provide a title"});
+
+            const selfAddress = req.user.profileAddress;
+            const i = track.image && track.image.size > 0
+              ? FormUtils.resizeImage(track.image.path, maxImageWidth)
+                .then((newPath) => mediaProvider.upload(newPath))
+              : license.imageUrl;
+
+            const sessionID = req.session ? req.session.id : "";
+            console.log(`Updating Track: session=${sessionID} ${JSON.stringify(track, null, 2)}`);
+
+            const m = mediaProvider.uploadText(JSON.stringify(track.metadata));
+            const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
+            return Promise.join(i, m, c, function (imageUrl, metadataUrl, contributors) {
+              track.imageUrl = imageUrl;
+              return musicoinApi.updateTrack(
+                fields.contractAddress,
+                track.title,
+                imageUrl,
+                metadataUrl,
+                contributors).then(txs => {
+                  console.log("Updating track: " + JSON.stringify(txs));
+                  return Release.findOne({contractAddress: fields.contractAddress})
+                    .then(releaseRecord => {
+                      releaseRecord.title = track.title;
+                      releaseRecord.description = track.description;
+                      releaseRecord.genres = track.genreArray;
+                      releaseRecord.regions = track.regionArray;
+                      releaseRecord.languages= track.languageArray;
+                      releaseRecord.moods = track.moodArray;
+                      releaseRecord.imageUrl = track.imageUrl;
+                      releaseRecord.pendingUpdateTxs = txs;
+                      return releaseRecord.save();
+                    })
+                })
+            })
+              .then(function (releaseRecord) {
+                console.log(`Updated track in database!`);
+                return res.json({success: true, pendingUpdateTxs: releaseRecord.pendingUpdateTxs});
+              })
+              .catch(function (err) {
+                console.log(`Saving releases to database failed! ${err}`);
+                return res.json({success: false, reason: "An internal error occurred.  Please try again later."});
+              });
+          })
+      });
+    });
+
+    router.get('/resolve/:address', function (req: any, res) {
+      addressResolver.resolveAddress("", {address: req.params.address})
+        .then(resolved => {
+          res.json(resolved);
+        })
+    });
+
     router.post('/release', function (req: any, res) {
       if (req.user && req.user.blocked) {
         return res.redirect("/profile?releaseError=true");
@@ -95,48 +191,16 @@ export class ReleaseManagerRouter {
         console.log(`Fields: ${JSON.stringify(fields)}`);
         console.log(`Files: ${JSON.stringify(files)}`);
 
-        const selfAddress = req.user.profileAddress;
         if (!isVerified(req.user) && !hasSocialLinks(req.user)) return res.json({success: false, reason: "You must link a twitter or facebook account to release music"});
-        if (!fields.title) return res.json({success: false, reason: "You must profile a title"});
+        if (!fields.title) return res.json({success: false, reason: "You must provide a title"});
         if (!files.audio || files.audio.size == 0) return res.json({success: false, reason: "You must provide an audio file"});
         if (fields.rights != "confirmed") return res.json({success: false, reason: "You must confirm that you have rights to release this work."});
         if (config.termsOfUseVersion != req.user.termsOfUseVersion && fields.terms != "confirmed") return res.json({success: false, reason: "You must agree to the Musicoin website's Terms of Use before you can release music."});
 
-        const recipients = FormUtils.extractRecipients(fields);
+        const track = buildTrackFromForm(req, fields, files);
+
+        const selfAddress = req.user.profileAddress;
         const key = crypto.randomBytes(16).toString('base64'); // 128-bits
-
-        const genres = fields.genres || "";
-        const languages = fields.languages || "";
-        const regions = fields.regions;
-        const regionArray = regions
-          ? regions.split(",").map(s => s.trim()).filter(s => s)
-          : req.user.draftProfile.regions
-            ? req.user.draftProfile.regions
-            : [];
-        const moods = fields.moods || "";
-
-        const track = {
-          title: fields.title,
-          audio: files.audio,
-          image: files.image,
-
-          genres: genres,
-          languages: languages,
-          regions: regions,
-          moods: moods,
-
-          genreArray: genres.split(",").map(s => s.trim()).filter(s => s),
-          languageArray: languages.split(",").map(s => s.trim()).filter(s => s),
-          regionArray: regionArray,
-          moodArray: moods.split(",").map(s => s.trim()).filter(s => s),
-
-          contributors: recipients.contributors,
-          royalties: recipients.royalties,
-          description: fields.description,
-          imageUrl: "",
-          metadata: {}
-        };
-
         const a = mediaProvider.upload(track.audio.path, () => key); // encrypted
         const profileHasDefaultImage = !req.user.draftProfile.ipfsImageUrl
           || req.user.draftProfile.ipfsImageUrl == defaultProfileIPFSImage
@@ -147,13 +211,6 @@ export class ReleaseManagerRouter {
           : profileHasDefaultImage
             ? defaultTrackImage
             : req.user.draftProfile.ipfsImageUrl;
-
-        track.metadata = {
-          genres: track.genreArray,
-          regions: track.regionArray,
-          languages: track.languageArray,
-          moods: track.moodArray
-        };
 
         const sessionID = req.session ? req.session.id : "";
         console.log(`Releasing Track: session=${sessionID} ${JSON.stringify(track, null, 2)}`);
@@ -217,6 +274,49 @@ export class ReleaseManagerRouter {
           });
       });
     });
+
+    function buildTrackFromForm(req: any, fields: any, files: any) {
+      const recipients = FormUtils.extractRecipients(fields);
+      const genres = fields.genres || "";
+      const languages = fields.languages || "";
+      const regions = fields.regions;
+      const regionArray = regions
+        ? regions.split(",").map(s => s.trim()).filter(s => s)
+        : req.user.draftProfile.regions
+          ? req.user.draftProfile.regions
+          : [];
+      const moods = fields.moods || "";
+
+      const track = {
+        title: fields.title,
+        audio: files.audio,
+        image: files.image,
+
+        genres: genres,
+        languages: languages,
+        regions: regions,
+        moods: moods,
+
+        genreArray: genres.split(",").map(s => s.trim()).filter(s => s),
+        languageArray: languages.split(",").map(s => s.trim()).filter(s => s),
+        regionArray: regionArray,
+        moodArray: moods.split(",").map(s => s.trim()).filter(s => s),
+
+        contributors: recipients.contributors,
+        royalties: recipients.royalties,
+        description: fields.description,
+        imageUrl: "",
+        metadata: {}
+      };
+
+      track.metadata = {
+        genres: track.genreArray,
+        regions: track.regionArray,
+        languages: track.languageArray,
+        moods: track.moodArray
+      };
+      return track;
+    }
 
     function doValidation(license): string[] {
       const errors = [];

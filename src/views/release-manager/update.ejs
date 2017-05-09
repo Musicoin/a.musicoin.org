@@ -1,0 +1,417 @@
+<style>
+    .track-editor .track-image {
+        background-size: cover;
+        min-width: 256px;
+        min-height: 256px;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 4px;
+    }
+
+    .track-editor textarea.form-control,
+    .track-editor input.form-control {
+        background-color: rgba(0, 0, 0, 0.02);
+        color: black;
+        border: none;
+        height: auto;
+    }
+
+    .track-editor th,
+    .track-editor label,
+    .track-editor input,
+    .track-editor h2 {
+        color: black;
+        text-transform: none;
+    }
+
+    .address {
+        font-weight: normal;
+        color: #aaa
+    }
+
+    .track-editor .button-bar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: baseline;
+    }
+
+    .track-editor .button-bar > div {
+        margin-right: 10px;
+    }
+
+</style>
+<div class="track-editor flex-row" style="justify-content: center">
+    <form id="releaseUpdateForm">
+        <input type="hidden" name="contractAddress" value="<%= license.address %>"/>
+        <div class="flex-column" style="max-width: 700px;">
+            <!-- track details -->
+            <div class="flex-column">
+                <div class="flex-row" style="justify-content: center">
+                    <div class="wizard-card-segment">
+                        <h2><%= license.title %></h2>
+                        <div class="flex-row" style="align-items: flex-start">
+                            <div class="flex-column">
+                                <div id="imageDisplay"
+                                     onclick="image.click()"
+                                     style="position: relative; background-image: url('<%= license.image %>')"
+                                     class="track-image clickable">
+                                    <div style="position: absolute; top:5px; right:5px" title="Select an image...">
+                                        <i class="fa fa-pencil text-large btn btn-default" aria-hidden="true"></i>
+                                    </div>
+                                    <div id="imageDisplayText" class="center-text" style="width: 256px; height: 256px;">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="profile-release-item">
+                                <input class="no-submit form-control" type="text" name="title" placeholder="Title"
+                                       value="<%= license.title %>">
+                                <input style="display: none"
+                                       onchange="updateImageDisplay('imageDisplay', this.id); $('#imageDisplayText').hide()"
+                                       id="image" type="file" name="image">
+
+                                <div class="mt10 subtle-text">
+                                    <strong class="mr10">Metadata</strong> <span class="subtle-text">You can enter multiple values separated by a comma</span>
+                                </div>
+
+                                <input name="genres" class="form-control no-submit genre-list"
+                                       placeholder="Genres (pick at least 1)"
+                                       value="<%= license.genres ? license.genres.join(", ") : "" %>">
+                                <input name="languages" class="form-control no-submit language-list"
+                                       placeholder="Language (or Instrumental)"
+                                       value="<%= license.languages ? license.languages.join(", ") : "" %>">
+
+                                <div class="mt10 subtle-text">
+                                    <strong class="mr10">Description</strong>
+                                </div>
+                                <textarea name="description"
+                                          class="form-control"
+                                          style="height: 80px"
+                                          placeholder="Add a description to help users connect with your music."><%= license.description %></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-column">
+                <div class="flex-row">
+                    <div class="flex-column wizard-card-segment">
+                        <h2>Payment Distribution</h2>
+                        <div>
+                            <table class="table table-condensed table-responsive contributors">
+                                <tr>
+                                    <th class="col-md-2"></th>
+                                    <th class="col-md-6">recipient <a href="/faq#WhatIsARecipient" target="help">(?)</a>
+                                    </th>
+                                    <th class="col-md-2">shares <a href="/faq#WhatAreShares" target="help">(?)</a></th>
+                                    <th class="col-md-1"></th>
+                                </tr>
+                                <tr class="row-template contributor" style="display: none">
+                                    <td><label class="user-alternate-address"></label></td>
+                                    <td><input name="address"
+                                               class="no-submit form-control user-address"
+                                               placeholder="email, wallet, or license address"></td>
+                                    <td><input name="value"
+                                               class="no-submit form-control text-right"
+                                               placeholder=""></td>
+                                    <td align="middle" style="vertical-align: middle">
+                                        <div class="text-center">
+                                            <span class="btn btn-default fa fa-trash-o text-large delete-contributor"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <% for (var c = 0; c < license.contributors.length; c++) {
+                                    var contributor = license.contributors[c];
+                                    var icon = contributor.type
+                                            ? contributor.type == "artist" ? "fa-user" : "fa-music"
+                                            : "";
+                                %>
+                                <tr class="contributor">
+                                    <td><label><%= contributor.alternateAddress %> (<%= contributor.type %>)</label>
+                                    </td>
+                                    <td><label class="form-control" style="width: 100%">
+                                            <span class="subtle-text address"><%= contributor.address %></span>
+                                        </label>
+                                        <input style="display: none; color: inherit"
+                                               name="recipient<%= c %>.address"
+                                               class="no-submit form-control "
+                                               value="<%= contributor.address %>"></td>
+                                    <td><input name="recipient<%= c %>.value"
+                                               class="no-submit form-control text-right"
+                                               value="<%= contributor.shares %>"
+                                               placeholder=""></td>
+                                    <td align="middle" style="vertical-align: middle">
+                                        <div class="text-center">
+                                            <span class="btn btn-default fa fa-trash-o text-large delete-contributor"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </table>
+                            <div class="text-right">
+                                <div class="btn btn-sm btn-link" onclick="addRow()">
+                                    <span class="glyphicon glyphicon-plus" value="Add"></span>
+                                    add another entry
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-bar text-right">
+                <div class="btn btn-success btn-sm mt20 mr10" id="btnUpdate" onclick='$("#releaseUpdateForm").submit()'>
+                    Update
+                </div>
+            </div>
+
+            <div id=progressBar class="progress m10" style="display: none">
+                <div class="progress-bar progress-bar-striped active" role="progressbar"
+                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; height: 50px">
+                    <span id="progressBarText">updates in progress...</span>
+                </div>
+            </div>
+        </div>
+
+    </form>
+    <script>
+
+      var attemptingRelease = false;
+      (function ($) {
+        // prevent dynamically created input elements from submitting the form
+        $('.contributors').on('keydown', '.no-submit', function (e) {
+          if (e.keyCode == 13) {
+            return false;
+          }
+        });
+      })(jQuery);
+
+      $(document).ready(function () {
+        $('#releaseUpdateForm').submit(function (event) {
+          event.preventDefault();
+
+          console.log("Attempting release: " + attemptingRelease);
+          if (attemptingRelease) return false;
+          attemptingRelease = true;
+          //grab all form data
+          var formData = new FormData($(this)[0]);
+
+          $("#btnUpdate").html("<span class='fa fa-spinner fa-spin'></span> Updating...");
+          $("#progressBar").show();
+          $("#progressBarText").text("Submitting updates...");
+          $.ajax({
+            url: '/release-manager/update',
+            type: 'POST',
+            data: formData,
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+              if (result.success) {
+                $("#progressBarText").text("Updates in progress...");
+                monitorTransactions(result.pendingUpdateTxs);
+              }
+              else {
+                new Message(result.reason, 'warning', 5000);
+                $("#progressBar").hide();
+                $("#btnUpdate").html("Update");
+                attemptingRelease = false;
+              }
+            },
+            error: function () {
+              attemptingRelease = false;
+              $("#progressBar").hide();
+              $("#btnUpdate").html("Update");
+              alert("error in ajax form submission");
+            }
+          });
+
+          return false;
+        });
+
+
+        $.fn.exists = function () {
+          return this.length !== 0;
+        }
+
+        var cardsContainer = $(".wizard-cards");
+        var navBar = $(".wizard-nav");
+        cardsContainer.find('.wizard-card').each(function () {
+          var name = $(this).attr('name');
+          var selected = $(this).attr('selected') ? "active" : "";
+          navBar.append("<li class='nav-item " + selected + "' target='" + name + "'><a href=#>" + $(this).attr('name') + "</a></li>");
+        })
+
+        $(document).on('click', '.nav-item', function () {
+          var current = cardsContainer.find("div[selected]");
+          current.removeAttr("selected")
+          var target = cardsContainer.find("[name='" + $(this).attr('target') + "']")
+          target.attr("selected", "true");
+          maybeLoadTarget(target);
+        });
+
+        $(document).on('click', '.delete-contributor', function () {
+          $(this).closest('.contributor').remove();
+        })
+
+        function updateUserName(target) {
+          var value = target.val();
+          let recipientName = target.closest('.contributor').find('.user-alternate-address');
+          recipientName.text("");
+          if (value) {
+            console.log("recipeint: " + value);
+            $.get("/release-manager/resolve/" + value, function (data) {
+              if (data.invalid || !data.alternateAddress || !data.type) {
+                recipientName.text("");
+              }
+              else {
+                recipientName.text(data.alternateAddress + " (" + data.type + ")");
+              }
+            })
+          }
+        }
+
+        $(document).on('change', 'input.user-address', function () {
+          updateUserName($(this));
+        })
+
+        function maybeLoadTarget(target) {
+          navBar.find(".nav-item").removeClass('active');
+          navBar.find("[target=" + target.attr('name') + "]").addClass('active')
+          if (target.attr('dynamic-element')) {
+            var context = {};
+            var element = target.find("#" + target.attr('dynamic-element'));
+            if (element.attr('context-provider')) {
+              context = eval(element.attr('context-provider'));
+            }
+            dynamic.refreshElement(element, context);
+          }
+        }
+
+        var availableGenres = ["<%- metadata.genres.join('","') %>"];
+        var availableLanguages = ["<%- metadata.languages.join('","') %>"];
+
+        autocomplete.linkAutoComplete(".genre-list", availableGenres, 0);
+        autocomplete.linkAutoComplete(".language-list", availableLanguages, 2);
+
+
+        var options = {
+          source: "/json-api/artists/find",
+          minLength: 2,
+          select: function (event, ui) {
+            updateUserName($(event.target));
+          }
+        };
+        var selector = 'input.user-address';
+        $(document).on('keydown.autocomplete', selector, function () {
+          $(this).autocomplete(options);
+        });
+      });
+
+      var counter = "<%= license.contributors.length %>";
+      function addRow() {
+        console.log("Adding row " + counter);
+        var newItem = $(".row-template").clone();
+        newItem.removeClass("row-template");
+        newItem.css("display", "");
+        newItem.find("input[name=address]").attr("name", "recipient" + counter + ".address");
+        newItem.find("input[name=value]").attr("name", "recipient" + counter + ".value");
+        newItem.appendTo(".contributors");
+        counter++;
+      }
+
+      function readURL(targetId, input) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+
+          reader.onload = function (e) {
+            $('#' + targetId).css('background-image', "url('" + e.target.result + "')");
+          }
+
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      function updateImageDisplay(targetId, inputId) {
+        readURL(targetId, $('#' + inputId)[0]);
+        $('#' + targetId).css('border', 'none');
+      }
+
+      function countPendingTxs(pendingUpdateTxs) {
+        var count = 0;
+        for (var key in pendingUpdateTxs) {
+          if (!pendingUpdateTxs.hasOwnProperty(key)) continue;
+          if (!pendingUpdateTxs[key]) continue;
+          count++;
+        }
+        return count;
+      }
+
+      var monitorTask = null;
+      function monitorTransactions(pendingUpdateTxs) {
+        if (monitorTask) window.clearInterval(monitorTask);
+        var successes = 0;
+        var failures = 0;
+        var allDone = false;
+
+        // checks to see if all of the pending txs have completed cancels interval and
+        var checkForCompletion = function (p, interval) {
+          var count = countPendingTxs(pendingUpdateTxs);
+
+          console.log(count + " txs remaining");
+          if (!allDone && count === 0) {
+            allDone = true;
+            $("#btnUpdate").html("Update");
+            $("#progressBar").hide();
+            window.clearInterval(interval);
+            attemptingRelease = false;
+            interval = null;
+          }
+        }
+
+        if (countPendingTxs(pendingUpdateTxs) == 0)
+          return checkForCompletion(pendingUpdateTxs, null); // nothing to do;
+
+        monitorTask = window.setInterval(function () {
+          var count = 0;
+          for (var key in pendingUpdateTxs) {
+            if (!pendingUpdateTxs.hasOwnProperty(key)) continue;
+            if (!pendingUpdateTxs[key]) continue;
+            count++;
+            var tx = pendingUpdateTxs[key];
+            var currentKey = key;
+            console.log("Checking for status of " + key + " tx: " + tx);
+            $.get('/json-api/tx/status/' + tx, {}, function (data) {
+              console.log(currentKey + " status=" + data.status);
+              if (data.status != "pending") {
+                pendingUpdateTxs[currentKey] = null;
+                if (data.status == "complete") {
+                  console.log(tx + " success!");
+                  successes++;
+                }
+                else {
+                  console.log(tx + ": failed: " + JSON.stringify(data));
+                  failures++;
+                }
+                checkForCompletion(pendingUpdateTxs, monitorTask);
+              }
+            });
+          }
+          checkForCompletion(pendingUpdateTxs, monitorTask);
+        }, 10000)
+      }
+
+      function getLicensePreviewFields() {
+        var output = {
+          title: $("input[name=title]").val()
+        }
+        $("input[name^=recipient]").each(function () {
+          output[$(this).attr('name')] = $(this).val();
+        })
+        return output;
+      }
+    </script>
+</div>

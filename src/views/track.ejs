@@ -55,6 +55,10 @@
         .language-tag, a.language-tag:hover     {   background-color: #619dc2;  }
         .region-tag, a.region-tag:hover         {   background-color: #619dc2;  }
         .mood-tag, a.mood-tag:hover             {   background-color: #619dc2;  }
+
+        .show-on-edit {
+            /*visibility: hidden;*/
+        }
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -266,7 +270,11 @@
                                         %>
                                         <tr>
                                             <td><a href="<%=url%>"><%=name%></a></td>
-                                            <td><%=contributor.percentage%>%</td>
+                                            <td><%=contributor.percentage%>%
+                                                <% if (isArtist) { %>
+                                                <span class="fa fa-trash-o ml5 show-on-edit"></span>
+                                                <% } %>
+                                            </td>
                                         </tr>
                                         <% } %>
                                     </table>

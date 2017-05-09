@@ -14,6 +14,7 @@ export class MusicoinRestAPI {
     jsonRouter.get('/artist/:address', (req) => jsonAPI.getArtist(req.params.address, true, false));
     jsonRouter.get('/artists/featured', (req) => jsonAPI.getFeaturedArtists(this._getLimit(req)));
     jsonRouter.get('/artists/new', (req) => jsonAPI.getNewArtists(this._getLimit(req)));
+    jsonRouter.get('/artists/find', (req) => jsonAPI.findArtists(this._getLimit(req), req.query.term));
 
     jsonRouter.post('/artists/earnings', (req) => jsonAPI.getArtistEarnings(req.body.artistid));
 
@@ -32,7 +33,8 @@ export class MusicoinRestAPI {
         req.query.search);
     });
 
-    jsonRouter.get('/tx/history/:address', req => jsonAPI.getTransactionHistory(req.params.address, this._getLimit(req), this._getStart(req)))
+    jsonRouter.get('/tx/history/:address', req => jsonAPI.getTransactionHistory(req.params.address, this._getLimit(req), this._getStart(req)));
+    jsonRouter.get('/tx/status/:tx', req => jsonAPI.getTransactionStatus(req.params.tx));
   }
 
   getRouter() {

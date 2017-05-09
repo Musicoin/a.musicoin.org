@@ -1,4 +1,8 @@
 var modalUtils = {
+  showDefaultModal: function(url, params) {
+    this.showModal("thread-modal", url, params);
+  },
+
   showModal: function(modalId, url, params) {
     var modal = $("#" + modalId);
     modal.find(".modal-content").load(url, params, function() {
