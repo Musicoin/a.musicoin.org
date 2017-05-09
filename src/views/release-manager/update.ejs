@@ -39,6 +39,15 @@
         margin-right: 10px;
     }
 
+    .track-metadata-fields {
+        display: flex;
+        flex-direction: column;
+        min-height: 100px;
+        justify-content: space-around;
+        padding-left: 10px;
+        width: 100%;
+    }
+
 </style>
 <div class="track-editor flex-row" style="justify-content: center">
     <form id="releaseUpdateForm">
@@ -63,7 +72,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="profile-release-item">
+                            <div class="track-metadata-fields">
                                 <input class="no-submit form-control" type="text" name="title" placeholder="Title"
                                        value="<%= license.title %>">
                                 <input style="display: none"

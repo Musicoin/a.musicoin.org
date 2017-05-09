@@ -270,15 +270,15 @@
                                         %>
                                         <tr>
                                             <td><a href="<%=url%>"><%=name%></a></td>
-                                            <td><%=contributor.percentage%>%
-                                                <% if (isArtist) { %>
-                                                <span class="fa fa-trash-o ml5 show-on-edit"></span>
-                                                <% } %>
-                                            </td>
+                                            <td><%=contributor.percentage%>%</td>
                                         </tr>
                                         <% } %>
                                     </table>
 
+                                    <% if (isArtist) { %>
+                                    <div class="subtle-text">Only visible to you, the artist</div>
+                                    <div class="btn btn-warning" onclick='editRelease("<%=license.address%>")'><span class="fa fa-pencil"></span> Edit</div>
+                                    <% } %>
                                 </div>
                             </td>
                         </tr>
@@ -313,13 +313,6 @@
                     <%}%>
                 </div>
                 <div class="flex-column mb20 <%= isArtist ? "private-view" : ""%>">
-                    <% if (isArtist) { %>
-                    <div class="track-description-header mb10">Only you (the artist) can edit this area.  If you want, say something about the track.</div>
-                    <textarea id=trackDescription class="mb10" placeholder="Say something about '<%=license.title%>'"><%=description%></textarea>
-                    <div class="button-bar">
-                        <div id=btnSave class="btn btn-warning" onclick=saveTrackDescription()>Save</div>
-                    </div>
-                    <%} else if (description) {%>
                     <p></p>
                     <blockquote class="track-description-header">
                         <%=description%>
@@ -327,7 +320,6 @@
                             - <%=license.artistName%>
                         </div>
                     </blockquote>
-                    <%}%>
                 </div>
             </div>
         </div>
@@ -444,6 +436,10 @@
       }
     })
   });
+
+  function editRelease(address) {
+    modalUtils.showDefaultModal("/release-manager/edit", {contractAddress: address});
+  }
 
   function saveTrackDescription() {
     $("#btnSave").text("Saving...");
