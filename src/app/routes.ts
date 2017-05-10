@@ -333,8 +333,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.feed.topPlayLastWeek, "week").catchReturn([]);
     const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.feed.topTippedLastWeek, "week").catchReturn([]);
     const h  = jsonAPI.getHero();
+    const r = jsonAPI.getUserRecentPlays(req.user._id, 0, config.ui.feed.myPlays);
 
-    Promise.join(m, h, tpw, ttw, function (messages, hero, topPlayed, topTipped) {
+    Promise.join(m, h, tpw, ttw, r, function (messages, hero, topPlayed, topTipped, recentlyPlayed) {
       if (messages.length > 0) {
         console.log("mini: " + req.user.preferences.minimizeHeroInFeed);
         doRender(req, res, "feed.ejs", {
@@ -342,6 +343,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           messages: messages,
           topPlayedLastWeek: topPlayed,
           topTippedLastWeek: topTipped,
+          recentlyPlayed: recentlyPlayed,
           hero: hero,
           minimizeHeroInFeed: !!req.user.preferences.minimizeHeroInFeed,
           ui: config.ui.feed
@@ -477,6 +479,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.render('partials/track-list.ejs', {releases: releases});
       });
   });
+
+  app.post('/elements/user-recently-played', function (req, res) {
+    const limit = req.body.limit && req.body.limit > 0 ? parseInt(req.body.limit) : 10;
+    const start = req.body.start && req.body.start > 0 ? parseInt(req.body.start) : 0;
+    jsonAPI.getUserRecentPlays(req.user._id, start, limit)
+      .then(function (recentlyPlayed) {
+        res.render('partials/release-events.ejs', {releases: recentlyPlayed, elementId: req.body.elementid});
+      });
+  });
+
 
   function handleMessagePost(req) {
     if (req.isAuthenticated() && req.user.profileAddress) {

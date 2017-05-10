@@ -85,6 +85,14 @@ if (typeof dynamic == "undefined") {
       })
     },
 
+    appendToElement: function(element, containerId, extraParams) {
+      var params = dynamic.getParams(element, extraParams);
+      console.log("Refreshing element with " + JSON.stringify(params));
+      $("<div>").load( params.url, params, function() {
+        element.append($(this).find("#" +containerId).html());
+      })
+    },
+
     getParams: function(element, extraParams) {
       var params = extraParams || {};
       var prefix = dynamic.getPrefix();

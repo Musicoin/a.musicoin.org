@@ -278,6 +278,18 @@ export class MusicoinOrgJsonAPI {
       });
   }
 
+  getUserRecentPlays(userId: string, start: number, length: number): Promise<any> {
+    return UserPlayback.find({user: userId})
+      .sort({"playbackDate": 'desc'})
+      .skip(start)
+      .limit(length)
+      .populate("release")
+      .exec()
+      .then(results => {
+        return Promise.all(results.map(r => this._convertDbRecordToLicenseLite(r.release)));
+      })
+  }
+
   getPlaybackHistory(userId: string, releaseId: string, start: number, length: number): Promise<any> {
     let conditions = [];
     if (userId) conditions.push({user: userId});

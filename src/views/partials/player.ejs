@@ -212,6 +212,11 @@
         transition: none;
     }
 
+    .button-highlight {
+        color: #e4aa17;
+        text-shadow: 0 0 3px #fcc017;
+    }
+
 </style>
 <div id="player-section" class="fixed-footer player show-on-play">
     <div class="player-foreground no_selection">
@@ -256,8 +261,8 @@
                style="padding: 5px"
                aria-hidden="true"></i>
         </div>
-        <div class="clickable title-link text-large mr10">
-            <i class="fa fa-comments btn-plain btn-sm"
+        <div class="clickable text-large mr10">
+            <i class="fa fa-random btn-plain btn-sm toggle-shuffle"
                style="padding: 5px"
                aria-hidden="true"></i>
         </div>
@@ -282,6 +287,7 @@
     progressForeground: null,
 
     currentPlaylist: [],
+    shuffle: false,
 
     playItemById: function (licenseAddress, callback) {
       if (licenseAddress == audioPlayer.nowPlayingLicenseAddress) {
@@ -344,8 +350,15 @@
 
     playNextItem: function() {
       if (audioPlayer.currentPlaylist.length > 0) {
-        audioPlayer.playItemById(audioPlayer.currentPlaylist.shift());
+        audioPlayer.playItemById(audioPlayer.getAndRemoveNextItem());
       }
+    },
+
+    getAndRemoveNextItem: function() {
+      var array = audioPlayer.currentPlaylist;
+      return audioPlayer.shuffle
+        ? array.splice(Math.floor(Math.random()*array.length), 1)
+        : array.shift();
     },
 
     playItem: function (e, url, title, artist, img, playCount, tipCount, artistProfileAddress, licenseAddress) {
@@ -503,6 +516,11 @@
         $(".title-link").on('click', function() {
           if (audioPlayer.nowPlayingLicenseAddress)
             parent.document.getElementById("mainFrame").src = "/track/" + audioPlayer.nowPlayingLicenseAddress;
+        })
+
+        $(".toggle-shuffle").on('click', function() {
+          audioPlayer.shuffle = !audioPlayer.shuffle;
+          $(this).toggleClass('button-highlight', audioPlayer.shuffle);
         })
       }
       return audioPlayer.audioElement;

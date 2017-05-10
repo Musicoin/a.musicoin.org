@@ -55,7 +55,8 @@ function getStructuredConfig(keyValueConfig) {
         newReleases: 9,
         topPlayLastWeek: 10,
         topTippedLastWeek: 10,
-        newArtists: 12
+        newArtists: 12,
+        myPlays: 3
       },
       home: {
         newReleases: 6,

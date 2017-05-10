@@ -78,6 +78,37 @@
         <div class="pad10 col2" style="background-color: rgba(0,0,0,0.02)">
             <%- include('partials/mini-hero.ejs', { display: minimizeHeroInFeed }) %>
 
+            <% if (typeof recentlyPlayed != "undefined" && recentlyPlayed.length > 0) { %>
+            <div class="mb10">
+                <div class="event-header text-center subtle-text">
+                    my plays
+                    <div>
+                        <div class="btn btn-success party-button play-list pad5 play-all-button"
+                             target="recentlyPlayed"
+                             title="Play recently played tracks">
+                            <i class="fa fa-play text-large mr5 text-default" aria-hidden="true"></i> PLAY ALL
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="dynamic-element"
+                     id="recentlyPlayed"
+                     de-limit="<%=ui.myPlays%>"
+                     de-start=0
+                     de-url="/elements/user-recently-played"
+                     de-elementId="recentlyPlayedItems">
+                    <%- include('partials/release-events.ejs', {releases: recentlyPlayed, elementId: "recentlyPlayedItems"}) %>
+                </div>
+                <div class="center-text">
+                    <div class="btn btn-link"
+                         onclick="$('#recentlyPlayed').attr('de-start', parseInt($('#recentlyPlayed').attr('de-start'))+parseInt($('#recentlyPlayed').attr('de-limit'))); dynamic.appendToElement($('#recentlyPlayed'), 'recentlyPlayedItems'); ">
+                        show more <span class="fa fa-chevron-down"></span>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+
             <% if (typeof topTippedLastWeek != "undefined") { %>
                 <%- include('partials/top-release-chart.ejs', {releases: topTippedLastWeek, title: "top tipped", elementEndpoint: "top-tipped-period"}) %>
             <% } %>
