@@ -652,7 +652,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   //app.get('/projects', (req, res) => doRender(req, res, 'projects.ejs', {}));
   //app.get('/team', (req, res) => doRender(req, res, 'team.ejs', {}));
-  
+
+  app.get('/demo/play-queue', (req, res) => doRender(req, res, 'play-queue-page.ejs', {}));
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   // app.get('/landing',  (req, res) => doRender(req, res, 'landing.ejs', {}));
