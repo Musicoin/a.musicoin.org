@@ -185,6 +185,10 @@
     color: #eee
 }
 
+.play-queue .track-artist {
+    color: #777
+}
+
 .play-queue .play-queue-table li.active .fa-pause {
     color: #ea504e;
 }
