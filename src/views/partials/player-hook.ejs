@@ -38,7 +38,12 @@
 
     $(document).on('click', '.audio-track', function() {
       var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.queueTrack($(this).attr("licenseAddress"));
+      _audioPlayer.queueTrack($(this).attr("licenseAddress"), true);
+    });
+
+    $(document).on('click', '.queue-audio-track', function() {
+      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
+      _audioPlayer.queueTrack($(this).attr("licenseAddress"), false);
     });
 
     $(document).on('click', '.audio-pause', function() {
@@ -56,11 +61,6 @@
       else {
         _audioPlayer.jumpToIndex(idx);
       }
-    });
-
-    $(document).on('click', '.queue-audio-track', function() {
-      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.queueTrack($(this).attr("licenseAddress"));
     });
   });
 </script>

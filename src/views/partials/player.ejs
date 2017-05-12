@@ -357,12 +357,13 @@
       })
     },
 
-    queueTrack: function(licenseAddress) {
-      audioPlayer.currentPlaylist.push(licenseAddress);
+    queueTrack: function(licenseAddress, startIfPaused) {
+      var newLength = audioPlayer.currentPlaylist.push(licenseAddress);
       audioPlayer._playlistChanged();
 
-      if (!audioPlayer.nowPlayingLicenseAddress) {
-        audioPlayer.playNextItem();
+      // auto play this new track if the player is paused
+      if (!audioPlayer.isPlaying() && (startIfPaused || newLength === 1)) {
+        audioPlayer.jumpToIndex(newLength-1);
       }
     },
 
