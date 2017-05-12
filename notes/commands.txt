@@ -78,3 +78,6 @@ mongodump -u musicoin -p XXXXX -d musicoin-org -o $DEST
 
 # reCAPTCHA
 https://www.google.com/recaptcha/admin#site/337598103
+
+# debugging p2p issues
+grep p2p background.log  | grep failed | sed s/.*failed// | sed s/.*:// | sort | uniq -c | sort -r -n

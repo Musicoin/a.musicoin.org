@@ -36,12 +36,29 @@
 
     $(document).on('click', '.audio-track', function() {
       var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.playList([$(this).attr("licenseAddress")]);
+      _audioPlayer.queueTrack($(this).attr("licenseAddress"));
+    });
+
+    $(document).on('click', '.audio-pause', function() {
+      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
+      _audioPlayer.pause();
+    });
+
+    $(document).on('click', '.playlist-item', function() {
+      console.log("clicked on playlist-item");
+      var idx = parseInt($(this).attr('idx'));
+      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
+      if (idx === _audioPlayer.currentIdx) {
+        _audioPlayer.togglePlayState();
+      }
+      else {
+        _audioPlayer.jumpToIndex(idx);
+      }
     });
 
     $(document).on('click', '.queue-audio-track', function() {
       var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.queueTrack([$(this).attr("licenseAddress")]);
+      _audioPlayer.queueTrack($(this).attr("licenseAddress"));
     });
   });
 </script>

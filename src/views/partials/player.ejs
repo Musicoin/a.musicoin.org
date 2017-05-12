@@ -217,6 +217,22 @@
         text-shadow: 0 0 3px #fcc017;
     }
 
+    .queue-size {
+        border-radius: 12px;
+        border: 2px solid white;
+        background-color: #e4aa17;
+        color: white;
+        font-weight: bold;
+        font-size: 0.5em;
+        min-width: 25px;
+        text-align: center;
+    }
+
+    .play-queue-open {
+        background-color: white;
+        color: #333;
+    }
+
 </style>
 <div id="player-section" class="fixed-footer player show-on-play">
     <div class="player-foreground no_selection">
@@ -237,7 +253,7 @@
              style="width: 55px; height: 55px; padding-right: 5px; margin-right: 4px"
              class="player-control">
 
-        <div id=player-progress class="player-progress mr5">
+        <div id=player-progress class="player-progress mr5 big-screen-only">
             <div class="progress-bar progress-background"></div>
             <div id="player-progress-div" class="progress-bar progress-foreground">
             </div>
@@ -262,9 +278,22 @@
                aria-hidden="true"></i>
         </div>
         <div class="clickable text-large mr10">
-            <i class="fa fa-random btn-plain btn-sm toggle-shuffle"
+            <i id=shuffle class="fa fa-random btn-plain btn-sm toggle-shuffle"
                style="padding: 5px"
                aria-hidden="true"></i>
+        </div>
+
+        <div title="Show or hide the playlist"
+                class="clickable text-large mr10"
+                style="position: relative">
+            <i id="play-queue-trigger"
+               class="fa fa-list-ul btn-plain btn-sm play-queue-trigger"
+               style="padding: 5px"
+               aria-hidden="true"></i>
+            <i id="play-queue-count"
+               class="queue-size"
+               aria-hidden="true"
+               style="position: absolute;bottom: -9px;right: -13px;">0</i>
         </div>
     </div>
     <div id="player-background" class="player-background" style="background-image: url('')"></div>
@@ -287,7 +316,9 @@
     progressForeground: null,
 
     currentPlaylist: [],
+    currentIdx: -1,
     shuffle: false,
+    playlistListener: null,
 
     playItemById: function (licenseAddress, callback) {
       if (licenseAddress == audioPlayer.nowPlayingLicenseAddress) {
@@ -328,37 +359,119 @@
 
     queueTrack: function(licenseAddress) {
       audioPlayer.currentPlaylist.push(licenseAddress);
+      audioPlayer._playlistChanged();
+
       if (!audioPlayer.nowPlayingLicenseAddress) {
         audioPlayer.playNextItem();
       }
-      $("#player-next-button").toggleClass("disabled", audioPlayer.currentPlaylist.length == 0);
+    },
+
+    removePlaylistItem: function(idx) {
+      if (idx >= 0 && idx < audioPlayer.currentPlaylist.length) {
+        var wasCurrent = idx === audioPlayer.currentIdx;
+        audioPlayer.currentPlaylist.splice(idx, 1);
+        audioPlayer._playlistChanged();
+        if (wasCurrent) {
+          if (audioPlayer.currentPlaylist.length > 0) {
+            audioPlayer.jumpToIndex(Math.min(audioPlayer.currentPlaylist.length-1, idx));
+          }
+        }
+      }
+    },
+
+    clearPlaylist: function() {
+      if (audioPlayer.currentPlaylist.length > audioPlayer.currentIdx) {
+        audioPlayer.currentPlaylist = [audioPlayer.currentPlaylist[audioPlayer.currentIdx]];
+        audioPlayer.currentIdx = 0;
+        audioPlayer._playlistChanged();
+        audioPlayer._selectedItemChanged();
+      }
     },
 
     playList: function(licenseIds) {
       if (licenseIds) {
         audioPlayer.currentPlaylist = licenseIds.slice();
-        audioPlayer.playNextItem();
+        audioPlayer._playlistChanged();
+        audioPlayer.jumpToIndex(0);
       }
     },
 
     skipTrack: function() {
-      if (audioPlayer.currentPlaylist.length > 0) {
+      if (audioPlayer.currentPlaylist.length > audioPlayer.currentIdx) {
         audioPlayer.nowPlayingLicenseAddress = null; // force skip
         audioPlayer.playNextItem();
       }
     },
 
-    playNextItem: function() {
-      if (audioPlayer.currentPlaylist.length > 0) {
-        audioPlayer.playItemById(audioPlayer.getAndRemoveNextItem());
+    jumpToIndex: function(idx) {
+      if (idx >= 0 && idx < audioPlayer.currentPlaylist.length) {
+        audioPlayer.currentIdx = idx;
+        audioPlayer.playItemById(audioPlayer.currentPlaylist[audioPlayer.currentIdx]);
+        audioPlayer._selectedItemChanged();
       }
     },
 
-    getAndRemoveNextItem: function() {
-      var array = audioPlayer.currentPlaylist;
-      return audioPlayer.shuffle
-        ? array.splice(Math.floor(Math.random()*array.length), 1)
-        : array.shift();
+    toggleShuffle: function() {
+      audioPlayer.shuffle = !audioPlayer.shuffle;
+      $("#shuffle").toggleClass('button-highlight', audioPlayer.shuffle);
+      audioPlayer._shuffleStateChanged();
+    },
+
+    playNextItem: function() {
+      var nextIdx = audioPlayer.shuffle
+        ? Math.floor(Math.random() * audioPlayer.currentPlaylist.length)
+        : audioPlayer.currentIdx + 1;
+
+      audioPlayer.jumpToIndex(nextIdx);
+    },
+
+    pause: function() {
+      audioPlayer.audioElement.pause();
+    },
+
+    setPlayQueueClosed: function() {
+      $("#play-queue-trigger").toggleClass("play-queue-open", false);
+    },
+
+    _selectedItemChanged: function() {
+      if (audioPlayer.playlistListener && audioPlayer.playlistListener.selectedItemChanged)
+        audioPlayer.playlistListener.selectedItemChanged(audioPlayer.currentIdx);
+      audioPlayer._updateNextButton();
+    },
+
+    _playlistChanged: function() {
+      if (audioPlayer.playlistListener && audioPlayer.playlistListener.playlistChanged)
+        audioPlayer.playlistListener.playlistChanged(audioPlayer.currentPlaylist.slice());
+      audioPlayer._updateNextButton();
+      audioPlayer._updateQueueCount();
+    },
+
+    _shuffleStateChanged: function() {
+      if (audioPlayer.playlistListener && audioPlayer.playlistListener.shuffleStateChanged) {
+        audioPlayer.playlistListener.shuffleStateChanged(audioPlayer.shuffle);
+      }
+      audioPlayer._updateNextButton();
+    },
+
+    _playStateChanged: function(playing) {
+      if (audioPlayer.playlistListener && audioPlayer.playlistListener.playStateChanged) {
+        audioPlayer.playlistListener.playStateChanged(playing);
+      }
+      audioPlayer._updateNextButton();
+    },
+
+    _updateNextButton: function() {
+      var canGoNext = audioPlayer.shuffle
+        ?  audioPlayer.currentPlaylist.length > 0
+        : audioPlayer.currentIdx < audioPlayer.currentPlaylist.length-1;
+      console.log("canGoNext: " + canGoNext);
+      $("#player-next-button").toggleClass("disabled", !canGoNext);
+    },
+
+    _updateQueueCount: function() {
+      let queueCount = $("#play-queue-count");
+      queueCount.toggle(audioPlayer.currentPlaylist.length > 1);
+      queueCount.text(audioPlayer.currentPlaylist.length);
     },
 
     playItem: function (e, url, title, artist, img, playCount, tipCount, artistProfileAddress, licenseAddress) {
@@ -402,7 +515,6 @@
       $("#player")[0].src = url + "?" + new Date().getTime();
       $("#player-background")[0].style.backgroundImage = "url('" + img + "')";
       $("#player-badge-image")[0].src = img;
-      $("#player-next-button").toggleClass("disabled", audioPlayer.currentPlaylist.length == 0);
 //      $("#player-plays")[0].innerHTML = playCount;
 //      $("#player-tips")[0].innerHTML = tipCount;
 
@@ -496,12 +608,14 @@
           audioPlayer.syncProgressNow();
           $("#player-play-button").hide();
           $("#player-pause-button").show();
+          audioPlayer._playStateChanged(true);
         })
 
         audioPlayer.audioElement.addEventListener('pause', function () {
           audioPlayer.syncProgressNow();
           $("#player-play-button").show();
           $("#player-pause-button").hide();
+          audioPlayer._playStateChanged(false);
         })
 
         audioPlayer.audioElement.addEventListener('canplay', function () {
@@ -519,9 +633,18 @@
         })
 
         $(".toggle-shuffle").on('click', function() {
-          audioPlayer.shuffle = !audioPlayer.shuffle;
-          $(this).toggleClass('button-highlight', audioPlayer.shuffle);
+          audioPlayer.toggleShuffle();
         })
+
+        $(".play-queue-trigger").on('click', function() {
+          var playQueue = parent.document.getElementById("mainFrame").contentWindow.playQueue;
+          var wasVisible = playQueue.isVisible();
+          if (playQueue) {
+            playQueue.toggle();
+          }
+          $(this).toggleClass("play-queue-open", !wasVisible);
+        })
+
       }
       return audioPlayer.audioElement;
     },

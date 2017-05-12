@@ -38,7 +38,6 @@ if (typeof dynamic == "undefined") {
       var offset = parseInt(element.attr("de-refresh-offset"));
       if (!offset) offset = 0;
       if (!period) {
-        console.log("element does not have a de-refresh-period defined, " + element.id);
         return false;
       }
       return (periodIdx+offset) % period == 0;

@@ -1,5 +1,5 @@
 /* The Modal (background) */
-.modal {
+.modal-ui {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
@@ -13,7 +13,7 @@
 }
 
 /* Modal Content/Box */
-.modal-content {
+.modal-content-ui {
     background-color: #fefefe;
     margin: 10% auto; /* 15% from the top and centered */
     padding: 20px;
@@ -24,7 +24,12 @@
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
-    animation-duration: 0.4s
+    animation-duration: 0.4s;
+
+    position: relative;
+    border-radius: 6px;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
 }
 
 /* The Close Button */

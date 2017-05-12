@@ -489,6 +489,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.post('/elements/play-queue', function (req, res) {
+    res.render('partials/play-queue-active.ejs', {});
+  });
+
 
   function handleMessagePost(req) {
     if (req.isAuthenticated() && req.user.profileAddress) {

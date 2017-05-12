@@ -9,6 +9,7 @@ div.hearts {
     max-width: 100px;
     pointer-events:none;
     white-space: nowrap;
+    z-index: 100;
 }
 div.heart {
     width: 30px;

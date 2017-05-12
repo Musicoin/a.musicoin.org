@@ -124,9 +124,17 @@
 </style>
 <div class="background-cover"></div>
 <!-- The Modal -->
-<div id="thread-modal" class="modal">
+<div id="thread-modal" class="modal-behavior modal-ui">
     <!-- Modal content -->
-    <div class="modal-content"></div>
+    <div class="modal-content-behavior modal-content-ui"></div>
+</div>
+
+<!-- The Modal -->
+<div id="play-queue-modal" class="modal-behavior play-queue-modal-ui">
+    <!-- Modal content -->
+    <div class="modal-content-behavior play-queue-modal-content-ui">
+        <%- include ../partials/play-queue-active.ejs %>
+    </div>
 </div>
 
 <div class="header">

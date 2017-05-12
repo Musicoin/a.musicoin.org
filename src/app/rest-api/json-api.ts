@@ -723,6 +723,19 @@ export class MusicoinOrgJsonAPI {
     return this._getLicensesForEntries(filter, limit);
   }
 
+  getTrackDetailsByIds(addresses: string[]): Promise<any> {
+    return Release.find({contractAddress: {$in: addresses}})
+      .populate('artist')
+      .then(releases => {
+        return Promise.all(releases.map(r => this._convertDbRecordToLicenseLite(r)));
+      })
+      .then(releases => {
+        const byId = {};
+        releases.forEach(r => byId[r.address] = r);
+        return addresses.map(a => byId[a]);
+      })
+  }
+
   getRandomReleases(limit: number, genre?: string): Promise<any> {
     const filter = genre ? {state: 'published', genres: genre, markedAsAbuse: {$ne: true}} : {state: 'published', markedAsAbuse: {$ne: true}};
     if (!limit || limit < 1 || limit > 10) {
@@ -1601,6 +1614,7 @@ export class MusicoinOrgJsonAPI {
   }
 
   _convertDbRecordToLicenseLite(record) {
+    const draftProfile = record.artist && record.artist.draftProfile ? record.artist.draftProfile : null;
     return {
       artistName: record.artistName,
 
@@ -1617,7 +1631,12 @@ export class MusicoinOrgJsonAPI {
       title: record.title,
       image: this.mediaProvider.resolveIpfsUrl(record.imageUrl),
       address: record.contractAddress,
-      tx: record.tx
+      tx: record.tx,
+      artist: {
+        artistName: draftProfile ? draftProfile.artistName : "",
+        image: draftProfile ? this.mediaProvider.resolveIpfsUrl(draftProfile.ipfsImageUrl) : "",
+        verified: record.artist && record.artist.verified
+      }
     }
   }
 
