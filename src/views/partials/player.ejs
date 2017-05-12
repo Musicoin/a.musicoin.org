@@ -411,10 +411,14 @@
       }
     },
 
-    toggleShuffle: function() {
-      audioPlayer.shuffle = !audioPlayer.shuffle;
+    setShuffle: function(newValue) {
+      audioPlayer.shuffle = newValue;
       $("#shuffle").toggleClass('button-highlight', audioPlayer.shuffle);
       audioPlayer._shuffleStateChanged();
+    },
+
+    toggleShuffle: function() {
+      audioPlayer.setShuffle(!audioPlayer.shuffle)
     },
 
     playNextItem: function() {
