@@ -159,7 +159,7 @@
     display: inline-flex;
     flex-direction: row;
     padding: 12px 16px;
-    transition: 100ms
+    transition: 100ms;
 }
 
 .play-queue .play-queue-table li:hover {
@@ -180,6 +180,11 @@
     display: block;
 }
 
+.play-queue .track-title,
+.play-queue .up-next-label {
+    color: #eee
+}
+
 .play-queue .play-queue-table li.active .fa-pause {
     color: #ea504e;
 }
@@ -198,7 +203,8 @@
 
 .play-queue .play-queue-table .queue-item-action {
     flex: 0 1 auto;
-    transition: 100ms
+    transition: 100ms;
+    color: #eee;
 }
 
 .play-queue .play-queue-table .queue-item-action:hover {
