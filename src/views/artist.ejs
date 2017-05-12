@@ -27,6 +27,33 @@
             font-size: 14pt;
         }
 
+        li.tip-button {
+            padding: 2px;
+            cursor: pointer;
+            text-align: right;
+            padding-right: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        li.tip-button:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        li.tip-button:first-child {  padding-top: 0;  }
+
+        li.tip-button:last-child {
+            border-bottom: none;
+        }
+
+        .tip-options {
+            background-color: #fff;
+        }
+
+        .dropdown-menu.tip-options {
+            min-width: 108px;
+            margin-top: 0;
+        }
+
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -83,15 +110,41 @@ function formatNumber(value) {
         </div>
 
         <div class="flex-column mr10 center-text tips-container">
-            <div id="player-tip-button"
-                 class="tip-button btn btn-success tip-button"
-                 recipient="<%= artist.profileAddress %>"
-                 amount="1"
-                 context-type="User"
-                 text-success="Thanks! :)"
-                 text-fail=":("
-                 text-default="Tip">
-                Tip
+            <div class="btn-group">
+                <button type="button"
+                        class="btn btn-success"
+                        title="Tip 1 MC"
+                        recipient="<%= artist.profileAddress %>"
+                        amount="1"
+                        context-type="User"
+                        text-success="Thanks! :)"
+                        text-fail=":("
+                        text-default="1 MC">
+                    Tip 1 MC
+                </button>
+                <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                    <li class="fa fa-sort-desc"></li>
+                </button>
+                <ul class="dropdown-menu tip-options">
+                    <%
+                    var amounts = [5, 10, 100, 1000];
+                    for (var i=0; i < amounts.length; i++) {
+                        var amount = amounts[i];
+                        var message = amount > 1 ? "Are you sure you want to tip " + amount + " coins?" : "";
+                    %>
+                    <li class="tip-button"
+                        recipient="<%= artist.profileAddress %>"
+                        amount="<%=amount%>"
+                        context-type="User"
+                        text-success="Thanks! :)"
+                        confirm-message="<%=message%>"
+                        text-fail=":("
+                        text-default="<%=amount%> MC">
+                        <%=amount%> MC
+                    </li>
+                    <% } %>
+                </ul>
             </div>
             <div class="subtle-text"><span data-behavior="total-tips"><%= formatNumber(artistStats.tipCount)%></span> tipped</div>
         </div>
