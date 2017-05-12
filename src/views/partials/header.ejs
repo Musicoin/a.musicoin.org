@@ -140,22 +140,27 @@
 <div class="header">
     <div>
         <a id="logo-container" href="/feed" class="brand-logo mont"><img src="/images/icon.png" width="32px" height="32px"></a>
-        <a id="logo-container" href="/feed" class="brand-logo mont plain big-screen-only">
+        <a id="logo-container" href="/feed" class="brand-logo mont plain big-screen-only" style="margin-right: 40px">
             musicoin
         </a>
     </div>
 
+    <form action="/browse?genre=<%= typeof genreFilter != "undefined" ? genreFilter : "" %>&sort=<%= typeof sort != "undefined" ? sort : "" %>" method="post">
+        <div class="flex-row">
+            <a href="/browse" class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></a>
+            <input class="form-control text-large pl25"
+                   name="search"
+                   style="color:inherit; border-radius: 15px; background-color: rgba(200,200,200,0.2)"
+                   value="<%= typeof searchTerm != "undefined" ? searchTerm : ""  %>" placeholder="">
+        </div>
+    </form>
+
     <div class="flex-row">
         <% if (isAuthenticated) { %>
-            <div style="width:20px"></div>
-            <!--<a href="/faq" class="header-menu-item"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>-->
-
             <% if (user.profileAddress) { %>
             <a href="/release-manager" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a>
             <% } %>
             <a href="/main" class="header-menu-item" title="discover"><i class="fa fa-compass" aria-hidden="true"></i></a>
-            <a href="/browse" class="header-menu-item" title="browse"><i class="fa fa-search" aria-hidden="true"></i></a>
-            <div style="width:20px"></div>
 
             <div class="popover-markup" style="display:inline;">
                 <a href="#" class="trigger">

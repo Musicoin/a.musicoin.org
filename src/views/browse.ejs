@@ -46,24 +46,7 @@
         background-color: whitesmoke;
     }
 </style>
-<div class="container">
-    <div class="search-area mb20">
-        <div class="col-sm-5">
-            <form action="/browse?genre=<%= genreFilter %>&sort=<%= sort %>" method="post">
-                <div class="flex-row">
-                    <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
-                    <input class="form-control text-large pl25"
-                           name="search"
-                           style="color:black"
-                           value="<%= searchTerm %>" placeholder=""
-                           autofocus onfocus="this.value = this.value;">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="col-sm-12">
+<div class="col-sm-12 mt20">
     <div class="center-text btn-group">
         <a href="/browse?sort=tips&genre=<%= encodeParam(genreFilter) %>&search=<%= encodeParam(searchTerm) %>"
            class="btn <%= sort == "tips" ? "btn-primary" : "btn-default" %>">Tips</a>
