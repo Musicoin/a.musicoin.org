@@ -106,6 +106,7 @@
       playQueue.playlistChanged(audioPlayer.currentPlaylist.slice());
       playQueue.setSelectedTrack(audioPlayer.currentIdx);
       playQueue.shuffleChanged();
+      playQueue.playStateChanged(audioPlayer.isPlaying());
       audioPlayer.setPlayQueueClosed();
     },
 

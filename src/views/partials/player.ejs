@@ -429,6 +429,10 @@
       audioPlayer.audioElement.pause();
     },
 
+    isPlaying: function() {
+      return !audioPlayer.audioElement.paused;
+    },
+
     setPlayQueueClosed: function() {
       $("#play-queue-trigger").toggleClass("play-queue-open", false);
     },
