@@ -392,7 +392,12 @@
       if (licenseIds) {
         audioPlayer.currentPlaylist = licenseIds.slice();
         audioPlayer._playlistChanged();
-        audioPlayer.jumpToIndex(0);
+        if (audioPlayer.shuffle) {
+          audioPlayer.playNextItem();
+        }
+        else {
+          audioPlayer.jumpToIndex(0);
+        }
       }
     },
 
