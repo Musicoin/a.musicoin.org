@@ -214,9 +214,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/', (req, res) => {
     res.render(__dirname + '/../overview/index.html', {});
   });
-  // app.get('/', unauthRedirect("/info"), checkLoginRedirect, function (req, res) {
-  //   res.render('index-frames.ejs', {mainFrameLocation: "/main"});
-  // });
 
   app.get('/accept/:code', (req, res) => {
     console.log(`Processing /accept/${req.params.code}`)
@@ -713,41 +710,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.json({success: false, reason: "error"});
       });
   });
-
-
-
-  /*
-  app.post('/waitlist/add', (req, res) => {
-    if (!req.body) {
-      console.log(`Waitlist request failed because no body was included`);
-      return res.json({
-          success: false,
-          message: "Invalid email address"
-        });
-    }
-
-    if (!FormUtils.validateEmail(req.body.email)) {
-      console.log(`Waitlist request failed because email does not appear to be valid: ${req.body.email}`);
-      return res.json({
-          success: false,
-          message: "Invalid email address"
-        });
-    }
-
-    return jsonAPI.addInviteRequest(req.body.email, req.body.musician == "true")
-      .then(result => {
-        res.json(result);
-      })
-      .catch(e => {
-        console.log(`Waitlist request failed for ${req.body.email}, musician=${req.body.musician}: ${e}`);
-        res.json({
-          success: false,
-          message: "ok"
-        })
-      })
-  });
-  */
-
 
   app.get('/new-user', (req, res) => {
     if (req.user.draftProfile && req.user.draftProfile.artistName) {

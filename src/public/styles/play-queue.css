@@ -219,6 +219,10 @@
     padding-right: 16px
 }
 
+.play-queue .play-queue-table li.active .action-delete {
+    display: none;
+}
+
 .play-queue .play-queue-table .action-delete {
     padding-left: 16px;
     margin-right: 10px;

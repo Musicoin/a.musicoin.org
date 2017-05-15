@@ -321,11 +321,6 @@
     playlistListener: null,
 
     playItemById: function (licenseAddress, callback) {
-      if (licenseAddress == audioPlayer.nowPlayingLicenseAddress) {
-        if (callback) callback(null, false);
-        return false;
-      }
-
       console.log("Checking eligibility for " + licenseAddress);
       $.post("/user/canPlay", {address: licenseAddress}, function(eligibility) {
         if (eligibility.success) {
@@ -363,14 +358,13 @@
     },
 
     removePlaylistItem: function(idx) {
-      if (idx >= 0 && idx < audioPlayer.currentPlaylist.length) {
-        var wasCurrent = idx === audioPlayer.currentIdx;
+      if (idx >= 0 && idx < audioPlayer.currentPlaylist.length && idx != audioPlayer.currentIdx) {
+        var beforeCurrent = idx < audioPlayer.currentIdx;
         audioPlayer.currentPlaylist.splice(idx, 1);
         audioPlayer._playlistChanged();
-        if (wasCurrent) {
-          if (audioPlayer.currentPlaylist.length > 0) {
-            audioPlayer.jumpToIndex(Math.min(audioPlayer.currentPlaylist.length-1, idx));
-          }
+        if (beforeCurrent) {
+          audioPlayer.currentIdx--;
+          audioPlayer._selectedItemChanged()
         }
       }
     },
@@ -398,20 +392,24 @@
     },
 
     skipTrack: function() {
-      if (audioPlayer.currentPlaylist.length > audioPlayer.currentIdx) {
-        audioPlayer.nowPlayingLicenseAddress = null; // force skip
-        audioPlayer.playNextItem();
-      }
+      audioPlayer.playNextItem();
     },
 
     jumpToIndex: function(idx) {
       if (idx >= 0 && idx < audioPlayer.currentPlaylist.length) {
+        console.log("Jumping to index: " + idx);
         audioPlayer.playItemById(audioPlayer.currentPlaylist[idx], function(err, played) {
           if (!err && played) {
             audioPlayer.currentIdx = idx;
             audioPlayer._selectedItemChanged();
           }
+          else {
+            console.log("Jumping to index: aborted: cannot play track now: " + idx + ": " + err);
+          }
         });
+      }
+      else {
+        console.log("Not kumping to index: index out of range: " + idx);
       }
     },
 
@@ -430,6 +428,7 @@
         ? Math.floor(Math.random() * audioPlayer.currentPlaylist.length)
         : audioPlayer.currentIdx + 1;
 
+      console.log("Playing next item at index: " + nextIdx);
       audioPlayer.jumpToIndex(nextIdx);
     },
 
@@ -487,8 +486,6 @@
     },
 
     playItem: function (e, url, title, artist, img, playCount, tipCount, artistProfileAddress, licenseAddress) {
-      if (licenseAddress == audioPlayer.nowPlayingLicenseAddress) return false;
-
       var now = new Date().getTime();
       if (now - audioPlayer.previousTime < audioPlayer.minMillisBetweenPlays) {
         audioPlayer.previousTime = now;
