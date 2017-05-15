@@ -10,6 +10,11 @@ module.exports = mongoose.model('UserPlayback', mongoose.Schema({
     ref: 'User',
     index: true
   },
+  anonymousUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'AnonymousUser',
+    index: true
+  },
   playbackDate: {
     type: Date,
     default: Date.now,

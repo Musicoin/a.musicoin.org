@@ -30,12 +30,13 @@ export class DashboardRouter {
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       var options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
 
-      jsonAPI.getPlaybackHistory(req.body.user, req.body.release, start, length)
+      jsonAPI.getPlaybackHistory(req.body.user, req.body.anonuser, req.body.release, start, length)
         .then(output => {
           output.records.forEach(r => {
             r.playbackDateDisplay = jsonAPI._timeSince(r.playbackDate) || "seconds ago";
-            r.nextPlaybackDateDisplay = r.user.freePlaysRemaining > 0 && r.user.nextFreePlayback
-              ? r.user.nextFreePlayback.toLocaleDateString('en-US', options) + " (" + r.user.freePlaysRemaining + ")"
+            const user = r.user ? r.user : r.anonymousUser;
+            r.nextPlaybackDateDisplay = user && user.freePlaysRemaining > 0 && user.nextFreePlayback
+              ? user.nextFreePlayback.toLocaleDateString('en-US', options) + " (" + user.freePlaysRemaining + ")"
               : "N/A";
           });
           return output;

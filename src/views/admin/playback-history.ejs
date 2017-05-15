@@ -15,6 +15,8 @@
         <td class="text-center middle">
             <%= playback.playbackDateDisplay %><br>
         </td>
+
+        <% if (playback.user != null) { %>
         <td class="text-center middle">
             <%= playback.user.draftProfile.artistName %><br>
             <a class="de-parameter-setter clickable <%= playback.user.accountLocked ? "text-danger" : "" %>"
@@ -25,6 +27,20 @@
             &nbsp;
             <a target="track-window" href="/artist/<%= playback.user.profileAddress %>">view</a>
         </td>
+        <% } else if (playback.anonymousUser != null) { %>
+        <td class="text-center middle">
+            <%= playback.anonymousUser.ip %><br>
+            <%= playback.anonymousUser.session %><br>
+            <a class="de-parameter-setter clickable <%= playback.anonymousUser.accountLocked ? "text-danger" : "" %>"
+               de-parameters="anonuser=<%=playback.anonymousUser._id%>,start=0"
+               title="filter by user">
+                filter
+            </a>
+        </td>
+        <% } else { %>
+        <td class="text-center middle"></td>
+        <% } %>
+
         <td class="text-center middle">
             <%= playback.release.title %>
             <br>

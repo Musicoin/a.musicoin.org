@@ -19,6 +19,7 @@ import {DashboardRouter} from "./admin-dashboard-routes";
 const sendSeekable = require('send-seekable');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
+const AnonymousUser = require('../app/models/anonymous-user');
 const TrackMessage = require('../app/models/track-message');
 const EmailConfirmation = require('../app/models/email-confirmation');
 const User = require('../app/models/user');
@@ -1131,41 +1132,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.get('/admin/playback-history', (req, res) => {
-    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
-    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
-    const previous = Math.max(0, start - length);
-    const url = '/admin/playback-history?search=' + (req.query.search ? req.query.search : '');
-    var options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
-
-    jsonAPI.getPlaybackHistory(req.query.user, req.query.release, start, length)
-      .then(output => {
-        output.records.forEach(r => {
-          r.playbackDateDisplay = r.playbackDate.toLocaleDateString('en-US', options);
-          r.nextPlaybackDateDisplay = r.user.freePlaysRemaining > 0 && r.user.nextFreePlayback
-            ? r.user.nextFreePlayback.toLocaleDateString('en-US', options) + " (" + r.user.freePlaysRemaining + ")"
-            : "N/A";
-        });
-        return output;
-      })
-      .then(output => {
-        const playbacks = output.records;
-        doRender(req, res, 'admin-playback-history.ejs', {
-          search: req.query.search,
-          playbacks: playbacks,
-          navigation: {
-            show10: `${url}&length=10`,
-            show25: `${url}&length=25`,
-            show50: `${url}&length=50`,
-            description: `Showing ${start + 1} to ${start + playbacks.length} of ${output.total}`,
-            start: previous > 0 ? `${url}&length=${length}` : null,
-            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
-            next: playbacks.length >= length ? `${url}&length=${length}&start=${start + length}` : null
-          }
-        });
-      });
-  });
-
   app.post('/admin/errors/remove', (req, res) => {
     jsonAPI.removeError(req.body._id)
       .then(result => res.json(result))
@@ -2116,77 +2082,138 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return total;
   }
 
-  function getPlaybackEligibility(req) {
+  function populateAnonymousUser(req, res, next) {
     if (!req.isAuthenticated()) {
-      console.log("Rejecting unauthorized user: " + req.session.id);
-      return Promise.resolve({success: false, message: "You must be logged in"});
+      return getAnonymousUser(req)
+        .then(anon => {
+          req.anonymousUser = anon;
+          next();
+        })
     }
-    else {
-      const address = req.body && req.body.address ? req.body.address : req.params.address;
+    return next();
+  }
 
-      // if the request if for their current track AND the current playback isn't expired
-      // short circuit these checks
-      const canUseCache = req.user.currentPlay
-        && req.user.currentPlay.licenseAddress == address
-        && UrlUtils.resolveExpiringLink(req.user.currentPlay.encryptedKey);
-      if (canUseCache) return Promise.resolve({success: true, canUseCache: true});
+  function getAnonymousUser(req) {
+    return AnonymousUser.findOne({session: req.session.id})
+      .then(anonymous => {
+        // normal case.  Same IP, same session
+        if (anonymous && anonymous.ip && anonymous.ip == req.ip)
+          return anonymous;
 
-      return Release.findOne({contractAddress: address, state: "published"}).exec()
-        .then(release => {
-          if (!release) {
-            return {success: false, skip: true, message: "Sorry, the track you requested was not found"};
-          }
-          if (release.markedAsAbuse) {
-            return {success: false, skip: true, message: "Sorry, this track was marked as abuse"};
-          }
+        if (anonymous) {
+          // the ip don't match.  probably some scammer trying to use the same sessionID
+          // across multiple hosts.
+          console.log(`Matching session with mismatched IPs: req.session: ${req.session.id}, recordIP: ${anonymous.ip}, req.ip: ${req.ip}`);
+          return null;
+        }
+        else {
+          // maybe create an new entry in the DB for this session, but first make sure this IP isn't
+          // used by another session
+          return AnonymousUser.findOne({ip: req.ip})
+            .then(otherRecord => {
+              if (!otherRecord) {
+                // new IP, new session.
+                const newUserData = {ip: req.ip, session: req.session.id};
+                console.log(`Creating new user for ${JSON.stringify(newUserData)}`);
+                return AnonymousUser.create(newUserData);
+              }
 
-          return User.findOne({profileAddress: release.artistAddress})
-            .then(artist => {
-              const verifiedArtist = artist && artist.verified;
-              const hasNoFreePlays  = req.user.freePlaysRemaining <= 0;
-              const payFromProfile = hasNoFreePlays || !verifiedArtist;
-              let p = payFromProfile
-                ? jsonAPI.getPendingPPPPayments(req.user._id)
-                : Promise.resolve([]);
-              const b = payFromProfile
-                ? musicoinApi.getAccountBalance(req.user.profileAddress)
-                : Promise.resolve(null);
+              // ip associated with a different session
+              const diff = Date.now() - new Date(otherRecord.sessionDate).getTime();
+              if (diff > config.ipSessionChangeTimeout) {
+                // ok, session changed but it's been a while since the last request.  just update the session
+                // associated with this IP address
+                otherRecord.session = req.session.id;
+                otherRecord.sessionDate = Date.now();
+                return otherRecord.save();
+              }
+              console.log(`Different session with same IPs: session changed too quickly: req.session: ${req.session.id}, recordSession: ${anonymous.session}, req.ip: ${req.ip}, msSinceLastSession: ${diff}`);
+              return null;
+            });
+        }
+      })
+  }
 
-              const l = musicoinApi.getLicenseDetails(address);
-              return Promise.join(p, b, l, (pendingPayments, profileBalance, license) => {
-                if (payFromProfile) {
-                  let totalCoinsPending = 0;
-                  pendingPayments.forEach(r => totalCoinsPending += r.coins);
-                  console.log("Pending ppp payments: " + totalCoinsPending);
-                  if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
-                    return {success: false, skip: false, message: "Sorry, it looks like you don't have enough coins."}
+  function getPlaybackEligibility(req) {
+    const user = req.isAuthenticated() ? req.user : req.anonymousUser;
+    if (!user) {
+      return Promise.resolve({success: false, skip: false, message: "Sorry, there was a problem with this request.  (code: 1)"});
+    }
+
+    if (user.accountLocked) {
+      console.log("Blocking playback for locked user.");
+      return Promise.resolve({success: false, skip: false, message: "Sorry, there was a problem with this request (code: 2)"});
+    }
+
+    // if the request if for their current track AND the current playback isn't expired
+    // short circuit these checks
+    const address = req.body && req.body.address ? req.body.address : req.params.address;
+    const canUseCache = user.currentPlay
+      && user.currentPlay.licenseAddress == address
+      && UrlUtils.resolveExpiringLink(user.currentPlay.encryptedKey);
+    if (canUseCache) return Promise.resolve({success: true, canUseCache: true});
+
+    return Release.findOne({contractAddress: address, state: "published"}).exec()
+      .then(release => {
+        if (!release) {
+          return {success: false, skip: true, message: "Sorry, the track you requested was not found"};
+        }
+        if (release.markedAsAbuse) {
+          return {success: false, skip: true, message: "Sorry, this track was marked as abuse"};
+        }
+
+        return User.findOne({profileAddress: release.artistAddress})
+          .then(artist => {
+            const verifiedArtist = artist && artist.verified;
+            const hasNoFreePlays  = user.freePlaysRemaining <= 0;
+            const payFromProfile = req.isAuthenticated() && (hasNoFreePlays || !verifiedArtist);
+            let p = payFromProfile
+              ? jsonAPI.getPendingPPPPayments(user._id)
+              : Promise.resolve([]);
+            const b = payFromProfile
+              ? musicoinApi.getAccountBalance(user.profileAddress)
+              : Promise.resolve(null);
+
+            const l = musicoinApi.getLicenseDetails(address);
+            return Promise.join(p, b, l, (pendingPayments, profileBalance, license) => {
+              if (payFromProfile) {
+                let totalCoinsPending = 0;
+                pendingPayments.forEach(r => totalCoinsPending += r.coins);
+                console.log("Pending ppp payments: " + totalCoinsPending);
+                if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
+                  return {success: false, skip: false, message: "Sorry, it looks like you don't have enough coins."}
+              }
+              else if (hasNoFreePlays) {
+                return {success: false, skip: false, message: "Sorry, it looks like you ran our of free plays.  Sign up to get more!"}
+              }
+              else if (!verifiedArtist) {
+                return {success: false, skip: true, message: "Sorry, only tracks from verified artists are eligible for free plays."}
+              }
+              else {
+                const diff = new Date(user.nextFreePlayback).getTime() - Date.now();
+                if (diff > 0 && diff < config.freePlayDelay) {
+                  return {success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play."}
                 }
-                else {
-                  const diff = new Date(req.user.nextFreePlayback).getTime() - Date.now();
-                  if (diff > 0 && diff < config.freePlayDelay) {
-                    return {success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play."}
-                  }
-                }
-                const unit = req.user.freePlaysRemaining-1 == 1 ? "play" : "plays";
-                return {
-                  success: true,
-                  payFromProfile: payFromProfile,
-                  message: payFromProfile
-                    ? hasNoFreePlays
-                      ? "This playback was paid for by you. Thanks!"
-                      : "This playback was paid for by you, because this artist is not yet verified and is therefore not eligible for free plays."
-                    : `This playback was paid for by Musicoin.org, you have ${req.user.freePlaysRemaining-1} free ${unit} left`
-                };
-              })
+              }
+              const unit = user.freePlaysRemaining-1 == 1 ? "play" : "plays";
+              return {
+                success: true,
+                payFromProfile: payFromProfile,
+                message: payFromProfile
+                  ? hasNoFreePlays
+                    ? "This playback was paid for by you. Thanks!"
+                    : "This playback was paid for by you, because this artist is not yet verified and is therefore not eligible for free plays."
+                  : `This playback was paid for by Musicoin.org, you have ${user.freePlaysRemaining-1} free ${unit} left`
+              };
             })
-        });
-    }
+          })
+      });
   }
 
 
   // convenience method for the UI so it can give a good message to the user about the play
   // ultimately, the ppp route has the final say about whether the playback
-  app.post('/user/canPlay', function (req, res) {
+  app.post('/user/canPlay', populateAnonymousUser, function (req, res) {
     getPlaybackEligibility(req)
       .then(result => {
         res.json(result);
@@ -2202,15 +2229,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     else {
       const userName = req.user && req.user.draftProfile
         ? req.user.draftProfile.artistName
-        : req.user ? req.user._id : "(anonymous)";
-      const profileAddress = req.user ? req.user.profileAddress : "";
+        : req.user ? req.user._id : req.ip;
+      const profileAddress = req.user ? req.user.profileAddress : "Anonymous";
       console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}, user: ${profileAddress} (${userName})`);
     }
     req.params.address = resolved;
     next();
   }
 
-  function payForPPPKey(user, release, license, payFromProfile) : Promise<any> {
+  function payForPPPKey(req, release, license, payFromProfile) : Promise<any> {
+    const user = req.isAuthenticated() ? req.user : req.anonymousUser;
     const ttl = config.playbackLinkTTLMillis;
     const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
     const licenseAddress = release.contractAddress;
@@ -2244,7 +2272,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
     // once the payment is initiated, update the release stats
     return paymentPromise.then(keyResponse => {
-      return jsonAPI.addToReleasePlayCount(user._id, release._id)
+      const userId = req.isAuthenticated() ? user._id : null;
+      const anonymousUserId = req.isAuthenticated() ? null : user._id;
+      return jsonAPI.addToReleasePlayCount(userId, anonymousUserId, release._id)
         .then(() => {
           console.log("Caching key for current playback...");
           user.currentPlay = {
@@ -2264,20 +2294,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     })
   }
 
-  function getPPPKeyForUser(user, release, license, playbackEligibility) {
+  function getPPPKeyForUser(req, release, license, playbackEligibility) {
+    const user = req.isAuthenticated() ? req.user : req.anonymousUser;
     const cachedKey = user.currentPlay
       ? UrlUtils.resolveExpiringLink(user.currentPlay.encryptedKey)
       : null;
 
     return playbackEligibility.canUseCache && cachedKey
       ? Promise.resolve({key: cachedKey, cached: true})
-      : payForPPPKey(user, release, license, playbackEligibility.payFromProfile);
+      : payForPPPKey(req, release, license, playbackEligibility.payFromProfile);
   }
 
-  app.get('/ppp/:address', (req, res, next) => {
-    console.log("Range: " + req.headers.range);
-    next();
-  }, sendSeekable, resolveExpiringLink, function (req, res) {
+  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
@@ -2290,7 +2318,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
 
         return Promise.join(l, r, (license, release) => {
-          return getPPPKeyForUser(req.user, release, license, playbackEligibility)
+          return getPPPKeyForUser(req, release, license, playbackEligibility)
             .then(keyResponse => {
               return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
                 .then(function (result) {

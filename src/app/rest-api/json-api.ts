@@ -290,17 +290,18 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
-  getPlaybackHistory(userId: string, releaseId: string, start: number, length: number): Promise<any> {
+  getPlaybackHistory(userId: string, anonymousUserId: string, releaseId: string, start: number, length: number): Promise<any> {
     let conditions = [];
     if (userId) conditions.push({user: userId});
+    if (anonymousUserId) conditions.push({anonymousUser: anonymousUserId});
     if (releaseId) conditions.push({release: releaseId});
-
 
     const rs = UserPlayback.find(conditions.length > 0 ? {$or: conditions} : {})
       .sort({"playbackDate": 'desc'})
       .skip(start)
       .limit(length)
       .populate("user")
+      .populate("anonymousUser")
       .populate("release")
       .exec();
 
@@ -1317,7 +1318,7 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
-  addToReleasePlayCount(userId: string, releaseId: string): Promise<any> {
+  addToReleasePlayCount(userId: string, anonymousUserId: string, releaseId: string): Promise<any> {
     return Release.findById(releaseId).exec()
       .then(release => {
         release.directPlayCount = release.directPlayCount ? release.directPlayCount + 1 : 1;
@@ -1325,7 +1326,11 @@ export class MusicoinOrgJsonAPI {
       })
       .then(release => {
         // fire and forget
-        UserPlayback.create({user: userId, release: release.id});
+        UserPlayback.create({
+          user: userId,
+          release: release.id,
+          anonymousUser: anonymousUserId
+        });
 
         return MusicoinOrgJsonAPI._updateReleaseStats(release.id, Date.now(), {$inc: {playCount: 1}})
           .catch(err => {

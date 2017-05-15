@@ -348,11 +348,6 @@
         else {
           parent.showMessage(eligibility.message, "warning", 5000);
           if (callback) callback(new Error("Cannot play track"),  false);
-          if (eligibility.skip) {
-            window.setTimeout(function() {
-              audioPlayer.playNextItem();
-            }, 0);
-          }
         }
       })
     },
@@ -411,9 +406,12 @@
 
     jumpToIndex: function(idx) {
       if (idx >= 0 && idx < audioPlayer.currentPlaylist.length) {
-        audioPlayer.currentIdx = idx;
-        audioPlayer.playItemById(audioPlayer.currentPlaylist[audioPlayer.currentIdx]);
-        audioPlayer._selectedItemChanged();
+        audioPlayer.playItemById(audioPlayer.currentPlaylist[idx], function(err, played) {
+          if (!err && played) {
+            audioPlayer.currentIdx = idx;
+            audioPlayer._selectedItemChanged();
+          }
+        });
       }
     },
 
