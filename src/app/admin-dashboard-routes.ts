@@ -162,13 +162,14 @@ export class DashboardRouter {
     router.post('/elements/users', function(req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
-      jsonAPI.getAllUsers(req.body.search, req.body.invitedby, req.body.verified, req.body.artist, start, length)
+      const invitedByIds = req.body.invitedby ? req.body.invitedby.split("|") : [];
+      jsonAPI.getAllUsers(req.body.search, invitedByIds, req.body.verified, req.body.artist, start, length)
         .then(results => {
           const users = results.users;
           const addresses = users.map(u => u.profileAddress).filter(a => a);
 
           const balanceMap = {};
-          const ivb = req.body.invitedby ? User.findById(req.body.invitedby).exec() : Promise.resolve(null);
+          const ivb = req.body.invitedby && invitedByIds.length == 1 ? User.findById(invitedByIds[0]).exec() : Promise.resolve(null);
           Promise.join(musicoinApi.getAccountBalances(addresses), ivb, (balances, invitedBy) => {
               balances.forEach((balance, idx) => {
                 balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;

@@ -17,20 +17,26 @@
 </style>
 
 <div id="user-container">
-    <h3 class="text-center flex-row" style="justify-content: space-between">
-        <div style="width: 200px">
-            <a class="text-medium de-parameter-setter clickable"
-               de-parameters="verified=false,artist=true,search=,start=0">
-                show unverified arists
+    <div class="text-center flex-row" style="justify-content: space-between">
+        <div style="width: 200px" class="flex-column">
+            <a class="de-parameter-setter clickable"
+               de-parameters="invitedby=,verified=false,artist=true,search=,start=0">
+                show unverified artists
             </a>
+
+            <a class="de-parameter-setter clickable"
+               de-parameters="invitedby=58bf0abb58b11b65e9c7fe77|58c7409d09ac25763401191a,verified=false,artist=true,search=,start=0">
+                show David/JoeJoe totals
+            </a>
+
         </div>
-        <div>Users</div>
+        <h3>Users</h3>
         <div><input type="text"
                     class="admin-search de-parameter-input"
                     de-parameter="search"
                     de-parameters="start=0"
                     value="<%=search%>"></div>
-    </h3>
+    </div>
     <%- include element-nav.ejs %>
     <%= invitedBy ? "Showing users invited by " + invitedBy : "" %>
     <table class="table table-responsive white-well">

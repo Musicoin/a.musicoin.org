@@ -330,7 +330,7 @@ export class MusicoinOrgJsonAPI {
       .exec();
   }
 
-  getAllUsers(_search: string, invitedById: string, verified: string, artist: string, start: number, length: number): Promise<any> {
+  getAllUsers(_search: string, invitedByIds: string[], verified: string, artist: string, start: number, length: number): Promise<any> {
     let filter = {};
     if (_search) {
       const search = _search.trim();
@@ -351,8 +351,8 @@ export class MusicoinOrgJsonAPI {
         {"local.email": {"$regex": search, "$options": "i"}},
       ]};
     }
-    if (invitedById) {
-      filter["invite.invitedBy"] = invitedById;
+    if (invitedByIds && invitedByIds.length > 0) {
+      filter["invite.invitedBy"] = {$in: invitedByIds};
     }
     if (verified) {
       filter["verified"] = verified == "true" ? {$eq: true} : {$ne: true};
