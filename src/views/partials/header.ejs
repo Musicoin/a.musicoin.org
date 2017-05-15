@@ -145,6 +145,7 @@
         </a>
     </div>
 
+    <% if (isAuthenticated) { %>
     <form action="/browse?genre=<%= typeof genreFilter != "undefined" ? genreFilter : "" %>&sort=<%= typeof sort != "undefined" ? sort : "" %>" method="post">
         <div class="flex-row">
             <a href="/browse" class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></a>
@@ -154,6 +155,7 @@
                    value="<%= typeof searchTerm != "undefined" ? searchTerm : ""  %>" placeholder="">
         </div>
     </form>
+    <% } %>
 
     <div class="flex-row">
         <% if (isAuthenticated) { %>
