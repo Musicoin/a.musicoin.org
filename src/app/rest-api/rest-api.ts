@@ -23,8 +23,6 @@ export class MusicoinRestAPI {
       const origin = `${referrerUrl.protocol}//${referrerUrl.hostname}`;
       const clientid = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
       if (!clientid) {
-        const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
-        console.log(`Unauthoirized API request: ip: ${req.ip}, session: ${req.session}, user: ${userName}`);
         return next();
       }
 
@@ -80,7 +78,8 @@ export class MusicoinRestAPI {
 
     router.use(function (err, req, res, next) {
       if (err.name === 'UnauthorizedError') {
-        console.log(err.message);
+        const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
+        console.log(`Unauthorized API request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}, err: ${err}`);
         res.status(401).send(err.message);
       }
     });
