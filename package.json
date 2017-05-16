@@ -12,6 +12,7 @@
     "cookie-parser": "^1.4.3",
     "ejs": "^2.5.5",
     "express": "^4.14.0",
+    "express-gettext": "^1.1.0",
     "express-session": "^1.14.2",
     "feed": "^0.3.1",
     "formidable": "^1.0.17",
@@ -41,8 +42,11 @@
     "@types/node": "^6.0.52",
     "@types/passport": "^0.2.35",
     "mocha": "^3.2.0",
+    "recursive-readdir-sync": "^1.0.6",
     "ts-node": "^1.7.2",
-    "typescript": "^2.1.4"
+    "typescript": "^2.1.4",
+    "upath": "^1.0.0",
+    "xgettext-template": "^3.3.0"
   },
   "scripts": {
     "test": "mocha test",
