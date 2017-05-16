@@ -22,25 +22,45 @@ export class MusicoinRestAPI {
       const referrerUrl = url.parse(req.headers.referer);
       const origin = `${referrerUrl.protocol}//${referrerUrl.hostname}`;
       const clientid = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
+      const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
       if (!clientid) {
+        console.log(`Failed CORS 0: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
         return next();
       }
 
       APIClient.findOne({clientId: clientid}).exec()
         .then(client => {
-          if (!client) return next();
-          if (client.accountLocked) throw new UnauthorizedError("Unauthorized: Locked");
-          if (client.domains.indexOf("*") < 0 && client.domains.indexOf(origin) < 0) throw new UnauthorizedError(`Unauthorized (invalid origin: ${origin})`);
-          if (client.methods.indexOf(req.method) < 0) throw new UnauthorizedError(`Unauthorized (invalid method: ${req.method})`);
+          if (!client) {
+            console.log(`Failed CORS 1: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            return next();
+          }
+          if (client.accountLocked) {
+            console.log(`Failed CORS 2: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            throw new UnauthorizedError("Unauthorized: Locked");
+          }
+          if (client.domains.indexOf("*") < 0 && client.domains.indexOf(origin) < 0) {
+            console.log(`Failed CORS 3: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            throw new UnauthorizedError(`Unauthorized (invalid origin: ${origin})`);
+          }
+          if (client.methods.indexOf(req.method) < 0) {
+            console.log(`Failed CORS 4: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            throw new UnauthorizedError(`Unauthorized (invalid method: ${req.method})`);
+          }
+
+          console.log(`Adding CORS headers: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+          console.log(`CORS headers: Access-Control-Allow-Origin: ${req.headers.referer}`);
+          console.log(`CORS headers: Access-Control-Allow-Methods: ${req.method}`);
 
           res.header('Access-Control-Allow-Origin', req.headers.referer);
           res.header('Access-Control-Allow-Methods', req.method);
           res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
           if ('OPTIONS' == req.method) {
+            console.log(`Responding to CORS OPTIONS request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             return res.send(200);
           }
           else {
+            console.log(`Responding to CORS request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             next();
           }
         }).catch(err => {
