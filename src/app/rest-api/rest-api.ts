@@ -54,7 +54,7 @@ export class MusicoinRestAPI {
 
           res.header('Access-Control-Allow-Origin', originWithPort);
           res.header('Access-Control-Allow-Methods', req.method);
-          res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+          res.header('Access-Control-Allow-Headers', 'Content-Type, clientid');
 
           if ('OPTIONS' == req.method) {
             console.log(`Responding to CORS OPTIONS request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
