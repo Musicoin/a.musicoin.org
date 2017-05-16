@@ -18,37 +18,37 @@ class UnauthorizedError extends Error {
 
 export class MusicoinRestAPI {
   constructor(jsonAPI: MusicoinOrgJsonAPI) {
-    router.use((req: any, res, next) => {
-      const referrerUrl = url.parse(req.headers.referer);
-      const origin = `${referrerUrl.protocol}//${referrerUrl.hostname}`;
-      const clientid = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
-      if (!clientid) {
-        const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
-        console.log(`Unauthoirized API request: ip: ${req.ip}, session: ${req.session}, user: ${userName}`);
-        throw new UnauthorizedError("Unauthorized: " + req.ip);
-      }
-
-      APIClient.findOne({clientId: clientid}).exec()
-        .then(client => {
-          if (!client) throw new UnauthorizedError(`Unauthorized: unknown clientId: ${clientid}`);
-          if (client.accountLocked) throw new UnauthorizedError("Unauthorized: Locked");
-          if (client.domains.indexOf("*") < 0 && client.domains.indexOf(origin) < 0) throw new UnauthorizedError(`Unauthorized (invalid origin: ${origin})`);
-          if (client.methods.indexOf(req.method) < 0) throw new UnauthorizedError(`Unauthorized (invalid method: ${req.method})`);
-
-          res.header('Access-Control-Allow-Origin', origin);
-          res.header('Access-Control-Allow-Methods', req.method);
-          res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-          if ('OPTIONS' == req.method) {
-            return res.send(200);
-          }
-          else {
-            next();
-          }
-        }).catch(err => {
-          next(err);
-      });
-    });
+    // router.use((req: any, res, next) => {
+    //   const referrerUrl = url.parse(req.headers.referer);
+    //   const origin = `${referrerUrl.protocol}//${referrerUrl.hostname}`;
+    //   const clientid = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
+    //   if (!clientid) {
+    //     const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
+    //     console.log(`Unauthoirized API request: ip: ${req.ip}, session: ${req.session}, user: ${userName}`);
+    //     throw new UnauthorizedError("Unauthorized: " + req.ip);
+    //   }
+    //
+    //   APIClient.findOne({clientId: clientid}).exec()
+    //     .then(client => {
+    //       if (!client) throw new UnauthorizedError(`Unauthorized: unknown clientId: ${clientid}`);
+    //       if (client.accountLocked) throw new UnauthorizedError("Unauthorized: Locked");
+    //       if (client.domains.indexOf("*") < 0 && client.domains.indexOf(origin) < 0) throw new UnauthorizedError(`Unauthorized (invalid origin: ${origin})`);
+    //       if (client.methods.indexOf(req.method) < 0) throw new UnauthorizedError(`Unauthorized (invalid method: ${req.method})`);
+    //
+    //       res.header('Access-Control-Allow-Origin', origin);
+    //       res.header('Access-Control-Allow-Methods', req.method);
+    //       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    //
+    //       if ('OPTIONS' == req.method) {
+    //         return res.send(200);
+    //       }
+    //       else {
+    //         next();
+    //       }
+    //     }).catch(err => {
+    //       next(err);
+    //   });
+    // });
 
     jsonRouter.get('/profile/:address', (req) => jsonAPI.getArtist(req.params.address, true, true));
 
