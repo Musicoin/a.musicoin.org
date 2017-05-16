@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as gettext from 'express-gettext';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as logging  from './app/logging';
@@ -141,3 +142,16 @@ ConfigUtils.loadConfig()
       cb(null, { options: opts, certs: certs });
     }
   });
+
+// gettext
+app.use(gettext(app, {
+    directory: path.join(__dirname, 'locales'),
+    useAcceptedLanguageHeader: true,
+	alias: '_'
+}));
+app.use(function(req, res, next) {
+    if (req.query && req.query.locale) {
+        res.setLocale(req.query.locale);
+    }
+    next();
+});
