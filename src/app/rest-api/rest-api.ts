@@ -42,7 +42,7 @@ export class MusicoinRestAPI {
             console.log(`Failed CORS 3: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             throw new UnauthorizedError(`Unauthorized (invalid origin: ${origin})`);
           }
-          if (client.methods.indexOf(req.method) < 0) {
+          if (req.method != "OPTIONS" && client.methods.indexOf(req.method) < 0) {
             console.log(`Failed CORS 4: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             throw new UnauthorizedError(`Unauthorized (invalid method: ${req.method})`);
           }
