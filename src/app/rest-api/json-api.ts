@@ -790,11 +790,8 @@ export class MusicoinOrgJsonAPI {
             });
             return newItems.length > limit ? newItems.slice(0, limit) : newItems;
           })
-          .then(items => items.map(item => this._convertDbRecordToLicenseLite(item)))
+          .then(items => items.map(item => this._convertDbRecordToLicense(item)))
           .then(promises => Promise.all(promises))
-          .then(results => {
-            return results;
-          });
       })
   }
 
