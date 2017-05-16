@@ -21,6 +21,7 @@ export class MusicoinRestAPI {
     router.use((req: any, res, next) => {
       const referrerUrl = url.parse(req.headers.referer);
       const origin = `${referrerUrl.protocol}//${referrerUrl.hostname}`;
+      const originWithPort = `${referrerUrl.protocol}//${referrerUrl.host}`;
       const clientid = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
       const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
       if (!clientid) {
@@ -51,7 +52,7 @@ export class MusicoinRestAPI {
           console.log(`CORS headers: Access-Control-Allow-Origin: ${req.headers.referer}`);
           console.log(`CORS headers: Access-Control-Allow-Methods: ${req.method}`);
 
-          res.header('Access-Control-Allow-Origin', req.headers.referer);
+          res.header('Access-Control-Allow-Origin', originWithPort);
           res.header('Access-Control-Allow-Methods', req.method);
           res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
