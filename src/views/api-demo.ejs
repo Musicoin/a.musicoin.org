@@ -120,7 +120,7 @@
       target.html("Loading...");
       $.ajax({
         url: endpoint + url + address,
-        headers: {clientid: clientid},
+        data: {clientid: clientid},
         success:function (data, status) {
           target.html("<pre>" + JSON.stringify(data, null, 2) + "</pre>");
         },

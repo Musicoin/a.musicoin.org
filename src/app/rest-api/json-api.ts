@@ -756,6 +756,9 @@ export class MusicoinOrgJsonAPI {
     // short of upgrading the DB, random selection is a bit difficult.
     // However, we don't really need it to be truly random
     const condition = {verified: true, mostRecentReleaseDate: {$ne: null}};
+    if (!limit || limit < 1 || limit > 10) {
+      limit = 1;
+    }
 
     // TODO we could cache the count() result as it doesn't change very often
     return User.find(condition).count()
@@ -767,9 +770,6 @@ export class MusicoinOrgJsonAPI {
       })
       .then(artists => {
         const filter = genre ? {state: 'published', genres: genre, markedAsAbuse: {$ne: true}} : {state: 'published', markedAsAbuse: {$ne: true}};
-        if (!limit || limit < 1 || limit > 10) {
-          limit = 1;
-        }
         let query = Release.find(filter)
           .where({artist: {$in: artists.map(a => a._id)}})
           .populate("artist");
