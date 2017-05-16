@@ -777,12 +777,22 @@ export class MusicoinOrgJsonAPI {
         return query.exec()
           .then(items => {
             this.shuffle(items);
-            return items.length > limit ? items.slice(0, limit) : items;
+            const newItems = [];
+            const artists = {};
+            items.forEach(item => {
+              if (!artists[item.artistAddress]) {
+                artists[item.artistAddress] = true;
+                newItems.unshift(item);
+              }
+              else {
+                newItems.push(item);
+              }
+            });
+            return newItems.length > limit ? newItems.slice(0, limit) : newItems;
           })
           .then(items => items.map(item => this._convertDbRecordToLicenseLite(item)))
           .then(promises => Promise.all(promises))
           .then(results => {
-            this.shuffle(results);
             return results;
           });
       })
