@@ -772,10 +772,13 @@ export class MusicoinOrgJsonAPI {
         }
         let query = Release.find(filter)
           .where({artist: {$in: artists.map(a => a._id)}})
-          .limit(limit)
           .populate("artist");
 
         return query.exec()
+          .then(items => {
+            this.shuffle(items);
+            return items.length > limit ? items.slice(0, limit) : items;
+          })
           .then(items => items.map(item => this._convertDbRecordToLicenseLite(item)))
           .then(promises => Promise.all(promises))
           .then(results => {
