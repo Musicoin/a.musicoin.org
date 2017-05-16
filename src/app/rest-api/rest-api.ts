@@ -22,7 +22,11 @@ export class MusicoinRestAPI {
       const referrerUrl = url.parse(req.headers.referer);
       const origin = `${referrerUrl.protocol}//${referrerUrl.hostname}`;
       const clientid = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
-      if (!clientid) throw new UnauthorizedError("Unauthorized");
+      if (!clientid) {
+        const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
+        console.log(`Unauthoirized API request: ip: ${req.ip}, session: ${req.session}, user: ${userName}`);
+        throw new UnauthorizedError("Unauthorized: " + req.ip);
+      }
 
       APIClient.findOne({clientId: clientid}).exec()
         .then(client => {
