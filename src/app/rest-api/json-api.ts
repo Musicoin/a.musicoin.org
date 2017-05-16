@@ -19,6 +19,7 @@ const InviteRequest = require('../../app/models/invite-request');
 const TrackMessage = require('../../app/models/track-message');
 const Hero = require('../../app/models/hero');
 const ErrorReport = require('../../app/models/error-report');
+const APIClient = require('../../app/models/api-client');
 // const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 const defaultProfileIPFSImage = "ipfs://QmR8mmsMn9TUdJiA6Ja3SYcQ4ckBdky1v5KGRimC7LkhGF";
 const uuidV4 = require('uuid/v4');
@@ -328,6 +329,20 @@ export class MusicoinOrgJsonAPI {
       .skip(start)
       .limit(length)
       .exec();
+  }
+
+  getAllAPIClients(start: number, length: number): Promise<any> {
+    const c = APIClient.count().exec();
+    const u = APIClient.find()
+      .skip(start)
+      .limit(length)
+      .exec();
+    return Promise.join(c, u, (count, users) => {
+      return {
+        count: count,
+        clients: users
+      }
+    })
   }
 
   getAllUsers(_search: string, invitedByIds: string[], verified: string, artist: string, start: number, length: number): Promise<any> {

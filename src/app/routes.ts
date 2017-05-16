@@ -155,7 +155,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.json({ok: true})
   });
 
+  app.get('/json-api/demo', isLoggedIn, (req, res) => doRender(req, res, 'api-demo.ejs', {}));
   app.use('/json-api', restAPI.getRouter());
+
   app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
   app.use('/admin', isLoggedIn, adminOnly);
   app.use('/admin/*', isLoggedIn, adminOnly);
@@ -719,7 +721,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
   app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
   app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
-  app.get('/json-api/demo', isLoggedIn, (req, res) => doRender(req, res, 'api-demo.ejs', {}));
 
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function (req, res) {

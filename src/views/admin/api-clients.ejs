@@ -1,0 +1,157 @@
+<style>
+    tr.claimed {
+        background-color: rgba(0, 200, 0, 0.1);
+    }
+
+    tr.profile {
+        background-color: rgba(0, 200, 0, 0.2);
+    }
+
+    tr.no-release {
+        background-color: rgba(228, 170, 23, 0.3);
+    }
+
+    tr.locked {
+        background-color: rgba(200, 0, 0, 0.2);
+    }
+</style>
+
+<div id="api-client-container">
+    <div class="text-center flex-row" style="justify-content: space-between">
+        <div></div>
+        <h3>API Clients</h3>
+        <div class="btn btn-warning" onclick="createNewClient()">New Client</div>
+    </div>
+    <%- include element-nav.ejs %>
+    <table class="table table-responsive white-well">
+        <tr>
+            <th class="text-center"></th>
+            <th class="text-center">Name</th>
+            <th class="text-center">ClientId</th>
+            <th class="text-center">Domains</th>
+            <th class="text-center">Methods</th>
+            <th class="text-center">Locked</th>
+        </tr>
+
+        <% for (var ivt = 0; ivt < apiClients.length; ivt++) {
+            var apiClient = apiClients[ivt];
+            var state = apiClient.accountLocked ? "locked" : "";
+            var name = apiClient.name;
+        %>
+        <tr class="<%= state %> client-account-row">
+            <td class="text-center middle">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Edit<span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0)" onclick="lockClientAccount(this, '<%= apiClient._id %>', '<%= name %>')"><%= apiClient.accountLocked ? "Unlock Account" : "Lock Account"%></a></li>
+                        <li class="divider"></li>
+                        <li><a href="javascript:void(0)" onclick="saveClientAccount(this, '<%= apiClient._id %>', '<%= name %>')">Save</a></li>
+                        <li class="divider"></li>
+                        <li><a href="javascript:void(0)" onclick="deleteClientAccount(this, '<%= apiClient._id %>', '<%= name %>')">Delete</a></li>
+                    </ul>
+                </div>
+            </td>
+            <td class="text-center middle"><%= name %></td>
+            <td class="text-center middle"><%= apiClient.clientId %></td>
+            <td class="text-center middle"><input class="client-domains"
+                                                  value="<%= apiClient.domains %>"
+                                                  onkeydown="$(this).css('background-color', '#ffe')"></td>
+            <td class="text-center middle"><input class="client-methods"
+                                                  value="<%= apiClient.methods %>"
+                                                  onkeydown="$(this).css('background-color', '#ffe')"></td>
+            <td class="text-center middle"><%= apiClient.accountLocked ? "Locked" : "" %></td>
+        </tr>
+        <% } %>
+    </table>
+</div>
+
+<script>
+  function createNewClient() {
+    var name = prompt("Enter a name for this client");
+    if (name) {
+      $.post('/admin/api-clients/add', {
+        name: name
+      }, function (data) {
+        if (data.success) {
+          new Message("Client added!", "success", 3000);
+          refreshAPIClientContainer();
+        }
+        else {
+          new Message("Failed: " + data.reason, 'error', 5000)
+        }
+      });
+    }
+  }
+
+  function lockClientAccount(element, id, name) {
+    var button= $(element);
+    var lock = button.text() == "Lock Account";
+    var msg = lock
+      ? "Are you sure you want to lock " + name + "? The user will not be able to log in."
+      : "Are you sure you want to enable " + name + "? The user will be able to log in again.";
+    var resultMsg = lock
+      ? "User account locked"
+      : "User account unlocked";
+
+    new Message(msg, 'error', 5000)
+      .button("Yes", function() {
+        $.post('/admin/api-clients/lock', {
+          id: id,
+          lock: lock
+        }, function (data) {
+          if (data.success) {
+            $(element).text(lock ? "Unlock Account" : "Lock Account");
+            $(element).toggleClass("btn-danger", !lock);
+            $(element).toggleClass("btn-success", lock);
+            new Message(resultMsg, "success", 3000);
+            refreshAPIClientContainer();
+          }
+          else {
+            new Message("Failed: " + data.reason, 'error', 5000)
+          }
+        })
+      })
+  }
+
+  function saveClientAccount(element, id, name) {
+    var row = $(element).closest(".client-account-row");
+    var domains = row.find(".client-domains").val();
+    var methods = row.find(".client-methods").val();
+
+    $.post('/admin/api-clients/save', {
+      id: id,
+      domains: domains,
+      methods: methods
+    }, function (data) {
+      if (data.success) {
+        new Message("Saved!", "success", 3000);
+      }
+      else {
+        new Message("Failed: " + data.reason, 'error', 5000)
+      }
+    });
+  }
+
+  function deleteClientAccount(element, id, name) {
+    var button= $(element);
+    var msg = "Are you sure you want to DELETE " + name + "? The user will no longer be able to acccess the API."
+    new Message(msg, 'error', 5000)
+      .button("Yes", function() {
+        $.post('/admin/api-clients/delete', {
+          id: id
+        }, function (data) {
+          if (data.success) {
+            new Message("Client account deleted", "success", 3000);
+            refreshAPIClientContainer();
+          }
+          else {
+            new Message("Failed: " + data.reason, 'error', 5000)
+          }
+        })
+      })
+  }
+
+  function refreshAPIClientContainer() {
+    dynamic.refreshElement($($("#api-client-container").closest('.dynamic-element')))
+  }
+</script>

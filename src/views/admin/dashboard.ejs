@@ -48,6 +48,9 @@
     .admin-section {
         min-height: 600px;
     }
+    .small-admin-section {
+        min-height: 300px;
+    }
 </style>
 <%- include ../partials/header.ejs %>
 
@@ -179,6 +182,25 @@
                      de-start="0"
                      de-length="10"
                      de-url="/admin/elements/releases">
+                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <div class="well white-well small-shadow-no-hover small-admin-section">
+                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
+                     de-target-id="de-api-clients">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </div>
+                <div class="dynamic-element"
+                     id="de-api-clients"
+                     de-refresh-period="600"
+                     de-refresh-offset="0"
+                     de-reset="start=0,length=10"
+                     de-start="0"
+                     de-length="10"
+                     de-url="/admin/elements/api-clients">
                     <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
                 </div>
             </div>

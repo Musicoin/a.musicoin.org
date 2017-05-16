@@ -1,17 +1,17 @@
 import * as express from 'express';
 import {Promise} from 'bluebird';
-import * as Formidable from 'formidable';
-import * as MetadataLists from '../config/metadata-lists';
 const router = express.Router();
 import {AddressResolver} from "./address-resolver";
 import {MusicoinOrgJsonAPI} from "./rest-api/json-api";
-import * as FormUtils from "./form-utils";
 import {MusicoinAPI} from "./musicoin-api";
+import * as crypto from 'crypto';
+
 const Release = require('../app/models/release');
 const User = require('../app/models/user');
-const Playback = require('../app/models/playback');
 const ReleaseStats = require('../app/models/release-stats');
+const APIClient = require('../app/models/api-client');
 const UserStats = require('../app/models/user-stats');
+
 
 export class DashboardRouter {
   constructor(musicoinApi: MusicoinAPI,
@@ -257,6 +257,82 @@ export class DashboardRouter {
           accounts: output,
         });
       })
+    });
+
+    router.post('/elements/api-clients', function(req, res) {
+      const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
+      const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
+      jsonAPI.getAllAPIClients(start, length)
+        .then(results => {
+          const clients = results.clients;
+          doRender(req, res, 'admin/api-clients.ejs', {
+            apiClients: clients,
+            totalClients: results.count,
+            navigation: {
+              description: `Showing ${start + 1} to ${start + clients.length} of ${results.count}`,
+              start: start,
+              length: clients.length
+            }
+          });
+        });
+    });
+
+    router.post('/api-clients/delete', (req, res) => {
+      APIClient.findById(req.body.id).exec()
+        .then(client => {
+          if (!client) throw Error("Could not find requested client");
+          return client.remove();
+        })
+        .then(() => {
+          res.json({success: true})
+        })
+        .catch(err => {
+          console.log("Failed to delete API client: " + err);
+          res.json({success: false, err: err.message});
+        })
+    });
+
+    router.post('/api-clients/add', (req, res) => {
+      const clientId = crypto.randomBytes(16).toString('hex'); // 128-bits
+      APIClient.create({
+        name: req.body.name,
+        clientId: clientId,
+        domains: [],
+        methods: ["GET"]
+      })
+        .then((record) => {
+          res.json({success: true});
+        })
+        .catch(err => {
+          console.log(`could not create new API user: ${err}`);
+          res.json({success: false, err: err.message});
+        });
+    });
+
+    router.post('/api-clients/lock', (req, res) => {
+      if (!req.body.id) return res.json({success: false, reason: "No id"});
+      if (typeof req.body.lock == "undefined") return res.json({success: false, reason: "specify true/false for 'lock' parameter"});
+      APIClient.findById(req.body.id).exec()
+        .then(user => {
+          user.accountLocked = req.body.lock == "true";
+          return user.save();
+        })
+        .then(() => {
+          res.json({success: true})
+        })
+    });
+
+    router.post('/api-clients/save', (req, res) => {
+      if (!req.body.id) return res.json({success: false, reason: "No id"});
+      APIClient.findById(req.body.id).exec()
+        .then(user => {
+          user.domains = req.body.domains.split(",").map(s => s.trim()).filter(s => s);
+          user.methods = req.body.methods.split(",").map(s => s.trim()).filter(s => s);
+          return user.save();
+        })
+        .then(() => {
+          res.json({success: true})
+        })
     });
 
     function _timeSince(date) {

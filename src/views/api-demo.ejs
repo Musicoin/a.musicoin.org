@@ -34,6 +34,11 @@
         .mb0 {
             margin-bottom: 0;
         }
+
+        .global-param-name {
+            width: 75px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +47,12 @@
     <div class="page-header">
         <h1>API Demo</h1>
     </div>
+
+    <div>
+        <div><span class="global-param-name">clientId </span><input id=clientid style="color: black" type="text" placeholder="Enter a clientId"></div>
+        <div><span class="global-param-name">endpoint </span><input id=endpoint style="color: black" type="text" placeholder="endpoint (optional)"></div>
+    </div>
+
 
     <%
     var apis = loadAPIs();
@@ -103,10 +114,13 @@
     },
     getJson: function (url, addressId, targetId) {
       var address = addressId ? $("#" + addressId).val() : "";
+      var clientid = $("#clientid").val();
+      var endpoint = $("#endpoint").val();
       var target = $("#" + targetId);
       target.html("Loading...");
       $.ajax({
-        url: url + address,
+        url: endpoint + url + address,
+        headers: {clientid: clientid},
         success:function (data, status) {
           target.html("<pre>" + JSON.stringify(data, null, 2) + "</pre>");
         },

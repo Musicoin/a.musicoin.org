@@ -149,7 +149,7 @@ app.use(gettext(app, {
     useAcceptedLanguageHeader: true,
 	alias: '_'
 }));
-app.use(function(req, res, next) {
+app.use(function(req, res: any, next) {
     if (req.query && req.query.locale) {
         res.setLocale(req.query.locale);
     }
