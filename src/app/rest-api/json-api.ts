@@ -752,6 +752,39 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
+  getSampleOfVerifiedTracks(limit: number, genre?: string): Promise<any> {
+    // short of upgrading the DB, random selection is a bit difficult.
+    // However, we don't really need it to be truly random
+    const condition = {verified: true, mostRecentReleaseDate: {$ne: null}};
+
+    // TODO we could cache the count() result as it doesn't change very often
+    return User.find(condition).count()
+      .then(count => {
+        let offset = count < limit ? 0 : Math.floor(Math.random() * (count-limit));
+        return User.find(condition, '_id')
+          .limit(limit)
+          .skip(offset)
+      })
+      .then(artists => {
+        const filter = genre ? {state: 'published', genres: genre, markedAsAbuse: {$ne: true}} : {state: 'published', markedAsAbuse: {$ne: true}};
+        if (!limit || limit < 1 || limit > 10) {
+          limit = 1;
+        }
+        let query = Release.find(filter)
+          .where({artist: {$in: artists.map(a => a._id)}})
+          .limit(limit)
+          .populate("artist");
+
+        return query.exec()
+          .then(items => items.map(item => this._convertDbRecordToLicenseLite(item)))
+          .then(promises => Promise.all(promises))
+          .then(results => {
+            this.shuffle(results);
+            return results;
+          });
+      })
+  }
+
   getRandomReleases(limit: number, genre?: string): Promise<any> {
     const filter = genre ? {state: 'published', genres: genre, markedAsAbuse: {$ne: true}} : {state: 'published', markedAsAbuse: {$ne: true}};
     if (!limit || limit < 1 || limit > 10) {
@@ -1706,6 +1739,13 @@ export class MusicoinOrgJsonAPI {
 
   private _notBlank(s: string) {
     return s && s.trim().length > 0;
+  }
+
+  private shuffle(a) {
+    for (let i = a.length; i; i--) {
+      let j = Math.floor(Math.random() * i);
+      [a[i - 1], a[j]] = [a[j], a[i - 1]];
+    }
   }
 
   _sanitize(s: string) {

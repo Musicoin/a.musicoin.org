@@ -25,14 +25,12 @@ export class MusicoinRestAPI {
       const clientid = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
       const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
       if (!clientid) {
-        console.log(`Failed CORS 0: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
         return next();
       }
 
       APIClient.findOne({clientId: clientid}).exec()
         .then(client => {
           if (!client) {
-            console.log(`Failed CORS 1: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             return next();
           }
           if (client.accountLocked) {
@@ -48,9 +46,9 @@ export class MusicoinRestAPI {
             throw new UnauthorizedError(`Unauthorized (invalid method: ${req.method})`);
           }
 
-          console.log(`Adding CORS headers: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
-          console.log(`CORS headers: Access-Control-Allow-Origin: ${req.headers.referer}`);
-          console.log(`CORS headers: Access-Control-Allow-Methods: ${req.method}`);
+          // console.log(`Adding CORS headers: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+          // console.log(`CORS headers: Access-Control-Allow-Origin: ${req.headers.referer}`);
+          // console.log(`CORS headers: Access-Control-Allow-Methods: ${req.method}`);
 
           res.header('Access-Control-Allow-Origin', originWithPort);
           res.header('Access-Control-Allow-Methods', req.method);
@@ -82,7 +80,7 @@ export class MusicoinRestAPI {
     jsonRouter.get('/tracks/new', (req) => jsonAPI.getNewReleases(this._getLimit(req)));
     jsonRouter.get('/tracks/recent', (req) => jsonAPI.getRecentPlays(this._getLimit(req)));
     jsonRouter.get('/tracks/top', req => jsonAPI.getTopPlayed(this._getLimit(req), req.query.genre));
-    jsonRouter.get('/tracks/random', (req) => jsonAPI.getRandomReleases(this._getLimit(req)));
+    jsonRouter.get('/tracks/random', (req) => jsonAPI.getSampleOfVerifiedTracks(this._getLimit(req), req.query.genre));
     jsonRouter.get('/tracks/details', (req) => jsonAPI.getTrackDetailsByIds(req.query.addresses));
 
     jsonRouter.post('/track/earnings/', req => jsonAPI.getTrackEarnings(req.body.releaseid));
