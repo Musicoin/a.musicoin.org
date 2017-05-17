@@ -333,7 +333,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/feed', isLoggedIn, function (req, res) {
-    const messageTypes = req.user && req.user.preferences ? req.user.preferences.feedFilter.split("|").filter(v=>v) : [];
+    const messageTypes = req.user && req.user.preferences && req.user.preferences.feedFilter ? req.user.preferences.feedFilter.split("|").filter(v=>v) : [];
     const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages, messageTypes);
     const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.feed.topPlayLastWeek, "week").catchReturn([]);
     const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.feed.topTippedLastWeek, "week").catchReturn([]);
