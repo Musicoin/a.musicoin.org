@@ -616,7 +616,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     const messageTypes = req.body.messagetypes ? req.body.messagetypes.split("|") : [];
     if (req.user && req.user.preferences && req.user.preferences.feedFilter != req.body.messagetypes) {
-      console.log("Saving shit: " + req.body.messagetypes);
       req.user.preferences.feedFilter = req.body.messagetypes;
       req.user.save();
     }
