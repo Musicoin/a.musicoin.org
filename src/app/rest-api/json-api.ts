@@ -1175,17 +1175,19 @@ export class MusicoinOrgJsonAPI {
               sendNotification = false;
             }
 
+            const threadId = _threadId
+              ? _threadId
+              : replyToMessage && replyToMessage.threadId
+                ? replyToMessage.threadId
+                : uuidV4();
+
             if (sendNotification) {
               const recipient = a ? this._getUserEmail(a)
                 : messageType == "donate" ? "musicoin@berry.ai" : null;
 
               if (recipient) {
                 console.log(`Sending message notification to: ${recipient}`);
-                const urlPath = release
-                  ? "/track/" + release.contractAddress
-                  : artistAddress
-                    ? "/artist/" + artistAddress
-                    : "/artist/" + senderAddress;
+                const urlPath = `/nav/thread-page?thread=${threadId}`;
                 const notification = {
                   trackName: release ? release.title : null,
                   actionUrl: this.config.serverEndpoint + urlPath,
@@ -1200,12 +1202,6 @@ export class MusicoinOrgJsonAPI {
                 console.log(`Could not send message to artist ${artistAddress} because no email address is associated with the account`);
               }
             }
-
-            const threadId = _threadId
-              ? _threadId
-              : replyToMessage && replyToMessage.threadId
-                ? replyToMessage.threadId
-                : uuidV4();
 
             return TrackMessage.create({
               artistAddress: artistAddress,

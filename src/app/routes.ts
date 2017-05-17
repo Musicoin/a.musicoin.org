@@ -76,7 +76,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   };
 
   const newReleaseListener = r => {
-    jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, "New release!", MESSAGE_TYPES.release, null)
+    let msgText = r.description ? "[New Release] " + r.description : "New release!";
+
+    // TODO: This should be handled in the UI, but for now just chop the message text
+    if (msgText.length > 150) msgText = msgText.substring(0, 150) + "...";
+    jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, msgText, MESSAGE_TYPES.release, null)
       .catch(err => {
         console.log(`Failed to post a message about a new release: ${err}`)
       });
