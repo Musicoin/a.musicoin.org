@@ -1220,22 +1220,27 @@ export class MusicoinOrgJsonAPI {
     })
   }
 
-  getFeedMessages(userId: string, limit: number, minDate?: any): Promise<any[]> {
+  getFeedMessages(userId: string, limit: number, messageTypes: string[], minDate?: any): Promise<any[]> {
     const f = Follow.find({follower: userId}).exec();
     const u = User.findOne({_id: userId}).exec();
     return Promise.join(u, f, (user, followingRecords) => {
         if (user) {
           const following = followingRecords.map(fr => fr.following);
           const filter = minDate ? {timestamp: {$gte: minDate}} : {};
-          return this._executeTrackMessagesQuery(
-            TrackMessage.find(filter)
-              .or([
-                {sender: {$in: following}}, // comments by users/artists I follow
-                {sender: userId}, // messages I sent
-                {$and: [{artist: userId}, {messageType: {$in: ["tip", "follow"]}}]}, // anyone followed/tipped me
-                {replyToSender: userId} // messages in reply to my messages
-              ])
-            .limit(limit))
+          let query = TrackMessage.find(filter)
+            .or([
+              {sender: {$in: following}}, // comments by users/artists I follow
+              {sender: userId}, // messages I sent
+              {$and: [{artist: userId}, {messageType: {$in: ["tip", "follow"]}}]}, // anyone followed/tipped me
+              {replyToSender: userId} // messages in reply to my messages
+            ])
+            .limit(limit);
+
+          if (messageTypes && messageTypes.length > 0) {
+            query = query.where({messageType: {$in: messageTypes}})
+          }
+
+          return this._executeTrackMessagesQuery(query)
         }
         return [];
       })

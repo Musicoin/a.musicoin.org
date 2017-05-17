@@ -333,7 +333,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/feed', isLoggedIn, function (req, res) {
-    const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages);
+    const messageTypes = req.user && req.user.preferences ? req.user.preferences.feedFilter.split("|").filter(v=>v) : [];
+    const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages, messageTypes);
     const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.feed.topPlayLastWeek, "week").catchReturn([]);
     const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.feed.topTippedLastWeek, "week").catchReturn([]);
     const h  = jsonAPI.getHero();
@@ -345,6 +346,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         doRender(req, res, "feed.ejs", {
           showFeedPlayAll: true,
           messages: messages,
+          messageTypes: messageTypes,
           topPlayedLastWeek: topPlayed,
           topTippedLastWeek: topTipped,
           recentlyPlayed: recentlyPlayed,
@@ -612,7 +614,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
-    handleMessagePost(req).then(() => jsonAPI.getFeedMessages(req.user._id, limit))
+    const messageTypes = req.body.messagetypes ? req.body.messagetypes.split("|") : [];
+    if (req.user && req.user.preferences && req.user.preferences.feedFilter != req.body.messagetypes) {
+      console.log("Saving shit: " + req.body.messagetypes);
+      req.user.preferences.feedFilter = req.body.messagetypes;
+      req.user.save();
+    }
+
+    handleMessagePost(req).then(() => jsonAPI.getFeedMessages(req.user._id, limit, messageTypes))
       .then(messages => {
         return doRender(req, res, "partials/track-messages.ejs", {
           messages: messages,

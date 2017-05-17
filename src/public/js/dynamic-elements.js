@@ -115,5 +115,69 @@ if (typeof dynamic == "undefined") {
       var target = targetId ? $("#" + item.attr('de-target-id')) : item.parentsUntil(".dynamic-element").parent();
       dynamic.refreshElement(target);
     })
+
+    function findTarget(child) {
+      return child.attr('de-target') ? $("#" + child.attr('de-target')) : child.closest('.dynamic-element');
+    }
+
+    $(document).on('click', '.de-parameter-setter', function() {
+      var child = $(this);
+      var element = findTarget(child);
+      setParameter(element, child.attr('de-parameter'), child.attr('de-value'), false);
+      setAll(element, child.attr('de-parameters'), child.attr('de-refresh') != "false");
+    });
+
+    $(document).on('click', '.de-parameter-checkbox', function() {
+      var child = $(this);
+      var element = findTarget(child);
+      var parameter = child.attr('de-checkbox-group');
+      var value = child.attr('de-value');
+      var currentValues = element.attr('de-' + parameter).split("|");
+      var idx = currentValues.indexOf(value);
+      if (child[0].checked) {
+        if (idx < 0) currentValues.push(value);
+
+      }
+      else {
+        if (idx >= 0) currentValues.splice(idx, 1);
+      }
+      setParameter(element, parameter, currentValues.join("|"), true);
+    });
+
+
+
+    $(document).on('click', '.de-parameter-reset', function() {
+      var child = $(this);
+      var element = findTarget(child);
+      setAll(element, element.attr('de-reset'), true);
+    });
+
+    $(document).on('keypress', '.de-parameter-input', function(e) {
+      if(e.which == 13) {
+        var child = $(this);
+        var element = findTarget(child);
+        setParameter(element, child.attr('de-parameter'), child.val(), false);
+        setAll(element, child.attr('de-parameters'), child.attr('de-refresh') != "false");
+      }
+    });
+
+    function setAll(element, params, refresh) {
+      if (params) {
+        params.split(',').forEach(function(p) {
+          var nameValue = p.split("=")
+          element.attr('de-' + nameValue[0], nameValue[1]);
+        });
+      }
+      if (refresh) {
+        dynamic.refreshElement(element);
+      }
+    }
+
+    function setParameter(element, param, value, refresh) {
+      element.attr("de-" + param, value);
+      if (refresh) {
+        dynamic.refreshElement(element);
+      }
+    }
   });
 }

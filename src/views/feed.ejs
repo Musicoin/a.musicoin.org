@@ -62,6 +62,36 @@
                 <textarea class="general-post" target="de-track-messages" placeholder="say something..."></textarea>
             </div>
 
+            <div class="flex-row" style="justify-content: center">
+                <div class="dropdown">
+                    <div class="dropdown-toggle clickable btn btn-default" type="button" data-toggle="dropdown"><i class="fa fa-filter" aria-hidden="true"></i>  filter <i class="fa fa-chevron-down" aria-hidden="true"></i></div>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <%
+                        var types = [
+                            {value: "release", name: "New releases"},
+                            {value: "comment", name: "Comments"},
+                            {value: "donate", name: "Donations"},
+                            {value: "follow", name: "New connections"},
+                            {value: "tip", name: "Tips"}]
+                        for (var idx=0; idx < types.length; idx++) {
+                          var type = types[idx];
+                          var checked = messageTypes.indexOf(type.value) >= 0;
+                        %>
+                        <li style="padding-left: 5px">
+                            <label class="clickable" style="text-transform: none; text-wrap: none">
+                                <input title="test" type="checkbox" class="de-parameter-checkbox clickable"
+                                   <%- checked ? "checked" : "" %>
+                                   de-checkbox-group="messagetypes"
+                                   de-value="<%=type.value%>"
+                                   de-target="de-track-messages">
+                                <%=type.name%>
+                            </label>
+                        </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+
             <div class="dynamic-element message-scroller"
                  data-behavior="chat-message-area"
                  style="min-height: 180px"
@@ -69,6 +99,7 @@
                  de-refresh-period="10"
                  de-refresh-offset="10"
                  de-showtrack="true"
+                 de-messagetypes="<%=messageTypes.join('|')%>"
                  de-limit="<%= ui.newMessages %>",
                  de-nocontent="You're not following anyone"
                  de-url="/elements/feed">

@@ -111,7 +111,8 @@ const userSchema = mongoose.Schema({
     activityReporting: {
       type: String,
       default: 'week'
-    }
+    },
+    feedFilter: String
   },
   directTipCount: {
     type: Number,
