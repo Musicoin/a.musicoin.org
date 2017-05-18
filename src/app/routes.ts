@@ -1230,208 +1230,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  // =====================================
-  // EMAIL ==============================
-  // =====================================
-  app.get('/login', function (req, res) {
-    if (req.user) {
-      console.log("User is already logged in, redirecting away from login page");
-      return res.redirect(loginRedirect);
-    }
-    // render the page and pass in any flash data if it exists
-    doRender(req, res, 'login.ejs', {message: req.flash('loginMessage')});
-  });
 
-  app.get('/connect/email', function (req, res) {
-    // render the page and pass in any flash data if it exists
-    doRender(req, res, 'login.ejs', {
-      message: req.flash('loginMessage'),
-    });
-  });
-
-  app.post('/login/confirm', function (req, res) {
-    if (req.body.email) req.body.email = req.body.email.trim();
-    if (!FormUtils.validateEmail(req.body.email)) {
-      res.json({
-        success: false,
-        email: req.body.email,
-        reason: "The email address does not appear to be valid"
-      });
-    }
-    else {
-      const code = crypto.randomBytes(4).toString('hex')
-      EmailConfirmation.create({email: req.body.email, code: code})
-        .then(record => {
-          return mailSender.sendEmailConfirmationCode(req.body.email, code)
-            .then(() => {
-              console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
-              res.json({
-                success: true,
-                email: req.body.email
-              });
-            })
-        })
-        .catch((err) => {
-          console.log(`Failed to send email confirmation code: ${err}`);
-          res.json({
-            success: false,
-            email: req.body.email,
-            reason: "An internal error occurred.  Please try again later."
-          });
-        });
-    }
-  });
-
-  function validateLoginEmail(errRedirect) {
-    return function (req, res, next) {
-      if (req.body.email) req.body.email = req.body.email.trim();
-      if (!FormUtils.validateEmail(req.body.email)) {
-        req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
-        return res.redirect(errRedirect);
-      }
-
-      // in cases where the user is creating/linking an email address, check the password
-      const isLinking = req.isAuthenticated();
-      if (isLinking) {
-        // passwords must match (also check client side, but don't count on it)
-        if (req.body.password != req.body.password2) {
-          req.flash('loginMessage', `Your passwords did not match`);
-          return res.redirect(errRedirect);
-        }
-
-        // minimum password strength
-        const error = FormUtils.checkPasswordStrength(req.body.password);
-        if (error) {
-          req.flash('loginMessage', error);
-          return res.redirect(errRedirect);
-        }
-
-        return EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation})
-          .then(record => {
-            if (record) {
-              next();
-            }
-            else {
-              req.flash('loginMessage', "The confirmation code provided did not match the email address provided.");
-              return res.redirect(errRedirect);
-            }
-          })
-      }
-      return next();
-    }
-  }
-
-  function validateNewAccount(errRedirect) {
-    return function (req, res, next) {
-      if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
-      if (!FormUtils.validateEmail(req.body.email)) {
-        req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
-        return res.redirect(errRedirect);
-      }
-
-      // in cases where the user is creating/linking an email address, check the password
-      // passwords must match (also check client side, but don't count on it)
-      if (req.body.password != req.body.password2) {
-        req.flash('loginMessage', `Your passwords did not match`);
-        return res.redirect(errRedirect);
-      }
-
-      if ((!req.body.name || req.body.name.trim().length == 0)) {
-        req.flash('loginMessage', `Please enter a screen name`);
-        return res.redirect(errRedirect);
-      }
-
-      // minimum password strength
-      const error = FormUtils.checkPasswordStrength(req.body.password);
-      if (error) {
-        req.flash('loginMessage', error);
-        return res.redirect(errRedirect);
-      }
-
-      const cc = EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation});
-      const eu = User.findOne({"local.email": req.body.email});
-      const cp = checkCaptcha(req);
-
-      return Promise.join(cc, eu, cp, function(confirmation, existingUser, captchaOk) {
-        if (!captchaOk) {
-          req.flash('loginMessage', "The reCAPTCHA validation failed.");
-          return res.redirect(errRedirect);
-        }
-
-        if (existingUser) {
-          req.flash('loginMessage', "An account already exists with this email address");
-          return res.redirect(errRedirect);
-        }
-
-        if (confirmation) {
-          next();
-        }
-        else {
-          req.flash('loginMessage', "The confirmation code provided did not match the email address provided.");
-          return res.redirect(errRedirect);
-        }
-      });
-    }
-  }
-
-  function checkCaptcha(req) {
-    const userResponse = req.body['g-recaptcha-response'];
-    const url = config.captcha.url;
-    return new Promise(function (resolve, reject) {
-      var verificationUrl = `${url}?secret=${config.captcha.secret}&response=${userResponse}&remoteip=${req.ip}`;
-      console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
-      const options = {
-        method: 'post',
-        url: verificationUrl
-      };
-      request(options, function (err, res, body) {
-        if (err) {
-          console.log(err);
-          return reject(err);
-        }
-        else if (res.statusCode != 200) {
-          console.log(`reCAPTCHA request failed with status code ${res.statusCode}, url: ${url}`);
-          return reject(new Error(`Request failed with status code ${res.statusCode}, url: ${url}`));
-        }
-        resolve(body);
-      });
-    }.bind(this))
-      .then(captchaResponse => {
-        return JSON.parse(captchaResponse);
-      })
-      .then(captchaResponse => {
-        console.log("reCAPTCHA response from google: " + JSON.stringify(captchaResponse));
-        return captchaResponse && captchaResponse.success;
-      })
-      .catch(err => {
-        console.log("Failed to process captcha: " + err);
-        return false;
-      });
-  }
-
-  app.post('/connect/email', validateLoginEmail('/connect/email'), passport.authenticate('local', {
-    successRedirect : loginRedirect, // redirect to the secure profile section
-    failureRedirect : '/connect/email', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
-  }));
-
-  app.post('/login', validateLoginEmail('/login'), passport.authenticate('local', {
-    successRedirect : loginRedirect, // redirect to the secure profile section
-    failureRedirect : '/login', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
-  }));
-
-  app.post('/signin', validateLoginEmail('/welcome'), passport.authenticate('local', {
-    successRedirect : loginRedirect, // redirect to the secure profile section
-    failureRedirect : '/welcome', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
-  }));
-
-  app.post('/signup', validateNewAccount('/welcome'), passport.authenticate('local', {
-    successRedirect : loginRedirect, // redirect to the secure profile section
-    failureRedirect : '/welcome', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
-  }));
 
   // =====================================
   // PUBLIC ARTIST PROFILE SECTION =====================
@@ -1943,14 +1742,22 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.redirect('/');
   });
 
+  function setSignUpFlag(isSignup) {
+    return function(req, res, next) {
+      req.session.signup = isSignup;
+      next();
+    }
+  }
+
   // =====================================
   // GOOGLE ROUTES =======================
   // =====================================
   // send to google to do the authentication
   // profile gets us their basic information including their name
   // email gets their emails
-  app.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
-  app.get('/connect/google', passport.authorize('google', {scope: ['profile', 'email']}));
+  app.get('/signup/google', setSignUpFlag(true), passport.authenticate('google', {scope: ['profile', 'email']}));
+  app.get('/auth/google', setSignUpFlag(false), passport.authenticate('google', {scope: ['profile', 'email']}));
+  app.get('/connect/google', setSignUpFlag(false), passport.authorize('google', {scope: ['profile', 'email']}));
 
   // the callback after google has authenticated the user
   app.get('/auth/google/callback',
@@ -1966,17 +1773,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }));
 
 
-  app.get('/auth/soundcloud', passport.authenticate('soundcloud'));
-
-  // the callback after google has authenticated the user
-  app.get('/auth/soundcloud/callback',
-    passport.authenticate('soundcloud', {
-      successRedirect: loginRedirect,
-      failureRedirect: '/welcome'
-    }));
-
-  app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
-  app.get('/connect/facebook', passport.authorize('facebook', {scope: ['public_profile', 'email']}));
+  app.get('/signup/facebook', setSignUpFlag(true), passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
+  app.get('/auth/facebook', setSignUpFlag(false), passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
+  app.get('/connect/facebook', setSignUpFlag(false), passport.authorize('facebook', {scope: ['public_profile', 'email']}));
 
   // handle the callback after twitter has authenticated the user
   app.get('/auth/facebook/callback',
@@ -1992,8 +1791,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       failureRedirect: '/welcome'
     }));
 
-  app.get('/auth/twitter', passport.authenticate('twitter', {scope: 'email'}));
-  app.get('/connect/twitter', passport.authorize('twitter', {scope: 'email'}));
+  app.get('/signup/twitter', setSignUpFlag(true), passport.authenticate('twitter', {scope: 'email'}));
+  app.get('/auth/twitter', setSignUpFlag(false), passport.authenticate('twitter', {scope: 'email'}));
+  app.get('/connect/twitter', setSignUpFlag(false), passport.authorize('twitter', {scope: 'email'}));
 
   // handle the callback after twitter has authenticated the user
   app.get('/auth/twitter/callback',
@@ -2007,6 +1807,83 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       successRedirect: loginRedirect,
       failureRedirect: '/welcome'
     }));
+
+
+  // =====================================
+  // EMAIL ==============================
+  // =====================================
+  app.get('/login', function (req, res) {
+    if (req.user) {
+      console.log("User is already logged in, redirecting away from login page");
+      return res.redirect(loginRedirect);
+    }
+    // render the page and pass in any flash data if it exists
+    doRender(req, res, 'login.ejs', {message: req.flash('loginMessage')});
+  });
+
+  app.get('/connect/email', function (req, res) {
+    // render the page and pass in any flash data if it exists
+    doRender(req, res, 'login.ejs', {
+      message: req.flash('loginMessage'),
+    });
+  });
+
+  app.post('/login/confirm', function (req, res) {
+    if (req.body.email) req.body.email = req.body.email.trim();
+    if (!FormUtils.validateEmail(req.body.email)) {
+      res.json({
+        success: false,
+        email: req.body.email,
+        reason: "The email address does not appear to be valid"
+      });
+    }
+    else {
+      const code = crypto.randomBytes(4).toString('hex')
+      EmailConfirmation.create({email: req.body.email, code: code})
+        .then(record => {
+          return mailSender.sendEmailConfirmationCode(req.body.email, code)
+            .then(() => {
+              console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
+              res.json({
+                success: true,
+                email: req.body.email
+              });
+            })
+        })
+        .catch((err) => {
+          console.log(`Failed to send email confirmation code: ${err}`);
+          res.json({
+            success: false,
+            email: req.body.email,
+            reason: "An internal error occurred.  Please try again later."
+          });
+        });
+    }
+  });
+
+  app.post('/connect/email', setSignUpFlag(false), validateLoginEmail('/connect/email'), passport.authenticate('local', {
+    successRedirect : loginRedirect, // redirect to the secure profile section
+    failureRedirect : '/connect/email', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+  }));
+
+  app.post('/login', setSignUpFlag(false), validateLoginEmail('/login'), passport.authenticate('local', {
+    successRedirect : loginRedirect, // redirect to the secure profile section
+    failureRedirect : '/login', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+  }));
+
+  app.post('/signin', setSignUpFlag(false), validateLoginEmail('/welcome'), passport.authenticate('local', {
+    successRedirect : loginRedirect, // redirect to the secure profile section
+    failureRedirect : '/welcome', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+  }));
+
+  app.post('/signup', setSignUpFlag(true), validateNewAccount('/welcome'), passport.authenticate('local', {
+    successRedirect : loginRedirect, // redirect to the secure profile section
+    failureRedirect : '/welcome', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+  }));
 
   // =============================================================================
   // UNLINK ACCOUNTS =============================================================
@@ -2046,6 +1923,134 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     req.user.save(function (err) {
       return res.json({success: true, message: `Your ${provider} account has been unlinked from this account`});
     });
+  }
+
+
+  function validateLoginEmail(errRedirect) {
+    return function (req, res, next) {
+      if (req.body.email) req.body.email = req.body.email.trim();
+      if (!FormUtils.validateEmail(req.body.email)) {
+        req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
+        return res.redirect(errRedirect);
+      }
+
+      // in cases where the user is creating/linking an email address, check the password
+      const isLinking = req.isAuthenticated();
+      if (isLinking) {
+        // passwords must match (also check client side, but don't count on it)
+        if (req.body.password != req.body.password2) {
+          req.flash('loginMessage', `Your passwords did not match`);
+          return res.redirect(errRedirect);
+        }
+
+        // minimum password strength
+        const error = FormUtils.checkPasswordStrength(req.body.password);
+        if (error) {
+          req.flash('loginMessage', error);
+          return res.redirect(errRedirect);
+        }
+
+        return EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation})
+          .then(record => {
+            if (record) {
+              next();
+            }
+            else {
+              req.flash('loginMessage', "The confirmation code provided did not match the email address provided.");
+              return res.redirect(errRedirect);
+            }
+          })
+      }
+      return next();
+    }
+  }
+
+  function validateNewAccount(errRedirect) {
+    return function (req, res, next) {
+      if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
+      if (!FormUtils.validateEmail(req.body.email)) {
+        req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
+        return res.redirect(errRedirect);
+      }
+
+      // in cases where the user is creating/linking an email address, check the password
+      // passwords must match (also check client side, but don't count on it)
+      if (req.body.password != req.body.password2) {
+        req.flash('loginMessage', `Your passwords did not match`);
+        return res.redirect(errRedirect);
+      }
+
+      if ((!req.body.name || req.body.name.trim().length == 0)) {
+        req.flash('loginMessage', `Please enter a screen name`);
+        return res.redirect(errRedirect);
+      }
+
+      // minimum password strength
+      const error = FormUtils.checkPasswordStrength(req.body.password);
+      if (error) {
+        req.flash('loginMessage', error);
+        return res.redirect(errRedirect);
+      }
+
+      const cc = EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation});
+      const eu = User.findOne({"local.email": req.body.email});
+      const cp = checkCaptcha(req);
+
+      return Promise.join(cc, eu, cp, function(confirmation, existingUser, captchaOk) {
+        if (!captchaOk) {
+          req.flash('loginMessage', "The reCAPTCHA validation failed.");
+          return res.redirect(errRedirect);
+        }
+
+        if (existingUser) {
+          req.flash('loginMessage', "An account already exists with this email address");
+          return res.redirect(errRedirect);
+        }
+
+        if (confirmation) {
+          next();
+        }
+        else {
+          req.flash('loginMessage', "The confirmation code provided did not match the email address provided.");
+          return res.redirect(errRedirect);
+        }
+      });
+    }
+  }
+
+  function checkCaptcha(req) {
+    const userResponse = req.body['g-recaptcha-response'];
+    const url = config.captcha.url;
+    return new Promise(function (resolve, reject) {
+      var verificationUrl = `${url}?secret=${config.captcha.secret}&response=${userResponse}&remoteip=${req.ip}`;
+      console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
+      const options = {
+        method: 'post',
+        url: verificationUrl
+      };
+      request(options, function (err, res, body) {
+        if (err) {
+          console.log(err);
+          return reject(err);
+        }
+        else if (res.statusCode != 200) {
+          console.log(`reCAPTCHA request failed with status code ${res.statusCode}, url: ${url}`);
+          return reject(new Error(`Request failed with status code ${res.statusCode}, url: ${url}`));
+        }
+        resolve(body);
+      });
+    }.bind(this))
+      .then(captchaResponse => {
+        return JSON.parse(captchaResponse);
+      })
+      .then(captchaResponse => {
+        console.log("reCAPTCHA response from google: " + JSON.stringify(captchaResponse));
+        return captchaResponse && captchaResponse.success;
+      })
+      .catch(err => {
+        console.log("Failed to process captcha: " + err);
+        return false;
+      });
   }
 
   function getLoginMethodCount(user) {

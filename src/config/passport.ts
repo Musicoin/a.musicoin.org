@@ -356,9 +356,8 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
            // existing user, just return
            if (user) return user;
 
-           // only allow a new user to be created when coming from the signup page
-           // this is ugly
-           if (authProvider == "local" && req.originalUrl != "/signup") return null;
+           // do not create new accounts unless we are in the signup flow
+           if (!req.session.signup) return null;
 
            // if not, look for an unclaimed invite
            return User.findOne({
