@@ -8,6 +8,7 @@ import * as UrlUtils from "./url-utils";
 import * as MetadataLists from '../config/metadata-lists';
 import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
+import {ExchangeRateProvider} from "./exchange-service";
 import {AddressResolver} from "./address-resolver";
 import {MailSender} from "./mail-sender";
 import {PendingTxDaemon} from './tx-daemon';
@@ -16,6 +17,7 @@ import Feed = require('feed');
 import * as request from 'request';
 import {ReleaseManagerRouter} from "./release-manager-routes";
 import {DashboardRouter} from "./admin-dashboard-routes";
+import {RequestCache} from "./cached-request";
 const sendSeekable = require('send-seekable');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
@@ -50,7 +52,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   publicPagesEnabled = config.publicPagesEnabled;
   let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider, config.playbackLinkTTLMillis);
   const mailSender = new MailSender();
-  let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider, mailSender, config);
+  const cachedRequest = new RequestCache();
+  const exchangeRateProvider = new ExchangeRateProvider(config.exchangeRateService, cachedRequest);
+
+  let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider, mailSender, exchangeRateProvider, config);
+
   let restAPI = new MusicoinRestAPI(jsonAPI);
   const addressResolver = new AddressResolver();
 
@@ -1241,7 +1247,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const a = jsonAPI.getArtist(req.params.address, true, false);
     const h = jsonAPI.getUserHero(req.params.address);
     const r = jsonAPI.getUserStatsReport(req.params.address, Date.now(), 'all');
-    Promise.join(a, m, h, r, (output, messages, hero, statsReport) => {
+    const x = exchangeRateProvider.getMusicoinExchangeRate();
+    Promise.join(a, m, h, r, x, (output, messages, hero, statsReport, exchangeRate) => {
         if (!output) return res.redirect("/not-found");
 
         let totalTips = statsReport.stats.user.tipCount;
@@ -1258,8 +1265,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         output.artistStats = {
           playCount: totalPlays,
           tipCount: totalTips,
-          totalEarned: (totalPlays + totalTips)
+          totalEarned: (totalPlays + totalTips),
+          formattedTotalUSD: "$" + _formatNumber((totalPlays + totalTips) * exchangeRate.usd, 2)
         };
+        output.exchangeRate = exchangeRate;
         doRender(req, res, "artist.ejs", output);
       })
   });
@@ -1289,8 +1298,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const ms = jsonAPI.getLicenseMessages(req.params.address, 20);
     const l = jsonAPI.getLicense(req.params.address);
     const r = Release.findOne({contractAddress: req.params.address, state: 'published'});
+    const x = exchangeRateProvider.getMusicoinExchangeRate();
 
-    Promise.join(l, ms, r, (license, messages, release) => {
+    Promise.join(l, ms, r, x, (license, messages, release, exchangeRate) => {
       if (!license || !release) {
         console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
         return res.render('not-found.ejs');
@@ -1302,6 +1312,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           let totalShares = 0;
           resolvedAddresses.forEach(r => totalShares += parseInt(r.shares));
           resolvedAddresses.forEach(r => r.percentage = _formatNumber(100 * r.shares / totalShares, 1));
+        const plays = release.directPlayCount || 0;
+        const tips = release.directTipCount || 0;
+        const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
           doRender(req, res, "track.ejs", {
             artist: response.artist,
             license: license,
@@ -1310,7 +1323,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             description: release.description,
             messages: messages,
             isArtist: req.user && req.user.profileAddress == license.artistProfileAddress,
-            abuseMessage: config.ui.admin.markAsAbuse
+            abuseMessage: config.ui.admin.markAsAbuse,
+            exchangeRate: exchangeRate,
+            trackStats: {
+              playCount: plays,
+              tipCount: tips,
+              totalEarned: (plays + tips),
+              formattedTotalUSD: usd
+            }
           });
         })
     })
@@ -1378,7 +1398,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
   app.get('/profile', isLoggedIn, function (req, res) {
-    jsonAPI.getArtist(req.user.profileAddress, true, true).then((output) => {
+    const a = jsonAPI.getArtist(req.user.profileAddress, true, true);
+    const r = exchangeRateProvider.getMusicoinExchangeRate();
+    Promise.join(a, r, (output, exchangeRate) => {
       output['invited'] = {
         email: req.query.invited,
         success: req.query.success == "true",
@@ -1396,9 +1418,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         languages: MetadataLists.languages,
         moods: MetadataLists.moods,
         genres: MetadataLists.genres,
-        regions: MetadataLists.regions
-      }
+        regions: MetadataLists.regions,
+      };
+
+      output.exchangeRate = exchangeRate;
       output.artist.formattedBalance = _formatNumber(output.artist.balance);
+      output.artist.formattedUSD = exchangeRate.success
+        ? "$" + _formatNumber(output.artist.balance * exchangeRate.usd, 2)
+        : "";
       doRender(req, res, "profile.ejs", output);
     })
   });

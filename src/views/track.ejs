@@ -165,7 +165,7 @@
                                      de-url="/json-api/track/earnings/">
                                     <div class="text-large">
                                         <span class="text-large" data-behavior="track-earnings"><%=formatNumber(parseInt(license.directPlayCount) + parseInt(license.directTipCount))%></span><span class="text-medium-small">MC</span><BR>
-                                        <span class="text-medium-small" style="position: relative; top: -10px;">earned</span>
+                                        <span class="text-medium-small subtle-text" style="position: relative; top: -10px;"><span data-behavior="track-earnings-usd"><%=trackStats.formattedTotalUSD%></span> earned</span>
                                     </div>
                                     <div class="subtle-text" style="position:relative; top:-5px">
                                         <span data-behavior="track-plays"><%=formatNumber(license.directPlayCount)%></span> plays + <span data-behavior="track-tips"><%=formatNumber(license.directTipCount)%></span> tips</div>
@@ -427,8 +427,10 @@
       var newPlays = parseInt(data.plays);
       var newTips = parseInt(data.tips)
       var newTotal = format.formatNumber(newPlays + newTips);
+      console.log("Updating earnings: " + JSON.stringify(data));
       if (newTotal != element.find("[data-behavior~=track-earnings]").text()) {
         element.find("[data-behavior~=track-earnings]").text(newTotal);
+        element.find("[data-behavior~=track-earnings-usd]").text(data.formattedTotalUSD);
         element.find("[data-behavior~=track-plays]").text(format.formatNumber(newPlays));
         element.find("[data-behavior~=track-tips]").text(format.formatNumber(newTips));
         element.effect("bounce");

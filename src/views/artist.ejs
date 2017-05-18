@@ -125,7 +125,7 @@ function formatNumber(value) {
             <div style="top: -6px; position: relative;">
                 <span class="text-large" data-behavior="total-earned"><%=formatNumber(artistStats.totalEarned)%></span><span class="text-medium-small">MC</span>
             </div>
-            <span class="text-medium-small subtle-text" style="position: relative; top: -11px;">earned</span>
+            <span class="text-medium-small subtle-text" style="position: relative; top: -11px;"><span data-behavior="total-earned-usd"><%=artistStats.formattedTotalUSD%></span> earned</span>
         </div>
     </div>
 </div>
@@ -180,9 +180,11 @@ function formatNumber(value) {
 
       var newTotal = format.formatNumber(newPlays + newTips);
       var earningsElement = element.find("[data-behavior~=total-earned]");
+      var earningsUSDElement = element.find("[data-behavior~=total-earned-usd]");
       var earningsContainer = element.find(".earnings-container");
       if (newTotal != earningsElement.text()) {
         earningsElement.text(newTotal);
+        earningsUSDElement.text(data.formattedTotalUSD);
         earningsContainer.effect("bounce");
       }
 

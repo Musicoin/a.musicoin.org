@@ -320,6 +320,11 @@
                 <div>
                     <div class="balance"><%= artist.formattedBalance %></div>
                     <div class="text-center subtle-text">musicoins</div>
+                    <% if (exchangeRate.success) { %>
+                    <div class="text-center subtle-text">
+                        <a target=_blank title="<%=exchangeRate.disclaimer%>" href="<%=exchangeRate.link%>"><%= artist.formattedUSD %> USD</a>
+                    </div>
+                    <% } %>
                 </div>
                 <div class=wallet-actions style="display: none">
                     <p>

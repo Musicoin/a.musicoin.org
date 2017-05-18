@@ -114,6 +114,12 @@ function getStructuredConfig(keyValueConfig) {
       clientID: keyValueConfig.musicoinApiClientId,
       clientSecret: keyValueConfig.musicoinApiClientSecret
     },
+    exchangeRateService: {
+      endpoint: "https://api.coinmarketcap.com/v1/ticker/musicoin/",
+      link: "https://coinmarketcap.com/currencies/musicoin/",
+      cacheTTL: 1000*60*5,
+      disclaimer: "For informational purposes only, based on current price reported by coinmarketcap.com. Does not represent a promise by Musicoin to buy/sell at this price."
+    },
     rewards: {
       verifiedSender: {
         forSendingInvite: 0,

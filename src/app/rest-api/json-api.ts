@@ -1,6 +1,7 @@
 import {Promise} from 'bluebird';
 import {MusicoinHelper} from "../musicoin-helper";
 import {MusicoinAPI} from "../musicoin-api";
+import {ExchangeRateProvider} from "../exchange-service";
 import * as moment from "moment";
 import * as FormUtils from "../form-utils";
 import * as crypto from 'crypto';
@@ -77,6 +78,7 @@ export class MusicoinOrgJsonAPI {
               private mcHelper: MusicoinHelper,
               private mediaProvider,
               private mailSender: MailSender,
+              private exchangeRateProvider: ExchangeRateProvider,
               private config: any) {
   }
 
@@ -1637,8 +1639,9 @@ export class MusicoinOrgJsonAPI {
   }
 
   getArtistEarnings(id: string): Promise<any> {
-    return User.findById(id).exec()
-      .then(user => {
+    const x = this.exchangeRateProvider.getMusicoinExchangeRate();
+    const u = User.findById(id).exec();
+    return Promise.join(u, x, (user, exchangeRate) => {
         if (!user) return {success: false};
         return this.getUserStatsReport(user.profileAddress, Date.now(), "all")
           .then(statsReport => {
@@ -1651,20 +1654,25 @@ export class MusicoinOrgJsonAPI {
             return {
               tips: totalTips,
               plays: totalPlays,
-              followers: user.followerCount
+              followers: user.followerCount,
+              formattedTotalUSD: "$" + this._formatNumber((totalPlays+totalTips) * exchangeRate.usd, 2)
             }
           })
       })
   }
 
   getTrackEarnings(id: string): Promise<any> {
-    return Release.findById(id).exec()
-      .then(release => {
-        if (!release) return {success: false}
+    const x = this.exchangeRateProvider.getMusicoinExchangeRate();
+    const r = Release.findById(id).exec();
+    return Promise.join(r, x, (release, exchangeRate) => {
+        if (!release) return {success: false};
+        const plays = release.directPlayCount || 0;
+        const tips = release.directTipCount || 0;
         return {
           success: true,
-          plays: release.directPlayCount || 0,
-          tips: release.directTipCount || 0
+          plays: plays,
+          tips: tips,
+          formattedTotalUSD: "$" + this._formatNumber((plays+tips) * exchangeRate.usd, 2)
         }
       })
   }
@@ -1808,6 +1816,13 @@ export class MusicoinOrgJsonAPI {
 
   private _hasAuthMethod(user: any, method: string): boolean {
     return user[method] && user[method].id;
+  }
+
+  private _formatNumber(value: any, decimals?: number) {
+    var raw = parseFloat(value).toFixed(decimals ? decimals : 0);
+    var parts = raw.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
   }
 }
 
