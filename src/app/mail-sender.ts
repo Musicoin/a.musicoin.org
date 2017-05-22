@@ -27,6 +27,11 @@ export class MailSender {
     return this.sendTemplate(`${appDir}/views/mail/email-confirmation.ejs`, recipient, subject, {code: code});
   }
 
+  sendPasswordReset(recipient: string, link: string): Promise<any> {
+    const subject = `Musicoin password reset request`;
+    return this.sendTemplate(`${appDir}/views/mail/password-reset.ejs`, recipient, subject, {link: link});
+  }
+
   sendInvite(recipient: string, invite: Invite): Promise<any> {
     const subject = `${invite.invitedBy} wants to you join Musicoin!`;
     return this.sendTemplate(`${appDir}/views/mail/invite.ejs`, recipient, subject, {invite: invite});

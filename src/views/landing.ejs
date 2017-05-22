@@ -6,7 +6,7 @@
     <style>
         body {
             word-wrap:break-word;
-            background-image: url(images/landing.jpg);
+            background-image: url(/images/landing.jpg);
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-size: cover;
@@ -196,6 +196,11 @@
 
 </style>
 
+<%
+    if (typeof code == "undefined") code = null;
+    if (typeof message == "undefined") message = "";
+%>
+
 <div class="flex-column mt25">
     <div class="mt40 big-screen-only"></div>
     <div class="center-text landing-header">
@@ -206,7 +211,7 @@
             <!-- Row 1 -->
             <div class="signin-instructions">
                 <%= _("sign in or sign up using one of these services:") %>
-                <% if (code) { %>
+                <% if (typeof code != "undefined" && code) { %>
                 <div style="color:#888">Invite Code: <%=code%></div>
                 <% } %>
             </div>
@@ -251,7 +256,11 @@
 
                         <div class="flex-row mt20" style="justify-content: space-between">
                             <button type="submit" class="btn btn-login login-button">SIGN IN</button>
-                            <a class="clickable text-login" onclick="$('.signin').hide(); $('.signup').show();">Sign up</a>
+                            <div class="flex-row">
+                                <a class="text-login mr20" href="/login/forgot">Forgot</a>
+                                <a class="clickable text-login" onclick="$('.signin').hide(); $('.signup').show();">Sign up</a>
+                            </div>
+
                         </div>
                     </form>
                 </div>

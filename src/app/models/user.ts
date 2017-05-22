@@ -15,6 +15,8 @@ const userSchema = mongoose.Schema({
     email: String,
     username: String,
     password: String,
+    resetCode: String,
+    resetExpiryTime: Date
   },
   facebook: {
     id: String,

@@ -166,7 +166,8 @@ function getStructuredConfig(keyValueConfig) {
         'clientID'    : keyValueConfig.facebookClientId,
         'clientSecret': keyValueConfig.facebookClientSecret,
         'callbackURL' : `${keyValueConfig.authCallbackEndpoint}/auth/facebook/callback`
-      }
+      },
+      passwordResetLinkTimeout: 1000*60*60
     },
     captcha: {
       secret: keyValueConfig.captchaSecret,

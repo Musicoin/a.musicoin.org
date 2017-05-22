@@ -70,6 +70,7 @@ export const genres = [
   "Latin",
   "Metal",
   "Piano",
+  "Podcast",
   "Pop",
   "R&B & Soul",
   "Reggae",

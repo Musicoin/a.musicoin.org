@@ -907,6 +907,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     })
   });
 
+  app.get('/admin/mail/reset', isLoggedIn, adminOnly, function (req, res) {
+    res.render("mail/password-reset.ejs", {
+      link: "http://google.com?test=123455"
+    })
+  });
+
   app.get('/admin/mail/invite', isLoggedIn, adminOnly, function (req, res) {
     res.render("mail/invite.ejs", {invite: {
       invitedBy: "TestUser",
@@ -1911,6 +1917,80 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     failureRedirect : '/welcome', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
+
+  app.get('/login/forgot', redirectIfLoggedIn(loginRedirect), (req, res) => {
+    doRender(req, res, "password-forgot.ejs", {});
+  });
+
+  app.post('/login/forgot', (req, res) => {
+    User.findOne({"local.email": req.body.email}).exec()
+      .then(user => {
+        if (!user) return doRender(req, res, "password-forgot.ejs", {message: "User not found: " + req.body.email});
+        user.local.resetExpiryTime = Date.now() + config.auth.passwordResetLinkTimeout;
+        user.local.resetCode = crypto.randomBytes(16).toString('hex');
+        return user.save();
+      })
+      .then(user => {
+        return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode);
+      })
+      .then(() => {
+        doRender(req, res, "password-forgot.ejs", {message: "An email has been sent to " + req.body.email});
+      })
+  });
+
+  app.get('/login/reset', redirectIfLoggedIn(loginRedirect), (req, res) => {
+    // if the code is expired, take them back to the login
+    const code = req.query.code;
+    var failMessage = "Your password reset code is invalid or has expired";
+    if (!code) return doRender(req, res, "landing.ejs", {message: failMessage});
+    User.findOne({"local.resetCode": code}).exec()
+      .then(user => {
+        // code does not exist, just go to the login page
+        if (!user || !user.local || !user.local.resetExpiryTime) return doRender(req, res, "landing.ejs", {message: failMessage});
+
+        // make sure code is not expired
+        const expiry = new Date(user.local.resetExpiryTime).getTime();
+        if (Date.now() > expiry) return doRender(req, res, "landing.ejs", {message: failMessage});
+
+        doRender(req, res, "password-reset.ejs", { code: code});
+      })
+  });
+
+  app.post('/login/reset', (req, res) => {
+    const code = req.body.code;
+    if (!code)
+      return doRender(req, res, "landing.ejs", {message: "There was a problem resetting your password"});
+
+    if (req.body.password != req.body.password2) {
+      return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match"});
+    }
+    User.findOne({"local.resetCode": code}).exec()
+      .then(user => {
+        // code does not exist or is expired, just go to the login page
+        if (!user || !user.local || !user.local.resetExpiryTime)
+          return doRender(req, res, "landing.ejs", {message: "The password reset link has expired"});
+
+        // make sure code is not expired
+        const expiry = new Date(user.local.resetExpiryTime).getTime();
+        if (Date.now() > expiry)
+          return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match"});
+
+        const error = FormUtils.checkPasswordStrength(req.body.password);
+        if (error) {
+          return doRender(req, res, "password-reset.ejs", { code: code, message: error});
+        }
+
+        user.local.password = user.generateHash(req.body.password);
+        user.local.resetCode = null;
+        user.local.resetExpiryTime = null;
+
+        return user.save()
+          .then(user => {
+            req.flash('loginMessage', "Your password has been reset.  Please login with your new password");
+            return res.redirect("/welcome");
+          })
+      })
+  });
 
   // =============================================================================
   // UNLINK ACCOUNTS =============================================================
