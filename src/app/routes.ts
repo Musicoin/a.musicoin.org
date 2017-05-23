@@ -1934,18 +1934,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/login/forgot', (req, res) => {
+    const email = req.body.email || "";
+    if (email.trim().length < 5)  /// a@b.c is the smallest possible email address (5 chars)
+      return doRender(req, res, "password-forgot.ejs", {message: "Invalid email address: " + req.body.email});
+
     User.findOne({"local.email": req.body.email}).exec()
       .then(user => {
         if (!user) return doRender(req, res, "password-forgot.ejs", {message: "User not found: " + req.body.email});
         user.local.resetExpiryTime = Date.now() + config.auth.passwordResetLinkTimeout;
         user.local.resetCode = crypto.randomBytes(16).toString('hex');
-        return user.save();
-      })
-      .then(user => {
-        return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode);
-      })
-      .then(() => {
-        doRender(req, res, "password-forgot.ejs", {message: "An email has been sent to " + req.body.email});
+        return user.save()
+          .then(user => {
+            if (!user) {
+              console.log("user.save() during password reset did not return a user record");
+              return doRender(req, res, "password-forgot.ejs", {message: "An internal error occurred, please try again later"});
+            }
+            return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode);
+          })
+          .then(() => {
+            doRender(req, res, "password-forgot.ejs", {message: "An email has been sent to " + req.body.email});
+          })
+          .catch(err => {
+            console.log(`An error occurred when sending the pasword reset email for ${email}: ${err}`);
+            return doRender(req, res, "password-forgot.ejs", {message: "An internal error occurred, please try again later"});
+          })
       })
   });
 
