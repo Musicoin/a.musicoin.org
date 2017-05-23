@@ -63,9 +63,10 @@
 </head>
 <body>
 <%
-function formatNumber(value) {
-    if (!value || value == 0) return 0;
-    return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function formatNumber(value, decimals) {
+    if (!value) value = 0;
+    if (!decimals) decimals = 0;
+    return value.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 %>
 <div class="text-center"><span class="sg-image text-center"
@@ -106,36 +107,45 @@ function formatNumber(value) {
             <th>Track</th>
             <th>Plays</th>
             <th>Tips</th>
-            <th>Msgs</th>
+            <th>Earnings*</th>
         </tr>
         <%
             var totalPlays = 0;
             var totalTips = 0;
             var totalComments = 0;
+            var totalEarnings = 0;
         for (var r=0; r < report.stats.releases.length; r++) {
             var stats = report.stats.releases[r];
+            var earningsEst = (stats.playCount + stats.tipCount) * report.exchangeRateInfo.usd;
             totalPlays += stats.playCount;
             totalTips += stats.tipCount;
+            totalEarnings += earningsEst;
             totalComments += stats.commentCount;
         %>
         <tr>
             <td><a target="_blank" href="<%=report.baseUrl%>/nav/track/<%=stats.track.contractAddress%>"><%=stats.track.title%></a></td>
             <td><%=formatNumber(stats.playCount)%></td>
             <td><%=formatNumber(stats.tipCount)%></td>
-            <td><%=formatNumber(stats.commentCount)%></td>
+            <td><%= "$" + formatNumber(earningsEst, 2)%></td>
         </tr>
         <% } %>
         <tr class="totals">
             <td>Totals</td>
             <td><%=formatNumber(totalPlays)%></td>
             <td><%=formatNumber(totalTips)%></td>
-            <td><%=formatNumber(totalComments)%></td>
+            <td><%="$" + formatNumber(totalEarnings, 2)%></td>
         </tr>
     </table>
 </div>
 
 
 <div style="margin-top: 40px; text-align: center">
+    <div class="text-center">
+        * Earnings are estimated in USD based on the current exchange rate quoted by <a href="<%=report.exchangeRateInfo.link%>">coinmarketcap.com</a>
+    </div>
+
+    <p></p>
+
     <div class="text-center">
         Have any new tracks to release?  Want to see what your fans are saying?
         <br>Check it out on musicoin.org.

@@ -1437,7 +1437,7 @@ export class MusicoinOrgJsonAPI {
     ]).exec();
   }
 
-  sendAllUserReports(duration: string, durationAdj: string) {
+  sendAllUserReports(duration: string, durationAdj: string, exchangeRateInfo: any) {
     let sent = 0;
     let errors = 0;
     const asOf = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), duration);
@@ -1458,7 +1458,7 @@ export class MusicoinOrgJsonAPI {
           .then(users => {
             return Promise.all(users.map(user => {
               const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
-              return this._sendUserStatsReport(user, asOf, duration, durationAdj)
+              return this._sendUserStatsReport(user, asOf, duration, durationAdj, exchangeRateInfo)
                 .then((output) => {
                   sent++;
                   return output;
@@ -1488,15 +1488,15 @@ export class MusicoinOrgJsonAPI {
       });
   }
 
-  sendUserStatsReport(userId: string, duration: string, durationAdj: string): Promise<any> {
+  sendUserStatsReport(userId: string, duration: string, durationAdj: string, exchangeRateInfo: any): Promise<any> {
     const asOf = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), duration);
     return User.findById(userId).exec()
       .then(user => {
-        return this._sendUserStatsReport(user, asOf, duration, durationAdj);
+        return this._sendUserStatsReport(user, asOf, duration, durationAdj, exchangeRateInfo);
       })
   }
 
-  _sendUserStatsReport(user: any, asOf: number, duration: string, durationAdj: string): Promise<any> {
+  _sendUserStatsReport(user: any, asOf: number, duration: string, durationAdj: string, exchangeRateInfo: any): Promise<any> {
     if (user.accountLocked) {
       console.log("Not sending report to user with locked account: " + user.profileAddress);
       return Promise.resolve();
@@ -1510,6 +1510,7 @@ export class MusicoinOrgJsonAPI {
 
     return this.getUserStatsReport(user.profileAddress, asOf, duration)
       .then(report => {
+        report.exchangeRateInfo = exchangeRateInfo;
         report.actionUrl = "https://musicoin.org/nav/feed";
         report.baseUrl = "https://musicoin.org";
         report.description = `Musicoin ${durationAdj} report`;

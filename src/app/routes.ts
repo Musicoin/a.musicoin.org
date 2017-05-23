@@ -952,37 +952,48 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   function renderReport(req, res, duration, durationAdj) {
     const offset = req.query.offset ? req.query.offset : 0;
     const asOf = moment().subtract(offset, duration).startOf(duration).toDate().getTime();
-    jsonAPI.getUserStatsReport(req.params.profileAddress, asOf, duration)
-      .then(report => {
-        report.actionUrl = config.serverEndpoint + loginRedirect;
-        report.baseUrl = config.serverEndpoint;
-        report.description = `Musicoin ${durationAdj} report`;
-        report.duration = duration;
-        res.render("mail/activity-report.ejs", {report: report});
-      })
+    return exchangeRateProvider.getMusicoinExchangeRate()
+      .then(exchangeRateInfo => {
+        jsonAPI.getUserStatsReport(req.params.profileAddress, asOf, duration)
+          .then(report => {
+            report.exchangeRateInfo = exchangeRateInfo;
+            report.actionUrl = config.serverEndpoint + loginRedirect;
+            report.baseUrl = config.serverEndpoint;
+            report.description = `Musicoin ${durationAdj} report`;
+            report.duration = duration;
+            res.render("mail/activity-report.ejs", {report: report});
+          })
+      });
   }
 
   app.post('/admin/send-weekly-report', (req, res) => {
     if (!req.body.id) return res.json({success: false, reason: "No id"});
-    jsonAPI.sendUserStatsReport(req.body.id, "week", "weekly")
-      .then(() => {
-        res.json({success: true})
-      })
-      .catch(err => {
-        console.log("Failed to send report: " + err);
-        res.json({success: false, message: "Failed to send report"})
-      })
+    return exchangeRateProvider.getMusicoinExchangeRate()
+      .then(exchangeRateInfo => {
+        jsonAPI.sendUserStatsReport(req.body.id, "week", "weekly", exchangeRateInfo)
+          .then(() => {
+            res.json({success: true})
+          })
+          .catch(err => {
+            console.log("Failed to send report: " + err);
+            res.json({success: false, message: "Failed to send report"})
+          })
+    })
+
   });
 
   app.post('/admin/send-all-weekly-reports', (req, res) => {
-    jsonAPI.sendAllUserReports("week", "weekly")
-      .then((result) => {
-        res.json(result);
-      })
-      .catch(err => {
-        console.log("Failed to send reports: " + err);
-        res.json({success: false, message: "Failed to send report"})
-      })
+    return exchangeRateProvider.getMusicoinExchangeRate()
+      .then(exchangeRateInfo => {
+        jsonAPI.sendAllUserReports("week", "weekly", exchangeRateInfo)
+          .then((result) => {
+            res.json(result);
+          })
+          .catch(err => {
+            console.log("Failed to send reports: " + err);
+            res.json({success: false, message: "Failed to send report"})
+          })
+      });
   });
 
   app.post('/admin/free-plays/add', (req, res) => {
