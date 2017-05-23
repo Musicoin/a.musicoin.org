@@ -1949,10 +1949,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               console.log("user.save() during password reset did not return a user record");
               return doRender(req, res, "password-forgot.ejs", {message: "An internal error occurred, please try again later"});
             }
-            return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode);
-          })
-          .then(() => {
-            doRender(req, res, "password-forgot.ejs", {message: "An email has been sent to " + req.body.email});
+            return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
+              .then(() => {
+                doRender(req, res, "password-forgot.ejs", {message: "An email has been sent to " + req.body.email});
+              })
           })
           .catch(err => {
             console.log(`An error occurred when sending the pasword reset email for ${email}: ${err}`);
