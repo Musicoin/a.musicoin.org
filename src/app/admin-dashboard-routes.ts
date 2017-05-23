@@ -11,6 +11,7 @@ const User = require('../app/models/user');
 const ReleaseStats = require('../app/models/release-stats');
 const APIClient = require('../app/models/api-client');
 const UserStats = require('../app/models/user-stats');
+const DAY = 1000*60*60*24;
 
 
 export class DashboardRouter {
@@ -88,11 +89,14 @@ export class DashboardRouter {
     });
 
     router.post('/elements/release-count', function(req, res) {
-      return Release.count({contractAddress: { $exists: true, $ne: null }, state: "published"}).exec()
-        .then(count => {
+      const a = Release.count({contractAddress: { $exists: true, $ne: null }, state: "published"}).exec();
+      const d = Release.count({contractAddress: { $exists: true, $ne: null }, state: "published", releaseDate:  {$gte: Date.now() - DAY}}).exec();
+      return Promise.join(a, d, (all, day) => {
           doRender(req, res, 'admin/count.ejs', {
-            count: count,
-            type: "Total Releases"
+            count: all,
+            type: "Total Releases",
+            subcount: day,
+            subtype: "in the last day"
           });
         })
     });
@@ -121,12 +125,15 @@ export class DashboardRouter {
     });
 
     router.post('/elements/user-count', function(req, res) {
-      return User.count({profileAddress: { $exists: true, $ne: null }}).exec()
-        .then(count => {
+      const a = User.count({profileAddress: { $exists: true, $ne: null }}).exec();
+      const d = User.count({profileAddress: { $exists: true, $ne: null}, joinDate: {$gte: Date.now() - DAY}}).exec();
+      return Promise.join(a, d, (all, day) => {
           doRender(req, res, 'admin/count.ejs', {
-            count: count,
-            type: "Total Users"
-          });
+            count: all,
+            type: "Total Users",
+            subcount: day,
+            subtype: "in the last day"
+          })
         })
     });
 
