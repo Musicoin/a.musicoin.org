@@ -1987,7 +1987,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (req.body.password != req.body.password2) {
       return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match"});
     }
-    User.findOne({"local.resetCode": JSON.stringify(code)}).exec()
+
+    if (typeof code != "string") {
+      return doRender(req, res, "landing.ejs", {message: "The password reset link has expired"});
+    }
+
+    User.findOne({"local.resetCode": code}).exec()
       .then(user => {
         // code does not exist or is expired, just go to the login page
         if (!user || !user.local || !user.local.resetExpiryTime)
