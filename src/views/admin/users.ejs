@@ -73,13 +73,14 @@
                                     ? (user.profileAddress && user.draftProfile.artistName) ? "profile" : "claimed"
                                     : "";
             var name = user.draftProfile && user.draftProfile.artistName ? user.draftProfile.artistName : "this user";
+            var escapedName = name.replace(/'/g, "\\'");
         %>
         <tr class="<%= state %>">
             <td class="text-center middle">
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Edit<span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)" onclick="verifyUser(this, '<%= user._id %>', '<%= name %>')"><%= user.verified ? "Unverify" : "Verify"%></a></li>
+                        <li><a href="javascript:void(0)" onclick="verifyUser(this, '<%= user._id %>', '<%= escapedName %>')"><%= user.verified ? "Unverify" : "Verify"%></a></li>
 
                         <li class="divider"></li>
                         <li><a href="javascript:void(0)" onclick="addFreePlays('<%= user._id %>', 10)">+10 free plays</a></li>
@@ -92,8 +93,8 @@
                         <% } else { %>
                         <li><a onclick="blacklist('<%= user._id %>', true)">Blacklist (no invite rewards)</a></li>
                         <% } %>
-                        <li><a href="javascript:void(0)" onclick="blockUser(this, '<%= user._id %>', '<%= name %>')"><%= user.blocked ? "Unblock Releases" : "Block Releases"%></a></li>
-                        <li><a href="javascript:void(0)" onclick="lockUserAccount(this, '<%= user._id %>', '<%= name %>')"><%= user.accountLocked ? "Unlock Account" : "Lock Account"%></a></li>
+                        <li><a href="javascript:void(0)" onclick="blockUser(this, '<%= user._id %>', '<%= escapedName %>')"><%= user.blocked ? "Unblock Releases" : "Block Releases"%></a></li>
+                        <li><a href="javascript:void(0)" onclick="lockUserAccount(this, '<%= user._id %>', '<%= escapedName %>')"><%= user.accountLocked ? "Unlock Account" : "Lock Account"%></a></li>
                     </ul>
                 </div>
             </td>
@@ -294,6 +295,7 @@
   }
 
   function verifyUser(element, id, name) {
+    console.log("calling verifyUser " + name);
     var button= $(element);
     var verified = button.text() == "Verify";
     var msg = verified
