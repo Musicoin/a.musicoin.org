@@ -67,6 +67,20 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
     },
     function (req, email, password, done) { // callback with email and password from our form
 
+      if (!req.isAuthenticated()) {
+        console.log(`Anonymous attempt to use admin tools: ip=${req.ip}, session=${req.session.id}`);
+        return done(null, false, req.flash('loginMessage', 'You must be logged in to perform this action'));
+      }
+
+      // if the user is found but the password is wrong
+      if (!req.user.isAdmin) {
+        const name = req.user.draftProfile && req.user.draftProfile.artistName
+          ? `${req.user.draftProfile.artistName} (${req.user.profileAddress})`
+          : req.user.profileAddress;
+        console.log(`Unauthorized attempt to use admin tools: ip=${req.ip}, session=${req.session.id}, user._id=${req.user._id}, user=${name}`);
+        return done(null, false, req.flash('loginMessage', 'You must be an administrator to perform this action'));
+      }
+
       const condition = req.body.profileAddress
         ? {'profileAddress': req.body.profileAddress}
         : req.body.gmailAddress
@@ -93,10 +107,6 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
         // if no user is found, return the message
         if (!user)
           return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
-
-        // if the user is found but the password is wrong
-        if (!req.user.isAdmin)
-          return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
 
         // all is well, return successful user
         return done(null, user);

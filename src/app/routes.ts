@@ -6,7 +6,7 @@ import {MusicoinHelper} from "./musicoin-helper";
 import * as FormUtils from "./form-utils";
 import * as UrlUtils from "./url-utils";
 import * as MetadataLists from '../config/metadata-lists';
-import {MusicoinOrgJsonAPI, ArtistProfile} from "./rest-api/json-api";
+import {MusicoinOrgJsonAPI} from "./rest-api/json-api";
 import {MusicoinRestAPI} from "./rest-api/rest-api";
 import {ExchangeRateProvider} from "./exchange-service";
 import {AddressResolver} from "./address-resolver";
@@ -44,7 +44,7 @@ const MESSAGE_TYPES = {
   donate: "donate",
   follow: "follow",
   tip: "tip",
-}
+};
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
@@ -97,7 +97,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
 
   app.use('/oembed', (req, res) => res.render('oembed.ejs'));
-  app.use('/services/oembed', (req, res, next) => {
+  app.use('/services/oembed', (req, res) => {
     // https://musicoin.org/nav/track/0x28e4f842f0a441e0247bdb77f3e10b4a54da2502
     console.log("Got oEmbed request: " + req.query.url);
     if (req.query.url && req.query.url.startsWith("https://musicoin.org/")) {
@@ -177,7 +177,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/loginRedirect', (req, res) => {
     if (req.session && req.session.destinationUrl) {
       console.log("Found login redirect override: " + req.session.destinationUrl);
-      var url = req.session.destinationUrl
+      const url = req.session.destinationUrl;
       req.session.destinationUrl = null;
       return res.redirect(url);
     }
@@ -206,8 +206,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 
   function _formatNumber(value: any, decimals?: number) {
-    var raw = parseFloat(value).toFixed(decimals ? decimals : 0);
-    var parts = raw.toString().split(".");
+    const raw = parseFloat(value).toFixed(decimals ? decimals : 0);
+    const parts = raw.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join(".");
   }
@@ -219,7 +219,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   function _formatDate(timestamp) {
     // TODO: Locale
-    var options = {year: 'numeric', month: 'short', day: 'numeric'};
+    const options = {year: 'numeric', month: 'short', day: 'numeric'};
     return new Date(timestamp * 1000).toLocaleDateString('en-US', options);
   }
 
@@ -371,7 +371,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  function handleBrowseRequest(req, res, search, genre) {
+  function handleBrowseRequest(req, res, _search, genre) {
+    const search = FormUtils.defaultString(_search, null);
     const maxGroupSize = req.query.maxGroupSize ? parseInt(req.query.maxGroupSize) : 8;
     const sort = req.query.sort || "tips";
     const rs = jsonAPI.getNewReleasesByGenre(150, maxGroupSize, search, genre, sort).catchReturn([]);
@@ -573,7 +574,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     // don't redirect if they aren't logged in, this is just page section
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : config.ui.thread.newMessages;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
-    handleMessagePost(req).then(() => jsonAPI.getThreadMessages(req.body.thread, limit))
+    const threadId = FormUtils.defaultString(req.body.thread, "");
+    handleMessagePost(req).then(() => jsonAPI.getThreadMessages(threadId, limit))
       .then(messages => {
         doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
       })
@@ -602,7 +604,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     const noContentMessage = req.body.nocontentmessage ? req.body.nocontentmessage : "No messages";
-    handleMessagePost(req).then(() => jsonAPI.getUserMessages(req.body.user, limit))
+    const profileAddress = FormUtils.defaultString(req.body.user, "");
+    handleMessagePost(req).then(() => jsonAPI.getUserMessages(profileAddress, limit))
       .then(messages => {
         doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack, noContentMessage: noContentMessage});
       })
@@ -686,7 +689,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     if (req.query.redirect) {
-      console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`)
+      console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`);
       req.session.destinationUrl = req.query.redirect;
     }
     const message = req.flash('loginMessage');
@@ -723,7 +726,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     jsonAPI.markAsAbuse(req.body.licenseAddress, markAsAbuse)
       .then(result => res.json(result))
       .then(() => {
-        jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
+        return jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
       })
       .catch(err => {
         console.log("failed to mark track as abuse: " + err);
@@ -873,13 +876,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           name: accountDetails.name,
           address: accountDetails.address,
         })
-      })
+      });
       output.push({
         balance: mcBalance.musicoins,
         formattedBalance: mcBalance.formattedMusicoins,
         name: "MC Client Balance",
         address: "",
-      })
+      });
 
       const userMetrics = [];
       userMetrics.push({name: "Users", value: _formatNumber(usersWithProfile)});
@@ -1035,9 +1038,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/admin/invites/blacklist', (req, res) => {
-    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    const id = FormUtils.defaultString(req.body.id, null);
+    if (!id) return res.json({success: false, reason: "No id"});
     if (typeof req.body.blacklist == "undefined") return res.json({success: false, reason: "specify true/false for 'blacklist' parameter"});
-    User.findById(req.body.id).exec()
+    User.findById(id).exec()
       .then(user => {
         user.invite.noReward = req.body.blacklist == "true";
         return user.save();
@@ -1048,7 +1052,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/admin/users/block', (req, res) => {
-    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    const id = FormUtils.defaultString(req.body.id, null);
+    if (!id) return res.json({success: false, reason: "No id"});
     User.findById(req.body.id).exec()
       .then(user => {
         user.blocked = req.body.block == "true";
@@ -1075,7 +1080,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/admin/session/boot', (req, res) => {
     const idx = bootSession.indexOf(req.body.session);
     if (idx < 0) {
-      console.log(`Adding ${req.body.session} to blacklist`)
+      console.log(`Adding ${req.body.session} to blacklist`);
       bootSession.push(req.body.session);
     }
     res.redirect("/admin/overview");
@@ -1084,7 +1089,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/admin/session/unboot', (req, res) => {
     const idx = bootSession.indexOf(req.body.session);
     if (idx >= 0) {
-      console.log(`Removing ${req.body.session} from blacklist`)
+      console.log(`Removing ${req.body.session} from blacklist`);
       bootSession.splice(idx, 1);
     }
     res.redirect("/admin/overview");
@@ -1108,7 +1113,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/invite-requests?search=' + (req.query.search ? req.query.search : '');
-    var options = {year: 'numeric', month: 'short', day: 'numeric'};
+    const options = {year: 'numeric', month: 'short', day: 'numeric'};
     jsonAPI.getAllInviteRequests(req.query.search, start, length)
       .then(requests => {
         requests.forEach(r => {
@@ -1144,7 +1149,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/errors?search=' + (req.query.search ? req.query.search : '');
-    var options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
+    const options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
     jsonAPI.getErrors(req.query.search, start, length)
       .then(errors => {
         errors.forEach(r => {
@@ -1221,7 +1226,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(users => {
         // Handling UTF-8 character set
         // http://stackoverflow.com/questions/27802123/utf-8-csv-encoding
-        var BOM = String.fromCharCode(0xFEFF);
+        const BOM = String.fromCharCode(0xFEFF);
 
         res.charset = "UTF-8";
         res.set({"Content-Disposition":"attachment; filename=contacts.csv", "Content-Type": "text/csv; charset=utf-8"});
@@ -1258,7 +1263,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // PUBLIC ARTIST PROFILE SECTION =====================
   // =====================================
-  app.get('/artist/:address', isLoggedInOrIsPublic, function (req, res, next) {
+  app.get('/artist/:address', isLoggedInOrIsPublic, function (req, res) {
     // find tracks for artist
     const m = jsonAPI.getUserMessages(req.params.address, 30);
     const a = jsonAPI.getArtist(req.params.address, true, false);
@@ -1290,36 +1295,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.post('/track/description', isLoggedIn, function (req, res, next) {
-    Release.findOne({
-      contractAddress: req.body.contractAddress,
-      artistAddress: req.user.profileAddress
-    }).
-      then((record) => {
-        record.description = req.body.description;
-        return record.save();
-    })
-      .then(() => {
-        console.log("Save track description: " + req.body.contractAddress);
-        res.json({success: true})
-      })
-      .catch((err) => {
-        console.log("Failed to save track description: " + req.body.contractAddress + ": " + err);
-        res.json({success: false})
-      })
-  });
-
-  //0xa0f17e527d50b5973bc0d029006f0f55ace16819
-  app.get('/track/:address', isLoggedInOrIsPublic, function (req, res, next) {
+  app.get('/track/:address', isLoggedInOrIsPublic, function (req, res) {
     console.log("Loading track page for track address: " + req.params.address);
-    const ms = jsonAPI.getLicenseMessages(req.params.address, 20);
-    const l = jsonAPI.getLicense(req.params.address);
-    const r = Release.findOne({contractAddress: req.params.address, state: 'published'});
+    const address = FormUtils.defaultString(req.params.address, null);
+    if (!address) {
+      console.log(`Failed to load track page, no address provided`);
+      return res.render('not-found.ejs');
+    }
+    const ms = jsonAPI.getLicenseMessages(address, 20);
+    const l = jsonAPI.getLicense(address);
+    const r = Release.findOne({contractAddress: address, state: 'published'});
     const x = exchangeRateProvider.getMusicoinExchangeRate();
 
     Promise.join(l, ms, r, x, (license, messages, release, exchangeRate) => {
       if (!license || !release) {
-        console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
+        console.log(`Failed to load track page for license: ${address}, err: Not found`);
         return res.render('not-found.ejs');
       }
 
@@ -1391,15 +1381,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post("/error-report", function(req, res) {
     const userProfileAddress = req.user ? req.user.profileAddress : "Unknown";
     const userId = req.user ? req.user._id : null;
+    const licenseAddress = FormUtils.defaultString(req.body.licenseAddress, "");
     console.log(`Error reported by client: 
-      licenseAddress: ${req.body.licenseAddress}, 
+      licenseAddress: ${licenseAddress}, 
       errorCode: ${req.body.errorCode}, 
       errorContext: ${req.body.errorContext},
       userProfileAddress: ${userProfileAddress}, 
       user: ${userId}`);
 
     ErrorReport.create({
-      licenseAddress: req.body.licenseAddress,
+      licenseAddress: licenseAddress,
       user: userId,
       userProfileAddress: userProfileAddress,
       errorCode: req.body.errorCode,
@@ -1465,7 +1456,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
     const updateStatus = (req.body.follow == "true")
       ? jsonAPI.startFollowing(req.user._id, req.body.toFollow)
-      : jsonAPI.stopFollowing(req.user._id, req.body.toFollow)
+      : jsonAPI.stopFollowing(req.user._id, req.body.toFollow);
 
     updateStatus
       .then(result => {
@@ -1515,11 +1506,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/tip', function (req, res) {
     if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
     if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
-    if (req.user.profileAddress == req.body.recipient) return res.json({success: false, authenticated: true, profile: true, self: true});
+
+    const contractAddress = FormUtils.defaultString(req.body.recipient, null);
+    if (!contractAddress) return res.json({success: false, authenticated: true, profile: true, self: true});
+
+    if (req.user.profileAddress == contractAddress) return res.json({success: false, authenticated: true, profile: true, self: true});
     const units = req.body.amount == 1 ? " coin" : "coins";
     const amount = parseInt(req.body.amount);
 
-    return Release.findOne({contractAddress: req.body.recipient})
+    return Release.findOne({contractAddress: contractAddress})
       .then(r => {
         if (r && r.artistAddress == req.user.profileAddress) {
           return res.json({success: false, authenticated: true, profile: true, self: true});
@@ -1653,7 +1648,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log(`Saving updated profile to database...`);
         return req.user.save();
       })
-        .then((result) => {
+        .then(() => {
           const d = mediaProvider.uploadText(fields.description);
           const s = mediaProvider.uploadText(JSON.stringify(socialData));
           return Promise.join(d, s, (descriptionUrl, socialUrl) => {
@@ -1723,7 +1718,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           royalties: resolveRoyalties,
           contributors: resolvedContributors,
           errors: []
-        }
+        };
         license.errors = doValidation(license);
         return license;
       })
@@ -1747,12 +1742,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .catch(function (err) {
         res.json({success: false, message: err.message});
       });
-  })
+  });
 
   app.post('/license/delete', isLoggedIn, hasProfile, function (req, res) {
     // mark release status as deleted
     // remove from playbacks
-    const contractAddress = req.body.contractAddress;
+    const contractAddress = FormUtils.defaultString(req.body.contractAddress, "");
+    if (!contractAddress) return res.json({success: false, message: "Not contractAddress was specified"});
     Release.findOne({contractAddress: contractAddress, artistAddress: req.user.profileAddress}).exec()
       .then(function (record) {
         if (!record) {
@@ -1882,9 +1878,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
     }
     else {
-      const code = crypto.randomBytes(4).toString('hex')
+      const code = crypto.randomBytes(4).toString('hex');
       EmailConfirmation.create({email: req.body.email, code: code})
-        .then(record => {
+        .then(() => {
           return mailSender.sendEmailConfirmationCode(req.body.email, code)
             .then(() => {
               console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
@@ -1964,7 +1960,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/login/reset', redirectIfLoggedIn(loginRedirect), (req, res) => {
     // if the code is expired, take them back to the login
     const code = req.query.code;
-    var failMessage = "Your password reset code is invalid or has expired";
+    const failMessage = "Your password reset code is invalid or has expired";
     if (!code) return doRender(req, res, "landing.ejs", {message: failMessage});
     User.findOne({"local.resetCode": code}).exec()
       .then(user => {
@@ -1980,9 +1976,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/login/reset', (req, res) => {
-    const code = req.body.code;
+    const code = String(req.body.code);
     if (!code)
       return doRender(req, res, "landing.ejs", {message: "There was a problem resetting your password"});
+
+    const error = FormUtils.checkPasswordStrength(req.body.password);
+    if (error) {
+      return doRender(req, res, "password-reset.ejs", { code: code, message: error});
+    }
 
     if (req.body.password != req.body.password2) {
       return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match"});
@@ -2013,7 +2014,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         user.local.resetExpiryTime = null;
 
         return user.save()
-          .then(user => {
+          .then(() => {
             req.flash('loginMessage', "Your password has been reset.  Please login with your new password");
             return res.redirect("/welcome");
           })
@@ -2056,6 +2057,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
     req.user[provider] = {};
     req.user.save(function (err) {
+      if (err) {
+        console.log("Failed to save user record: " + err);
+        res.json({success: false, message: "An internal error occurred"});
+      }
       return res.json({success: true, message: `Your ${provider} account has been unlinked from this account`});
     });
   }
@@ -2157,7 +2162,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const userResponse = req.body['g-recaptcha-response'];
     const url = config.captcha.url;
     return new Promise(function (resolve, reject) {
-      var verificationUrl = `${url}?secret=${config.captcha.secret}&response=${userResponse}&remoteip=${req.ip}`;
+      const verificationUrl = `${url}?secret=${config.captcha.secret}&response=${userResponse}&remoteip=${req.ip}`;
       console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
       const options = {
         method: 'post',
@@ -2561,20 +2566,6 @@ function canInvite(user) {
   return user.invitesRemaining > 0 || isAdmin(user);
 }
 
-function unauthRedirect(dest: string) {
-  return function (req, res, next) {
-    // if (true) return next();
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
-      return next();
-
-    console.log(`User is not logged in, redirecting to ${dest}`);
-
-    // if they aren't logged in, redirect them
-    res.redirect(dest);
-  }
-}
-
 function redirectIfLoggedIn(dest) {
   return function(req, res, next) {
     if (req.isAuthenticated()) {
@@ -2604,30 +2595,6 @@ function isLoggedIn(req, res, next) {
   // if they aren't redirect them to the home page
   req.session.destinationUrl = req.originalUrl;
   res.redirect(notLoggedInRedirect);
-}
-
-// used only when processing the login success redirect page.  Google, Twitter, Facebook
-// will always redirect to the same page.  If we captured the where they were trying to
-// go before the were redirected to the auth provider, then when they come back we can
-// send them to their intended destination.
-// e.g. User goes to /xyz
-// User is not logged in, so save "/xyz" in the session
-// User is redirected for auth, and sent to /auth/success by passport
-// when
-function checkLoginRedirect(req, res, next) {
-  if (req.session && req.session.destinationUrl) {
-    const dest = req.session.destinationUrl;
-    delete req.session.destinationUrl;
-    return res.redirect(dest);
-  }
-  next();
-}
-
-function debug(msg) {
-  return function(req, res, next) {
-    console.log(msg);
-    return next();
-  }
 }
 
 function adminOnly(req, res, next) {

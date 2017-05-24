@@ -1,6 +1,7 @@
 import * as express from 'express';
 import {JsonPromiseRouter} from './json-promise-router';
 import {MusicoinOrgJsonAPI} from "./json-api";
+import * as FormUtils from "../form-utils";
 const APIClient = require('../../app/models/api-client');
 const url = require('url');
 const router = express.Router();
@@ -22,13 +23,14 @@ export class MusicoinRestAPI {
       const referrerUrl = url.parse(req.headers.referer);
       const origin = `${referrerUrl.protocol}//${referrerUrl.hostname}`;
       const originWithPort = `${referrerUrl.protocol}//${referrerUrl.host}`;
-      const clientid = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
+      const rawClientId = req.query.clientid || req.params.clientid || req.body.clientid || req.header("clientid");
+      const clientId = FormUtils.defaultString(rawClientId, "");
       const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
-      if (!clientid) {
+      if (!clientId || clientId.trim().length == 0) {
         return next();
       }
 
-      APIClient.findOne({clientId: clientid}).exec()
+      APIClient.findOne({clientId: clientId}).exec()
         .then(client => {
           if (!client) {
             return next();

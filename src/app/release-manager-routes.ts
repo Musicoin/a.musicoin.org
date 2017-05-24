@@ -86,7 +86,7 @@ export class ReleaseManagerRouter {
     }
 
     router.post('/edit', function(req, res) {
-      jsonAPI.getLicense(req.body.contractAddress)
+      jsonAPI.getLicense(FormUtils.requiredString(req.body.contractAddress))
         .then(license => {
           if (!license) throw new Error(`Could not find license to update: ${req.body.contractAddress}`);
           if (req.user.profileAddress != license.artistProfileAddress)

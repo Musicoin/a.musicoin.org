@@ -442,18 +442,6 @@
     modalUtils.showDefaultModal("/release-manager/edit", {contractAddress: address});
   }
 
-  function saveTrackDescription() {
-    $("#btnSave").text("Saving...");
-    $.post('/track/description', {
-      contractAddress: trackId,
-      description: $("#trackDescription").val(),
-    }, function (data) {
-      console.log("Saved");
-      $("#btnSave").text("Saved!");
-      window.setTimeout(function(){ $("#btnSave").text("Save")}, 3000);
-    })
-  }
-
   function refreshMessageList() {
     dynamic.refreshElement($("#de-track-messages"));
   }

@@ -1,6 +1,20 @@
 import {Promise} from 'bluebird';
 const sharp = require('sharp');
 
+export function defaultString(value: any, defaultValue?: string): string {
+  if (!value || typeof value != "string")
+    return defaultValue;
+  return value;
+}
+
+export function requiredString(value: any): string {
+  if (!value)
+    throw new Error(`required string was not found: ${value}`);
+  if (typeof value != "string")
+    throw new Error(`required string was not a string value, type=${typeof value}, value=${value}`);
+  return value;
+}
+
 export function resizeImage(path: string, width: number, height?: number) {
   const outputPath = path + ".resized.png";
   return sharp(path)

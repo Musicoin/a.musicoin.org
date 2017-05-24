@@ -115,32 +115,6 @@ export class MusicoinOrgJsonAPI {
     });
   }
 
-  addInviteRequest(email: string, musician: boolean): Promise<any> {
-    return InviteRequest.findOne({username: {"$regex": email, "$options": "i"}, source: "waitlist"}).exec()
-      .then(request => {
-        let insert = Promise.resolve();
-        if (!request) {
-          const query = {username: email, source: "waitlist", musician: musician},
-            update = {},
-            options = {upsert: true, new: true, setDefaultsOnInsert: true};
-
-          // Find the document
-          insert = InviteRequest.findOneAndUpdate(query, update, options);
-        }
-        const condition = request ? {requestDate: {$lt: request.requestDate}} : {};
-        const exists = !!request;
-        return insert.then(() => InviteRequest.count(condition).exec())
-          .then(count => {
-            return {
-              address: email,
-              exists: exists,
-              position: exists ? count : count-1,
-              success: true
-            }
-          })
-      });
-  }
-
   removeInviteRequest(_id: string): Promise<any> {
     return InviteRequest.findByIdAndRemove(_id).exec()
       .then((removed) => {
@@ -165,7 +139,7 @@ export class MusicoinOrgJsonAPI {
     return User.findById(p.invite.invitedBy).exec()
       .then(sender => {
         if (!sender || !sender.invite) {
-          console.log("Not sending reward because there is no sender or not sender invite field")
+          console.log("Not sending reward because there is no sender or not sender invite field");
           return {};
         }
         if (sender.invite.noReward) {
@@ -380,7 +354,7 @@ export class MusicoinOrgJsonAPI {
       filter["mostRecentReleaseDate"] = artist == "true" ? { $exists: true, $ne: null } : {$not: { $exists: true, $ne: null }};
     }
 
-    const c = User.count(filter).exec()
+    const c = User.count(filter).exec();
     const u = User.find(filter).sort({"invite.invitedOn": 'desc'})
       .skip(start)
       .limit(length)
@@ -418,7 +392,7 @@ export class MusicoinOrgJsonAPI {
     let query = User.find(filter)
       .where({profileAddress: { $exists: true, $ne: null }})
       .sort({"invite.invitedOn": 'desc'})
-      .skip(start)
+      .skip(start);
 
     if (length > 0) {
       query = query.limit(length);
@@ -510,7 +484,7 @@ export class MusicoinOrgJsonAPI {
               output.stats = {
                 plays: sr.playCount,
                 period: period
-              }
+              };
               return output;
             });
         })
@@ -537,7 +511,7 @@ export class MusicoinOrgJsonAPI {
               output.stats = {
                 tips: sr.tipCount,
                 period: period
-              }
+              };
               return output;
             });
         })
@@ -1148,7 +1122,7 @@ export class MusicoinOrgJsonAPI {
     const messageType = _messageType ? _messageType : "comment";
 
     return Promise.join(r, a, s, m, (release, artist, sender, replyToMessage) => {
-      const artistAddress = artist ? artist.profileAddress : release ? release.artistAddress : replyToMessage ? replyToMessage.artistAddress : null
+      const artistAddress = artist ? artist.profileAddress : release ? release.artistAddress : replyToMessage ? replyToMessage.artistAddress : null;
 
       // notify the user that is the subject of this message about the comment/tip, as long as
       // they allow it.
@@ -1502,7 +1476,7 @@ export class MusicoinOrgJsonAPI {
       return Promise.resolve();
     }
 
-    var preferredFrequency = user.preferences && user.preferences.activityReporting ? user.preferences.activityReporting : "week";
+    const preferredFrequency = user.preferences && user.preferences.activityReporting ? user.preferences.activityReporting : "week";
     if (preferredFrequency != duration) {
       console.log(`Not sending report to user because this does not match their preferences: ${preferredFrequency} != ${duration} ${user.profileAddress}`);
       return Promise.resolve();
@@ -1533,7 +1507,8 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
-  getUserStatsReport(profileAddress: string, date: number, duration: string): Promise<any> {
+  getUserStatsReport(_profileAddress: string, date: number, duration: string): Promise<any> {
+    const profileAddress = FormUtils.requiredString(_profileAddress);
     if (duration != "day" && duration != "week" && duration != "month" && duration != "all")
       throw new Error("invalid duration: " + duration);
     const u = User.findOne({profileAddress: profileAddress}).exec();
@@ -1569,7 +1544,7 @@ export class MusicoinOrgJsonAPI {
               }
           })
       });
-      var options = {year: 'numeric', month: 'short', day: 'numeric'};
+      const options = {year: 'numeric', month: 'short', day: 'numeric'};
       return Promise.join(ustats, Promise.all(rstats), (userStats, allReleaseStats) => {
         return {
           user: user,
@@ -1768,7 +1743,8 @@ export class MusicoinOrgJsonAPI {
     }
   }
 
-  _sanitize(s: string) {
+  _sanitize(_s: string) {
+    const s = FormUtils.defaultString(_s, "");
     return s ? s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&").trim() : s;
   }
 
@@ -1782,7 +1758,7 @@ export class MusicoinOrgJsonAPI {
       {value: 24, unit: "day"},
       {value: 30, unit: "month"},
       {value: 12, unit: "year"},
-    ]
+    ];
 
     let unit = "second";
     let value = seconds;
@@ -1820,8 +1796,8 @@ export class MusicoinOrgJsonAPI {
   }
 
   private _formatNumber(value: any, decimals?: number) {
-    var raw = parseFloat(value).toFixed(decimals ? decimals : 0);
-    var parts = raw.toString().split(".");
+    const raw = parseFloat(value).toFixed(decimals ? decimals : 0);
+    const parts = raw.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join(".");
   }
