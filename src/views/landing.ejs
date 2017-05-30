@@ -180,7 +180,6 @@
         }
 
     </style>
-    <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 <%- include partials/header.ejs %>
@@ -254,7 +253,7 @@
                             <input type="password" name="password" class="landing" placeholder="Password">
                         </div>
 
-                        <div class="g-recaptcha mt20" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU"></div>
+                        <div id="signInCaptcha" class="mt20"></div>
 
                         <div class="flex-row mt20" style="justify-content: space-between">
                             <button type="submit" class="btn btn-login login-button">SIGN IN</button>
@@ -338,7 +337,7 @@
                             <input type="password" name="password2" class="landing" placeholder="Repeat Password">
                         </div>
 
-                        <div class="g-recaptcha mt20" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU"></div>
+                        <div id="signUpCaptcha" class="mt20"></div>
 
                         <div class="flex-row mt20" style="justify-content: space-between">
                             <button type="submit" class="btn btn-login login-button">SIGN UP</button>
@@ -433,6 +432,20 @@
       return false;
     }
   }
+
+  var onloadCallback = function() {
+    grecaptcha.render(document.getElementById('signUpCaptcha'), {
+      'sitekey' : '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
+    });
+
+    grecaptcha.render(document.getElementById('signInCaptcha'), {
+      'sitekey' : '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
+    });
+  }
 </script>
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        async defer>
+</script>
+
 </body>
 </html>
