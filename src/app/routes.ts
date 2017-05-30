@@ -2101,7 +2101,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             }
           })
       }
-      return next();
+
+      return checkCaptcha(req)
+        .then(captchaOk => {
+          if (!captchaOk) {
+            req.flash('loginMessage', `The captcha check failed`);
+            return res.redirect(errRedirect);
+          }
+          return next();
+        });
     }
   }
 
