@@ -427,13 +427,13 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
              if (req.session && req.session.inviteCode) {
                return done(null, false, req.flash('loginMessage', 'The invite code you are using has already been claimed'));
              }
-             return done(null, false, req.flash('loginMessage', 'Oops! User not found or invalid password'));
+             return done(null, false, req.flash('loginMessage', 'User account not found.  Click "Sign up" if you need to create a new account.'));
            }
          })
          .catch(function (err) {
            if (err instanceof LoginFailed) {
              console.log(`Login attempt failed due to invalid password ${authProvider}: ${err}`);
-             return done(null, false, req.flash('loginMessage', 'Oops! User not found or invalid password.'));
+             return done(null, false, req.flash('loginMessage', 'User account not found or your password was incorrect.  Click "Sign up" if you need to create a new account.'));
            }
            else if (err instanceof AccountDisabled) {
              console.log(`Login attempt failed because the account is locked ${authProvider}: ${err}`);
