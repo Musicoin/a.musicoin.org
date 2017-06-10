@@ -958,6 +958,13 @@ export class MusicoinOrgJsonAPI {
         console.log(`Saving profile tx info to the database...`);
         return user.save();
       })
+      .then(user => {
+        return this.startFollowing(user._id, this.config.autoFollowUserId)
+      })
+      .then(() => {
+        console.log(`User ${name} is now following the musicoin account`);
+        return user;
+      });
   }
 
   isUserFollowing(userId: string, toFollow: string ) {

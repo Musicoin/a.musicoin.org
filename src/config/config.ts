@@ -20,6 +20,7 @@ function getStructuredConfig(keyValueConfig) {
     publicPagesEnabled: keyValueConfig.publicPagesEnabled,
     sessionSecret: keyValueConfig.sessionSecret,
     serverEndpoint: keyValueConfig.authCallbackEndpoint,
+    autoFollowUserId: keyValueConfig.musicoinAutoFollowUserId,
     loggingConfig: {
       logDirectory: 'logs',
       logFileName: 'musicoin.log',
@@ -227,6 +228,7 @@ function getDefaultKeyValueConfig() {
         port: env.PORT || 3000,
         publicPagesEnabled: env.PUBLIC_PAGES_ENABLED || false,
         musicoinAdminProfile: env.MUSICOIN_ADMIN_PROFILE || "0x65e7175dfcc9d1806863e989a347bf269df973b6",
+        musicoinAutoFollowUserId: env.MUSICOIN_AUTO_FOLLOW_USER_ID || "5920465fb96d777b14888cad",
 
         musicoinApiEndpoint: env.MUSICOIN_API_ENDPOINT || "http://localhost:8082",
         musicoinApiClientId: env.MUSICOIN_CLIENT_ID || "clientID",
