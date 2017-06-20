@@ -1,112 +1,273 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles/signup_page.css">
-  <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Raleway:100" rel="stylesheet">
-
-  <!--Google Fonts-->
-  <link href='https://fonts.googleapis.com/css?family=Playfair+Display' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
-  <title>Signup for Musicoin</title>
+    <title>musicoin</title>
+    <%- include partials/page-head.ejs %>
 </head>
-
 <body>
-<div id="main-wrapper">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-6 left-side">
-        <header>
-          <h3 id="logo">Create your<br>Music Wallet</h3>
-          <span>Musicoin</span>
-        </header>
-      </div>
-      <div class="col-md-6 right-side">
-        <h3 id ="heading"><a href="https://musicoin.org" class="href1">musicoin</a> </h3>
-        <span class="input input--hoshi">
-          <input class="input__field input__field--hoshi" type="text" id="name" />
-          <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
-            <span class="input__label-content input__label-content--hoshi">Name</span>
-          </label>
-        </span>
-        <span class="input input--hoshi">
-          <input class="input__field input__field--hoshi" type="text" id="email" />
-          <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
-            <span class="input__label-content input__label-content--hoshi">E-mail</span>
-          </label>
-        </span>
-        <span class="input input--hoshi">
-          <input class="input__field input__field--hoshi" type="password" id="password" />
-          <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
-            <span class="input__label-content input__label-content--hoshi">Password</span>
-          </label>
-        </span>
-        <span class="input input--hoshi">
-          <input class="input__field input__field--hoshi" type="password" id="password1" />
-          <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password1">
-            <span class="input__label-content input__label-content--hoshi">Repeat Password</span>
-          </label>
-        </span>
-        <div class="cta">
-          <button class="btn btn-primary pull-left">
-            Sign-Up Now
-          </button>
-          <span><a href="#" class="href1">Sign In</a></span>
-        </div>
-        <ul class="social list-inline">
-          <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-          <li><a href="#"><i class="fa fa-facebook-square" aria-hidden="true"></i></a></li>
-          <li><a href="#"><i class="fa fa-google" aria-hidden="true"></i></a></li>
-        </ul>
-      </div>
+<%- include partials/header.ejs %>
+<style>
+    .background-cover {
+        display: none;
+    }
+
+    .subtle-text {
+        color: white;
+    }
+
+
+</style>
+
+<%
+    if (typeof code == "undefined") code = null;
+    if (typeof message == "undefined") message = "";
+%>
+
+<div class="flex-column mt25">
+    <div class="mt40 big-screen-only"></div>
+    <div class="center-text landing-header">
+        Create your first $MUSIC wallet and join the global revolution
     </div>
-  </div>
+    <div class="center-text mt40 flex-column">
+        <div class="login-section">
+            <!-- Row 1 -->
+            <div class="signin-instructions">
+                <%= _("sign in or sign up using one of these services:") %>
+                <% if (typeof code != "undefined" && code) { %>
+                <div style="color:#888">Invite Code: <%=code%></div>
+                <% } %>
+            </div>
 
-</div> <!-- end #main-wrapper -->
+            <!-- Row 2 -->
+            <div class="login-forms two-columns signin" style="<%= code ? "display: none" : ""%>">
+                <div class="flex-column big-screen-ml30">
+                    <a href="/auth/twitter" target=_top class="flex-row btn btn-info social-login login-button">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Twitter</div>
+                    </a>
 
-<!-- Scripts -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="js/scripts.js"></script>
-<script src="js/classie.js"></script>
+                    <a href="/auth/facebook" target=_top class="flex-row btn btn-primary social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Facebook</div>
+                    </a>
+
+                    <a href="/auth/google" target=_top class="flex-row btn btn-danger social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign in with Google</div>
+                    </a>
+                </div>
+
+                <div class="small-screen-only mb40"></div>
+
+                <div class="email-login flex-column big-screen-mr30">
+                    <form name="loginForm" action="/signin" target=_top method="post" onsubmit="return validateSigninFields()">
+                        <div class="flex-row input-with-icon">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="text" name="email" class="landing" placeholder="Email">
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="password" name="password" class="landing" placeholder="Password">
+                        </div>
+
+                        <div id="signInCaptcha" class="mt20"></div>
+
+                        <div class="flex-row mt20" style="justify-content: space-between">
+                            <button type="submit" class="btn btn-login login-button">SIGN IN</button>
+                            <div class="flex-row">
+                                <a class="text-login mr20" href="/login/forgot">Forgot</a>
+                                <a class="clickable text-login" onclick="$('.signin').hide(); $('.signup').show();">Sign up</a>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- Row 3 -->
+            <div id="signupEmailForm" class="signup two-columns" style="<%= code ? "" : "display: none"%>">
+                <!-- LOGIN FORM -->
+
+                <div class="flex-column big-screen-ml30" style="align-items: center">
+                    <div class="center-text text-large mb10">
+                        Sign up with social
+                    </div>
+
+                    <a href="/signup/twitter" target=_top class="flex-row btn btn-info social-login login-button">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign up with Twitter</div>
+                    </a>
+
+                    <a href="/signup/facebook" target=_top class="flex-row btn btn-primary social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign up with Facebook</div>
+                    </a>
+
+                    <a href="/signup/google" target=_top class="flex-row btn btn-danger social-login login-button mt20">
+                        <div class="divider" style="left: 50px"></div>
+                        <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
+                        <div class="text-social-login">Sign up with Google</div>
+                    </a>
+                </div>
+
+                <div class="small-screen-only mb40"></div>
+
+                <div>
+                    <form name="singupForm" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
+                        <div class="text-center text-large">
+                            or sign up with email
+                        </div>
+
+                        <div class="mb10"></div>
+
+                        <div class="flex-row input-with-icon">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-user shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input id=screenname type="text" class="landing" name="name" placeholder="Choose a screen name">
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="text" name="email" class="landing" placeholder="Email">
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-check-circle shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="text" name="confirmation" class="landing confirmation-code" placeholder="confirmation code">
+                            <span id=confirm class="btn btn-confirm-code">Get a code</span>
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="password" name="password" class="landing" placeholder="Password">
+                        </div>
+
+                        <div class="flex-row input-with-icon mt20">
+                            <div class="divider" style="left: 33px"></div>
+                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
+                            <input type="password" name="password2" class="landing" placeholder="Repeat Password">
+                        </div>
+
+                        <div id="signUpCaptcha" class="mt20"></div>
+
+                        <div class="flex-row mt20" style="justify-content: space-between">
+                            <button type="submit" class="btn btn-login login-button">SIGN UP</button>
+                            <a class="clickable text-login" onclick="$('.signin').show(); $('.signup').hide()">Have an account? Sign in</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="center-text mt80">
+    <%- include partials/connect-with-us.ejs %>
+</footer>
+
+
+
 <script>
-  (function() {
-    // trim polyfill : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
-    if (!String.prototype.trim) {
-      (function() {
-        // Make sure we trim BOM and NBSP
-        var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
-        String.prototype.trim = function() {
-          return this.replace(rtrim, '');
-        };
-      })();
-    }
 
-    [].slice.call( document.querySelectorAll( 'input.input__field' ) ).forEach( function( inputEl ) {
-      // in case the input is already filled..
-      if( inputEl.value.trim() !== '' ) {
-        classie.add( inputEl.parentNode, 'input--filled' );
+    <% if (message.length > 0) { %>
+        new Message("<%=message%>", 'warning', 5000);
+    <% } %>
+
+  $( document ).ready(function() {
+    $("#confirm").on('click', function () {
+      var email = document.forms["singupForm"]["email"].value;
+      if (!email || email.trim().length == 0) {
+        new Message("Enter your email address, then you can request a code", 'warning', 5000);
       }
-
-      // events:
-      inputEl.addEventListener( 'focus', onInputFocus );
-      inputEl.addEventListener( 'blur', onInputBlur );
-    } );
-
-    function onInputFocus( ev ) {
-      classie.add( ev.target.parentNode, 'input--filled' );
-    }
-
-    function onInputBlur( ev ) {
-      if( ev.target.value.trim() === '' ) {
-        classie.remove( ev.target.parentNode, 'input--filled' );
+      else {
+        $.post('/login/confirm', {
+            email: email
+          },
+          function (data) {
+            if (data.success) {
+              new Message("A confirmation code was sent to " + data.email, 'success', 5000);
+            }
+            else {
+              new Message("Failed to send confirmation: " + data.reason, 'error', 5000);
+            }
+          })
       }
+    })
+  })
+
+  var validatePassword = true;
+  var validateCode = true;
+  var validateUsername = true;
+
+  function validateSigninFields() {
+    var email = document.forms["loginForm"]["email"].value;
+    if (!email || email.trim().length == 0) {
+      new Message("Please provide an email address", 'error', 5000);
+      return false;
     }
-  })();
+
+    var pwd = document.forms["loginForm"]["password"].value;
+    if (!pwd || pwd.trim().length == 0) {
+      new Message("A password is required", 'error', 5000);
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateSignupFields() {
+    var email = document.forms["singupForm"]["email"].value;
+    if (!email || email.trim().length == 0) {
+      alert("Please provide an email address");
+      return false;
+    }
+
+    var pwd = document.forms["singupForm"]["password"].value;
+    if (!pwd || pwd.trim().length == 0) {
+      new Message("A password is required", 'error', 5000);
+      return false;
+    }
+
+    if (validateUsername && document.forms["singupForm"]["name"].value.trim().length == 0) {
+      new Message("Please enter a screen name", 'error', 5000);
+      return false;
+    }
+
+    if (validatePassword && document.forms["singupForm"]["password2"].value != pwd) {
+      new Message("Passwords do not match!", 'error', 5000);
+      return false;
+    }
+
+    if (validateCode && document.forms["singupForm"]["confirmation"].value.trim().length == 0) {
+      new Message("Please enter the confirmation code", 'error', 5000);
+      return false;
+    }
+  }
+
+  var onloadCallback = function() {
+    grecaptcha.render(document.getElementById('signUpCaptcha'), {
+      'sitekey' : '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
+    });
+
+    grecaptcha.render(document.getElementById('signInCaptcha'), {
+      'sitekey' : '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
+    });
+  }
+</script>
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        async defer>
 </script>
 
 </body>
