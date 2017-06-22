@@ -125,7 +125,7 @@
                             </span>
                             <div id="signInCaptcha" class="mt20 hidden"></div>
                             <div class="cta">
-                                <button type="submit" class="btn btn-primary pull-left" id="signInButton" data-sitekey="6Lf6VSYUAAAAANpb9jQ36-_gSlbGYuj3itvUORy-">Sign-In Now</button>
+                                <button type="submit" class="btn btn-primary pull-left" id="signInButton" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">Sign-In Now</button>
                                 <span><a class="href1" style="cursor: pointer" onclick="$('.signup').show(); $('.signin').addClass('hidden'); $('#signInCaptcha').addClass('hidden');">Sign Up</a></span>
                             </div>
                             <a class="crazy" href="/login/forgot">Forgot </a>
@@ -180,13 +180,13 @@
             var onloadCallback = function() {
                 console.log("CAPTCHA");
                 grecaptcha.render(document.getElementById('signUpCaptcha'), {
-                    'sitekey': '6Lf6VSYUAAAAANpb9jQ36-_gSlbGYuj3itvUORy-',
+                    'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU',
                     'theme': 'dark'
                 });
 
                 grecaptcha.render(document.getElementById('signInCaptcha'), {
                     'theme': 'dark',
-                    'sitekey': '6Lf6VSYUAAAAANpb9jQ36-_gSlbGYuj3itvUORy-'
+                    'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
                 });
             }
         </script>
