@@ -1382,11 +1382,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const userProfileAddress = req.user ? req.user.profileAddress : "Unknown";
     const userId = req.user ? req.user._id : null;
     const licenseAddress = FormUtils.defaultString(req.body.licenseAddress, "");
-    console.log(`Error reported by client: 
-      licenseAddress: ${licenseAddress}, 
-      errorCode: ${req.body.errorCode}, 
+    console.log(`Error reported by client:
+      licenseAddress: ${licenseAddress},
+      errorCode: ${req.body.errorCode},
       errorContext: ${req.body.errorContext},
-      userProfileAddress: ${userProfileAddress}, 
+      userProfileAddress: ${userProfileAddress},
       user: ${userId}`);
 
     ErrorReport.create({
@@ -2128,7 +2128,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return res.redirect(errRedirect);
       }
 
-      if ((!req.body.name || req.body.name.trim().length == 0)) {
+      if ((!req.body.name || req.body.name.length == 0)) {
         req.flash('loginMessage', `Please enter a screen name`);
         return res.redirect(errRedirect);
       }
