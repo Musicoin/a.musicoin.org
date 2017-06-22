@@ -1,451 +1,191 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <title>musicoin</title>
-    <%- include partials/page-head.ejs %>
-    <style>
-        body {
-            word-wrap:break-word;
-            background-image: url(/images/landing.jpg);
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: top;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
-            color: black;
-            background-color: black;
-        }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        .landing-header {
-            color: white;
-            font-size: 16pt;
-            font-weight: 600;
-            font-family: 'Arial', sans-serif;
-        }
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles/signup_page.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:100" rel="stylesheet">
 
-        .login-section {
-            background-color: rgba(255,255,255, 0.6);
-            background-blend-mode: multiply;
-            border-radius: 40px;
-            display: flex;
-            flex-direction: column;
-            color: #484945;
-            padding: 30px;
-        }
-
-        input.landing {
-            min-width: 320px;
-        }
-
-        @media screen and (max-width: 800px) {
-            .login-section {
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-            input.landing {
-                min-width: 250px;
-            }
-        }
-
-        .signin-instructions {
-            font-weight: 800;
-        }
-
-        .login-forms {
-            padding: 20px;
-        }
-
-        .landing {
-            width: 100%;
-            border: 2px solid rgba(0,0,0,0.1);
-            font-size: 18px;
-            padding: 5px;
-            background-color: transparent;
-            padding-left: 40px;
-        }
-
-        .text-light {
-            color: rgba(0,0,0,0.4);
-        }
-
-        .shift-r25 {
-            position: absolute;
-            left: 25px;
-        }
-
-        .shift-r10 {
-            position: absolute;
-            left: 10px;
-        }
-
-        .mt25 {
-            margin-top: 25px;
-        }
-
-        .input-with-icon {
-            position: relative;
-        }
-
-        .input-icon {
-            width: 16px;
-        }
-
-
-
-        input.landing:focus{
-            box-shadow: 0 0 5px rgba(0, 112, 0, 0.5);
-            border: 2px solid rgba(0, 112, 0, 0.5);
-        }
-
-        .login-button {
-            background-blend-mode: multiply;
-            border: 1px solid rgba(0,0,0,0.2);
-            position: relative;
-            font-family: Arial, sans-serif;
-        }
-
-        .social-login {
-            width: 250px;
-        }
-
-        input.landing.confirmation-code {
-            min-width: 200px;
-        }
-
-        .text-social-login {
-            color: rgba(255,255,255,0.8);
-            font-family: Arial, sans-serif;
-            font-size: 12pt;
-        }
-
-        .social-login-icon {
-            font-size: 18pt;
-            width: 30px;
-        }
-
-        .mr20 {
-            margin-right: 20px;
-        }
-
-        .mt40 {   margin-top: 40px;  }
-        .mb40 {   margin-bottom: 40px;  }
-        .mt80 {   margin-top: 80px;  }
-
-        .divider {
-            position: absolute;
-            border-right: 1px solid rgba(0,0,0,0.2);
-            height: 80%;
-        }
-
-        .text-login {
-            color: rgba(0,116,115,0.8);
-            font-weight: bold;
-        }
-
-        .btn-login {
-            color: #ffffff;
-            background-color: rgba(0,116,115,0.5);
-            border-color: rgba(0,116,115,0.5);
-            background-blend-mode: multiply;
-        }
-
-        .btn-login:hover,
-        .btn-login:focus,
-        .btn-login.active {
-            color: #ffffff;
-            background-color: rgba(0,116,115,0.6);
-            border-color: rgba(0,116,115,0.6);
-        }
-
-        .btn-confirm-code {
-            color: #ffffff;
-            background-color: rgba(0, 0, 115,0.5);
-            border-color: rgba(0,0,101,0.5);
-            background-blend-mode: multiply;
-        }
-
-        .btn-confirm-code:hover,
-        .btn-confirm-code:focus,
-        .btn-confirm-code.active {
-            color: #ffffff;
-            background-color: rgba(0, 0,115,0.6);
-            border-color: rgba(0,0,101,0.6);
-        }
-
-        @media screen and (min-width: 800px) {
-            .big-screen-ml30 { margin-left: 30px;}
-            .big-screen-mr30 { margin-right: 30px;}
-        }
-
-    </style>
+    <!--Google Fonts-->
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit"async defer></script>
+    <title>Signup for Musicoin</title>
 </head>
-<body>
-<%- include partials/header.ejs %>
-<style>
-    .background-cover {
-        display: none;
-    }
+<%- include partials/page-head.ejs %>
 
-    .subtle-text {
-        color: white;
-    }
-
-
-</style>
-
-<%
-    if (typeof code == "undefined") code = null;
-    if (typeof message == "undefined") message = "";
-%>
-
-<div class="flex-column mt25">
-    <div class="mt40 big-screen-only"></div>
-    <div class="center-text landing-header">
-        Create your first $MUSIC wallet and join the global revolution
-    </div>
-    <div class="center-text mt40 flex-column">
-        <div class="login-section">
-            <!-- Row 1 -->
-            <div class="signin-instructions">
-                <%= _("sign in or sign up using one of these services:") %>
-                <% if (typeof code != "undefined" && code) { %>
-                <div style="color:#888">Invite Code: <%=code%></div>
-                <% } %>
-            </div>
-
-            <!-- Row 2 -->
-            <div class="login-forms two-columns signin" style="<%= code ? "display: none" : ""%>">
-                <div class="flex-column big-screen-ml30">
-                    <a href="/auth/twitter" target=_top class="flex-row btn btn-info social-login login-button">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign in with Twitter</div>
-                    </a>
-
-                    <a href="/auth/facebook" target=_top class="flex-row btn btn-primary social-login login-button mt20">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign in with Facebook</div>
-                    </a>
-
-                    <a href="/auth/google" target=_top class="flex-row btn btn-danger social-login login-button mt20">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign in with Google</div>
-                    </a>
-                </div>
-
-                <div class="small-screen-only mb40"></div>
-
-                <div class="email-login flex-column big-screen-mr30">
-                    <form name="loginForm" action="/signin" target=_top method="post" onsubmit="return validateSigninFields()">
-                        <div class="flex-row input-with-icon">
-                            <div class="divider" style="left: 33px"></div>
-                            <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
-                            <input type="text" name="email" class="landing" placeholder="Email">
-                        </div>
-
-                        <div class="flex-row input-with-icon mt20">
-                            <div class="divider" style="left: 33px"></div>
-                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
-                            <input type="password" name="password" class="landing" placeholder="Password">
-                        </div>
-
-                        <div id="signInCaptcha" class="mt20"></div>
-
-                        <div class="flex-row mt20" style="justify-content: space-between">
-                            <button type="submit" class="btn btn-login login-button">SIGN IN</button>
-                            <div class="flex-row">
-                                <a class="text-login mr20" href="/login/forgot">Forgot</a>
-                                <a class="clickable text-login" onclick="$('.signin').hide(); $('.signup').show();">Sign up</a>
-                            </div>
-
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-
-            <!-- Row 3 -->
-            <div id="signupEmailForm" class="signup two-columns" style="<%= code ? "" : "display: none"%>">
-                <!-- LOGIN FORM -->
-
-                <div class="flex-column big-screen-ml30" style="align-items: center">
-                    <div class="center-text text-large mb10">
-                        Sign up with social
+    <body>
+        <div id="main-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 left-side">
+                        <header>
+                            <h3 id="logo">Create your<br>Music Wallet</h3>
+                            <span>Musicoin</span>
+                        </header>
                     </div>
+                    <div class="col-md-6 right-side">
+                        <h3 id="heading"><a href="https://musicoin.org" class="href1">musicoin</a> </h3>
+                        <form name="signupForm" class="signup" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
+                            <span class="input input--hoshi">
+                      <input class="input__field input__field--hoshi" type="text" id="screenname" name="name" required />
+                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
+                        <span class="input__label-content input__label-content--hoshi">Name</span>
+                            </label>
+                            </span>
+                            <span class="input input--hoshi">
+                      <input class="input__field input__field--hoshi" type="text" id="email" name="email" required/>
+                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
+                        <span class="input__label-content input__label-content--hoshi">E-mail</span>
+                            </label>
+                            </span>
+                            <span class="input input--hoshi">
+                      <input class="input__field input__field--hoshi" type="password" id="password" name="password" required/>
+                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
+                        <span class="input__label-content input__label-content--hoshi">Password</span>
+                            </label>
+                            </span>
+                            <span class="input input--hoshi">
+                      <input class="input__field input__field--hoshi" type="password" id="password1" name="password2" required/>
+                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password1">
+                        <span class="input__label-content input__label-content--hoshi">Repeat Password</span>
+                            </label>
+                        </span>
+                            <span class="input input--hoshi">
+                      <input class="input__field input__field--hoshi" type="text" id="screenname" name="name" required />
+                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
+                        <span class="input__label-content input__label-content--hoshi">Request Code</span>
+                            </label>
+                            </span>
+                            <span id="confirm" class="crazy1">Get a code</span>
+                            <div id="signUpCaptcha" class="mt20" style=""></div>
+                            <div class="cta">
+                                <button type="submit"  class="btn btn-primary pull-left" id="signUpButton">Sign-Up Now</button>
+                                <span><a class="href1" style="cursor: pointer" onclick="$('.signin').removeClass('hidden'); $('#signInCaptcha').removeClass('hidden'); $('.signup').hide()">Sign In</a></span>
+                            </div>
+                            <ul class="social list-inline">
+                                <li><a href="/signup/twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                <li><a href="/signup/facebook"><i class="fa fa-facebook-square" aria-hidden="true"></i></a></li>
+                                <li><a href="/signup/google"><i class="fa fa-google" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </form>
 
-                    <a href="/signup/twitter" target=_top class="flex-row btn btn-info social-login login-button">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-twitter mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign up with Twitter</div>
-                    </a>
 
-                    <a href="/signup/facebook" target=_top class="flex-row btn btn-primary social-login login-button mt20">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-facebook mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign up with Facebook</div>
-                    </a>
+                        <form name="loginForm" class="signin hidden" action="/signin" target=_top method="post" onsubmit="return validateSignupFields()">
 
-                    <a href="/signup/google" target=_top class="flex-row btn btn-danger social-login login-button mt20">
-                        <div class="divider" style="left: 50px"></div>
-                        <i class="fa fa-google-plus mr20 social-login-icon" aria-hidden="true"></i>
-                        <div class="text-social-login">Sign up with Google</div>
-                    </a>
-                </div>
-
-                <div class="small-screen-only mb40"></div>
-
-                <div>
-                    <form name="singupForm" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
-                        <div class="text-center text-large">
-                            or sign up with email
-                        </div>
-
-                        <div class="mb10"></div>
-
-                        <div class="flex-row input-with-icon">
-                            <div class="divider" style="left: 33px"></div>
-                            <i class="fa fa-user shift-r10 text-light input-icon" aria-hidden="true"></i>
-                            <input id=screenname type="text" class="landing" name="name" placeholder="Choose a screen name">
-                        </div>
-
-                        <div class="flex-row input-with-icon mt20">
-                            <div class="divider" style="left: 33px"></div>
-                            <i class="fa fa-envelope shift-r10 text-light input-icon" aria-hidden="true"></i>
-                            <input type="text" name="email" class="landing" placeholder="Email">
-                        </div>
-
-                        <div class="flex-row input-with-icon mt20">
-                            <div class="divider" style="left: 33px"></div>
-                            <i class="fa fa-check-circle shift-r10 text-light input-icon" aria-hidden="true"></i>
-                            <input type="text" name="confirmation" class="landing confirmation-code" placeholder="confirmation code">
-                            <span id=confirm class="btn btn-confirm-code">Get a code</span>
-                        </div>
-
-                        <div class="flex-row input-with-icon mt20">
-                            <div class="divider" style="left: 33px"></div>
-                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
-                            <input type="password" name="password" class="landing" placeholder="Password">
-                        </div>
-
-                        <div class="flex-row input-with-icon mt20">
-                            <div class="divider" style="left: 33px"></div>
-                            <i class="fa fa-lock shift-r10 text-light input-icon" aria-hidden="true"></i>
-                            <input type="password" name="password2" class="landing" placeholder="Repeat Password">
-                        </div>
-
-                        <div id="signUpCaptcha" class="mt20"></div>
-
-                        <div class="flex-row mt20" style="justify-content: space-between">
-                            <button type="submit" class="btn btn-login login-button">SIGN UP</button>
-                            <a class="clickable text-login" onclick="$('.signin').show(); $('.signup').hide()">Have an account? Sign in</a>
-                        </div>
-                    </form>
+                            <span class="input input--hoshi">
+                      <input class="input__field input__field--hoshi" type="text" id="email" name="email" required/>
+                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
+                        <span class="input__label-content input__label-content--hoshi">E-mail</span>
+                            </label>
+                            </span>
+                            <span class="input input--hoshi">
+                      <input class="input__field input__field--hoshi" type="password" id="password" name="password" required/>
+                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
+                        <span class="input__label-content input__label-content--hoshi">Password</span>
+                            </label>
+                            </span>
+                            <div id="signInCaptcha" class="mt20 hidden"></div>
+                            <div class="cta">
+                                <button type="submit" class="btn btn-primary pull-left" id="signInButton" data-sitekey="6Lf6VSYUAAAAANpb9jQ36-_gSlbGYuj3itvUORy-">Sign-In Now</button>
+                                <span><a class="href1" style="cursor: pointer" onclick="$('.signup').show(); $('.signin').addClass('hidden'); $('#signInCaptcha').addClass('hidden');">Sign Up</a></span>
+                            </div>
+                            <a class="crazy" href="/login/forgot">Forgot </a>
+                            <ul class="social list-inline">
+                                <li><a href="/auth/twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                <li><a href="/auth/facebook"><i class="fa fa-facebook-square" aria-hidden="true"></i></a></li>
+                                <li><a href="/auth/google"><i class="fa fa-google" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+        </script>
+        <!-- end #main-wrapper -->
 
-<footer class="center-text mt80">
-    <%- include partials/connect-with-us.ejs %>
-</footer>
+        <!-- Scripts -->
+        <script src="js/scripts.js"></script>
+        <script src="js/classie.js"></script>
+        <script>
+            <% if (message.length > 0) { %>
+            new Message("<%=message%>", 'warning', 5000);
+            <% } %>
+            $(document).ready(function() {
+                $("#confirm").on('click', function() {
+                    var email = document.forms["signupForm"]["email"].value;
+                    if (!email || email.trim().length == 0) {
+                        new Message("Enter your email address, then you can request a code", 'warning', 5000);
+                    } else {
+                        $.post('/login/confirm', {
+                                email: email
+                            },
+                            function(data) {
+                                if (data.success) {
+                                    new Message("A Request Code was sent to " + data.email, 'success', 5000);
+                                } else {
+                                    new Message("Failed to send Request Code: " + data.reason, 'error', 5000);
+                                }
+                            })
+                    }
+                })
+            });
 
-
-
-<script>
-
-    <% if (message.length > 0) { %>
-        new Message("<%=message%>", 'warning', 5000);
-    <% } %>
-
-  $( document ).ready(function() {
-    $("#confirm").on('click', function () {
-      var email = document.forms["singupForm"]["email"].value;
-      if (!email || email.trim().length == 0) {
-        new Message("Enter your email address, then you can request a code", 'warning', 5000);
-      }
-      else {
-        $.post('/login/confirm', {
-            email: email
-          },
-          function (data) {
-            if (data.success) {
-              new Message("A confirmation code was sent to " + data.email, 'success', 5000);
+            function validateSignupFields() {
+                if (document.forms["signupForm"]["password2"].value != pwd) {
+                    new Message("Passwords do not match!", 'error', 5000);
+                } else {
+                    grecaptcha.execute();
+                }
             }
-            else {
-              new Message("Failed to send confirmation: " + data.reason, 'error', 5000);
+
+            var onloadCallback = function() {
+                console.log("CAPTCHA");
+                grecaptcha.render(document.getElementById('signUpCaptcha'), {
+                    'sitekey': '6Lf6VSYUAAAAANpb9jQ36-_gSlbGYuj3itvUORy-',
+                    'theme': 'dark'
+                });
+
+                grecaptcha.render(document.getElementById('signInCaptcha'), {
+                    'theme': 'dark',
+                    'sitekey': '6Lf6VSYUAAAAANpb9jQ36-_gSlbGYuj3itvUORy-'
+                });
             }
-          })
-      }
-    })
-  })
+        </script>
 
-  var validatePassword = true;
-  var validateCode = true;
-  var validateUsername = true;
+        <script>
+        // Hovering stuff
+            (function() {
+                [].slice.call(document.querySelectorAll('input.input__field')).forEach(function(inputEl) {
+                    // in case the input is already filled..
+                    if (inputEl.value.trim() !== '') {
+                        classie.add(inputEl.parentNode, 'input--filled');
+                    }
 
-  function validateSigninFields() {
-    var email = document.forms["loginForm"]["email"].value;
-    if (!email || email.trim().length == 0) {
-      new Message("Please provide an email address", 'error', 5000);
-      return false;
-    }
+                    // events:
+                    inputEl.addEventListener('focus', onInputFocus);
+                    inputEl.addEventListener('blur', onInputBlur);
+                });
 
-    var pwd = document.forms["loginForm"]["password"].value;
-    if (!pwd || pwd.trim().length == 0) {
-      new Message("A password is required", 'error', 5000);
-      return false;
-    }
+                function onInputFocus(ev) {
+                    classie.add(ev.target.parentNode, 'input--filled');
+                }
 
-    return true;
-  }
+                function onInputBlur(ev) {
+                    if (ev.target.value.trim() === '') {
+                        classie.remove(ev.target.parentNode, 'input--filled');
+                    }
+                }
 
-  function validateSignupFields() {
-    var email = document.forms["singupForm"]["email"].value;
-    if (!email || email.trim().length == 0) {
-      alert("Please provide an email address");
-      return false;
-    }
+            })();
+        </script>
+        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+    </body>
 
-    var pwd = document.forms["singupForm"]["password"].value;
-    if (!pwd || pwd.trim().length == 0) {
-      new Message("A password is required", 'error', 5000);
-      return false;
-    }
-
-    if (validateUsername && document.forms["singupForm"]["name"].value.trim().length == 0) {
-      new Message("Please enter a screen name", 'error', 5000);
-      return false;
-    }
-
-    if (validatePassword && document.forms["singupForm"]["password2"].value != pwd) {
-      new Message("Passwords do not match!", 'error', 5000);
-      return false;
-    }
-
-    if (validateCode && document.forms["singupForm"]["confirmation"].value.trim().length == 0) {
-      new Message("Please enter the confirmation code", 'error', 5000);
-      return false;
-    }
-  }
-
-  var onloadCallback = function() {
-    grecaptcha.render(document.getElementById('signUpCaptcha'), {
-      'sitekey' : '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
-    });
-
-    grecaptcha.render(document.getElementById('signInCaptcha'), {
-      'sitekey' : '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
-    });
-  }
-</script>
-<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-        async defer>
-</script>
-
-</body>
 </html>
