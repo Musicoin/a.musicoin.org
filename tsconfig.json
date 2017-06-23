@@ -10,6 +10,6 @@
   ],
   "exclude": [
     "./src/public/**/*",
-    "./scr/overview/*"
+    "./src/overview/*"
   ]
 }
