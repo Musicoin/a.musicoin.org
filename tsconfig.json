@@ -9,6 +9,7 @@
     "./src/**/*"
   ],
   "exclude": [
-    "./src/public/**/*"
+    "./src/public/**/*",
+    "./scr/overview/*"
   ]
 }
