@@ -10,6 +10,7 @@
         week: "last week",
         month: "last month"
     }
+    var iconBackground = releases[0].image;
     for (var i=0; i < releases.length; i++) {
         var release = releases[i];
         var periodText = release.stats ? periodTexts[release.stats.period] : "";
@@ -40,3 +41,5 @@
     </div>
     <%}%>
 </div>
+<!-- artist image -->
+<div class="release-image" style="position: relative; top: -131.5%; left: 92%; background-image: url('<%=iconBackground%>'); border-radius: 50px;"></div>
