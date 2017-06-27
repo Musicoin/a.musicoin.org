@@ -52,7 +52,6 @@
             </div>
             <% } %>
             <a href="/artist/<%=message.sender.profileAddress%>"><div style="background-image: url('<%=message.sender.image%>')" class="<%=senderClass%>"></div></a>
-            <div class="release-image" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px; background-image: url('<%=message.sender.image%>'); border-radius: 200px;"></div>        </div>
         <div class="chat-message-area">
             <div class="chat-message-sender flex-row" style="justify-content: space-between">
                 <div>
@@ -106,7 +105,7 @@
                     <a target=_blank class="subtle-text" href="/nav/thread-page?thread=<%=message.threadId%>">
                         <i class="fa fa-comments btn" aria-hidden="true"></i>
                     </a>
-                    <% if (isAuthenticated && user.profileAddress) { %> 
+                    <% if (isAuthenticated && user.profileAddress) { %>
 
                     <% if (message.sender.profileAddress == user.profileAddress) { %>
                         <% if (message.messageType == "repost") { %>
