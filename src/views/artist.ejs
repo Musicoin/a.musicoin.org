@@ -146,8 +146,6 @@ function formatNumber(value) {
              de-url="/elements/user-messages"> 
             <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
         </div>
-        <!-- Artist icon -->
-        <div class="release-image" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px; background-image: url('<%=messages[0].sender.image%>'); border-radius: 200px;"></div>
     </div>
 
     <div class="pad10">
@@ -170,6 +168,8 @@ function formatNumber(value) {
         <% } %>
     </div>
 </div>
+<!-- Artist icon -->
+<div class="release-image" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px; background-image: url('<%=messages[messages.length-1].sender.image%>'); border-radius: 200px;"></div>
 <script>
   function refreshMessageList() {
     dynamic.refreshElement($("#de-user-messages"));
