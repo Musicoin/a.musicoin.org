@@ -52,7 +52,7 @@
             </div>
             <% } %>
             <a href="/artist/<%=message.sender.profileAddress%>"><div style="background-image: url('<%=message.sender.image%>')" class="<%=senderClass%>"></div></a>
-            <div class="release-image" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px; background-image: url('/media/cf3928cca6dce74429ac3e95de2d67f7c8599a0f0b1c4ee35269a1f7d58a0b8376664077adb1312975781d3f8c7f'); border-radius: 200px;"></div>        </div>
+            <div class="release-image" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px; background-image: url('<%=message.sender.image%>'); border-radius: 200px;"></div>        </div>
         <div class="chat-message-area">
             <div class="chat-message-sender flex-row" style="justify-content: space-between">
                 <div>
