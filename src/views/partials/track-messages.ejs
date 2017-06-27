@@ -52,7 +52,7 @@
             </div>
             <% } %>
             <a href="/artist/<%=message.sender.profileAddress%>"><div style="background-image: url('<%=message.sender.image%>')" class="<%=senderClass%>"></div></a>
-            <div class="release-image" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px;background-image: url('<%=message.sender.image%>'); border-radius: 200px;"></div>        </div>
+        </div>
         <div class="chat-message-area">
             <div class="chat-message-sender flex-row" style="justify-content: space-between">
                 <div>
@@ -100,12 +100,6 @@
                 <%=message.body%>
                 <% } %>
             </div>
-            <script>
-              matchStr = $('.chat-message-body').text().replace(/([a-z]+\:\/+)([^\/\s]*)([a-z0-9\-@\^=%&;\/~\+]*)[\?]?([^ \#]*)#?([^ \#]*)?/ig, function(m1,m2,m3,m4,m5) {
-                return '<a href="'+ m1 +'">'+ m1 +'</a>';
-              });
-              $('.chat-message-body').html(matchStr);
-            </script>
             <div class="small-screen-only">
 
                 <span class="mobile-action-area">
