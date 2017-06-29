@@ -180,7 +180,7 @@
                             <span class="fa fa-pencil"></span> Edit License</a></li>
                     <li class="divider"></li>
                     <li><a class="clickable"
-                            onclick="promptDelete('<%= releaseId %>', '<%= release.address %>', '<%= release.title %>')">
+                            onclick='promptDelete("<%=releaseId%>", "<%=release.address%>", "<%=release.title%>")'>
                             <span class="fa fa-trash-o"></span> Delete</a>
                     </li>
                 </ul>
@@ -252,4 +252,3 @@
   }
 </script>
 <%}%>
-
