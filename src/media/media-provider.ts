@@ -220,8 +220,12 @@ const _uploadRaw = function(ipfsAddUrl, pathOrStream) {
       if (err) {
         reject(err);
       } else {
-        const ipfsHash = JSON.parse(body).Hash;
-        resolve(ipfsHash);
+        try {
+          const ipfsHash = JSON.parse(body).Hash;
+          resolve(ipfsHash);
+        } catch(e) {
+          console.log("Malformed Request. Could not parse JSON" + e);
+        }
       }
     })
     // N.B.  This is strange, but req.form() isn't actually submitted until after we return control
