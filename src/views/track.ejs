@@ -140,7 +140,7 @@
                         <div style="width: 44px"></div>
                         <div class="audio-track clickable text-large btn mt5"
                              licenseAddress='<%=license.address%>'>
-                             <i aria-hidden="true" style="font-size: 150px; position: absolute; top: 155px; left: 130px; color: white; opacity: 0.5; display: inline-block" class="fa fa-play-circle"></i>
+                             <i id="play-button" aria-hidden="true" style="font-size: 150px; position: absolute; top: 155px; left: 130px; color: white; display: inline-block" class="fa fa-play-circle"></i>
                         </div>
                         <div class="btn queue-audio-track"
                              licenseAddress='<%=license.address%>'
@@ -445,6 +445,13 @@
   function refreshMessageList() {
     dynamic.refreshElement($("#de-track-messages"));
   }
+</script>
+<script>
+$('#play-button').hover(function(){
+    $(this).css("opacity", "1");
+}, function(){
+    $(this).css("opacity", "0.5");
+});
 </script>
 <%- include partials/player-hook.ejs %>
 <%- include partials/connect-with-us.ejs %>
