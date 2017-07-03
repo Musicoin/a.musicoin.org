@@ -2,7 +2,7 @@
 <html>
 <head>
     <%- include partials/page-head.ejs %>
-    <title>musicoin</title>
+    <title>Musicoin</title>
     <style>
         body {
             background-color: #333;
@@ -143,7 +143,7 @@ function formatNumber(value) {
              de-limit=20
              de-nocontentmessage="No messages"
              de-user="<%=artist.profileAddress%>"
-             de-url="/elements/user-messages"> 
+             de-url="/elements/user-messages">
             <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
         </div>
     </div>
