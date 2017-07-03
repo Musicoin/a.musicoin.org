@@ -2568,7 +2568,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 }
 
 function isAdmin(user) {
-  return (user && user.google && user.google.email && user.google.email.endsWith("@berry.ai"));
+  return (user && user.google && user.google.email && user.google.email.endsWith("@musicoin.org"));
 }
 function canInvite(user) {
   return user.invitesRemaining > 0 || isAdmin(user);
