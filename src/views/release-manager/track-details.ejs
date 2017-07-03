@@ -1,68 +1,55 @@
 <style>
-    .track-image {
-        background-size: cover;
-        min-width: 256px;
-        min-height: 256px;
-        background-position: center;
-        background-repeat: no-repeat;
-        border-radius: 4px;
-    }
+  .track-image {
+    background-size: cover;
+    min-width: 256px;
+    min-height: 256px;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 4px;
+  }
 </style>
 
 <div class="flex-column">
-    <div class="flex-row" style="justify-content: center">
-        <div class="wizard-card-segment">
-            <h2>Track details</h2>
-            <p class="text-large subtle-text">You put a lot of work into making your music sound great -- but the first thing potential fans will encounter
-                is your track name and artwork.</p>
-            <div class="flex-row" style="align-items: flex-start">
-                <div class="flex-column">
-                    <div id="imageDisplay"
-                         onclick="image.click()"
-                         style="border: 1px dashed #ccc; position: relative;"
-                         class="track-image clickable">
-                        <div style="position: absolute; top:5px; right:5px" title="Select an image...">
-                            <i class="fa fa-pencil text-large btn btn-default" aria-hidden="true"></i>
-                        </div>
-                        <div id="imageDisplayText" class="center-text" style="width: 256px; height: 256px">
-                            Select a track image
-                        </div>
-                    </div>
-                </div>
-                <div class="profile-release-item">
-                    <input class="no-submit form-control" type="text" name="title" placeholder="Title" onkeyup="updateInfoNextButton()">
-                    <input style="display: none" onchange="updateImageDisplay('imageDisplay', this.id); $('#imageDisplayText').hide()"
-                           id="image" type="file" name="image">
-
-                    <div class="mt10 subtle-text">
-                        <strong class="mr10">Metadata</strong> <span class="subtle-text">You can enter multiple values separated by a comma</span>
-                    </div>
-
-                    <input name="genres" class="form-control no-submit genre-list"
-                           placeholder="Genres (pick at least 1)"
-                           value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
-                    <input name="languages" class="form-control no-submit language-list"
-                           placeholder="Language (or Instrumental)"
-                           value="<%= user.profile.languages ? user.profile.languages.join(", ") : "" %>">
-
-                    <div class="mt10 subtle-text">
-                        <strong class="mr10">Description</strong>
-                    </div>
-                    <textarea name="description"
-                              class="form-control"
-                              style="height: 160px"
-                              placeholder="Add a description to help users connect with your music."></textarea>
-                </div>
+  <div class="flex-row" style="justify-content: center">
+    <div class="wizard-card-segment">
+      <h2>Track details</h2>
+      <p class="text-large subtle-text">You put a lot of work into making your music sound great. Please spend a few more minutes detailing your work of ar.</p>
+      <div class="flex-row" style="align-items: flex-start">
+        <div class="flex-column">
+          <div id="imageDisplay" onclick="image.click()" style="border: 1px dashed #ccc; position: relative;" class="track-image clickable">
+            <div style="position: absolute; top:5px; right:5px" title="Select an image...">
+              <i class="fa fa-pencil text-large btn btn-default" aria-hidden="true"></i>
             </div>
-            <div class="wizard-button-bar">
-                <div id="fromInfoToNext" class="navNext btn btn-success disabled">Next</div>
+            <div id="imageDisplayText" class="center-text" style="width: 256px; height: 256px">
+              Select a track image
             </div>
+          </div>
         </div>
+        <div class="profile-release-item">
+          <input class="no-submit form-control" type="text" name="title" placeholder="Title" onkeyup="updateInfoNextButton()">
+          <input style="display: none" onchange="updateImageDisplay('imageDisplay', this.id); $('#imageDisplayText').hide()" id="image" type="file" name="image">
+
+          <div class="mt10 subtle-text">
+            <strong class="mr10">Metadata</strong> <span class="subtle-text">You can enter multiple values separated by a comma</span>
+          </div>
+
+          <input name="genres" class="form-control no-submit genre-list" placeholder="Genres (pick at least 1)" value="<%= user.profile.genres ? user.profile.genres.join(" , ") : " " %>">
+          <input name="languages" class="form-control no-submit language-list" placeholder="Language (or Instrumental)" value="<%= user.profile.languages ? user.profile.languages.join(" , ") : " " %>">
+
+          <div class="mt10 subtle-text">
+            <strong class="mr10">Description</strong>
+          </div>
+          <textarea name="description" class="form-control" style="height: 160px" placeholder="Add a description to help users connect with your music."></textarea>
+        </div>
+      </div>
+      <div class="wizard-button-bar">
+        <div id="fromInfoToNext" class="navNext btn btn-success disabled">Next</div>
+      </div>
     </div>
+  </div>
 
 </div>
 <script>
-
   function updateInfoNextButton() {
     $('#fromInfoToNext').toggleClass('disabled', !isInfoDone())
   }
