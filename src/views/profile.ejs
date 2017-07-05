@@ -327,6 +327,9 @@
                     <% } %>
                 </div>
                 <div class=wallet-actions style="display: none">
+                    <!--
+                    TODO: Fix this in the future
+                    -->
                     <p>
 
                         <br>
@@ -335,43 +338,8 @@
                     <br>
 
                     <p class="subtle-text">
-                        Send musicoins to a friend or transfer to another wallet for safe keeping.
+                      Please download the <a href="https://musicoin.org/wallet.html">desktop client</a> and transfer funds to your local wallet for safekeeping.
                     </p>
-                    <form action="/send" method="post">
-                        <table cellpadding="3">
-                            <tr>
-                                <td>Recipient</td>
-                                <td width="99%"><input name=recipient type="text" class="form-control"
-                                                       placeholder="address"></td>
-                            </tr>
-                            <tr>
-                                <td>Amount</td>
-                                <td>
-                                    <div class="flex-row">
-                                        <input name=amount type="number" class="form-control text-right form-number"
-                                               placeholder="0">
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <div class="text-warning text-center mb20">Warning! Exchanges may not recognize
-                                        coins sent directly from your profile.
-                                        (<a href="/faq/#ExchangeDeposit">why?</a>)
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td class="text-right">
-                                    <button type="submit" class="btn btn-warning mb10">
-                                        Send
-                                    </button>
-                                </td>
-                            </tr>
-
-                        </table>
-                    </form>
                 </div>
                 <div class="flex-row wallet-action-bar">
                     <div onclick='$(".wallet-actions").toggle()'
