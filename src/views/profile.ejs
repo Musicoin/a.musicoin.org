@@ -333,7 +333,7 @@
                     <div class="text-center subtle-text">my wallet address</div>
                     <div class="text-center"><%= user.profileAddress %></div>
                     <br>
-                    <%= if (artist.verified) { %>
+                    <% if (artist.verified) { %>
                     <p class="subtle-text">
                         Send musicoins to a friend or transfer to another wallet for safe keeping.
                     </p>
@@ -376,7 +376,7 @@
                       <p class="subtle-text">
                         Only verified artists are allowed to withdraw from their wallets
                       </p>
-                    <%= } %>
+                    <% } %>
                 </div>
                 <div class="flex-row wallet-action-bar">
                     <div onclick='$(".wallet-actions").toggle()'
