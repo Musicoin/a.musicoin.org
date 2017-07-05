@@ -327,19 +327,56 @@
                     <% } %>
                 </div>
                 <div class=wallet-actions style="display: none">
-                    <!--
-                    TODO: Fix this in the future
-                    -->
                     <p>
 
                         <br>
                     <div class="text-center subtle-text">my wallet address</div>
                     <div class="text-center"><%= user.profileAddress %></div>
                     <br>
-
+                    <%= if (artist.verified) { %>
                     <p class="subtle-text">
-                      Please download the <a href="https://musicoin.org/wallet.html">desktop client</a> and transfer funds to your local wallet for safekeeping.
+                        Send musicoins to a friend or transfer to another wallet for safe keeping.
                     </p>
+                    <form action="/send" method="post">
+                        <table cellpadding="3">
+                            <tr>
+                                <td colspan="2">
+                                    <div class="text-warning text-center mb20" style="font-size: 25px !important;">Warning! Exchanges may not recognize
+                                        coins sent directly from your profile.
+                                        (<a href="/faq/#ExchangeDeposit">why?</a>)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Recipient</td>
+                                <td width="99%"><input name=recipient type="text" class="form-control"
+                                                       placeholder="address"></td>
+                            </tr>
+                            <tr>
+                                <td>Amount</td>
+                                <td>
+                                    <div class="flex-row">
+                                        <input name=amount type="number" class="form-control text-right form-number"
+                                               placeholder="0">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="text-right">
+                                    <button type="submit" class="btn btn-warning mb10">
+                                        Send
+                                    </button>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </form>
+                    <% } else { %>
+                      <p class="subtle-text">
+                        Only verified artists are allowed to withdraw from their wallets
+                      </p>
+                    <%= } %>
                 </div>
                 <div class="flex-row wallet-action-bar">
                     <div onclick='$(".wallet-actions").toggle()'
