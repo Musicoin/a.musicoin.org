@@ -2284,10 +2284,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return Release.findOne({contractAddress: address, state: "published"}).exec()
       .then(release => {
         if (!release) {
-          return {success: false, skip: true, message: "Sorry, the track you requested was not found"};
+          return {success: false, skip: true, message: "The requested track was not found"};
         }
         if (release.markedAsAbuse) {
-          return {success: false, skip: true, message: "Sorry, this track was marked as abuse"};
+          return {success: false, skip: true, message: "This track was flagged abusive by our users"};
         }
 
         return User.findOne({profileAddress: release.artistAddress})
@@ -2309,13 +2309,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 pendingPayments.forEach(r => totalCoinsPending += r.coins);
                 console.log("Pending ppp payments: " + totalCoinsPending);
                 if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
-                  return {success: false, skip: false, message: "Sorry, it looks like you don't have enough coins."}
+                  return {success: false, skip: false, message: "It looks like you don't have enough coins/free plays or are trying to play a track from a non verified artist"}
               }
               else if (hasNoFreePlays) {
-                return {success: false, skip: false, message: "Sorry, it looks like you ran our of free plays.  Sign up to get more!"}
+                return {success: false, skip: false, message: "Looks like you ran out of free plays.  Sign up to get more!"}
               }
               else if (!verifiedArtist) {
-                return {success: false, skip: true, message: "Sorry, only tracks from verified artists are eligible for free plays."}
+                return {success: false, skip: true, message: "Only tracks from verified artists are eligible for free plays."}
               }
               else {
                 const diff = new Date(user.nextFreePlayback).getTime() - Date.now();
