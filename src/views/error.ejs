@@ -1,21 +1,226 @@
-<!doctype html>
 <html>
+
 <head>
-    <title>Musicoin</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
-    <style>
-        body        { padding-top:80px; }
-    </style>
+  <link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet">
+  <title>Landed on the wrong page you have</title>
+  <link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet">
+  <style>
+    body {
+      background-color: black;
+    }
+    /*neon effect*/
+
+    p {
+      text-align: center;
+      font-size: 6em;
+      margin: 20px 0 20px 0;
+    }
+
+    a {
+      text-decoration: none;
+      -webkit-transition: all 0.5s;
+      -moz-transition: all 0.5s;
+      transition: all 0.5s;
+    }
+
+    p:nth-child(1) a {
+      color: #FF1177;
+      font-family: Monoton;
+      -webkit-animation: neon1 1.5s ease-in-out infinite alternate;
+      -moz-animation: neon1 1.5s ease-in-out infinite alternate;
+      animation: neon1 1.5s ease-in-out infinite alternate;
+    }
+
+    p a:hover {
+      color: #ffffff;
+    }
+    /*glow for webkit-ket-frames*/
+
+    @-webkit-keyframes neon1 {
+      from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF1177, 0 0 70px #FF1177, 0 0 80px #FF1177, 0 0 100px #FF1177, 0 0 150px #FF1177;
+      }
+      to {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FF1177, 0 0 35px #FF1177, 0 0 40px #FF1177, 0 0 50px #FF1177, 0 0 75px #FF1177;
+      }
+    }
+    /*glow for mozilla-keyframes*/
+
+    @-moz-keyframes neon1 {
+      from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF1177, 0 0 70px #FF1177, 0 0 80px #FF1177, 0 0 100px #FF1177, 0 0 150px #FF1177;
+      }
+      to {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FF1177, 0 0 35px #FF1177, 0 0 40px #FF1177, 0 0 50px #FF1177, 0 0 75px #FF1177;
+      }
+    }
+
+    @keyframes neon1 {
+      from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF1177, 0 0 70px #FF1177, 0 0 80px #FF1177, 0 0 100px #FF1177, 0 0 150px #FF1177;
+      }
+      to {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FF1177, 0 0 35px #FF1177, 0 0 40px #FF1177, 0 0 50px #FF1177, 0 0 75px #FF1177;
+      }
+    }
+  </style>
+  <style>
+    html,
+    body {
+      background: black;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    .view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      -webkit-perspective: 400;
+      perspective: 400;
+    }
+
+    .plane {
+      width: 180px;
+      height: 180px;
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+    }
+
+    .plane.main {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      -webkit-transform: rotateX(60deg) rotateZ(-30deg);
+      transform: rotateX(60deg) rotateZ(-30deg);
+      -webkit-animation: rotate 20s infinite linear;
+      animation: rotate 20s infinite linear;
+    }
+
+    .plane.main .circle {
+      width: 180px;
+      height: 180px;
+      position: absolute;
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+      border-radius: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 0 75px #FF1177, inset 0 0 75px #FF1177;
+    }
+
+    .plane.main .circle::before,
+    .plane.main .circle::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      width: 10%;
+      height: 10%;
+      border-radius: 100%;
+      background: #FF1177;
+      box-sizing: border-box;
+      box-shadow: 0 0 75px 2px #FF1177;
+    }
+
+    .plane.main .circle::before {
+      -webkit-transform: translateZ(-75px);
+      transform: translateZ(-75px);
+    }
+
+    .plane.main .circle::after {
+      -webkit-transform: translateZ(75px);
+      transform: translateZ(75px);
+    }
+
+    .plane.main .circle:nth-child(1) {
+      -webkit-transform: rotateZ(72deg) rotateX(63.435deg);
+      transform: rotateZ(72deg) rotateX(63.435deg);
+    }
+
+    .plane.main .circle:nth-child(2) {
+      -webkit-transform: rotateZ(144deg) rotateX(63.435deg);
+      transform: rotateZ(144deg) rotateX(63.435deg);
+    }
+
+    .plane.main .circle:nth-child(3) {
+      -webkit-transform: rotateZ(216deg) rotateX(63.435deg);
+      transform: rotateZ(216deg) rotateX(63.435deg);
+    }
+
+    .plane.main .circle:nth-child(4) {
+      -webkit-transform: rotateZ(288deg) rotateX(63.435deg);
+      transform: rotateZ(288deg) rotateX(63.435deg);
+    }
+
+    .plane.main .circle:nth-child(5) {
+      -webkit-transform: rotateZ(360deg) rotateX(63.435deg);
+      transform: rotateZ(360deg) rotateX(63.435deg);
+    }
+
+    @-webkit-keyframes rotate {
+      0% {
+        -webkit-transform: rotateX(0) rotateY(0) rotateZ(0);
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+      100% {
+        -webkit-transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+        transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+      }
+    }
+
+    @keyframes rotate {
+      0% {
+        -webkit-transform: rotateX(0) rotateY(0) rotateZ(0);
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+      100% {
+        -webkit-transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+        transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+      }
+    }
+
+    #quote {
+      color: #FF1177;
+      font-size: 15px;
+      font-family: 'Droid Sans', sans-serif;
+      position: relative;
+      text-align: center;
+      top: 77%;
+    }
+  </style>
+
 </head>
+
 <body>
-<div class="container">
-
-    <div class="jumbotron text-center">
-        <h1>Something bad happened</h1>
-        :(
+  <div class="container">
+    <p><a href="">
+			404:&nbsp;NOT &nbsp; FOUND
+  </a></p>
+  </div>
+  <div class="view">
+    <div class="plane main">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
     </div>
-
-</div>
+    <div id="quote">
+      To play a wrong note is insignificant, to play without passion is inexcusable
+      <br> Ludwig Van Beethoven
+    </div>
+  </div>
 </body>
+
 </html>
