@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const gettext = require("express-gettext");
 const path = require("path");
@@ -138,4 +137,5 @@ app.use(function (req, res, next) {
     }
     next();
 });
+module.exports = app;
 //# sourceMappingURL=server.js.map

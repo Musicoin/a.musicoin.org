@@ -155,3 +155,5 @@ app.use(function(req, res: any, next) {
     }
     next();
 });
+
+export = app;
