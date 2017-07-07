@@ -169,7 +169,7 @@ function formatNumber(value) {
     </div>
 </div>
 <!-- Artist icon -->
-<% if (messages.length) >= 1 { %>
+<% if (messages.length > 0) { %>
 <div class="release-image" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px; background-image: url('<%=messages[messages.length-1].sender.image%>'); border-radius: 200px;"></div>
 <% } %>
 <script>
