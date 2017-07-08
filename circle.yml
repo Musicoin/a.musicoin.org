@@ -1,0 +1,13 @@
+machine:
+  timezone: America/New_York
+  node:
+    version: 6.7.0
+
+database:
+  pre:
+    - npm install --save-dev sharp
+
+dependencies:
+  override:
+    - npm install -g
+    - npm uninstall sharp 

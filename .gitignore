@@ -1,9 +1,5 @@
-/src/**/*.js.map
-/src/app/**/*.js
-/src/config/**/*.js
-/src/media/**/*.js
 /logs
 /.idea
 /Email-Verification
 /node_modules
-.DS_Store
+.DS_Store 
