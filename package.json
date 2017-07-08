@@ -33,7 +33,7 @@
     "send-seekable": "^1.0.4",
     "sendgrid": "^4.7.1",
     "serve-favicon": "~2.3.0",
-    "sharp": "^0.17.1",
+    "sharp": "*",
     "tmp": "0.0.31",
     "uuid": "^3.0.1"
   },
