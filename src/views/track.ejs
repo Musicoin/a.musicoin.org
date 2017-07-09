@@ -140,7 +140,7 @@
                         <div style="width: 44px"></div>
                         <div class="audio-track clickable text-large btn mt5"
                              licenseAddress='<%=license.address%>'>
-                             <i id="play-button" aria-hidden="true" style="opacity: 0.5; font-size: 150px; position: absolute; top: 155px; left: 130px; color: white; display: inline-block" class="fa fa-play-circle"></i>
+                             <i id="play-button" aria-hidden="true" style="opacity: 0.8; font-size: 150px; position: absolute; top: 140px; left: 120px; color: white; display: inline-block; background: black; padding: 0px 10px; border-radius: 200px;" class="fa fa-play-circle-o"></i>
                         </div>
                         <div class="btn queue-audio-track"
                              licenseAddress='<%=license.address%>'
@@ -450,7 +450,7 @@
 $('#play-button').hover(function(){
     $(this).css("opacity", "1");
 }, function(){
-    $(this).css("opacity", "0.5");
+    $(this).css("opacity", "0.8");
 });
 </script>
 <%- include partials/player-hook.ejs %>
