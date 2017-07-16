@@ -148,14 +148,14 @@ ConfigUtils.loadConfig()
 
 //helmet middleware to enhance security
 
+/*
 const oneDayinSeconds = 5184000 // verify header every one day
-
 app.use(helmet.hpkp({
   maxAge: oneDayinSeconds,
   sha256s: ['Qj0Lpmhq1bu3ksR36/IKlNy17cy6tKDmLYnvoE631Lw=','xmvvalwaPni4IBbhPzFPPMX6JbHlKqua257FmJsWWto='],
   includeSubdomains: true
 }))
-
+*/
 app.use(helmet())
 app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
 
@@ -164,6 +164,7 @@ app.use(expectCt({
   maxAge: 90
 }))
 
+/*
 app.use(csp({
   directives: {
     defaultSrc: ["'self'"],
@@ -175,7 +176,7 @@ app.use(csp({
     objectSrc: ["'none'"],
   }
 }))
-
+*/
 // gettext
 app.use(gettext(app, {
   directory: path.join(__dirname, 'locales'),

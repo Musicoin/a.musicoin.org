@@ -4,8 +4,8 @@ echo "Starting ipfs..."
 cd /
 /go-ipfs/ipfs daemon --init=true --migrate=true >> ipfs.log 2>&1 &
 
-echo "Starting forever script..."
-forever start /musicoin.org/src/server.js
+echo "Starting pm2 script..."
+pm2 start /musicoin.org/src/server.js --max-restarts 10000000 -i 0
 
 echo "Setting up jenkins monitor.."
 touch /home/jenkins/monitor
