@@ -17,7 +17,7 @@ const defaultProfile = {
 };
 
 // expose this function to our app using module.exports
-export function configure(passport: Passport, mediaProvider, configAuth: any) {
+export function configure(passport: any, mediaProvider, configAuth: any) {
 
   class LoginFailed extends Error {
     constructor(message) {
@@ -40,7 +40,7 @@ export function configure(passport: Passport, mediaProvider, configAuth: any) {
   // passport needs ability to serialize and unserialize users out of session
 
   // used to serialize the user for the session
-  passport.serializeUser(function (user, done) {
+  passport.serializeUser(function(user, done) {
     done(null, user.id);
   });
 

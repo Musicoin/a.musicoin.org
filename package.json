@@ -36,6 +36,8 @@
     "serve-favicon": "*",
     "sharp": "*",
     "tmp": "*",
+    "tsc": "*",
+    "typescript": "*",
     "uuid": "*"
   },
   "devDependencies": {

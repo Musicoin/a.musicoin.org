@@ -37,7 +37,7 @@ ConfigUtils.loadConfig()
     mongoose.Promise = require('bluebird');
     mongoose.connect(config.database.url);
 
-    passportConfigurer.configure(passport, mediaProvider, config.auth);
+    passportConfigurer.configure(passport as any, mediaProvider, config.auth);
 
     const get_ip = require('ipware')().get_ip;
     app.use(function(req, res, next) {
