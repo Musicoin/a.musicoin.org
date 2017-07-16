@@ -10,6 +10,9 @@ import * as cookieParser from 'cookie-parser';
 import * as mongoose from 'mongoose';
 import * as passport from 'passport';
 import * as passportConfigurer from './config/passport';
+import * as helmet from 'helmet';
+import * as csp from 'helmet-csp';
+import * as expectCt from 'expect-ct'
 import {MusicoinAPI} from './app/musicoin-api';
 
 const app = express();
@@ -23,18 +26,18 @@ ConfigUtils.loadConfig()
     const musicoinApi = new MusicoinAPI(config.musicoinApi);
     const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
     const isDevEnvironment = app.get('env') === 'development';
-    const ONE_YEAR = 1000*60*60*24*365;
+    const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
     app.set('port', config.port);
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'ejs');
     app.engine('html', require('ejs').renderFile);
 
-// connect to database
+    // connect to database
     mongoose.Promise = require('bluebird');
     mongoose.connect(config.database.url);
 
-    passportConfigurer.configure(passport, mediaProvider, config.auth);
+    passportConfigurer.configure(passport as any, mediaProvider, config.auth);
 
     const get_ip = require('ipware')().get_ip;
     app.use(function(req, res, next) {
@@ -70,13 +73,13 @@ ConfigUtils.loadConfig()
     routes.configure(app, passport, musicoinApi, mediaProvider, config);
     app.use(express.static(path.join(__dirname, 'overview')));
 
-// let angular catch them
+    // let angular catch them
     app.use(function(req, res) {
       res.render('not-found');
     });
 
     if (isDevEnvironment) {
-      app.listen(config.port, function () {
+      app.listen(config.port, function() {
         console.log('Listening on port ' + config.port);
         console.log('Environment ' + app.get('env'));
         console.log("loaded config: " + JSON.stringify(config, null, 2));
@@ -102,19 +105,19 @@ ConfigUtils.loadConfig()
         approveDomains: config.certificate.approveDomains
       });
 
-      require('http').createServer(lex.middleware(require('redirect-https')())).listen(80, function () {
+      require('http').createServer(lex.middleware(require('redirect-https')())).listen(80, function() {
         console.log("Listening for ACME http-01 challenges on", this.address());
       });
 
-      require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(443, function () {
+      require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(443, function() {
         console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
         console.log('Environment ' + app.get('env'));
         console.log("loaded config: " + JSON.stringify(config, null, 2));
       });
     }
 
-// production error handler
-// no stacktraces leaked to user
+    // production error handler
+    // no stacktraces leaked to user
     app.use(function(err, req, res, next) {
       console.log("ERROR: " + err);
       res.status(err.status || 500);
@@ -143,17 +146,47 @@ ConfigUtils.loadConfig()
     }
   });
 
+//helmet middleware to enhance security
+
+const oneDayinSeconds = 5184000 // verify header every one day
+
+app.use(helmet.hpkp({
+  maxAge: oneDayinSeconds,
+  sha256s: ['Qj0Lpmhq1bu3ksR36/IKlNy17cy6tKDmLYnvoE631Lw=','xmvvalwaPni4IBbhPzFPPMX6JbHlKqua257FmJsWWto='],
+  includeSubdomains: true
+}))
+
+app.use(helmet())
+app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
+
+app.use(expectCt({
+  enforce: true,
+  maxAge: 90
+}))
+
+app.use(csp({
+  directives: {
+    defaultSrc: ["'self'"],
+    styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com', 'https://fonts.googleapis.com'],
+    fontSrc: ["'self'", 'https://fonts.gstatic.com data:'],
+    scriptSrc: ["'self'", 'https://ajax.googleapis.com'],
+    sandbox: ['allow-forms', 'allow-scripts'],
+    // reportUri: ['/report-violation'],
+    objectSrc: ["'none'"],
+  }
+}))
+
 // gettext
 app.use(gettext(app, {
-    directory: path.join(__dirname, 'locales'),
-    useAcceptedLanguageHeader: true,
-	alias: '_'
+  directory: path.join(__dirname, 'locales'),
+  useAcceptedLanguageHeader: true,
+  alias: '_'
 }));
 app.use(function(req, res: any, next) {
-    if (req.query && req.query.locale) {
-        res.setLocale(req.query.locale);
-    }
-    next();
+  if (req.query && req.query.locale) {
+    res.setLocale(req.query.locale);
+  }
+  next();
 });
 
 export = app;

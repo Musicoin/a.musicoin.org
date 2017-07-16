@@ -61,19 +61,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   const addressResolver = new AddressResolver();
 
   const releaseManager = new ReleaseManagerRouter(musicoinApi,
-                                                   jsonAPI,
-                                                   addressResolver,
-                                                   maxImageWidth,
-                                                   mediaProvider,
-                                                   config,
-                                                   doRender);
+    jsonAPI,
+    addressResolver,
+    maxImageWidth,
+    mediaProvider,
+    config,
+    doRender);
   const dashboardManager = new DashboardRouter(musicoinApi,
-                                                    jsonAPI,
-                                                    addressResolver,
-                                                    maxImageWidth,
-                                                    mediaProvider,
-                                                    config,
-                                                    doRender);
+    jsonAPI,
+    addressResolver,
+    maxImageWidth,
+    mediaProvider,
+    config,
+    doRender);
 
   const newProfileListener = p => {
     jsonAPI.sendRewardsForInvite(p)
@@ -102,12 +102,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     console.log("Got oEmbed request: " + req.query.url);
     if (req.query.url && req.query.url.startsWith("https://musicoin.org/")) {
       const parts = req.query.url.split('/');
-      const type = parts[parts.length-2];
-      const id = parts[parts.length-1];
+      const type = parts[parts.length - 2];
+      const id = parts[parts.length - 1];
       console.log("Parsed oEmbed request: " + id);
       if (type == "track" && id && id.trim().length > 0) {
         console.log("Looking for track: " + id);
-        return Release.findOne({contractAddress: id})
+        return Release.findOne({ contractAddress: id })
           .then(release => {
             if (!release) {
               console.log("Could not find track: " + id);
@@ -162,7 +162,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // });
 
   app.use('/health/shallow', (req, res) => {
-    res.json({ok: true})
+    res.json({ ok: true })
   });
 
   app.get('/json-api/demo', isLoggedIn, (req, res) => doRender(req, res, 'api-demo.ejs', {}));
@@ -219,7 +219,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   function _formatDate(timestamp) {
     // TODO: Locale
-    const options = {year: 'numeric', month: 'short', day: 'numeric'};
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(timestamp * 1000).toLocaleDateString('en-US', options);
   }
 
@@ -234,7 +234,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return res.redirect("https://musicoin.org/accept/" + req.params.code);
     }
     console.log(`Looking for invite: ${req.params.code}`);
-    User.findOne({"invite.inviteCode": req.params.code, "invite.claimed": {$ne: true}}).exec()
+    User.findOne({ "invite.inviteCode": req.params.code, "invite.claimed": { $ne: true } }).exec()
       .then((record) => {
         // console.log(`Invite query complete: ${record}`);
         delete req.session.inviteCode;
@@ -252,7 +252,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           console.log(`Checking for group invite: ${req.params.code}`);
           return User.findOne({
             "reusableInviteCode": req.params.code,
-            "invitesRemaining": {$gt: 0}
+            "invitesRemaining": { $gt: 0 }
           }).exec()
             .then(inviter => {
               // console.log(`GroupInvite query complete: ${inviter}`);
@@ -303,29 +303,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             artist: result.artist,
             mainFrameLocation: req.originalUrl.substr(4)
           });
-      } catch {
-        res.render('not-found.ejs')
-      });
-    }
+        } catch(Error) {
+          res.render('not-found.ejs')
+        }
+      }
+      );
   });
 
   // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
   // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
   app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
-    res.render('index-frames.ejs', {mainFrameLocation: req.originalUrl.substr(4)});
+    res.render('index-frames.ejs', { mainFrameLocation: req.originalUrl.substr(4) });
   });
 
   // =====================================
   // HOME PAGE
   // =====================================
-  app.get('/main', isLoggedIn, function (req, res) {
+  app.get('/main', isLoggedIn, function(req, res) {
     const rs = jsonAPI.getNewReleases(config.ui.home.newReleases).catchReturn([]);
     const fa = jsonAPI.getFeaturedArtists(config.ui.home.newArtists).catchReturn([]);
     const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.home.topPlayLastWeek, "week").catchReturn([]);
     const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.home.topTippedLastWeek, "week").catchReturn([]);
-    const h  = jsonAPI.getHero();
+    const h = jsonAPI.getHero();
     const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
-    Promise.join(rs, fa, b, h, tpw, ttw, function (releases, artists, balance, hero, topPlayed, topTipped) {
+    Promise.join(rs, fa, b, h, tpw, ttw, function(releases, artists, balance, hero, topPlayed, topTipped) {
       doRender(req, res, "index-new.ejs", {
         musicoinClientBalance: balance,
         hero: hero,
@@ -336,21 +337,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         ui: config.ui.home
       });
     })
-      .catch(function (err) {
+      .catch(function(err) {
         console.log(err);
         res.redirect('/error');
       });
   });
 
-  app.get('/feed', isLoggedIn, function (req, res) {
-    const messageTypes = req.user && req.user.preferences && req.user.preferences.feedFilter ? req.user.preferences.feedFilter.split("|").filter(v=>v) : [];
+  app.get('/feed', isLoggedIn, function(req, res) {
+    const messageTypes = req.user && req.user.preferences && req.user.preferences.feedFilter ? req.user.preferences.feedFilter.split("|").filter(v => v) : [];
     const m = jsonAPI.getFeedMessages(req.user._id, config.ui.feed.newMessages, messageTypes);
     const tpw = jsonAPI.getTopPlayedLastPeriod(config.ui.feed.topPlayLastWeek, "week").catchReturn([]);
     const ttw = jsonAPI.getTopTippedLastPeriod(config.ui.feed.topTippedLastWeek, "week").catchReturn([]);
-    const h  = jsonAPI.getHero();
+    const h = jsonAPI.getHero();
     const r = jsonAPI.getUserRecentPlays(req.user._id, 0, config.ui.feed.myPlays);
 
-    Promise.join(m, h, tpw, ttw, r, function (messages, hero, topPlayed, topTipped, recentlyPlayed) {
+    Promise.join(m, h, tpw, ttw, r, function(messages, hero, topPlayed, topTipped, recentlyPlayed) {
       if (messages.length > 0) {
         console.log("mini: " + req.user.preferences.minimizeHeroInFeed);
         doRender(req, res, "feed.ejs", {
@@ -369,7 +370,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.redirect("/main");
       }
     })
-      .catch(function (err) {
+      .catch(function(err) {
         console.log(err);
         res.redirect('/error');
       });
@@ -381,7 +382,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const sort = req.query.sort || "tips";
     const rs = jsonAPI.getNewReleasesByGenre(150, maxGroupSize, search, genre, sort).catchReturn([]);
     const as = jsonAPI.getNewArtists(maxGroupSize, search, genre).catchReturn([]);
-    Promise.join(rs, as, function (releases, artists) {
+    Promise.join(rs, as, function(releases, artists) {
       doRender(req, res, "browse.ejs", {
         searchTerm: search,
         genreFilter: genre,
@@ -391,122 +392,122 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         sort: sort
       });
     })
-      .catch(function (err) {
+      .catch(function(err) {
         console.log(err);
         res.redirect('/error');
       });
   }
 
-  app.post('/browse', isLoggedIn, function (req, res) {
+  app.post('/browse', isLoggedIn, function(req, res) {
     handleBrowseRequest(req, res, req.body.search, req.body.genre || req.query.genre);
   });
 
-  app.get('/browse', isLoggedIn, function (req, res) {
+  app.get('/browse', isLoggedIn, function(req, res) {
     handleBrowseRequest(req, res, req.query.search, req.query.genre);
   });
 
-  app.post('/elements/musicoin-balance', function (req, res) {
+  app.post('/elements/musicoin-balance', function(req, res) {
     musicoinApi.getMusicoinAccountBalance()
-      .then(function (balance) {
-        res.render('partials/musicoin-balance.ejs', {musicoinClientBalance: balance});
+      .then(function(balance) {
+        res.render('partials/musicoin-balance.ejs', { musicoinClientBalance: balance });
       });
   });
-  app.post('/elements/pending-releases', function (req, res) {
+  app.post('/elements/pending-releases', function(req, res) {
     jsonAPI.getArtist(req.user.profileAddress, true, true)
-      .then(function (output) {
+      .then(function(output) {
         res.render('partials/pending-releases.ejs', output);
       });
   });
 
-  app.post('/elements/release-list', function (req, res) {
+  app.post('/elements/release-list', function(req, res) {
     jsonAPI.getArtist(req.user.profileAddress, true, true)
-      .then(function (output) {
+      .then(function(output) {
         res.render('partials/release-list.ejs', output);
       });
   });
 
-  app.post('/elements/featured-artists', function (req, res) {
+  app.post('/elements/featured-artists', function(req, res) {
     const iconSize = req.body.iconSize ? req.body.iconSize : "large";
     jsonAPI.getFeaturedArtists(12)
-      .then(function (artists) {
-        res.render('partials/featured-artist-list.ejs', {artists: artists, iconSize: iconSize});
+      .then(function(artists) {
+        res.render('partials/featured-artist-list.ejs', { artists: artists, iconSize: iconSize });
       });
   });
 
-  app.post('/elements/new-artists', function (req, res) {
+  app.post('/elements/new-artists', function(req, res) {
     const iconSize = req.body.iconSize ? req.body.iconSize : "small";
     jsonAPI.getNewArtists(12)
-      .then(function (artists) {
-        res.render('partials/featured-artist-list.ejs', {artists: artists, iconSize: iconSize});
+      .then(function(artists) {
+        res.render('partials/featured-artist-list.ejs', { artists: artists, iconSize: iconSize });
       });
   });
 
-  app.post('/elements/artist-events', function (req, res) {
+  app.post('/elements/artist-events', function(req, res) {
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const iconSize = req.body.iconSize ? req.body.iconSize : "small";
     jsonAPI.getFeaturedArtists(limit)
-      .then(function (artists) {
-        res.render('partials/artist-events.ejs', {artists: artists, iconSize: iconSize});
+      .then(function(artists) {
+        res.render('partials/artist-events.ejs', { artists: artists, iconSize: iconSize });
       });
   });
 
-  app.post('/elements/release-events', function (req, res) {
+  app.post('/elements/release-events', function(req, res) {
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     jsonAPI.getNewReleases(limit)
-      .then(function (releases) {
-        res.render('partials/release-events.ejs', {releases: releases});
+      .then(function(releases) {
+        res.render('partials/release-events.ejs', { releases: releases });
       });
   });
 
-  app.post('/elements/top-played-period', function (req, res) {
+  app.post('/elements/top-played-period', function(req, res) {
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const period = req.body.period || 'week';
     jsonAPI.getTopPlayedLastPeriod(limit, period)
-      .then(function (releases) {
-        res.render('partials/release-events.ejs', {releases: releases});
+      .then(function(releases) {
+        res.render('partials/release-events.ejs', { releases: releases });
       });
   });
 
-  app.post('/elements/top-tipped-period', function (req, res) {
+  app.post('/elements/top-tipped-period', function(req, res) {
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const period = req.body.period || 'week';
     jsonAPI.getTopTippedLastPeriod(limit, period)
-      .then(function (releases) {
-        res.render('partials/release-events.ejs', {releases: releases});
+      .then(function(releases) {
+        res.render('partials/release-events.ejs', { releases: releases });
       });
   });
 
-  app.post('/elements/new-releases', function (req, res) {
+  app.post('/elements/new-releases', function(req, res) {
     jsonAPI.getNewReleases(12)
-      .then(function (releases) {
-        res.render('partials/track-list.ejs', {releases: releases});
+      .then(function(releases) {
+        res.render('partials/track-list.ejs', { releases: releases });
       });
   });
 
-  app.post('/elements/recently-played', function (req, res) {
+  app.post('/elements/recently-played', function(req, res) {
     jsonAPI.getRecentPlays(12)
-      .then(function (releases) {
-        res.render('partials/track-list.ejs', {releases: releases});
+      .then(function(releases) {
+        res.render('partials/track-list.ejs', { releases: releases });
       });
   });
 
-  app.post('/elements/top-played', function (req, res) {
+  app.post('/elements/top-played', function(req, res) {
     jsonAPI.getTopPlayed(12)
-      .then(function (releases) {
-        res.render('partials/track-list.ejs', {releases: releases});
+      .then(function(releases) {
+        res.render('partials/track-list.ejs', { releases: releases });
       });
   });
 
-  app.post('/elements/user-recently-played', function (req, res) {
+  app.post('/elements/user-recently-played', function(req, res) {
     const limit = req.body.limit && req.body.limit > 0 ? parseInt(req.body.limit) : 10;
     const start = req.body.start && req.body.start > 0 ? parseInt(req.body.start) : 0;
     jsonAPI.getUserRecentPlays(req.user._id, start, limit)
-      .then(function (recentlyPlayed) {
-        res.render('partials/release-events.ejs', {releases: recentlyPlayed, elementId: req.body.elementid});
+      .then(function(recentlyPlayed) {
+        res.render('partials/release-events.ejs', { releases: recentlyPlayed, elementId: req.body.elementid });
       });
   });
 
-  app.post('/elements/play-queue', function (req, res) {
+  app.post('/elements/play-queue', function(req, res) {
     res.render('partials/play-queue-active.ejs', {});
   });
 
@@ -524,17 +525,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         }
       }
       else if (req.body.repostMessage) {
-        return jsonAPI.repostMessages(req.user.profileAddress,req.body.repostMessage);
+        return jsonAPI.repostMessages(req.user.profileAddress, req.body.repostMessage);
       }
       else if (req.body.deleteMessage) {
-        return jsonAPI.deleteMessage(req.user.profileAddress,req.body.deleteMessage);
+        return jsonAPI.deleteMessage(req.user.profileAddress, req.body.deleteMessage);
       }
     }
 
     return Promise.resolve(null);
   }
 
-  app.get('/thread-page', function (req, res) {
+  app.get('/thread-page', function(req, res) {
     // don't redirect if they aren't logged in, this is just page section
     const limit = req.query.limit && req.query.limit > 0 && req.query.limit < MAX_MESSAGES ? parseInt(req.query.limit) : config.ui.thread.newMessages;
     const showTrack = req.query.showtrack ? req.query.showtrack == "true" : false;
@@ -550,11 +551,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
       .catch(err => {
         console.log("Failed to load thread messages: " + err);
-        doRender(req, res, "thread.ejs", {messages: []});
+        doRender(req, res, "thread.ejs", { messages: [] });
       })
   });
 
-  app.post('/thread-view', function (req, res) {
+  app.post('/thread-view', function(req, res) {
     // don't redirect if they aren't logged in, this is just page section
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : config.ui.thread.newMessages;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
@@ -570,59 +571,59 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
       .catch(err => {
         console.log("Failed to load thread messages: " + err);
-        doRender(req, res, "thread-view.ejs", {messages: []});
+        doRender(req, res, "thread-view.ejs", { messages: [] });
       })
   });
 
-  app.post('/elements/thread', function (req, res) {
+  app.post('/elements/thread', function(req, res) {
     // don't redirect if they aren't logged in, this is just page section
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : config.ui.thread.newMessages;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     const threadId = FormUtils.defaultString(req.body.thread, "");
     handleMessagePost(req).then(() => jsonAPI.getThreadMessages(threadId, limit))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
+        doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack });
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
-        doRender(req, res, "partials/track-messages.ejs", {messages: []});
+        doRender(req, res, "partials/track-messages.ejs", { messages: [] });
       })
   });
 
 
-  app.post('/elements/track-messages', function (req, res) {
+  app.post('/elements/track-messages', function(req, res) {
     // don't redirect if they aren't logged in, this is just page section
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     handleMessagePost(req).then(() => jsonAPI.getLicenseMessages(req.body.address, limit))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack});
+        doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack });
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
-        doRender(req, res, "partials/track-messages.ejs", {messages: []});
+        doRender(req, res, "partials/track-messages.ejs", { messages: [] });
       })
   });
 
-  app.post('/elements/user-messages', function (req, res) {
+  app.post('/elements/user-messages', function(req, res) {
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     const noContentMessage = req.body.nocontentmessage ? req.body.nocontentmessage : "No messages";
     const profileAddress = FormUtils.defaultString(req.body.user, "");
     handleMessagePost(req).then(() => jsonAPI.getUserMessages(profileAddress, limit))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", {messages: messages, showTrack: showTrack, noContentMessage: noContentMessage});
+        doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack, noContentMessage: noContentMessage });
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
-        doRender(req, res, "partials/track-messages.ejs", {messages: []});
+        doRender(req, res, "partials/track-messages.ejs", { messages: [] });
       })
   });
 
-  app.post('/elements/feed', function (req, res) {
+  app.post('/elements/feed', function(req, res) {
     // don't redirect if they aren't logged in, this is just page section
     if (!req.isAuthenticated()) {
-      return doRender(req, res, "partials/track-messages.ejs", {messages: []});
+      return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
     }
 
     const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
@@ -643,15 +644,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
-        return doRender(req, res, "partials/track-messages.ejs", {messages: []});
+        return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
       })
   });
 
-  app.get('/not-found', function (req, res) {
+  app.get('/not-found', function(req, res) {
     res.render('not-found.ejs');
   });
 
-  app.get('/tx/history/:address', isLoggedIn, function (req, res) {
+  app.get('/tx/history/:address', isLoggedIn, function(req, res) {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
@@ -660,7 +661,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     Promise.join(
       musicoinApi.getTransactionHistory(req.params.address, length, start),
       addressResolver.lookupAddress(req.user.profileAddress, req.params.address),
-      function (history, name) {
+      function(history, name) {
         history.forEach(h => {
           h.formattedDate = _formatAsISODateTime(h.timestamp);
           h.musicoins = _formatNumber(h.musicoins, 5);
@@ -686,7 +687,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   // app.get('/landing',  (req, res) => doRender(req, res, 'landing.ejs', {}));
-  app.get('/welcome',  redirectIfLoggedIn(loginRedirect), (req, res) => {
+  app.get('/welcome', redirectIfLoggedIn(loginRedirect), (req, res) => {
     if (req.user) {
       console.log("User is already logged in, redirecting away from login page");
       return res.redirect(loginRedirect);
@@ -711,7 +712,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(result => res.json(result))
       .catch(err => {
         console.log("failed to remove invite: " + err);
-        res.json({success: false, reason: "error"});
+        res.json({ success: false, reason: "error" });
       });
   });
 
@@ -720,7 +721,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(result => res.json(result))
       .catch(err => {
         console.log("failed to promote track to hero: " + err);
-        res.json({success: false, reason: "error"});
+        res.json({ success: false, reason: "error" });
       });
   });
 
@@ -734,7 +735,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
       .catch(err => {
         console.log("failed to mark track as abuse: " + err);
-        res.json({success: false, reason: "error"});
+        res.json({ success: false, reason: "error" });
       });
   });
 
@@ -748,7 +749,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
 
   app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
-  app.post('/invite', isLoggedIn, function (req, res) {
+  app.post('/invite', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
       jsonAPI.sendInvite(req.user, req.body.email)
         .then(result => {
@@ -760,7 +761,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
   });
 
-  app.post('/invite/send', isLoggedIn, function (req, res) {
+  app.post('/invite/send', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
       jsonAPI.sendInvite(req.user, req.body.email)
         .then(result => {
@@ -821,9 +822,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // LOGIN ===============================
   // =====================================
-  app.get('/admin/su', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/su', isLoggedIn, adminOnly, function(req, res) {
     // render the page and pass in any flash data if it exists
-    res.render('su.ejs', {message: req.flash('loginMessage')});
+    res.render('su.ejs', { message: req.flash('loginMessage') });
   });
 
   // process the login form
@@ -834,14 +835,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     failureFlash: true // allow flash messages
   }));
 
-  app.get('/admin/licenses/dump', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/licenses/dump', isLoggedIn, adminOnly, function(req, res) {
     // render the page and pass in any flash data if it exists
     jsonAPI.getAllContracts()
-      .then(function (all) {
+      .then(function(all) {
         return Promise.all(all.map(contract => {
           const k = musicoinApi.getKey(contract.address)
             .catch(err => "Unknown: " + err);
-          return k.then(function (key) {
+          return k.then(function(key) {
             contract.key = key;
             return contract;
           })
@@ -850,25 +851,25 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(all => res.json(all));
   });
 
-  app.get('/admin/artists/dump', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/artists/dump', isLoggedIn, adminOnly, function(req, res) {
     // render the page and pass in any flash data if it exists
     jsonAPI.getAllArtists()
-      .then(function (all) {
+      .then(function(all) {
         res.json(all);
       })
   });
 
-  app.get('/admin/overview', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/overview', isLoggedIn, adminOnly, function(req, res) {
     // render the page and pass in any flash data if it exists
     const b = musicoinApi.getMusicoinAccountBalance();
     const o = musicoinApi.getAccountBalances(config.trackingAccounts.map(ta => ta.address));
-    const wp = User.count({profileAddress: { $exists: true, $ne: null }}).exec();
+    const wp = User.count({ profileAddress: { $exists: true, $ne: null } }).exec();
     const wr = User.count({
       profileAddress: { $exists: true, $ne: null },
       mostRecentReleaseDate: { $exists: true, $ne: null }
     }).exec();
-    const tc = Release.count({contractAddress: { $exists: true, $ne: null }, state: "published"}).exec();
-    const dtc = Release.count({contractAddress: { $exists: true, $ne: null }, state: "deleted"}).exec();
+    const tc = Release.count({ contractAddress: { $exists: true, $ne: null }, state: "published" }).exec();
+    const dtc = Release.count({ contractAddress: { $exists: true, $ne: null }, state: "deleted" }).exec();
     const au = jsonAPI.getOverallReleaseStats();
     Promise.join(b, o, wp, wr, tc, dtc, au, (mcBalance, balances, usersWithProfile, usersWithRelease, trackCount, deletedTrackCount, allReleaseStats) => {
       const output = [];
@@ -889,15 +890,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
 
       const userMetrics = [];
-      userMetrics.push({name: "Users", value: _formatNumber(usersWithProfile)});
-      userMetrics.push({name: "Musicians", value: _formatNumber(usersWithRelease)});
+      userMetrics.push({ name: "Users", value: _formatNumber(usersWithProfile) });
+      userMetrics.push({ name: "Musicians", value: _formatNumber(usersWithRelease) });
 
       const trackMetrics = [];
-      trackMetrics.push({name: "Tracks", value: _formatNumber(trackCount)});
-      trackMetrics.push({name: "Deleted Tracks", value: _formatNumber(deletedTrackCount)});
-      trackMetrics.push({name: "totalPlays", value: _formatNumber(allReleaseStats[0].totalPlays)});
-      trackMetrics.push({name: "totalTips", value: _formatNumber(allReleaseStats[0].totalTips)});
-      trackMetrics.push({name: "totalComments", value: _formatNumber(allReleaseStats[0].totalComments)});
+      trackMetrics.push({ name: "Tracks", value: _formatNumber(trackCount) });
+      trackMetrics.push({ name: "Deleted Tracks", value: _formatNumber(deletedTrackCount) });
+      trackMetrics.push({ name: "totalPlays", value: _formatNumber(allReleaseStats[0].totalPlays) });
+      trackMetrics.push({ name: "totalTips", value: _formatNumber(allReleaseStats[0].totalTips) });
+      trackMetrics.push({ name: "totalComments", value: _formatNumber(allReleaseStats[0].totalComments) });
 
       return doRender(req, res, 'admin-overview.ejs', {
         accounts: output,
@@ -908,51 +909,55 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     })
   });
 
-  app.get('/admin/mail/confirm', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/mail/confirm', isLoggedIn, adminOnly, function(req, res) {
     res.render("mail/email-confirmation.ejs", {
       code: "XY12345"
     })
   });
 
-  app.get('/admin/mail/reset', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/mail/reset', isLoggedIn, adminOnly, function(req, res) {
     res.render("mail/password-reset.ejs", {
       link: "http://google.com?test=123455"
     })
   });
 
-  app.get('/admin/mail/invite', isLoggedIn, adminOnly, function (req, res) {
-    res.render("mail/invite.ejs", {invite: {
-      invitedBy: "TestUser",
-      acceptUrl: "http://localhost:3000/accept/12345"
-    }})
+  app.get('/admin/mail/invite', isLoggedIn, adminOnly, function(req, res) {
+    res.render("mail/invite.ejs", {
+      invite: {
+        invitedBy: "TestUser",
+        acceptUrl: "http://localhost:3000/accept/12345"
+      }
+    })
   });
 
-  app.get('/admin/mail/message', isLoggedIn, adminOnly, function (req, res) {
-    res.render("mail/message.ejs", {notification: {
-      senderName: "Sender-Dan",
-      message: "This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. actually This is some message.  It's really long. This is some message.  It's really long. ",
-      trackName: "My Track",
-      acceptUrl: "http://localhost:3000/track/12345"
-    }})
+  app.get('/admin/mail/message', isLoggedIn, adminOnly, function(req, res) {
+    res.render("mail/message.ejs", {
+      notification: {
+        senderName: "Sender-Dan",
+        message: "This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. actually This is some message.  It's really long. This is some message.  It's really long. ",
+        trackName: "My Track",
+        acceptUrl: "http://localhost:3000/track/12345"
+      }
+    })
   });
 
-  app.get('/admin/mail/activity/daily/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/mail/activity/daily/:profileAddress', isLoggedIn, adminOnly, function(req, res) {
     renderReport(req, res, "day", "daily");
   });
 
-  app.get('/admin/mail/activity/weekly/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/mail/activity/weekly/:profileAddress', isLoggedIn, adminOnly, function(req, res) {
     renderReport(req, res, "week", "weekly");
   });
 
-  app.get('/admin/mail/activity/monthly/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/mail/activity/monthly/:profileAddress', isLoggedIn, adminOnly, function(req, res) {
     renderReport(req, res, "month", "monthly");
   });
 
-  app.get('/admin/mail/activity/yearly/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/mail/activity/yearly/:profileAddress', isLoggedIn, adminOnly, function(req, res) {
     renderReport(req, res, "year", "yearly");
   });
 
-  app.get('/admin/mail/activity/all/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
+  app.get('/admin/mail/activity/all/:profileAddress', isLoggedIn, adminOnly, function(req, res) {
     renderReport(req, res, "all", "historical");
   });
 
@@ -968,24 +973,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             report.baseUrl = config.serverEndpoint;
             report.description = `Musicoin ${durationAdj} report`;
             report.duration = duration;
-            res.render("mail/activity-report.ejs", {report: report});
+            res.render("mail/activity-report.ejs", { report: report });
           })
       });
   }
 
   app.post('/admin/send-weekly-report', (req, res) => {
-    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    if (!req.body.id) return res.json({ success: false, reason: "No id" });
     return exchangeRateProvider.getMusicoinExchangeRate()
       .then(exchangeRateInfo => {
         jsonAPI.sendUserStatsReport(req.body.id, "week", "weekly", exchangeRateInfo)
           .then(() => {
-            res.json({success: true})
+            res.json({ success: true })
           })
           .catch(err => {
             console.log("Failed to send report: " + err);
-            res.json({success: false, message: "Failed to send report"})
+            res.json({ success: false, message: "Failed to send report" })
           })
-    })
+      })
 
   });
 
@@ -998,78 +1003,78 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           })
           .catch(err => {
             console.log("Failed to send reports: " + err);
-            res.json({success: false, message: "Failed to send report"})
+            res.json({ success: false, message: "Failed to send report" })
           })
       });
   });
 
   app.post('/admin/free-plays/add', (req, res) => {
-    if (!req.body.id) return res.json({success: false, reason: "No id"});
-    if (!req.body.count) return res.json({success: false, reason: "Free plays to add not provided"});
+    if (!req.body.id) return res.json({ success: false, reason: "No id" });
+    if (!req.body.count) return res.json({ success: false, reason: "Free plays to add not provided" });
     User.findById(req.body.id).exec()
       .then(user => {
         user.freePlaysRemaining += parseInt(req.body.count);
         return user.save();
       })
       .then(() => {
-        res.json({success: true})
+        res.json({ success: true })
       })
   });
 
   app.post('/admin/free-plays/clear', (req, res) => {
-    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    if (!req.body.id) return res.json({ success: false, reason: "No id" });
     User.findById(req.body.id).exec()
       .then(user => {
         user.freePlaysRemaining = 0;
         return user.save();
       })
       .then(() => {
-        res.json({success: true})
+        res.json({ success: true })
       })
   });
 
   app.post('/admin/invites/add', (req, res) => {
-    if (!req.body.id) return res.json({success: false, reason: "No id"});
-    if (!req.body.count) return res.json({success: false, reason: "Invite count to add not provided"});
+    if (!req.body.id) return res.json({ success: false, reason: "No id" });
+    if (!req.body.count) return res.json({ success: false, reason: "Invite count to add not provided" });
     User.findById(req.body.id).exec()
       .then(user => {
         user.invitesRemaining += parseInt(req.body.count);
         return user.save();
       })
       .then(() => {
-        res.json({success: true})
+        res.json({ success: true })
       })
   });
 
   app.post('/admin/invites/blacklist', (req, res) => {
     const id = FormUtils.defaultString(req.body.id, null);
-    if (!id) return res.json({success: false, reason: "No id"});
-    if (typeof req.body.blacklist == "undefined") return res.json({success: false, reason: "specify true/false for 'blacklist' parameter"});
+    if (!id) return res.json({ success: false, reason: "No id" });
+    if (typeof req.body.blacklist == "undefined") return res.json({ success: false, reason: "specify true/false for 'blacklist' parameter" });
     User.findById(id).exec()
       .then(user => {
         user.invite.noReward = req.body.blacklist == "true";
         return user.save();
       })
       .then(() => {
-        res.json({success: true})
+        res.json({ success: true })
       })
   });
 
   app.post('/admin/users/block', (req, res) => {
     const id = FormUtils.defaultString(req.body.id, null);
-    if (!id) return res.json({success: false, reason: "No id"});
+    if (!id) return res.json({ success: false, reason: "No id" });
     User.findById(req.body.id).exec()
       .then(user => {
         user.blocked = req.body.block == "true";
         return user.save();
       })
       .then(() => {
-        res.json({success: true})
+        res.json({ success: true })
       })
   });
 
   app.post('/admin/users/verify', (req, res) => {
-    if (!req.body.id) return res.json({success: false, reason: "No id"});
+    if (!req.body.id) return res.json({ success: false, reason: "No id" });
     User.findById(req.body.id).exec()
       .then(user => {
         console.log(`User verification status changed by ${req.user.draftProfile.artistName}, artist=${user.draftProfile.artistName}, newStatus=${req.body.verified == "true"}`);
@@ -1077,7 +1082,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return user.save();
       })
       .then(() => {
-        res.json({success: true})
+        res.json({ success: true })
       })
   });
 
@@ -1100,15 +1105,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/admin/users/lock', (req, res) => {
-    if (!req.body.id) return res.json({success: false, reason: "No id"});
-    if (typeof req.body.lock == "undefined") return res.json({success: false, reason: "specify true/false for 'lock' parameter"});
+    if (!req.body.id) return res.json({ success: false, reason: "No id" });
+    if (typeof req.body.lock == "undefined") return res.json({ success: false, reason: "specify true/false for 'lock' parameter" });
     User.findById(req.body.id).exec()
       .then(user => {
         user.accountLocked = req.body.lock == "true";
         return user.save();
       })
       .then(() => {
-        res.json({success: true})
+        res.json({ success: true })
       })
   });
 
@@ -1117,7 +1122,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/invite-requests?search=' + (req.query.search ? req.query.search : '');
-    const options = {year: 'numeric', month: 'short', day: 'numeric'};
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
     jsonAPI.getAllInviteRequests(req.query.search, start, length)
       .then(requests => {
         requests.forEach(r => {
@@ -1144,7 +1149,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(result => res.json(result))
       .catch(err => {
         console.log("failed to remove error: " + err);
-        res.json({success: false, reason: "error"});
+        res.json({ success: false, reason: "error" });
       });
   });
 
@@ -1153,7 +1158,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/errors?search=' + (req.query.search ? req.query.search : '');
-    const options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
+    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
     jsonAPI.getErrors(req.query.search, start, length)
       .then(errors => {
         errors.forEach(r => {
@@ -1233,7 +1238,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const BOM = String.fromCharCode(0xFEFF);
 
         res.charset = "UTF-8";
-        res.set({"Content-Disposition":"attachment; filename=contacts.csv", "Content-Type": "text/csv; charset=utf-8"});
+        res.set({ "Content-Disposition": "attachment; filename=contacts.csv", "Content-Type": "text/csv; charset=utf-8" });
         res.send(BOM + "email,name,artistName\n" + users.map(u => `${u.email},"${u.name}","${u.artistName}"`).join("\n"));
       });
   });
@@ -1267,7 +1272,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // PUBLIC ARTIST PROFILE SECTION =====================
   // =====================================
-  app.get('/artist/:address', isLoggedInOrIsPublic, function (req, res) {
+  app.get('/artist/:address', isLoggedInOrIsPublic, function(req, res) {
     // find tracks for artist
     const m = jsonAPI.getUserMessages(req.params.address, 30);
     const a = jsonAPI.getArtist(req.params.address, true, false);
@@ -1275,31 +1280,31 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const r = jsonAPI.getUserStatsReport(req.params.address, Date.now(), 'all');
     const x = exchangeRateProvider.getMusicoinExchangeRate();
     Promise.join(a, m, h, r, x, (output, messages, hero, statsReport, exchangeRate) => {
-        if (!output) return res.redirect("/not-found");
+      if (!output) return res.redirect("/not-found");
 
-        let totalTips = statsReport.stats.user.tipCount;
-        let totalPlays = 0;
-        statsReport.stats.releases.forEach(rs => {
-          totalPlays += rs.playCount;
-          totalTips += rs.tipCount;
-        });
+      let totalTips = statsReport.stats.user.tipCount;
+      let totalPlays = 0;
+      statsReport.stats.releases.forEach(rs => {
+        totalPlays += rs.playCount;
+        totalTips += rs.tipCount;
+      });
 
-        output.messages = messages;
-        hero.description = output.artist.description;
-        output.hero = hero;
-        output.showPlayAll = true;
-        output.artistStats = {
-          playCount: totalPlays,
-          tipCount: totalTips,
-          totalEarned: (totalPlays + totalTips),
-          formattedTotalUSD: "$" + _formatNumber((totalPlays + totalTips) * exchangeRate.usd, 2)
-        };
-        output.exchangeRate = exchangeRate;
-        doRender(req, res, "artist.ejs", output);
-      })
+      output.messages = messages;
+      hero.description = output.artist.description;
+      output.hero = hero;
+      output.showPlayAll = true;
+      output.artistStats = {
+        playCount: totalPlays,
+        tipCount: totalTips,
+        totalEarned: (totalPlays + totalTips),
+        formattedTotalUSD: "$" + _formatNumber((totalPlays + totalTips) * exchangeRate.usd, 2)
+      };
+      output.exchangeRate = exchangeRate;
+      doRender(req, res, "artist.ejs", output);
+    })
   });
 
-  app.get('/track/:address', isLoggedInOrIsPublic, function (req, res) {
+  app.get('/track/:address', isLoggedInOrIsPublic, function(req, res) {
     console.log("Loading track page for track address: " + req.params.address);
     const address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
@@ -1308,7 +1313,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     const ms = jsonAPI.getLicenseMessages(address, 20);
     const l = jsonAPI.getLicense(address);
-    const r = Release.findOne({contractAddress: address, state: 'published'});
+    const r = Release.findOne({ contractAddress: address, state: 'published' });
     const x = exchangeRateProvider.getMusicoinExchangeRate();
 
     Promise.join(l, ms, r, x, (license, messages, release, exchangeRate) => {
@@ -1320,35 +1325,35 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const ras = addressResolver.resolveAddresses("", license.contributors);
       const a = jsonAPI.getArtist(license.artistProfileAddress, false, false);
       Promise.join(a, ras, (response, resolvedAddresses) => {
-          let totalShares = 0;
-          resolvedAddresses.forEach(r => totalShares += parseInt(r.shares));
-          resolvedAddresses.forEach(r => r.percentage = _formatNumber(100 * r.shares / totalShares, 1));
+        let totalShares = 0;
+        resolvedAddresses.forEach(r => totalShares += parseInt(r.shares));
+        resolvedAddresses.forEach(r => r.percentage = _formatNumber(100 * r.shares / totalShares, 1));
         const plays = release.directPlayCount || 0;
         const tips = release.directTipCount || 0;
         const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
-          doRender(req, res, "track.ejs", {
-            artist: response.artist,
-            license: license,
-            contributors: resolvedAddresses,
-            releaseId: release._id,
-            description: release.description,
-            messages: messages,
-            isArtist: req.user && req.user.profileAddress == license.artistProfileAddress,
-            abuseMessage: config.ui.admin.markAsAbuse,
-            exchangeRate: exchangeRate,
-            trackStats: {
-              playCount: plays,
-              tipCount: tips,
-              totalEarned: (plays + tips),
-              formattedTotalUSD: usd
-            }
-          });
-        })
+        doRender(req, res, "track.ejs", {
+          artist: response.artist,
+          license: license,
+          contributors: resolvedAddresses,
+          releaseId: release._id,
+          description: release.description,
+          messages: messages,
+          isArtist: req.user && req.user.profileAddress == license.artistProfileAddress,
+          abuseMessage: config.ui.admin.markAsAbuse,
+          exchangeRate: exchangeRate,
+          trackStats: {
+            playCount: plays,
+            tipCount: tips,
+            totalEarned: (plays + tips),
+            formattedTotalUSD: usd
+          }
+        });
+      })
     })
-    .catch(err => {
-      console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
-      res.render('not-found.ejs');
-    })
+      .catch(err => {
+        console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
+        res.render('not-found.ejs');
+      })
   });
 
   app.get('/invite-history', isLoggedIn, (req, res) => {
@@ -1401,7 +1406,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       errorContext: req.body.errorContext
     }); // async, not checking result
 
-    res.json({success: true});
+    res.json({ success: true });
   });
 
   // =====================================
@@ -1409,7 +1414,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
-  app.get('/profile', isLoggedIn, function (req, res) {
+  app.get('/profile', isLoggedIn, function(req, res) {
     const a = jsonAPI.getArtist(req.user.profileAddress, true, true);
     const r = exchangeRateProvider.getMusicoinExchangeRate();
     Promise.join(a, r, (output, exchangeRate) => {
@@ -1443,8 +1448,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/follows', function(req, res) {
-    if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
-    if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
+    if (!req.isAuthenticated()) return res.json({ success: false, authenticated: false });
+    if (!req.user.profileAddress) return res.json({ success: false, authenticated: true, profile: false });
     jsonAPI.isUserFollowing(req.user._id, req.body.toFollow)
       .then(result => {
         res.json(result);
@@ -1455,8 +1460,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/follow', function(req, res) {
-    if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
-    if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
+    if (!req.isAuthenticated()) return res.json({ success: false, authenticated: false });
+    if (!req.user.profileAddress) return res.json({ success: false, authenticated: true, profile: false });
 
     const updateStatus = (req.body.follow == "true")
       ? jsonAPI.startFollowing(req.user._id, req.body.toFollow)
@@ -1470,7 +1475,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then((result) => {
         if (result.following) {
           if (req.body.licenseAddress) {
-            Release.findOne({contractAddress: req.body.licenseAddress}).exec()
+            Release.findOne({ contractAddress: req.body.licenseAddress }).exec()
               .then(release => {
                 if (release) {
                   return jsonAPI.postLicenseMessages(
@@ -1507,27 +1512,27 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.post('/tip', function (req, res) {
-    if (!req.isAuthenticated()) return res.json({success: false, authenticated: false});
-    if (!req.user.profileAddress) return res.json({success: false, authenticated: true, profile: false});
+  app.post('/tip', function(req, res) {
+    if (!req.isAuthenticated()) return res.json({ success: false, authenticated: false });
+    if (!req.user.profileAddress) return res.json({ success: false, authenticated: true, profile: false });
 
     const contractAddress = FormUtils.defaultString(req.body.recipient, null);
-    if (!contractAddress) return res.json({success: false, authenticated: true, profile: true, self: true});
+    if (!contractAddress) return res.json({ success: false, authenticated: true, profile: true, self: true });
 
-    if (req.user.profileAddress == contractAddress) return res.json({success: false, authenticated: true, profile: true, self: true});
+    if (req.user.profileAddress == contractAddress) return res.json({ success: false, authenticated: true, profile: true, self: true });
     const units = req.body.amount == 1 ? " coin" : "coins";
     const amount = parseInt(req.body.amount);
 
-    return Release.findOne({contractAddress: contractAddress})
+    return Release.findOne({ contractAddress: contractAddress })
       .then(r => {
         if (r && r.artistAddress == req.user.profileAddress) {
-          return res.json({success: false, authenticated: true, profile: true, self: true});
+          return res.json({ success: false, authenticated: true, profile: true, self: true });
         }
 
         return musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
-          .then(function (tx) {
+          .then(function(tx) {
             console.log(`Payment submitted! tx : ${tx}`);
-            res.json({success: true, tx: tx});
+            res.json({ success: true, tx: tx });
           })
           .then(() => {
             // if this was a tip to a track, add a message to the track saying the user tipped it
@@ -1577,29 +1582,29 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 null)
             }
           })
-          .catch(function (err) {
+          .catch(function(err) {
             console.log(err);
-            res.json({success: false});
+            res.json({ success: false });
           })
       })
   });
 
-  app.post('/send', isLoggedIn, function (req, res) {
+  app.post('/send', isLoggedIn, function(req, res) {
     musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
-      .then(function (tx) {
+      .then(function(tx) {
         if (tx) {
           console.log(`Payment submitted! tx : ${tx}`);
           res.redirect("/profile?sendError=false");
         }
         else throw new Error(`Failed to send payment, no tx id was returned: from: ${req.user.profileAddress} to ${req.body.recipient}, amount: ${req.body.amount}`);
       })
-      .catch(function (err) {
+      .catch(function(err) {
         console.log(err);
         res.redirect("/profile?sendError=true");
       })
   });
 
-  app.post('/profile/save', isLoggedIn, function (req, res) {
+  app.post('/profile/save', isLoggedIn, function(req, res) {
     const form = new Formidable.IncomingForm();
     form.parse(req, (err, fields: any, files: any) => {
       console.log(`Fields: ${JSON.stringify(fields)}`);
@@ -1663,7 +1668,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 req.user.updatePending = true;
                 req.user.hideProfile = !!fields.hideProfile;
                 console.log(`Saving profile tx info to the database...`);
-                req.user.save(function (err) {
+                req.user.save(function(err) {
                   if (err) {
                     console.log(`Saving profile to database failed! ${err}`);
                     res.send(500);
@@ -1689,21 +1694,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/license/preview/', (req, res) => {
     console.log("Getting license preview");
     convertFormToLicense(req.user.draftProfile.artistName, req.user.profileAddress, req.body)
-      .then(function (license) {
-        doRender(req, res, 'license.ejs', {showRelease: true, license: license});
+      .then(function(license) {
+        doRender(req, res, 'license.ejs', { showRelease: true, license: license });
       })
   });
 
   app.post('/license/view/', (req, res) => {
     const hideButtonBar = req.body.hideButtonBar == "true";
     jsonAPI.getLicense(req.body.address)
-      .then(function (license) {
+      .then(function(license) {
         const address = req.user ? req.user.profileAddress : "";
         return Promise.join(
           addressResolver.resolveAddresses(address, license.contributors),
-          function (contributors) {
+          function(contributors) {
             license.contributors = contributors;
-            doRender(req, res, 'license.ejs', {showRelease: false, license: license, hideButtonBar: hideButtonBar});
+            doRender(req, res, 'license.ejs', { showRelease: false, license: license, hideButtonBar: hideButtonBar });
           });
       })
   });
@@ -1714,7 +1719,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return Promise.join(
       addressResolver.resolveAddresses(selfAddress, recipients.contributors),
       addressResolver.resolveAddresses(selfAddress, recipients.royalties),
-      function (resolvedContributors, resolveRoyalties) {
+      function(resolvedContributors, resolveRoyalties) {
         const license = {
           coinsPerPlay: 1,
           title: trackFields['title'],
@@ -1736,52 +1741,52 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return errors;
   }
 
-  app.post('/license/distributeBalance', isLoggedIn, hasProfile, function (req, res) {
+  app.post('/license/distributeBalance', isLoggedIn, hasProfile, function(req, res) {
     const contractAddress = req.body.contractAddress;
     musicoinApi.distributeBalance(contractAddress)
       .then(tx => {
         console.log(`distributed balance: ${tx}`);
-        res.json({success: true});
+        res.json({ success: true });
       })
-      .catch(function (err) {
-        res.json({success: false, message: err.message});
+      .catch(function(err) {
+        res.json({ success: false, message: err.message });
       });
   });
 
-  app.post('/license/delete', isLoggedIn, hasProfile, function (req, res) {
+  app.post('/license/delete', isLoggedIn, hasProfile, function(req, res) {
     // mark release status as deleted
     // remove from playbacks
     const contractAddress = FormUtils.defaultString(req.body.contractAddress, "");
-    if (!contractAddress) return res.json({success: false, message: "Not contractAddress was specified"});
-    Release.findOne({contractAddress: contractAddress, artistAddress: req.user.profileAddress}).exec()
-      .then(function (record) {
+    if (!contractAddress) return res.json({ success: false, message: "Not contractAddress was specified" });
+    Release.findOne({ contractAddress: contractAddress, artistAddress: req.user.profileAddress }).exec()
+      .then(function(record) {
         if (!record) {
           console.log(`Failed to delete release: no record found with contractAddress: ${contractAddress}`);
           throw new Error("Could not find record");
         }
         record.state = 'deleted';
-        record.save(function (err) {
+        record.save(function(err) {
           if (err) {
             console.log(`Failed to delete release: no record found with contractAddress: ${contractAddress}, error: ${err}`);
             throw new Error("The database responded with an error");
           }
         })
       })
-      .then(function () {
-        return Playback.find({contractAddress: contractAddress}).remove().exec();
+      .then(function() {
+        return Playback.find({ contractAddress: contractAddress }).remove().exec();
       })
-      .then(function () {
-        res.json({success: true});
+      .then(function() {
+        res.json({ success: true });
       })
-      .catch(function (err) {
-        res.json({success: false, message: err.message});
+      .catch(function(err) {
+        res.json({ success: false, message: err.message });
       });
   });
 
   // =====================================
   // LOGOUT ==============================
   // =====================================
-  app.get('/logout', function (req, res) {
+  app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
   });
@@ -1799,9 +1804,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // send to google to do the authentication
   // profile gets us their basic information including their name
   // email gets their emails
-  app.get('/signup/google', setSignUpFlag(true), passport.authenticate('google', {scope: ['profile', 'email']}));
-  app.get('/auth/google', setSignUpFlag(false), passport.authenticate('google', {scope: ['profile', 'email']}));
-  app.get('/connect/google', setSignUpFlag(false), passport.authorize('google', {scope: ['profile', 'email']}));
+  app.get('/signup/google', setSignUpFlag(true), passport.authenticate('google', { scope: ['profile', 'email'] }));
+  app.get('/auth/google', setSignUpFlag(false), passport.authenticate('google', { scope: ['profile', 'email'] }));
+  app.get('/connect/google', setSignUpFlag(false), passport.authorize('google', { scope: ['profile', 'email'] }));
 
   // the callback after google has authenticated the user
   app.get('/auth/google/callback',
@@ -1817,9 +1822,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }));
 
 
-  app.get('/signup/facebook', setSignUpFlag(true), passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
-  app.get('/auth/facebook', setSignUpFlag(false), passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
-  app.get('/connect/facebook', setSignUpFlag(false), passport.authorize('facebook', {scope: ['public_profile', 'email']}));
+  app.get('/signup/facebook', setSignUpFlag(true), passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
+  app.get('/auth/facebook', setSignUpFlag(false), passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
+  app.get('/connect/facebook', setSignUpFlag(false), passport.authorize('facebook', { scope: ['public_profile', 'email'] }));
 
   // handle the callback after twitter has authenticated the user
   app.get('/auth/facebook/callback',
@@ -1835,9 +1840,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       failureRedirect: '/welcome'
     }));
 
-  app.get('/signup/twitter', setSignUpFlag(true), passport.authenticate('twitter', {scope: 'email'}));
-  app.get('/auth/twitter', setSignUpFlag(false), passport.authenticate('twitter', {scope: 'email'}));
-  app.get('/connect/twitter', setSignUpFlag(false), passport.authorize('twitter', {scope: 'email'}));
+  app.get('/signup/twitter', setSignUpFlag(true), passport.authenticate('twitter', { scope: 'email' }));
+  app.get('/auth/twitter', setSignUpFlag(false), passport.authenticate('twitter', { scope: 'email' }));
+  app.get('/connect/twitter', setSignUpFlag(false), passport.authorize('twitter', { scope: 'email' }));
 
   // handle the callback after twitter has authenticated the user
   app.get('/auth/twitter/callback',
@@ -1856,23 +1861,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   // EMAIL ==============================
   // =====================================
-  app.get('/login', function (req, res) {
+  app.get('/login', function(req, res) {
     if (req.user) {
       console.log("User is already logged in, redirecting away from login page");
       return res.redirect(loginRedirect);
     }
     // render the page and pass in any flash data if it exists
-    doRender(req, res, 'login.ejs', {message: req.flash('loginMessage')});
+    doRender(req, res, 'login.ejs', { message: req.flash('loginMessage') });
   });
 
-  app.get('/connect/email', function (req, res) {
+  app.get('/connect/email', function(req, res) {
     // render the page and pass in any flash data if it exists
     doRender(req, res, 'login.ejs', {
       message: req.flash('loginMessage'),
     });
   });
 
-  app.post('/login/confirm', function (req, res) {
+  app.post('/login/confirm', function(req, res) {
     if (req.body.email) req.body.email = req.body.email.trim();
     if (!FormUtils.validateEmail(req.body.email)) {
       res.json({
@@ -1883,7 +1888,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     else {
       const code = crypto.randomBytes(4).toString('hex');
-      EmailConfirmation.create({email: req.body.email, code: code})
+      EmailConfirmation.create({ email: req.body.email, code: code })
         .then(() => {
           return mailSender.sendEmailConfirmationCode(req.body.email, code)
             .then(() => {
@@ -1906,27 +1911,27 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/connect/email', setSignUpFlag(false), validateLoginEmail('/connect/email'), passport.authenticate('local', {
-    successRedirect : loginRedirect, // redirect to the secure profile section
-    failureRedirect : '/connect/email', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
+    successRedirect: loginRedirect, // redirect to the secure profile section
+    failureRedirect: '/connect/email', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
   }));
 
   app.post('/login', setSignUpFlag(false), validateLoginEmail('/login'), passport.authenticate('local', {
-    successRedirect : loginRedirect, // redirect to the secure profile section
-    failureRedirect : '/login', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
+    successRedirect: loginRedirect, // redirect to the secure profile section
+    failureRedirect: '/login', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
   }));
 
   app.post('/signin', setSignUpFlag(false), validateLoginEmail('/welcome'), passport.authenticate('local', {
-    successRedirect : loginRedirect, // redirect to the secure profile section
-    failureRedirect : '/welcome', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
+    successRedirect: loginRedirect, // redirect to the secure profile section
+    failureRedirect: '/welcome', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
   }));
 
   app.post('/signup', setSignUpFlag(true), validateNewAccount('/welcome'), passport.authenticate('local', {
-    successRedirect : loginRedirect, // redirect to the secure profile section
-    failureRedirect : '/welcome', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
+    successRedirect: loginRedirect, // redirect to the secure profile section
+    failureRedirect: '/welcome', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
   }));
 
   app.get('/login/forgot', redirectIfLoggedIn(loginRedirect), (req, res) => {
@@ -1936,27 +1941,27 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/login/forgot', (req, res) => {
     const email = req.body.email || "";
     if (email.trim().length < 5)  /// a@b.c is the smallest possible email address (5 chars)
-      return doRender(req, res, "password-forgot.ejs", {message: "Invalid email address: " + req.body.email});
+      return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
 
-    User.findOne({"local.email": req.body.email}).exec()
+    User.findOne({ "local.email": req.body.email }).exec()
       .then(user => {
-        if (!user) return doRender(req, res, "password-forgot.ejs", {message: "User not found: " + req.body.email});
+        if (!user) return doRender(req, res, "password-forgot.ejs", { message: "User not found: " + req.body.email });
         user.local.resetExpiryTime = Date.now() + config.auth.passwordResetLinkTimeout;
         user.local.resetCode = crypto.randomBytes(16).toString('hex');
         return user.save()
           .then(user => {
             if (!user) {
               console.log("user.save() during password reset did not return a user record");
-              return doRender(req, res, "password-forgot.ejs", {message: "An internal error occurred, please try again later"});
+              return doRender(req, res, "password-forgot.ejs", { message: "An internal error occurred, please try again later" });
             }
             return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
               .then(() => {
-                doRender(req, res, "password-forgot.ejs", {message: "An email has been sent to " + req.body.email});
+                doRender(req, res, "password-forgot.ejs", { message: "An email has been sent to " + req.body.email });
               })
           })
           .catch(err => {
             console.log(`An error occurred when sending the pasword reset email for ${email}: ${err}`);
-            return doRender(req, res, "password-forgot.ejs", {message: "An internal error occurred, please try again later"});
+            return doRender(req, res, "password-forgot.ejs", { message: "An internal error occurred, please try again later" });
           })
       })
   });
@@ -1965,52 +1970,52 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     // if the code is expired, take them back to the login
     const code = req.query.code;
     const failMessage = "Your password reset code is invalid or has expired";
-    if (!code) return doRender(req, res, "landing.ejs", {message: failMessage});
-    User.findOne({"local.resetCode": code}).exec()
+    if (!code) return doRender(req, res, "landing.ejs", { message: failMessage });
+    User.findOne({ "local.resetCode": code }).exec()
       .then(user => {
         // code does not exist, just go to the login page
-        if (!user || !user.local || !user.local.resetExpiryTime) return doRender(req, res, "landing.ejs", {message: failMessage});
+        if (!user || !user.local || !user.local.resetExpiryTime) return doRender(req, res, "landing.ejs", { message: failMessage });
 
         // make sure code is not expired
         const expiry = new Date(user.local.resetExpiryTime).getTime();
-        if (Date.now() > expiry) return doRender(req, res, "landing.ejs", {message: failMessage});
+        if (Date.now() > expiry) return doRender(req, res, "landing.ejs", { message: failMessage });
 
-        doRender(req, res, "password-reset.ejs", { code: code});
+        doRender(req, res, "password-reset.ejs", { code: code });
       })
   });
 
   app.post('/login/reset', (req, res) => {
     const code = String(req.body.code);
     if (!code)
-      return doRender(req, res, "landing.ejs", {message: "There was a problem resetting your password"});
+      return doRender(req, res, "landing.ejs", { message: "There was a problem resetting your password" });
 
     const error = FormUtils.checkPasswordStrength(req.body.password);
     if (error) {
-      return doRender(req, res, "password-reset.ejs", { code: code, message: error});
+      return doRender(req, res, "password-reset.ejs", { code: code, message: error });
     }
 
     if (req.body.password != req.body.password2) {
-      return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match"});
+      return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match" });
     }
 
     if (typeof code != "string") {
-      return doRender(req, res, "landing.ejs", {message: "The password reset link has expired"});
+      return doRender(req, res, "landing.ejs", { message: "The password reset link has expired" });
     }
 
-    User.findOne({"local.resetCode": code}).exec()
+    User.findOne({ "local.resetCode": code }).exec()
       .then(user => {
         // code does not exist or is expired, just go to the login page
         if (!user || !user.local || !user.local.resetExpiryTime)
-          return doRender(req, res, "landing.ejs", {message: "The password reset link has expired"});
+          return doRender(req, res, "landing.ejs", { message: "The password reset link has expired" });
 
         // make sure code is not expired
         const expiry = new Date(user.local.resetExpiryTime).getTime();
         if (Date.now() > expiry)
-          return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match"});
+          return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match" });
 
         const error = FormUtils.checkPasswordStrength(req.body.password);
         if (error) {
-          return doRender(req, res, "password-reset.ejs", { code: code, message: error});
+          return doRender(req, res, "password-reset.ejs", { code: code, message: error });
         }
 
         user.local.password = user.generateHash(req.body.password);
@@ -2032,46 +2037,46 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // for local account, remove email and password
   // user account will stay active in case they want to reconnect in the future
   // google ---------------------------------
-  app.post('/unlink/google', function (req, res) {
+  app.post('/unlink/google', function(req, res) {
     unlinkProvider('google', req, res);
   });
 
-  app.post('/unlink/twitter', function (req, res) {
+  app.post('/unlink/twitter', function(req, res) {
     unlinkProvider('twitter', req, res);
   });
 
-  app.post('/unlink/facebook', function (req, res) {
+  app.post('/unlink/facebook', function(req, res) {
     unlinkProvider('facebook', req, res);
   });
 
-  app.post('/unlink/local', function (req, res) {
+  app.post('/unlink/local', function(req, res) {
     unlinkProvider('local', req, res);
   });
 
   function unlinkProvider(provider, req, res) {
     if (!req.isAuthenticated()) {
-      return res.json({success: false, message: "You must be logged in to unlink an account"});
+      return res.json({ success: false, message: "You must be logged in to unlink an account" });
     }
     if (!req.user[provider] || !req.user[provider].id) {
-      return res.json({success: false, message: `No ${provider} account is linked.`});
+      return res.json({ success: false, message: `No ${provider} account is linked.` });
     }
     if (getLoginMethodCount(req.user) < 2) {
-      return res.json({success: false, message: "You cannot remove your only authentication method."});
+      return res.json({ success: false, message: "You cannot remove your only authentication method." });
     }
 
     req.user[provider] = {};
-    req.user.save(function (err) {
+    req.user.save(function(err) {
       if (err) {
         console.log("Failed to save user record: " + err);
-        res.json({success: false, message: "An internal error occurred"});
+        res.json({ success: false, message: "An internal error occurred" });
       }
-      return res.json({success: true, message: `Your ${provider} account has been unlinked from this account`});
+      return res.json({ success: true, message: `Your ${provider} account has been unlinked from this account` });
     });
   }
 
 
   function validateLoginEmail(errRedirect) {
-    return function (req, res, next) {
+    return function(req, res, next) {
       if (req.body.email) req.body.email = req.body.email.trim();
       if (!FormUtils.validateEmail(req.body.email)) {
         req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
@@ -2094,7 +2099,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           return res.redirect(errRedirect);
         }
 
-        return EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation})
+        return EmailConfirmation.findOne({ email: req.body.email, code: req.body.confirmation })
           .then(record => {
             if (record) {
               next();
@@ -2118,7 +2123,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 
   function validateNewAccount(errRedirect) {
-    return function (req, res, next) {
+    return function(req, res, next) {
       if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
       if (!FormUtils.validateEmail(req.body.email)) {
         req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
@@ -2144,8 +2149,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return res.redirect(errRedirect);
       }
 
-      const cc = EmailConfirmation.findOne({email: req.body.email, code: req.body.confirmation});
-      const eu = User.findOne({"local.email": req.body.email});
+      const cc = EmailConfirmation.findOne({ email: req.body.email, code: req.body.confirmation });
+      const eu = User.findOne({ "local.email": req.body.email });
       const cp = checkCaptcha(req);
 
       return Promise.join(cc, eu, cp, function(confirmation, existingUser, captchaOk) {
@@ -2173,14 +2178,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   function checkCaptcha(req) {
     const userResponse = req.body['g-recaptcha-response'];
     const url = config.captcha.url;
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       const verificationUrl = `${url}?secret=${config.captcha.secret}&response=${userResponse}&remoteip=${req.ip}`;
       console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
       const options = {
         method: 'post',
         url: verificationUrl
       };
-      request(options, function (err, res, body) {
+      request(options, function(err, res, body) {
         if (err) {
           console.log(err);
           return reject(err);
@@ -2226,7 +2231,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   }
 
   function getAnonymousUser(req) {
-    return AnonymousUser.findOne({session: req.session.id})
+    return AnonymousUser.findOne({ session: req.session.id })
       .then(anonymous => {
         // normal case.  Same IP, same session
         if (anonymous && anonymous.ip && anonymous.ip == req.ip)
@@ -2241,11 +2246,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         else {
           // maybe create an new entry in the DB for this session, but first make sure this IP isn't
           // used by another session
-          return AnonymousUser.findOne({ip: req.ip})
+          return AnonymousUser.findOne({ ip: req.ip })
             .then(otherRecord => {
               if (!otherRecord) {
                 // new IP, new session.
-                const newUserData = {ip: req.ip, session: req.session.id};
+                const newUserData = { ip: req.ip, session: req.session.id };
                 console.log(`Creating new user for ${JSON.stringify(newUserData)}`);
                 return AnonymousUser.create(newUserData);
               }
@@ -2269,12 +2274,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   function getPlaybackEligibility(req) {
     const user = req.isAuthenticated() ? req.user : req.anonymousUser;
     if (!user) {
-      return Promise.resolve({success: false, skip: false, message: "Sorry, there was a problem with this request.  (code: 1)"});
+      return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request.  (code: 1)" });
     }
 
     if (user.accountLocked) {
       console.log("Blocking playback for locked user.");
-      return Promise.resolve({success: false, skip: false, message: "Sorry, there was a problem with this request (code: 2)"});
+      return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request (code: 2)" });
     }
 
     // if the request if for their current track AND the current playback isn't expired
@@ -2283,21 +2288,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const canUseCache = user.currentPlay
       && user.currentPlay.licenseAddress == address
       && UrlUtils.resolveExpiringLink(user.currentPlay.encryptedKey);
-    if (canUseCache) return Promise.resolve({success: true, canUseCache: true});
+    if (canUseCache) return Promise.resolve({ success: true, canUseCache: true });
 
-    return Release.findOne({contractAddress: address, state: "published"}).exec()
+    return Release.findOne({ contractAddress: address, state: "published" }).exec()
       .then(release => {
         if (!release) {
-          return {success: false, skip: true, message: "The requested track was not found"};
+          return { success: false, skip: true, message: "The requested track was not found" };
         }
         if (release.markedAsAbuse) {
-          return {success: false, skip: true, message: "This track was flagged abusive by our users"};
+          return { success: false, skip: true, message: "This track was flagged abusive by our users" };
         }
 
-        return User.findOne({profileAddress: release.artistAddress})
+        return User.findOne({ profileAddress: release.artistAddress })
           .then(artist => {
             const verifiedArtist = artist && artist.verified;
-            const hasNoFreePlays  = user.freePlaysRemaining <= 0;
+            const hasNoFreePlays = user.freePlaysRemaining <= 0;
             const payFromProfile = req.isAuthenticated() && (hasNoFreePlays || !verifiedArtist);
             let p = payFromProfile
               ? jsonAPI.getPendingPPPPayments(user._id)
@@ -2313,21 +2318,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 pendingPayments.forEach(r => totalCoinsPending += r.coins);
                 console.log("Pending ppp payments: " + totalCoinsPending);
                 if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
-                  return {success: false, skip: false, message: "It looks like you don't have enough coins/free plays or are trying to play a track from a non verified artist"}
+                  return { success: false, skip: false, message: "It looks like you don't have enough coins/free plays or are trying to play a track from a non verified artist" }
               }
               else if (hasNoFreePlays) {
-                return {success: false, skip: false, message: "Looks like you ran out of free plays.  Sign up to get more!"}
+                return { success: false, skip: false, message: "Looks like you ran out of free plays.  Sign up to get more!" }
               }
               else if (!verifiedArtist) {
-                return {success: false, skip: true, message: "Only tracks from verified artists are eligible for free plays."}
+                return { success: false, skip: true, message: "Only tracks from verified artists are eligible for free plays." }
               }
               else {
                 const diff = new Date(user.nextFreePlayback).getTime() - Date.now();
                 if (diff > 0 && diff < config.freePlayDelay) {
-                  return {success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play."}
+                  return { success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play." }
                 }
               }
-              const unit = user.freePlaysRemaining-1 == 1 ? "play" : "plays";
+              const unit = user.freePlaysRemaining - 1 == 1 ? "play" : "plays";
               return {
                 success: true,
                 payFromProfile: payFromProfile,
@@ -2335,7 +2340,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   ? hasNoFreePlays
                     ? "This playback was paid for by you. Thanks!"
                     : "This playback was paid for by you, because this artist is not yet verified and is therefore not eligible for free plays."
-                  : `This playback was paid for by Musicoin.org, you have ${user.freePlaysRemaining-1} free ${unit} left`
+                  : `This playback was paid for by Musicoin.org, you have ${user.freePlaysRemaining - 1} free ${unit} left`
               };
             })
           })
@@ -2345,7 +2350,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   // convenience method for the UI so it can give a good message to the user about the play
   // ultimately, the ppp route has the final say about whether the playback
-  app.post('/user/canPlay', populateAnonymousUser, function (req, res) {
+  app.post('/user/canPlay', populateAnonymousUser, function(req, res) {
     getPlaybackEligibility(req)
       .then(result => {
         res.json(result);
@@ -2369,7 +2374,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     next();
   }
 
-  function payForPPPKey(req, release, license, payFromProfile) : Promise<any> {
+  function payForPPPKey(req, release, license, payFromProfile): Promise<any> {
     const user = req.isAuthenticated() ? req.user : req.anonymousUser;
     const ttl = config.playbackLinkTTLMillis;
     const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
@@ -2433,11 +2438,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       : null;
 
     return playbackEligibility.canUseCache && cachedKey
-      ? Promise.resolve({key: cachedKey, cached: true})
+      ? Promise.resolve({ key: cachedKey, cached: true })
       : payForPPPKey(req, release, license, playbackEligibility.payFromProfile);
   }
 
-  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
+  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function(req, res) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
@@ -2445,15 +2450,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           return res.send(new Error("PPP request failed: " + playbackEligibility.message));
         }
 
-        const context = {contentType: "audio/mpeg"};
+        const context = { contentType: "audio/mpeg" };
         const l = musicoinApi.getLicenseDetails(req.params.address);
-        const r = Release.findOne({contractAddress: req.params.address, state: "published"}).exec();
+        const r = Release.findOne({ contractAddress: req.params.address, state: "published" }).exec();
 
         return Promise.join(l, r, (license, release) => {
           return getPPPKeyForUser(req, release, license, playbackEligibility)
             .then(keyResponse => {
               return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
-                .then(function (result) {
+                .then(function(result) {
                   res.sendSeekable(result.stream, {
                     type: context.contentType,
                     length: result.headers['content-length']
@@ -2462,22 +2467,22 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             })
         })
       })
-      .catch(function (err) {
+      .catch(function(err) {
         console.error(err.stack);
         res.status(500);
         res.send("Failed to play track");
       });
   });
 
-  app.get('/media/:encryptedHash', function (req, res) {
+  app.get('/media/:encryptedHash', function(req, res) {
     // Hash is encrypted to avoid being a global proxy for IPFS.  This should ensure we are only proxying the URLs
     // we are giving out.
     mediaProvider.getRawIpfsResource(req.params.encryptedHash)
-      .then(function (result) {
+      .then(function(result) {
         res.writeHead(200, result.headers);
         result.stream.pipe(res);
       })
-      .catch(function (err) {
+      .catch(function(err) {
         console.error(err.stack);
         res.status(500);
         res.send(err);
@@ -2563,7 +2568,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(result => {
         res.json(result)
       })
-      .catch(function (err) {
+      .catch(function(err) {
         console.error(err.stack);
         res.status(500);
         res.send(err);
@@ -2654,7 +2659,7 @@ function preProcessUser(mediaProvider, jsonAPI) {
       if (!!user.accountLocked && req.originalUrl != "/logout") {
         return res.redirect("/logout");
       }
-      if(req.user.pendingInitialization) {
+      if (req.user.pendingInitialization) {
         return jsonAPI.setupNewUser(user)
           .then(() => {
             return res.redirect(loginRedirect);
@@ -2685,7 +2690,7 @@ function preProcessUser(mediaProvider, jsonAPI) {
               console.log("fixed social urls!");
               return next();
             })
-            .catch((err)=> {
+            .catch((err) => {
               console.log("failed to update social urls: " + err);
               return next();
             })

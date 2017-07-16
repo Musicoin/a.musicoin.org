@@ -1,4 +1,4 @@
-{ 
+{
   "name": "Musicoin.org",
   "version": "0.0.0",
   "private": true,
@@ -17,6 +17,7 @@
     "express-session": "*",
     "feed": "*",
     "formidable": "*",
+    "helmet": "*",
     "ipware": "*",
     "letsencrypt-express": "*",
     "logrotator": "*",
@@ -35,6 +36,8 @@
     "serve-favicon": "*",
     "sharp": "*",
     "tmp": "*",
+    "tsc": "*",
+    "typescript": "*",
     "uuid": "*"
   },
   "devDependencies": {
