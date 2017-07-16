@@ -260,10 +260,15 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);
         jsonAPI.getArtist(req.params.address, false, false)
             .then(result => {
-            res.render('index-frames.ejs', {
-                artist: result.artist,
-                mainFrameLocation: req.originalUrl.substr(4)
-            });
+            try {
+                res.render('index-frames.ejs', {
+                    artist: result.artist,
+                    mainFrameLocation: req.originalUrl.substr(4)
+                });
+            }
+            catch (Error) {
+                res.render('not-found.ejs');
+            }
         });
     });
     // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
@@ -820,18 +825,22 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         });
     });
     app.get('/admin/mail/invite', isLoggedIn, adminOnly, function (req, res) {
-        res.render("mail/invite.ejs", { invite: {
+        res.render("mail/invite.ejs", {
+            invite: {
                 invitedBy: "TestUser",
                 acceptUrl: "http://localhost:3000/accept/12345"
-            } });
+            }
+        });
     });
     app.get('/admin/mail/message', isLoggedIn, adminOnly, function (req, res) {
-        res.render("mail/message.ejs", { notification: {
+        res.render("mail/message.ejs", {
+            notification: {
                 senderName: "Sender-Dan",
                 message: "This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. This is some message.  It's really long. actually This is some message.  It's really long. This is some message.  It's really long. ",
                 trackName: "My Track",
                 acceptUrl: "http://localhost:3000/track/12345"
-            } });
+            }
+        });
     });
     app.get('/admin/mail/activity/daily/:profileAddress', isLoggedIn, adminOnly, function (req, res) {
         renderReport(req, res, "day", "daily");
