@@ -157,8 +157,8 @@ app.use(helmet.hpkp({
 }))
 */
 app.use(helmet())
-app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
-
+//app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
+/*
 app.use(expectCt({
   enforce: true,
   maxAge: 90
