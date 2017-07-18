@@ -121,7 +121,7 @@ MediaProvider.prototype.getIpfsResource = function(resourceUrl, keyProvider) {
         if (!downloading) {
           console.log("Canceling request for IPFS resource: " + resourceUrl);
           aborted = true;
-          reject(new Error("Request timed out"));
+          reject(new Error("Request timed out / Gmail 502 Error"));
         }
         else {
           // console.log("Timeout for resource expired but downloading started: " + resourceUrl);

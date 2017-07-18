@@ -131,12 +131,16 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
           password: newUser.generateHash(password),
         };
 
-        doStandardLogin("local",
-          req,
-          localProfile,
-          done,
-          (user) => {
-            return user.validPassword(password)
+        return Promise.resolve()
+          .delay(2000)
+          .then(() => {
+            doStandardLogin("local",
+              req,
+              localProfile,
+              done,
+              (user) => {
+                return user.validPassword(password)
+              });
           });
       });
     }));
@@ -315,6 +319,8 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
                            localProfile,
                            done,
                            validation?) {
+
+    console.log(`Handling login request: ip=${req.ip}, session=${req.session.id}, auth=${authProvider}, id=${localProfile.id}`);
      // if the user is already logged in, see if the account can be linked
      if (req.user) {
        const user = req.user;

@@ -12,8 +12,6 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const passportConfigurer = require("./config/passport");
 const helmet = require("helmet");
-const csp = require("helmet-csp");
-const expectCt = require("expect-ct");
 const musicoin_api_1 = require("./app/musicoin-api");
 const app = express();
 const flash = require('connect-flash');
@@ -129,29 +127,35 @@ ConfigUtils.loadConfig()
     }
 });
 //helmet middleware to enhance security
-const oneDayinSeconds = 5184000; // verify header every one day
+/*
+const oneDayinSeconds = 5184000 // verify header every one day
 app.use(helmet.hpkp({
-    maxAge: oneDayinSeconds,
-    sha256s: ['Qj0Lpmhq1bu3ksR36/IKlNy17cy6tKDmLYnvoE631Lw=', 'xmvvalwaPni4IBbhPzFPPMX6JbHlKqua257FmJsWWto='],
-    includeSubdomains: true
-}));
+  maxAge: oneDayinSeconds,
+  sha256s: ['Qj0Lpmhq1bu3ksR36/IKlNy17cy6tKDmLYnvoE631Lw=','xmvvalwaPni4IBbhPzFPPMX6JbHlKqua257FmJsWWto='],
+  includeSubdomains: true
+}))
+*/
 app.use(helmet());
-app.use(helmet.referrerPolicy({ policy: 'same-origin' }));
+//app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
+/*
 app.use(expectCt({
-    enforce: true,
-    maxAge: 90
-}));
+  enforce: true,
+  maxAge: 90
+}))
+
+/*
 app.use(csp({
-    directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com', 'https://fonts.googleapis.com'],
-        fontSrc: ["'self'", 'https://fonts.gstatic.com data:'],
-        scriptSrc: ["'self'", 'https://ajax.googleapis.com'],
-        sandbox: ['allow-forms', 'allow-scripts'],
-        // reportUri: ['/report-violation'],
-        objectSrc: ["'none'"],
-    }
-}));
+  directives: {
+    defaultSrc: ["'self'"],
+    styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com', 'https://fonts.googleapis.com'],
+    fontSrc: ["'self'", 'https://fonts.gstatic.com data:'],
+    scriptSrc: ["'self'", 'https://ajax.googleapis.com'],
+    sandbox: ['allow-forms', 'allow-scripts'],
+    // reportUri: ['/report-violation'],
+    objectSrc: ["'none'"],
+  }
+}))
+*/
 // gettext
 app.use(gettext(app, {
     directory: path.join(__dirname, 'locales'),

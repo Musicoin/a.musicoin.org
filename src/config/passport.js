@@ -114,8 +114,12 @@ function configure(passport, mediaProvider, configAuth) {
                 token: "token",
                 password: newUser.generateHash(password),
             };
-            doStandardLogin("local", req, localProfile, done, (user) => {
-                return user.validPassword(password);
+            return bluebird_1.Promise.resolve()
+                .delay(2000)
+                .then(() => {
+                doStandardLogin("local", req, localProfile, done, (user) => {
+                    return user.validPassword(password);
+                });
             });
         });
     }));
@@ -257,6 +261,7 @@ function configure(passport, mediaProvider, configAuth) {
         });
     }
     function doStandardLogin(authProvider, req, localProfile, done, validation) {
+        console.log(`Handling login request: ip=${req.ip}, session=${req.session.id}, auth=${authProvider}, id=${localProfile.id}`);
         // if the user is already logged in, see if the account can be linked
         if (req.user) {
             const user = req.user;

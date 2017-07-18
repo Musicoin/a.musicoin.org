@@ -2264,7 +2264,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 otherRecord.sessionDate = Date.now();
                 return otherRecord.save();
               }
-              console.log(`Different session with same IPs: session changed too quickly: req.session: ${req.session.id}, recordSession: ${anonymous.session}, req.ip: ${req.ip}, msSinceLastSession: ${diff}`);
+              console.log(`Different session with same IPs: session changed too quickly: req.session: ${req.session.id}, recordSession: "Anonymous Session", req.ip: ${req.ip}, msSinceLastSession: ${diff}`);
               return null;
             });
         }
