@@ -11,7 +11,6 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const passportConfigurer = require("./config/passport");
-const helmet = require("helmet");
 const musicoin_api_1 = require("./app/musicoin-api");
 const app = express();
 const flash = require('connect-flash');
@@ -135,7 +134,7 @@ app.use(helmet.hpkp({
   includeSubdomains: true
 }))
 */
-app.use(helmet());
+// app.use(helmet())
 //app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
 /*
 app.use(expectCt({
