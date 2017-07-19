@@ -55,7 +55,9 @@ ConfigUtils.loadConfig()
     app.use(session({
         secret: config.sessionSecret,
         store: new MongoStore({ mongooseConnection: mongoose.connection }),
-        cookie: { maxAge: ONE_YEAR } // TESTING to see if this solves the iOS playback issue
+        cookie: { maxAge: ONE_YEAR },
+        resave: true,
+        saveUninitialized: true
     }));
     app.use(passport.initialize());
     app.use(passport.session());
