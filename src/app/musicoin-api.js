@@ -236,11 +236,11 @@ class MusicoinAPI {
             }, function (error, response, result) {
                 if (error) {
                     console.log(`Request failed with ${error}, url: ${url}, properties: ${JSON.stringify(properties)}`);
-                    return reject(error);
+                    return bluebird_1.Promise.reject(error).catch(error => { console.log('Caught Error!', error.message); });
                 }
                 else if (response.statusCode != 200) {
                     console.log(`Request failed with status code ${response.statusCode}, url: ${url}, properties: ${JSON.stringify(properties)}`);
-                    return reject(new Error(`Request failed with status code ${response.statusCode}, url: ${url}, properties: ${JSON.stringify(properties)}`));
+                    return bluebird_1.Promise.reject(new Error(`Request failed with status code ${response.statusCode}, url: ${url}, properties: ${JSON.stringify(properties)}`)).catch(error => { console.log('Caught Error!', error.message); });
                 }
                 resolve(result);
             });
