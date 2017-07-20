@@ -1693,7 +1693,7 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             });
         }
         else {
-            const code = crypto.randomBytes(4).toString('hex');
+            const code = crypto.randomBytes(16).toString('hex');
             EmailConfirmation.create({ email: req.body.email, code: code })
                 .then(() => {
                 return mailSender.sendEmailConfirmationCode(req.body.email, code)
@@ -2367,7 +2367,7 @@ function hasProfile(req, res, next) {
 function checkInviteCode(req, res, next) {
     const user = req.user;
     if (user && !user.reusableInviteCode) {
-        user.reusableInviteCode = crypto.randomBytes(4).toString('hex');
+        user.reusableInviteCode = crypto.randomBytes(16).toString('hex');
         return user.save()
             .then(() => {
             console.log(`Updated user invite link: ${user.reusableInviteCode}`);
