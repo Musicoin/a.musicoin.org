@@ -1,56 +1,56 @@
 <!doctype html>
 <html>
+
 <body>
-<style>
+  <style>
     .preview-container {
-        height: 100%;
-        background-color: white;
-        display: flex;
-        flex-direction: column;
-        border-radius: 4px;
-    }
-    .scroll-container {
-        overflow: auto;
-        height: 100%;
-    }
-    .button-bar {
-        padding: 5px;
-        background-color: whitesmoke;
-        box-shadow: 0 0 15px -4px black;
-        min-height: 40px;
-    }
-    .license-section {
-        font-size: 24px;
-        margin-top: 10px;
+      height: 100%;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      border-radius: 4px;
     }
 
-</style>
-<div class="flex-column">
+    .scroll-container {
+      overflow: auto;
+      height: 100%;
+    }
+
+    .button-bar {
+      padding: 5px;
+      background-color: whitesmoke;
+      box-shadow: 0 0 15px -4px black;
+      min-height: 40px;
+    }
+
+    .license-section {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+  </style>
+  <div class="flex-column">
     <div class="flex-row" style="justify-content: center">
-        <div class="wizard-card-segment">
-            <div class="preview-container">
-                <div>
-                    <div class="license-section text-center">
-                        <img class="logo" src="/images/logo.png">
-                        <div class="subtle-text">Pay Per Play (PPP) License</div>
-                    </div>
-                </div>
-                <div class="scroll-container">
-                    <%- include ../partials/license-readable.ejs %>
-                </div>
+      <div class="wizard-card-segment">
+        <div class="preview-container">
+          <div>
+            <div class="license-section text-center">
+              <img class="logo" src="/images/logo.png">
+              <div class="subtle-text">Pay Per Play (PPP) License</div>
             </div>
-            <div class="wizard-button-bar text-right">
-                <% if (showRelease && (!license.errors || license.errors.length==0)) {%>
-                <div class="btn btn-success btn-sm mr10" onclick='$("#releaseForm").submit()'>Release</div>
-                <%}%>
-            </div>
+          </div>
+          <div class="scroll-container">
+            <%- include ../partials/license-readable.ejs %>
+          </div>
         </div>
+        <div class="wizard-button-bar text-right">
+          <% if (showRelease && (!license.errors || license.errors.length==0)) {%>
+            <div class="btn btn-success btn-sm mr10" onclick='$("#releaseForm").submit()'>Release</div>
+            <%}%>
+        </div>
+      </div>
     </div>
 
-</div>
-
-
-
+  </div>
 </body>
-</html>
 
+</html>
