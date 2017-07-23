@@ -83,8 +83,10 @@
 <script>
   function updateProgressBar() {
     var start = new Date();
-    var maxTime = Math.floor(document.getElementById('audio').files.item(0).size / 50000);
-    var timeoutVal = 2000000;
+    var maxTime = Math.floor(document.getElementById('audio').files.item(0).size / 200000);
+    var timeoutVal = Math.floor(maxTime / 100);
+
+    console.log(document.getElementById('audio').files.item(0).size / 200000);
     console.log(maxTime);
     animateUpdate();
 
@@ -96,7 +98,7 @@
       var now = new Date();
       var timeDiff = now.getTime() - start.getTime();
       var perc = Math.round((timeDiff / maxTime) * 100);
-      console.log(perc);
+      // console.log(perc);
       if (perc <= 100) {
         updateProgress(perc);
         setTimeout(animateUpdate, timeoutVal);
