@@ -46,7 +46,10 @@
         Please select an audio track to upload. We support only MP3 as of now, but will expand to other formats in the future. Please wait for some time until the file is done uploading
       </p>
       <div class="profile-release-item">
-        <input style="display: none" onchange="updateAudioLabel('audioLabel', this.id); updateAudioNextButton()" id="audio" type="file" name="audio">
+        <!--
+          <input id="audio" style="display: none" onchange="alert(document.getElementById('audio').files.item(0).size); updateAudioLabel('audioLabel', this.id); updateAudioNextButton()" type="file" name="audio">
+        -->
+        <input id="audio" style="display: none" onchange="updateProgressBar();updateAudioLabel('audioLabel', this.id); updateAudioNextButton()" type="file" name="audio">
         <div class="center-text m20">
           <label class="btn btn-warning no-submit form-entry btn-lg" style="max-width: 300px" for="audio" id="audioLabel" accept="audio/*">Click to Upload File</label>
         </div>
@@ -78,11 +81,11 @@
 
 </div>
 <script>
-  $('#audio').bind('change', function() {
-
+  function updateProgressBar() {
     var start = new Date();
-    var maxTime = Math.floor((this.files[0].size) / 100000);
-    var timeoutVal = 200000;
+    var maxTime = Math.floor(document.getElementById('audio').files.item(0).size / 50000);
+    var timeoutVal = 2000000;
+    console.log(maxTime);
     animateUpdate();
 
     function updateProgress(percentage) {
@@ -99,7 +102,7 @@
         setTimeout(animateUpdate, timeoutVal);
       }
     }
-  });
+  }
 
   function updateAudioNextButton() {
     $('#fromAudioToNext').toggleClass('disabled', !isAudioDone())
