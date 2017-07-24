@@ -158,7 +158,9 @@ app.use(helmet.hpkp({
   includeSubdomains: true
 }))
 */
-// app.use(helmet())
+
+app.use(helmet())
+
 //app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
 /*
 app.use(expectCt({
