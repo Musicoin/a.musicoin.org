@@ -1876,8 +1876,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/connect/email', function(req, res) {
     // render the page and pass in any flash data if it exists
-    doRender(req, res, 'login.ejs', {
-      message: req.flash('loginMessage'),
+    const message = req.flash('loginMessage');
+    doRender(req, res, 'landing.ejs', {
+      message: message,
     });
   });
 
