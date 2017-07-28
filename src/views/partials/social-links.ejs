@@ -30,5 +30,8 @@
     <% }
     }
     %>
-</div>
+    <form class="form1" action="/qr-code" method="post">
+      <input type="text" name="profileAddress" value="<%=profileAddress%>" style="visibility: hidden">
+      <button type="submit">Generate qr code</button>
+    </form>
 <% } %>
