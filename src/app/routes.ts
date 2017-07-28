@@ -15,6 +15,8 @@ import {PendingTxDaemon} from './tx-daemon';
 import moment = require("moment");
 import Feed = require('feed');
 import * as request from 'request';
+import * as qr from 'qr-image';
+import * as fs from 'fs';
 import {ReleaseManagerRouter} from "./release-manager-routes";
 import {DashboardRouter} from "./admin-dashboard-routes";
 import {RequestCache} from "./cached-request";
@@ -1879,6 +1881,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const message = req.flash('loginMessage');
     doRender(req, res, 'landing.ejs', {
       message: message,
+    });
+  });
+
+  app.post('/qr-code', function(req, res) {
+    //var qr_svg = qr.image('Custom Message', { type: 'svg' });
+    var qr_svg = qr.image('https://musicoin.org/artist/' + req.body.profileAddress, { type: 'png' });
+    var x = qr_svg.pipe(require('fs').createWriteStream(__dirname + '/qr_musicoin.png'));
+    x.on('finish', function(err){
+      if(err){
+        console.log(err);
+        return;
+      }
+      res.download(__dirname + '/qr_musicoin.png');
     });
   });
 

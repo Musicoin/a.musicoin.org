@@ -16,6 +16,7 @@ const tx_daemon_1 = require("./tx-daemon");
 const moment = require("moment");
 const Feed = require("feed");
 const request = require("request");
+const qr = require("qr-image");
 const release_manager_routes_1 = require("./release-manager-routes");
 const admin_dashboard_routes_1 = require("./admin-dashboard-routes");
 const cached_request_1 = require("./cached-request");
@@ -1685,6 +1686,18 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         const message = req.flash('loginMessage');
         doRender(req, res, 'landing.ejs', {
             message: message,
+        });
+    });
+    app.post('/qr-code', function (req, res) {
+        //var qr_svg = qr.image('Custom Message', { type: 'svg' });
+        var qr_svg = qr.image('https://musicoin.org/artist/' + req.body.profileAddress, { type: 'png' });
+        var x = qr_svg.pipe(require('fs').createWriteStream(__dirname + '/qr_musicoin.png'));
+        x.on('finish', function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            res.download(__dirname + '/qr_musicoin.png');
         });
     });
     app.post('/login/confirm', function (req, res) {
