@@ -30,7 +30,6 @@
     "passport-local": "*",
     "passport-soundcloud": "*",
     "passport-twitter": "*",
-    "qr-image": "*",
     "request": "*",
     "send-seekable": "*",
     "sendgrid": "*",

@@ -10,7 +10,7 @@ database:
     - npm install chai-http
     - npm install express
     - npm install chai
-    - npm install bcrypt-nodejs bluebird body-parser cached-request chai-http connect-flash connect-mongo cookie-parser ejs express express-gettext express-session feed formidable ipware letsencrypt-express logrotator moment mongoose morgan passport passport-facebook passport-google-oauth passport-local passport-soundcloud passport-twitter request send-seekable sendgrid serve-favicon sharp tmp uuid helmet qr-image
+    - npm install bcrypt-nodejs bluebird body-parser cached-request chai-http connect-flash connect-mongo cookie-parser ejs express express-gettext express-session feed formidable ipware letsencrypt-express logrotator moment mongoose morgan passport passport-facebook passport-google-oauth passport-local passport-soundcloud passport-twitter request send-seekable sendgrid serve-favicon sharp tmp uuid helmet
 
 dependencies:
   override:
