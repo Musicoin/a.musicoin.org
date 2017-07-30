@@ -58,7 +58,7 @@
         <h2>Great! We're processing your track now...</h2>
         <div class="subtle-text">
             <div class="text-center mb10">It should be ready in about 2 minutes.</div>
-            <div class="text-large">Here's what we're doing:</div>
+            <div class="text-large">Here's the magic going on:</div>
             <br>
 
             <ul class="checkmark text-large <%=done ? "very-subtle-text" : ""%>">
@@ -66,7 +66,7 @@
                 <li class="checked">Encrypting your audio file</li>
                 <li class="checked">Sending encrypted audio file to the P2P network</li>
                 <% if (!done) { %>
-                <li>... Waiting for confirmation </li>
+                <li>Waiting for confirmation ... </li>
                 <% } else { %>
                 <li class="checked text-success">Confirmed! <a href="http://orbiter.musicoin.org/tx/<%=release.tx%>">(view transaction)</a></li>
                 <% }  %>
@@ -103,8 +103,7 @@
         <br>
         <% if (done) { %>
         <div class="mb20">
-            <h3 class="text-center">Now, share your track on your social networks</h3>
-            <div class="text-center">You can share this link:</div>
+            <h3 class="text-center">Share your track on your social networks using this link:</h3>
 
             <div class="flex-row" style="border: 1px solid #ddd; border-radius: 2px; padding-left: 5px">
                 <input id="trackUrl" type="text" value="https://musicoin.org/nav/track/<%=release.address%>" style="width: 100%; border: none; font-size: 12px">
@@ -124,7 +123,7 @@
                 <!--<div><a href="/auth/soundcloud" class="btn btn-soundcloud btn-sm"><span class="fa fa-soundcloud text-large"> Soundcloud</span></a></div>-->
             </div>
             <br>
-            <h4 class="text-center">or <a href="../release-manager">release another track</a></h4>
+            <h4 class="text-center">or <a href="../release-manager">Upload another track</a></h4>
         </div>
         <% } else { %>
         <div class="subtle-text text-center mb20">This page will automatically refresh</div>
