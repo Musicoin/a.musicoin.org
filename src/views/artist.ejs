@@ -22,17 +22,23 @@
             margin-top: 20px;
             color: #e4aa17;
         }
-
         .social-link {
             font-size: 14pt;
         }
-        <style>
-            @media screen and (max-width:600px) {
-                #qrcode1{
-                  visibility: hidden;
-                  display: none;
-                }
+        @media screen and (max-width:599px) {
+            #qrcode1{
+                visibility: hidden !important;
             }
+        }
+        @media screen and (min-width:600px) {
+            #qrcode1{
+                visibility: visible !important;
+                background: none;
+                font-size: 18px;
+                border: none;
+                color: white;
+            }
+        }
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
