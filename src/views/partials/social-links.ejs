@@ -30,11 +30,11 @@
     <% }
     }
     %>
-    <div style="position: absolute; top: 88%; background: none;">
-            <form action="/qr-code" method="post">
-                <input type="text" name="profileAddress" value="<%=artist.profileAddress%>" style="visibility: hidden">
-                <button type="submit" id="qrcode1" class="cool">Generate qr code</button>
-            </form>
+    <div style="position: absolute; top: 80%; background: none; width: 160px; left: 160px;">
+                <form action="/qr-code" method="post">
+                    <input type="text" name="profileAddress" value="0x707749cbd75f5f950c4f5b603632d551c3ee81f2" style="visibility: hidden">
+                    <button type="submit" id="qrcode1" class="cool">Generate qr code</button>
+                </form>
+        </div>
     </div>
-</div>
 <% } %>
