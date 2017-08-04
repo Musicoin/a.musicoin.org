@@ -53,8 +53,18 @@ export class MusicoinAPI {
   getAccountBalance(address: string) {
     return this.getJson(`${this.apiConfig.getAccountBalance}/${address}`, 5000)
       .then((balance) => {
-          balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-          balance.formattedMusicoinsShort = this._formatShortNumber(balance.musicoins);
+          try{
+            balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          } catch(e) {
+            console.log(e);
+            return 0;
+          }
+          try{
+            balance.formattedMusicoinsShort = this._formatShortNumber(balance.musicoins);
+          } catch (e) {
+            console.log(e);
+            return 0;
+          }
           return balance;
         }
       )

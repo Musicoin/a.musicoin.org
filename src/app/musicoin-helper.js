@@ -26,8 +26,20 @@ class MusicoinHelper {
     getLicense(address) {
         return this.musicoinApi.getLicenseDetails(address)
             .then(license => {
-            license.image = this.mediaProvider.resolveIpfsUrl(license.imageUrl);
-            license.audioUrl = "/ppp/" + UrlUtils.createExpiringLink(license.address, this.playbackLinkTTLMillis);
+            try {
+                license.image = this.mediaProvider.resolveIpfsUrl(license.imageUrl);
+            }
+            catch (e) {
+                console.log(e);
+                return license;
+            }
+            try {
+                license.audioUrl = "/ppp/" + UrlUtils.createExpiringLink(license.address, this.playbackLinkTTLMillis);
+            }
+            catch (e) {
+                console.log(e);
+                return license;
+            }
             return license;
         });
     }
