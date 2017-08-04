@@ -14,6 +14,10 @@ class MailSender {
         const subject = `Your Musicoin confirmation code`;
         return this.sendTemplate(`${appDir}/views/mail/email-confirmation.ejs`, recipient, subject, { code: code });
     }
+    sendWelcomeEmail(recipient) {
+        const subject = `Welcome to Musicoin!`;
+        return this.sendTemplate(`${appDir}/views/mail/invite.ejs`, recipient, subject, { invite: 'invite' });
+    }
     sendPasswordReset(recipient, link) {
         const subject = `Musicoin password reset request`;
         return this.sendTemplate(`${appDir}/views/mail/password-reset.ejs`, recipient, subject, { link: link });

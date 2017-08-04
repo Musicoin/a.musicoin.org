@@ -27,6 +27,10 @@ export class MailSender {
     return this.sendTemplate(`${appDir}/views/mail/email-confirmation.ejs`, recipient, subject, {code: code});
   }
 
+  sendWelcomeEmail(recipient: string): Promise<any> {
+    const subject = `Welcome to Musicoin!`
+    return this.sendTemplate(`${appDir}/views/mail/invite.ejs`, recipient, subject, {invite: 'invite'});
+  }
   sendPasswordReset(recipient: string, link: string): Promise<any> {
     const subject = `Musicoin password reset request`;
     return this.sendTemplate(`${appDir}/views/mail/password-reset.ejs`, recipient, subject, {link: link});
@@ -76,5 +80,3 @@ export class MailSender {
 
   }
 }
-
-
