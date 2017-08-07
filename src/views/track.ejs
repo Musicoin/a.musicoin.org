@@ -346,7 +346,7 @@
                  de-address="<%=license.address%>"
                  de-showtrack="false"
                  de-url="/elements/track-messages">
-                <%- include('partials/track-messages.ejs', {messages: messages, showTrack: false}) %>
+                <%- include('partials/track-messages.ejs', {messages: messages.splice(0,1), showTrack: false}) %>
             </div>
             <div class="text-center pad5">
                 <a href="mailto:musicoin@musicoin.org?subject=Report Track&body=LicenseId:<%=license.address%>" target="_blank">Report abuse</a>
