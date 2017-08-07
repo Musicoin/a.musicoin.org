@@ -417,12 +417,15 @@
                         https://musicoin.org/accept/<%= user.reusableInviteCode %>
                     </div>
                     <br>
+                    <!--
+                    Remove individual invite since people are using it more than once.
                     <h4>Individual Invite Link</h4>
                     <p class="subtle-text">
                         If you want to create an invite for a <em>specific person</em>, enter an address below and we'll
                         send an invite to that address. You can also copy and paste the generated link and send it to
                         them separately. However, this type invite can only be used once.
                     </p>
+                    -->
                     <form action="/invite" method="post">
                         <table cellpadding="3">
                             <tr>

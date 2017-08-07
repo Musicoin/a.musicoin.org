@@ -27,6 +27,9 @@
       font-size: 24px;
       margin-top: 10px;
     }
+    .hide1{
+      visibility: hidden !important;
+    }
   </style>
   <div class="flex-column">
     <div class="flex-row" style="justify-content: center">
@@ -42,10 +45,13 @@
             <%- include ../partials/license-readable.ejs %>
           </div>
         </div>
-        <div class="wizard-button-bar text-right">
+        <div class="wizard-button-bar text-right" id="beforeRelease">
           <% if (showRelease && (!license.errors || license.errors.length==0)) {%>
-            <div class="btn btn-success btn-sm mr10" onclick='$("#releaseForm").submit()'>Release</div>
+            <div class="btn btn-success btn-sm mr10" onclick='$("#releaseForm").submit() ; $("#beforeRelease").hide(); $("#afterRelease").removeClass("hide1")'>Release</div>
             <%}%>
+        </div>
+        <div class="wizard-button-bar text-right hide1" id="afterRelease">
+            <div class="btn btn-success btn-sm mr10">Please Wait...</div>
         </div>
       </div>
     </div>
