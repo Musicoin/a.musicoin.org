@@ -270,6 +270,8 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             catch (Error) {
                 res.render('not-found.ejs');
             }
+        }).catch(error => {
+            console.log('ERROR!!', error.message);
         });
     });
     // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
@@ -591,6 +593,8 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             history.forEach(h => {
                 h.formattedDate = _formatAsISODateTime(h.timestamp);
                 h.musicoins = _formatNumber(h.musicoins, 5);
+            }).catch(function (e) {
+                console.log(e);
             });
             doRender(req, res, 'history.ejs', {
                 address: req.params.address,
