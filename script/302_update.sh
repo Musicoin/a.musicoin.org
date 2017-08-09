@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "Pulling changes from git..."
+echo $(date)
 cd /musicoin.org
 
 {
