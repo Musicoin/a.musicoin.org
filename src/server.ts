@@ -12,6 +12,7 @@ import * as passport from 'passport';
 import * as passportConfigurer from './config/passport';
 import * as helmet from 'helmet';
 import * as csp from 'helmet-csp';
+import * as Ddos from 'ddos';
 import * as expectCt from 'expect-ct'
 import {MusicoinAPI} from './app/musicoin-api';
 
@@ -160,7 +161,8 @@ app.use(helmet.hpkp({
 */
 
 app.use(helmet())
-
+var ddos = new Ddos;
+app.use(ddos.express)
 //app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
 /*
 app.use(expectCt({
