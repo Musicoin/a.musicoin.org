@@ -42,3 +42,6 @@ There are a number of steps needed to get a new server up and running.
   - `sudo chown coiner /etc/authbind/byport/80`
   - `sudo chmod 755 /etc/authbind/byport/80`
 - See `/scripts/deploy` for Jenkins configurations
+
+## Debugging
+Checkout Jenkins log for most faults. Worst case, checkout the server log and revert as quickly as possible to avoid downtime
