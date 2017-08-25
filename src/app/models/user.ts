@@ -129,7 +129,7 @@ const userSchema = mongoose.Schema({
   isMusician: {
     type: String,
     default: 'listener'
-  }
+  },
   blocked: Boolean,
   verified: Boolean,
   accountLocked: Boolean,
