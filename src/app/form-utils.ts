@@ -1,3 +1,4 @@
+const owasp = require('owasp-password-strength-test');
 import {Promise} from 'bluebird';
 const sharp = require('sharp');
 
@@ -100,8 +101,15 @@ export function convertToRoyaltyOrContributor(recipient) {
 }
 
 export function checkPasswordStrength(pwd): string {
-  // placeholder for now.  It could be better.
-  return pwd && pwd.trim().length >= 8 ? null : "Your password must be at least 8 characters";
+  owasp.config({
+    allowPassphrases       : false,
+    maxLength              : 64,
+    minLength              : 10,
+    minOptionalTestsToPass : 4,
+  });
+
+  var result =  owasp.test(pwd);
+  return pwd && result.errors.length == 0 ? null : result.errors;
 }
 
 export function validateEmail(email) {

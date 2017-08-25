@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const owasp = require('owasp-password-strength-test');
 const sharp = require('sharp');
 function defaultString(value, defaultValue) {
     if (!value || typeof value != "string")
@@ -101,8 +102,14 @@ function convertToRoyaltyOrContributor(recipient) {
 }
 exports.convertToRoyaltyOrContributor = convertToRoyaltyOrContributor;
 function checkPasswordStrength(pwd) {
-    // placeholder for now.  It could be better.
-    return pwd && pwd.trim().length >= 8 ? null : "Your password must be at least 8 characters";
+    owasp.config({
+        allowPassphrases: false,
+        maxLength: 64,
+        minLength: 10,
+        minOptionalTestsToPass: 4,
+    });
+    var result = owasp.test(pwd);
+    return pwd && result.errors.length == 0 ? null : result.errors;
 }
 exports.checkPasswordStrength = checkPasswordStrength;
 function validateEmail(email) {
