@@ -24,6 +24,7 @@
     "moment": "*",
     "mongoose": "*",
     "morgan": "*",
+    "owasp-password-strength-test": "*",
     "passport": "*",
     "passport-facebook": "*",
     "passport-google-oauth": "*",
