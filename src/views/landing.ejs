@@ -72,18 +72,20 @@
         <div class="col-md-6 right-side">
           <h3 id="heading"><a href="https://musicoin.org" class="href1">musicoin</a> </h3>
           <form name="signupForm" class="signup" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
+
           <div style="position: absolute; left: -50vw; top: 45vh;">
-            <div class="crazy" style="position: relative; left: 275px; top: 25px; color: white; font-size: 20px; background: black; width: 100px; text-align: center;">I am A</div>
+            <div class="crazy" style="position: relative; left: 275px; top: 25px; color: white; font-size: 20px; background: black; width: 100px; text-align: center; cursor: default">I am A</div>
             <div style="position: absolute; top: 70px; left: 200px;">
               <div class="cta">
-                <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Musician</button>
+                <button class="btn btn-primary pull-left" id="signUpButton" onclick="$('#attr1').value='musician'">Musician</button>
               </div>
               <div class="cta">
-              <button type="submit" class="btn btn-primary pull-left" style="position: relative; left: 130px;"id="signUpButton">Listener</button>
+              <button class="btn btn-primary pull-left" style="position: relative; left: 130px;"id="signUpButton" onclick="$('#attr1').value='listener'">Listener</button>
               </div>
             </div>
           </div>
 
+            <input class="hidden" name="attribute" type="text" id="attr1" default="musician"></input>
             <span class="input input--hoshi">
                       <input class="input__field input__field--hoshi" type="text" id="screenname" name="name" required />
                       <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">

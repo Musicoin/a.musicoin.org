@@ -1761,8 +1761,9 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         doRender(req, res, "password-forgot.ejs", {});
     });
     app.post('/login/forgot', (req, res) => {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         const email = req.body.email || "";
-        if (email.trim().length < 5)
+        if (re.test(email.trim().length) == false)
             return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
         User.findOne({ "local.email": req.body.email }).exec()
             .then(user => {

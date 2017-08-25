@@ -1963,8 +1963,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/login/forgot', (req, res) => {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const email = req.body.email || "";
-    if (email.trim().length < 5)  /// a@b.c is the smallest possible email address (5 chars)
+    if (re.test(email.trim().length) == false)  /// a@b.c is the smallest possible email address (5 chars)
       return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
 
     User.findOne({ "local.email": req.body.email }).exec()
