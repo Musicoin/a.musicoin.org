@@ -29,6 +29,9 @@
             #qrcode1{
                 visibility: hidden !important;
             }
+            #dp1 {
+              visibility: hidden !important;
+            }
         }
         @media screen and (min-width:600px) {
             #qrcode1{
@@ -38,7 +41,11 @@
                 border: none;
                 color: white;
             }
+            #dp1 {
+              visibility: visible !important;
+            }
         }
+
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
@@ -183,7 +190,7 @@ function formatNumber(value) {
 </div>
 <!-- Artist icon -->
 <% if (messages.length > 0) { %>
-<div class="release-image" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px; background-image: url('<%=messages[messages.length-1].sender.image%>'); border-radius: 200px;"></div>
+<div class="release-image" id="dp1" style="height: 150px; width: 150px; position: absolute; top: 110px; left: 20px; background-image: url('<%=messages[messages.length-1].sender.image%>'); border-radius: 200px;"></div>
 <% } %>
 <script>
   function refreshMessageList() {
