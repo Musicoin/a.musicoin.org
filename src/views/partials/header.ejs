@@ -174,7 +174,23 @@
             <a href="/release-manager" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a>
             <% } %>
             <a href="/main" class="header-menu-item" title="discover"><i class="fa fa-compass" aria-hidden="true"></i></a>
-
+            <% if(!user.twitter.token  && !user.facebook.token) { %>
+                <div id='delete1' style="z-index: 100 ;position: fixed; top: 65px !important; padding-left: 20px; background: #B7950B; width: 100vw; height: 22vh">
+                  <br>
+                  <div id="bold-text" style="font-weight: 900 !important; font-size: 30px;  color: black; font-family: 'Lato' !important;">
+                    Your Profile is not verified yet
+                  </div>
+                  <br>
+                  <div id='sub-text' style="width: 50vw; color: black; font-size: 15px; letter-spacing: 0em; line-height: 1">
+                    <strong>
+                    Please note that the verification process is not automatic and may take upto 3 days.
+                    The admins will verify your profile and you'll get a verified icon on your profile page.
+                  </strong>
+                  </div>
+                  <!--<button style="display: block; float: right; border: none; position: relative; top: -8vh; left: -20vw; width: 100px; border-radius: 50px; color: white; font-family: 'Lato'; font-weight: 900px; font-size: 11px;background: black; cursor: pointer" onclick=""> VERIFY </button>-->
+                    <i class="fa fa-times fa-2x" style="color: black; position: relative; float: right; top: -8vh; left: -10vw; cursor: pointer" onclick = "$('#delete1').css('visibility', 'hidden')"></i>
+                </div>
+            <% } %>
             <div class="popover-markup" style="display:inline;">
                 <a href="#" class="trigger">
                     <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
@@ -189,7 +205,7 @@
 
                         <% if(!user.google.token || !user.twitter.token || !user.facebook.token) { %>
                         <div class="center-text subtle-text flex-column mb5 mt10">
-                            <div>Link another account (<a class=text-small href="/faq#WhyLinkAccounts">why?</a>)</div>
+                            <div>Link another account (<a class=text-small href="/faq#WhyLinkAccounts">Why?</a>)</div>
                             <div class="flex-row center-text">
                                 <% if(!user.google.token) { %>
                                 <div class="mr5"><a href="/connect/google" target="_top" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>
