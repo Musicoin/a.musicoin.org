@@ -26,6 +26,9 @@
 
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
 </head>
 <body>
     <%- include partials/header.ejs %>
@@ -37,6 +40,22 @@
     <%
         var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image"
     %>
+
+    <div id='delete1' style="z-index: 100 ;position: fixed; top: 65px !important; padding-left: 20px; background: #B7950B; width: 100vw; height: 22vh">
+      <br>
+      <div id="bold-text" style="font-weight: 900 !important; font-size: 30px;  color: black; font-family: 'Lato' !important;">
+        Your Profile is not verified yet
+      </div>
+      <br>
+      <div id='sub-text' style="width: 50vw; color: black; font-size: 15px; letter-spacing: 0em; line-height: 1">
+        <strong>
+        Please note that the verification process is not automatic and may take upto 3 days.
+        The admins will verify your profile and you'll get a verified icon on your profile page.
+      </strong>
+      </div>
+      <!--<button style="display: block; float: right; border: none; position: relative; top: -8vh; left: -20vw; width: 100px; border-radius: 50px; color: white; font-family: 'Lato'; font-weight: 900px; font-size: 11px;background: black; cursor: pointer" onclick=""> VERIFY </button> -->
+        <i class="fa fa-times fa-2x" style="color: black; position: relative; float: right; top: -8vh; left: -10vw; cursor: pointer" onclick = "$('#delete1').css('visibility', 'hidden')"></i>
+    </div>
 
     <div class="columns-2-to-1 white-well box-shadow-top">
         <div class="col1">
