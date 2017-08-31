@@ -89,14 +89,12 @@ function formatNumber(value) {
          style="justify-content: flex-end; min-width: 200px; align-items: flex-start">
         <div class="flex-column center-text mr10 followers-container">
             <div class="follow-toggle-button btn btn-default"
-                 id="follow-button"
                  user="<%= artist.id %>"
                  text-following="Following"
                  class-following="<%= isArtist ? "disabled" : "btn-success"%>"
                  text-not-following="Follow"
                  class-not-following="<%= isArtist ? "disabled" : "btn-default"%>"
-                 follower-count="<%=artist.followerCount%>"
-                 onclick = "$('#follow-button').css('visibility', 'hidden !important')">
+                 follower-count="<%=artist.followerCount%>">
                 Follow
             </div>
             <div class="follower-count subtle-text"
