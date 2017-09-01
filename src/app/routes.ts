@@ -1596,6 +1596,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/send', isLoggedIn, function(req, res) {
+    var valueProvided = req.body.recipient;
+    var incorrectAddresses = ["0x0000000000000000000000000000000000000000","0x1111111111111111111111111111111111111111"];
+
+    if (incorrectAddresses.indexOf(valueProvided) < 0) {
+      throw new Error(`Invalid recipient address`);
+    }
+
     musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
       .then(function(tx) {
         if (tx) {

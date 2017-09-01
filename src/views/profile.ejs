@@ -547,20 +547,6 @@
 </body>
 <script>
   (function ($) {
-
-    $('#recip1').click(function(){
-        var val1 = $('#recip1').val();
-        incorrectAddresses = [
-            "0x0000000000000000000000000000000000000000",
-            "0x1111111111111111111111111111111111111111"
-        ];
-        if (incorrectAddresses.indexOf(val1) > 0) {
-            new Message("You can not send coins to this address. Please  check your address" , "error", 3000);
-            return false;
-        }
-    });
-
-    })
     // prevent dynamically created input elements from submitting the form
     $('.contributors').on('keydown', '.no-submit', function (e) {
       if (e.keyCode == 13) {
