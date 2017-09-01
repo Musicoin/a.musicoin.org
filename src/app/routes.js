@@ -1436,23 +1436,25 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         });
     });
     app.post('/send', isLoggedIn, function (req, res) {
-        var valueProvided = req.body.recipient;
-        if ((valueProvided == "0x0000000000000000000000000000000000000000") || (valueProvided == "0x1111111111111111111111111111111111111111")) {
+        //var valueProvided = req.body.recipient;
+        if ((req.body.recipient == "0x0000000000000000000000000000000000000000") || (req.body.recipient == "0x1111111111111111111111111111111111111111")) {
             throw new Error(`Invalid recipient address`);
         }
-        musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
-            .then(function (tx) {
-            if (tx) {
-                console.log(`Payment submitted! tx : ${tx}`);
-                res.redirect("/profile?sendError=false");
-            }
-            else
-                throw new Error(`Failed to send payment, no tx id was returned: from: ${req.user.profileAddress} to ${req.body.recipient}, amount: ${req.body.amount}`);
-        })
-            .catch(function (err) {
-            console.log(err);
-            res.redirect("/profile?sendError=true");
-        });
+        else {
+            musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
+                .then(function (tx) {
+                if (tx) {
+                    console.log(`Payment submitted! tx : ${tx}`);
+                    res.redirect("/profile?sendError=false");
+                }
+                else
+                    throw new Error(`Failed to send payment, no tx id was returned: from: ${req.user.profileAddress} to ${req.body.recipient}, amount: ${req.body.amount}`);
+            })
+                .catch(function (err) {
+                console.log(err);
+                res.redirect("/profile?sendError=true");
+            });
+        }
     });
     app.post('/profile/save', isLoggedIn, function (req, res) {
         const form = new Formidable.IncomingForm();
