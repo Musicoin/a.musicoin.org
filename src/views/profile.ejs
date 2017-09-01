@@ -334,22 +334,22 @@
                     <div class="text-center"><%= user.profileAddress %></div>
                     <br>
                     <p class="subtle-text">
-                        Send musicoins to a friend or transfer to another wallet for safe keeping.
+                        Send musicoins to a friend or transfer to another wallet (desktop/geth client) for safe keeping.
                     </p>
                     <form action="/send" method="post">
                         <table cellpadding="3">
                             <tr>
                                 <td colspan="2">
-                                    <div class="text-warning text-center mb20" style="font-size: 25px !important;">Warning! Exchanges may not recognize
+                                    <div class="text-warning text-center mb20" style="font-size: 25px !important;">Warning! Exchanges will not recognize
                                         coins sent directly from your profile.
-                                        (<a href="/faq/#ExchangeDeposit">why?</a>)
+                                        (<a href="/faq/#ExchangeDeposit">Here's why</a>)
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Recipient</td>
-                                <td width="99%"><input name=recipient type="text" class="form-control"
-                                                       placeholder="address"></td>
+                                <td width="99%"><input id="recip1" name=recipient type="text" class="form-control"
+                                                       placeholder="address" ></td>
                             </tr>
                             <tr>
                                 <td>Amount</td>
@@ -374,10 +374,10 @@
                 </div>
                 <div class="flex-row wallet-action-bar">
                     <div onclick='$(".wallet-actions").toggle()'
-                         class="wallet-action-toggle subtle-text wallet-actions">show options
+                         class="wallet-action-toggle subtle-text wallet-actions">Show options
                     </div>
                     <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions"
-                         style="display: none">hide options
+                         style="display: none">Hide options
                     </div>
                     <a class="subtle-text" href="/tx/history/<%= user.profileAddress %>"><i title="transaction history"
                                                                                             class="fa fa-list-ul"
@@ -548,6 +548,19 @@
 <script>
   (function ($) {
 
+    $('#recip1').click(function(){
+        var val1 = $('#recip1').val();
+        incorrectAddresses = [
+            "0x0000000000000000000000000000000000000000",
+            "0x1111111111111111111111111111111111111111"
+        ];
+        if (incorrectAddresses.indexOf(val1) > 0) {
+            new Message("You can not send coins to this address. Please  check your address" , "error", 3000);
+            return false;
+        }
+    });
+
+    })
     // prevent dynamically created input elements from submitting the form
     $('.contributors').on('keydown', '.no-submit', function (e) {
       if (e.keyCode == 13) {
