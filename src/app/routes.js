@@ -1721,7 +1721,7 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             });
         }
         else {
-            const code = crypto.randomBytes(16).toString('hex');
+            const code = "MUSIC" + crypto.randomBytes(11).toString('hex');
             EmailConfirmation.create({ email: req.body.email, code: code })
                 .then(() => {
                 return mailSender.sendEmailConfirmationCode(req.body.email, code)
@@ -1776,7 +1776,7 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             if (!user)
                 return doRender(req, res, "password-forgot.ejs", { message: "User not found: " + req.body.email });
             user.local.resetExpiryTime = Date.now() + config.auth.passwordResetLinkTimeout;
-            user.local.resetCode = crypto.randomBytes(16).toString('hex');
+            user.local.resetCode = "MUSIC" + crypto.randomBytes(11).toString('hex');
             return user.save()
                 .then(user => {
                 if (!user) {
@@ -2396,7 +2396,7 @@ function hasProfile(req, res, next) {
 function checkInviteCode(req, res, next) {
     const user = req.user;
     if (user && !user.reusableInviteCode) {
-        user.reusableInviteCode = crypto.randomBytes(16).toString('hex');
+        user.reusableInviteCode = req.user.draftProfile.ArtistName.toString().split(" ")[0] + crypto.randomBytes(8).toString('hex');
         return user.save()
             .then(() => {
             console.log(`Updated user invite link: ${user.reusableInviteCode}`);
