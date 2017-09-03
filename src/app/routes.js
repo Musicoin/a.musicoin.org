@@ -2396,7 +2396,7 @@ function hasProfile(req, res, next) {
 function checkInviteCode(req, res, next) {
     const user = req.user;
     if (user && !user.reusableInviteCode) {
-        user.reusableInviteCode = req.user.draftProfile.ArtistName.toString().split(" ")[0] + crypto.randomBytes(8).toString('hex');
+        user.reusableInviteCode = "MUSIC" + crypto.randomBytes(12).toString('hex');
         return user.save()
             .then(() => {
             console.log(`Updated user invite link: ${user.reusableInviteCode}`);
