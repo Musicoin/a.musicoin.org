@@ -63,7 +63,7 @@
 
         h3.section-title {
             /*font-family: monospace;*/
-            text-transform: lowercase;
+            text-transform: none;
             text-align: center;
             margin-top: 10px;
         }
@@ -183,12 +183,14 @@
                     <div class="form-group">
                       <label>Social Accounts</label>
                       <br>
-                      
+
                       <table class="social-group">
-                        <tr>
-                          <td><span class="fa fa-facebook"></span></td>
-                          <td width="99%">
                             <% if (user.facebook.token) { %>
+                            <tr>
+                            <td>
+                                <span class="fa fa-facebook"></span>
+                            </td>
+                            <td width="99%">
                               <div class="flex-row m10" style="justify-content: space-between;">
                                 <a class="mr10" target=_blank href="<%= user.facebook.url %>">
                                   <%= user.facebook.name %>
@@ -230,11 +232,11 @@
                                         </label>
                                       </div>
                                     </div>
-                                <% } else { %>
-                                  <p class="subtle-text">Link your Twitter and Facebook Accounts to help get verified asa musician.</p>
-                                <% } %>
-                          </td>
-                        </tr>
+                                </td>
+                              </tr>
+                        <% } else { %>
+                          <p class="subtle-text">Link your Twitter and Facebook Accounts to help get verified as a musician.</p>
+                        <% } %>
                       </table>
 
                     </div>
