@@ -183,46 +183,60 @@
                     <div class="form-group">
                       <label>Social Accounts</label>
                       <br>
-                      <% if !(user.facebook.token)) { %>
-                        <% if !(user.twitter.token)) { %>
-                          <p class="subtle-text">Link your Twitter and Facebook Accounts to help get verified asa musician.</p>
-                        <% } } else { %>
-                          <table class="social-group">
-                            <tr>
-                              <td><span class="fa fa-facebook"></span></td>
-                              <td width="99%">
-                                <% if (user.facebook.token) {%>
+                      
+                      <table class="social-group">
+                        <tr>
+                          <td><span class="fa fa-facebook"></span></td>
+                          <td width="99%">
+                            <% if (user.facebook.token) { %>
+                              <div class="flex-row m10" style="justify-content: space-between;">
+                                <a class="mr10" target=_blank href="<%= user.facebook.url %>">
+                                  <%= user.facebook.name %>
+                                </a>
+                                <div class="flex-row">
+                                  <label class="switch">
+                                            <input id=facebookUrlIsPublic
+                                                   type="checkbox" <%= user.facebook && user.facebook.urlIsPublic ? "checked" : "" %>>
+                                            <div class="slider round"></div>
+                                        </label>
+                                </div>
+                              </div>
+
+                                <% if (user.twitter.token) { %>
                                   <div class="flex-row m10" style="justify-content: space-between;">
-                                    <a class="mr10" target=_blank href="<%= user.facebook.url %>">
-                                      <%= user.facebook.name %>
+                                    <a class="mr10" target=_blank href="<%= user.twitter.url %>">
+                                      <%= user.twitter.username %>
                                     </a>
                                     <div class="flex-row">
                                       <label class="switch">
-                                                <input id=facebookUrlIsPublic
-                                                       type="checkbox" <%= user.facebook && user.facebook.urlIsPublic ? "checked" : "" %>>
-                                                <div class="slider round"></div>
-                                            </label>
+                                            <input id=twitterUrlIsPublic
+                                                   type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
+                                            <div class="slider round"></div>
+                                        </label>
                                     </div>
                                   </div>
                                   <% } %>
-                                    <% if (user.twitter.token) { %>
-                                      <div class="flex-row m10" style="justify-content: space-between;">
-                                        <a class="mr10" target=_blank href="<%= user.twitter.url %>">
-                                          <%= user.twitter.username %>
-                                        </a>
-                                        <div class="flex-row">
-                                          <label class="switch">
-                                                <input id=twitterUrlIsPublic
-                                                       type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
-                                                <div class="slider round"></div>
-                                            </label>
-                                        </div>
+
+                                <% } else if (user.twitter.token) { %>
+                                    <div class="flex-row m10" style="justify-content: space-between;">
+                                      <a class="mr10" target=_blank href="<%= user.twitter.url %>">
+                                        <%= user.twitter.username %>
+                                      </a>
+                                      <div class="flex-row">
+                                        <label class="switch">
+                                            <input id=twitterUrlIsPublic
+                                                   type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
+                                            <div class="slider round"></div>
+                                        </label>
                                       </div>
-                                      <% } %>
-                              </td>
-                            </tr>
-                          </table>
-                          <% } %>
+                                    </div>
+                                <% } else { %>
+                                  <p class="subtle-text">Link your Twitter and Facebook Accounts to help get verified asa musician.</p>
+                                <% } %>
+                          </td>
+                        </tr>
+                      </table>
+
                     </div>
                     <div class="form-group">
                         <label>other social</label>
