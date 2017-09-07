@@ -1971,7 +1971,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
     const email = req.body.email || "";
-    if (re.test(email.trim().length) == false)  /// a@b.c is the smallest possible email address (5 chars)
+    if (re.test(email.trim()) == false)  /// a@b.c is the smallest possible email address (5 chars)
       return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
 
     User.findOne({ "local.email": req.body.email }).exec()
