@@ -16,7 +16,7 @@ body {
 }
 
 label {
-    text-transform: lowercase;
+    text-transform: none;
 }
 
 input.form-control {
@@ -55,7 +55,7 @@ textarea.form-control {
     color: #aaa;
     font-weight: lighter;
     font-family: monospace;
-    text-transform: lowercase;
+    text-transform: none;
     text-align: center;
 }
 
@@ -67,7 +67,7 @@ textarea.form-control {
     top: -10px;
     position: relative;
     color: rgba(255,255,255,0.25);
-    text-transform: lowercase;
+    text-transform: none;
 }
 
 .flex-column {
