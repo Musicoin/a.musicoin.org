@@ -15,7 +15,8 @@
         var periodText = release.stats ? periodTexts[release.stats.period] : "";
 
     %>
-    <% if (releases[i].markedAsAbuse) { %>
+    <% if eval(releases[i].markedAsAbuse) { %>
+    <% } else { %>
     <div class="chat-message chat-message-normal event">
         <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=release.address%>'>
             <i class="fa fa-play-circle" aria-hidden="true"></i>
