@@ -1,4 +1,3 @@
-
 <div
         <% if (typeof elementId != "undefined" && elementId) { %>
         id = "<%=elementId%>"
@@ -15,29 +14,32 @@
         var release = releases[i];
         var periodText = release.stats ? periodTexts[release.stats.period] : "";
 
+        if (releases[i].artist.verified) { %>
+
     %>
-    <div class="chat-message chat-message-normal event">
-        <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=release.address%>'>
-            <i class="fa fa-play-circle" aria-hidden="true"></i>
-        </div>
-        <div class="top-center-text">
-            <a href="/track/<%=release.address%>"><div style="background-image: url('<%=release.image%>');" class="release-image"></div></a>
-        </div>
-        <div class="chat-message-area">
-            <div class="chat-message-sender">
-                <a href="/track/<%=release.address%>"><%=release.title%></a>
-            </div>
-            by <a href="/artist/<%=release.artistProfileAddress%>"><%=release.artistName%></a>
-            <% if (typeof release.stats != "undefined" && typeof release.stats.plays != "undefined") { %>
-            <div class="subtle-text"><%=release.stats.plays + " plays " + periodText%></div>
-            <% } else if (typeof release.stats != "undefined" && typeof release.stats.tips != "undefined") { %>
-            <div class="subtle-text"><%=release.stats.tips + " tips " + periodText%></div>
-            <% } else { %>
-            <div class="subtle-text">Released <%=release.timeSince%></div>
-            <% } %>
-            <div class="subtle-text text-small"><%=release.genres ? release.genres.join(", ") : ""%></div>
-            <div class="chat-message-body chat-message-preview"><%=release.description%></div>
-        </div>
-    </div>
+          <div class="chat-message chat-message-normal event">
+              <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=release.address%>'>
+                  <i class="fa fa-play-circle" aria-hidden="true"></i>
+              </div>
+              <div class="top-center-text">
+                  <a href="/track/<%=release.address%>"><div style="background-image: url('<%=release.image%>');" class="release-image"></div></a>
+              </div>
+              <div class="chat-message-area">
+                  <div class="chat-message-sender">
+                      <a href="/track/<%=release.address%>"><%=release.title%></a>
+                  </div>
+                  by <a href="/artist/<%=release.artistProfileAddress%>"><%=release.artistName%></a>
+                  <% if (typeof release.stats != "undefined" && typeof release.stats.plays != "undefined") { %>
+                  <div class="subtle-text"><%=release.stats.plays + " plays " + periodText%></div>
+                  <% } else if (typeof release.stats != "undefined" && typeof release.stats.tips != "undefined") { %>
+                  <div class="subtle-text"><%=release.stats.tips + " tips " + periodText%></div>
+                  <% } else { %>
+                  <div class="subtle-text">Released <%=release.timeSince%></div>
+                  <% } %>
+                  <div class="subtle-text text-small"><%=release.genres ? release.genres.join(", ") : ""%></div>
+                  <div class="chat-message-body chat-message-preview"><%=release.description%></div>
+              </div>
+          </div>
+        <% } %>
     <%}%>
 </div>
