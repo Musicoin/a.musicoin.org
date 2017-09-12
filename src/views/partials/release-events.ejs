@@ -40,6 +40,8 @@
     </div>
     <%}%>
     <div>
-        2. No .artist <%=releases[0].verified%>
+        <% if (releases[0].verified) { %>
+            Works
+        <% } %>
     </div>
 </div>
