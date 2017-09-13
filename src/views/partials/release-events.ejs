@@ -10,6 +10,17 @@
         month: "last month"
     }
     var iconBackground = releases[0].image;
+
+    for (var i =1 ; i<releases.length; i++){
+      x = releases[i].description;
+      for (var j=i; j<releases.length; j++){
+        if (x == releases[j].description){
+          releases.splice(j, 1);
+          j=j-1;
+        }
+      }
+    }
+
     for (var i=0; i < releases.length; i++) {
         var release = releases[i];
         var periodText = release.stats ? periodTexts[release.stats.period] : "";
