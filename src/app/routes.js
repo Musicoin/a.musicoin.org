@@ -659,10 +659,25 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             return jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
         })
             .catch(err => {
-            console.log("failed to mark track as abuse: " + err);
+            console.log("Failed to mark track as abuse: " + err);
             res.json({ success: false, reason: "error" });
         });
     });
+    /*
+      app.post('/admin/user/abuse', (req, res) => {
+        const markAsAbuse = req.body.abuse == "true";
+        const msg = markAsAbuse ? config.ui.admin.markAsAbuse : config.ui.admin.unmarkAsAbuse;
+        jsonAPI.markAsAbuse(req.body.licenseAddress, markAsAbuse)
+          .then(result => res.json(result))
+          .then(() => {
+            return jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
+          })
+          .catch(err => {
+            console.log("Failed to mark track as abuse: " + err);
+            res.json({ success: false, reason: "error" });
+          });
+      });
+    */
     app.get('/new-user', (req, res) => {
         if (req.user.draftProfile && req.user.draftProfile.artistName) {
             return res.redirect("/profile");
@@ -1767,9 +1782,9 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         doRender(req, res, "password-forgot.ejs", {});
     });
     app.post('/login/forgot', (req, res) => {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
         const email = req.body.email || "";
-        if (re.test(email.trim().length) == false)
+        if (re.test(email.trim()) == false)
             return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
         User.findOne({ "local.email": req.body.email }).exec()
             .then(user => {

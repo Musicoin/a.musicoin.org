@@ -740,11 +740,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
       })
       .catch(err => {
-        console.log("failed to mark track as abuse: " + err);
+        console.log("Failed to mark track as abuse: " + err);
         res.json({ success: false, reason: "error" });
       });
   });
 
+/*
+  app.post('/admin/user/abuse', (req, res) => {
+    const markAsAbuse = req.body.abuse == "true";
+    const msg = markAsAbuse ? config.ui.admin.markAsAbuse : config.ui.admin.unmarkAsAbuse;
+    jsonAPI.markAsAbuse(req.body.licenseAddress, markAsAbuse)
+      .then(result => res.json(result))
+      .then(() => {
+        return jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
+      })
+      .catch(err => {
+        console.log("Failed to mark track as abuse: " + err);
+        res.json({ success: false, reason: "error" });
+      });
+  });
+*/
   app.get('/new-user', (req, res) => {
     if (req.user.draftProfile && req.user.draftProfile.artistName) {
       return res.redirect("/profile");
