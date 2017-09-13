@@ -29,6 +29,9 @@
             #qrcode1{
                 visibility: hidden !important;
             }
+            #abuse1{
+                visibility: hidden !important;
+            }
             #dp1 {
               visibility: hidden !important;
             }
@@ -41,6 +44,12 @@
                 border: none;
                 color: white;
             }
+            #abuse1{
+                visibility: visible !important;
+                background: none;
+                border: none;
+                color: white;
+            }
             #dp1 {
               visibility: visible !important;
             }
@@ -48,6 +57,7 @@
 
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
+    <script src="http://underscorejs.org/underscore-min.js"></script>
 </head>
 <body>
 <%- include partials/header.ejs %>
@@ -149,6 +159,14 @@ function formatNumber(value) {
             </div>
             <span class="text-medium-small subtle-text" style="position: relative; top: -11px;"><span data-behavior="total-earned-usd"><%=artistStats.formattedTotalUSD%></span> earned</span>
         </div>
+        <% if (typeof isAdmin != "undefined" && isAdmin) { %>
+            <div style="position: absolute; top: 37%; background: none; width: 160px; right: -70px;">
+                <form action="/admin/user/abuse" method="post">
+                    <input type="text" name="profileAddress" value="<%=artist.profileAddress%>" style="visibility: hidden">
+                    <button type="submit" id="abuse1" class="cool"><i class="fa fa-3x fa-exclamation-triangle" aria-hidden="true"></i></button>
+                </form>
+            </div>
+        <% } %>
     </div>
 </div>
 
@@ -167,7 +185,7 @@ function formatNumber(value) {
              de-nocontentmessage="No messages"
              de-user="<%=artist.profileAddress%>"
              de-url="/elements/user-messages">
-            <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
+            <%- include('partials/track-messages.ejs', {messages: _.uniq(messages, function(p){ return p.description; }), showTrack: true, noContentMessage: "No messages"}) %>
         </div>
     </div>
     <% } else { %>
@@ -184,7 +202,7 @@ function formatNumber(value) {
                  de-nocontentmessage="No messages"
                  de-user="<%=artist.profileAddress%>"
                  de-url="/elements/user-messages">
-                <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
+                <%- include('partials/track-messages.ejs', {messages: _.uniq(messages, function(p){ return p.description; }), showTrack: true, noContentMessage: "No messages"}) %>
             </div>
         </div>
     <% } %>
@@ -206,7 +224,7 @@ function formatNumber(value) {
             </div>
 
             <!-- I don't see a reason for this to be a dynamic element -->
-            <%- include('partials/release-events.ejs', {releases: releases, elementId: "artistReleases"}) %>
+            <%- include('partials/release-events.ejs', {releases: _.uniq(releases, function(p){ return p.description; }), elementId: "artistReleases"}) %>
           <% } else { %>
             <div class="event-header text-center">
                 Releases (Unverified Musician)
@@ -222,7 +240,7 @@ function formatNumber(value) {
             </div>
 
             <!-- I don't see a reason for this to be a dynamic element -->
-            <%- include('partials/release-events.ejs', {releases: releases.slice(0,1), elementId: "artistReleases"}) %>
+            <%- include('partials/release-events.ejs', {releases: _.uniq(releases.slice(0,1), function(p){ return p.description; }), elementId: "artistReleases"}) %>
           <% } %>
         <% } %>
     </div>
