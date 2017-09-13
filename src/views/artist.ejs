@@ -153,8 +153,9 @@ function formatNumber(value) {
 </div>
 
 <div class="two-columns white-well">
+    <% if (artist.verified) { %>
     <div class="pad10">
-        <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i> posts</div>
+        <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i> Posts </div>
         <div class="dynamic-element message-scroller"
              data-behavior="chat-message-area"
              style="min-height: 180px"
@@ -169,24 +170,60 @@ function formatNumber(value) {
             <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
         </div>
     </div>
+    <% } else { %>
+        <div class="pad10">
+            <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i> Posts (Unverified musician) </div>
+            <div class="dynamic-element message-scroller"
+                 data-behavior="chat-message-area"
+                 style="min-height: 180px"
+                 id="de-user-messages"
+                 de-refresh-period="10"
+                 de-refresh-offset="10"
+                 de-showtrack="true"
+                 de-limit=20
+                 de-nocontentmessage="No messages"
+                 de-user="<%=artist.profileAddress%>"
+                 de-url="/elements/user-messages">
+                <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
+            </div>
+        </div>
+    <% } %>
 
     <div class="pad10">
         <% if (releases.length > 0) { %>
-        <div class="event-header text-center">
-            releases
-            <% if (typeof showPlayAll != "undefined" && showPlayAll) { %>
-            <div>
-                <div class="btn btn-success party-button play-list pad5 play-all-button"
-                     target="artistReleases"
-                     title="Play all tracks by this artist">
-                    <i class="fa fa-play text-large mr5 text-default" aria-hidden="true"></i> PLAY ALL
+          <% if (artist.verified) { %>
+            <div class="event-header text-center">
+                Releases
+                <% if (typeof showPlayAll != "undefined" && showPlayAll) { %>
+                <div>
+                    <div class="btn btn-success party-button play-list pad5 play-all-button"
+                         target="artistReleases"
+                         title="Play all tracks by this artist">
+                        <i class="fa fa-play text-large mr5 text-default" aria-hidden="true"></i> PLAY ALL
+                    </div>
                 </div>
+                <% } %>
             </div>
-            <% } %>
-        </div>
 
-        <!-- I don't see a reason for this to be a dynamic element -->
-        <%- include('partials/release-events.ejs', {releases: releases, elementId: "artistReleases"}) %>
+            <!-- I don't see a reason for this to be a dynamic element -->
+            <%- include('partials/release-events.ejs', {releases: releases, elementId: "artistReleases"}) %>
+          <% } else { %>
+            <div class="event-header text-center">
+                Releases (Unverified Musician)
+                <% if (typeof showPlayAll != "undefined" && showPlayAll) { %>
+                <div>
+                    <div class="btn btn-success party-button play-list pad5 play-all-button"
+                         target="artistReleases"
+                         title="Play all tracks by this artist">
+                        <i class="fa fa-play text-large mr5 text-default" aria-hidden="true"></i> PLAY ALL
+                    </div>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- I don't see a reason for this to be a dynamic element -->
+            <%- include('partials/release-events.ejs', {releases: releases.slice(0,1), elementId: "artistReleases"}) %>
+          <% } %>
         <% } %>
     </div>
 </div>
