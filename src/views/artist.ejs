@@ -57,7 +57,6 @@
 
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
-    <script src="http://underscorejs.org/underscore-min.js"></script>
 </head>
 <body>
 <%- include partials/header.ejs %>
@@ -185,7 +184,7 @@ function formatNumber(value) {
              de-nocontentmessage="No messages"
              de-user="<%=artist.profileAddress%>"
              de-url="/elements/user-messages">
-            <%- include('partials/track-messages.ejs', {messages: _.uniq(messages, function(p){ return p.description; }), showTrack: true, noContentMessage: "No messages"}) %>
+            <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
         </div>
     </div>
     <% } else { %>
@@ -202,7 +201,7 @@ function formatNumber(value) {
                  de-nocontentmessage="No messages"
                  de-user="<%=artist.profileAddress%>"
                  de-url="/elements/user-messages">
-                <%- include('partials/track-messages.ejs', {messages: _.uniq(messages, function(p){ return p.description; }), showTrack: true, noContentMessage: "No messages"}) %>
+                <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
             </div>
         </div>
     <% } %>
@@ -224,7 +223,7 @@ function formatNumber(value) {
             </div>
 
             <!-- I don't see a reason for this to be a dynamic element -->
-            <%- include('partials/release-events.ejs', {releases: _.uniq(releases, function(p){ return p.description; }), elementId: "artistReleases"}) %>
+            <%- include('partials/release-events.ejs', {releases: releases, elementId: "artistReleases"}) %>
           <% } else { %>
             <div class="event-header text-center">
                 Releases (Unverified Musician)
@@ -240,7 +239,7 @@ function formatNumber(value) {
             </div>
 
             <!-- I don't see a reason for this to be a dynamic element -->
-            <%- include('partials/release-events.ejs', {releases: _.uniq(releases.slice(0,1), function(p){ return p.description; }), elementId: "artistReleases"}) %>
+            <%- include('partials/release-events.ejs', {releases: releases.slice(0,1), elementId: "artistReleases"}) %>
           <% } %>
         <% } %>
     </div>
