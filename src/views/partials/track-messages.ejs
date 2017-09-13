@@ -9,6 +9,17 @@
         <%=_noContentMessage%>
     </div>
     <% } %>
+    <%
+       for (var i=1; i<messages.length;  i++) {
+         x = messages[i].body;
+         for (var j=i; j<messages.length; j++) {
+           if (x == messages[j].body){
+             messages.splice(j,1);
+             j = j-1;
+           }
+         }
+       }
+    %>
     <% for (var i=0; i < messages.length; i++) {
         var message = messages[i];
         var icon = message.tips > 0
