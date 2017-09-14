@@ -63,25 +63,23 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-6 left-side">
-          <header>
+          <header class="cymw">
             <h3 id="logo">Create your<br>Music Wallet</h3>
-            <span style="color: yellow; display: inline;">Musi</span><span style="color: cyan; display: inline;">coin</span>
-
           </header>
         </div>
         <div class="col-md-6 right-side">
-          <img src="/images/nclogo.svg" height="50" width="125px" style="position: absolute; top: 10px; right: 10px;"></img>
+          <img id="img1" src="/images/nclogo.svg" height="50" width="125px" style="position: absolute; top: 10px; right: 10px;"></img>
           <!--<h3 id="heading"><a href="https://musicoin.org" class="href1">musicoin</a> </h3>-->
           <form name="signupForm" class="signup" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
 
           <div style="position: absolute; left: -50vw; top: 45vh;">
-            <div class="crazy" style="position: relative; left: 225px; top: 25px; color: yellow; font-size: 20px; background: black; border: 1px black solid; border-radius: 50px; width: 200px; opacity: 0.8; text-align: center; cursor: default">I am A</div>
+            <div class="crazy" style="position: relative; left: 260px; top: 25px; color: white; opacity: 1 !important; font-size: 20px; background: #ff5500; border: 1px black solid; border-radius: 50px; width: 120px; opacity: 0.8; text-align: center; cursor: default">I am A</div>
             <div style="position: absolute; top: 70px; left: 200px;">
               <div class="cta">
-                <button class="btn btn-primary pull-left" onclick="$('#attr1').value='musician'" style= "opacity: 0.9;">Musician</button>
+                <button class="mc1 btn btn-primary pull-left" onclick="$('#attr1').value='musician'" style= "opacity: 1;">Musician</button>
               </div>
               <div class="cta">
-              <button class="btn btn-primary pull-left" style="opacity: 0.9; position: relative; left: 130px;" onclick="$('#attr1').value='listener'">Listener</button>
+              <button class="lt1 btn btn-primary pull-left" style="opacity: 1; position: relative; left: 130px;" onclick="$('#attr1').value='listener'">Listener</button>
               </div>
             </div>
           </div>
@@ -114,14 +112,14 @@
             <span class="input input--hoshi">
                       <input class="input__field input__field--hoshi" type="text" id="screenname" name="confirmation" required />
                       <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
-                        <span class="input__label-content input__label-content--hoshi">Request Code</span>
+                        <span class="input__label-content input__label-content--hoshi">Confirmation Code</span>
             </label>
             </span>
             <span id="confirm" class="crazy1">Get a code</span>
             <div id="signUpCaptcha" class="mt20" style=""></div>
             <div class="cta">
               <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Sign-Up Now</button>
-              <span><a class="href1" style="cursor: pointer" onclick="$('.signin').removeClass('hidden'); $('#signInCaptcha').removeClass('hidden'); $('.signup').hide()">Sign In</a></span>
+              <span id="sgin"><a class="href1" style="cursor: pointer" onclick="$('.signin').removeClass('hidden'); $('#signInCaptcha').removeClass('hidden'); $('.signup').hide()">Sign In</a></span>
             </div>
             <div class="crazy" style="position: absolute; top: 95vh; right: 10vw; cursor: none;">Social</div>
             <ul class="social">
