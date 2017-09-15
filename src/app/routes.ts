@@ -2320,6 +2320,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   function getPlaybackEligibility(req) {
     const user = req.isAuthenticated() ? req.user : req.anonymousUser;
 
+    if ((!req.anonymousUser) && (!req.user)) {
+      return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request.  (code: 1)" });
+    }
+
     if (user.accountLocked) {
       console.log("Blocking playback for locked user.");
       return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request (code: 2)" });
