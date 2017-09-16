@@ -744,22 +744,56 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.json({ success: false, reason: "error" });
       });
   });
-
-/*
   app.post('/admin/user/abuse', (req, res) => {
-    const markAsAbuse = req.body.abuse == "true";
-    const msg = markAsAbuse ? config.ui.admin.markAsAbuse : config.ui.admin.unmarkAsAbuse;
-    jsonAPI.markAsAbuse(req.body.licenseAddress, markAsAbuse)
-      .then(result => res.json(result))
-      .then(() => {
-        return jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
+
+    // First blacklist the user (no invite bonus)
+    const id = FormUtils.defaultString(req.body.id, null);
+    if (!id) return res.json({ success: false, reason: "No id" });
+    if (typeof req.body.blacklist == "undefined") return res.json({ success: false, reason: "specify true/false for 'blacklist' parameter" });
+    User.findById(id).exec()
+      .then(user => { // Blacklist user
+        console.log(`User has been flagged as a gamer of the system.`)
+        user.invite.noReward = req.body.blacklist == "true";
+        return user.save();
+      })// Unverify user
+      .then(user => {
+        console.log(`User verification status changed by ${req.user.draftProfile.artistName}, artist=${user.draftProfile.artistName}, newStatus=${req.body.verified == "true"}`);
+        user.verified = req.body.verified == "false";
+      })// Next lets lock his account
+      .then(user => {
+        user.accountLocked = req.body.lock == "true";
       })
-      .catch(err => {
-        console.log("Failed to mark track as abuse: " + err);
-        res.json({ success: false, reason: "error" });
+      .then(user => {
+        user.freePlaysRemaining = 0;
+      })
+      .then(user => {
+        user.followerCount = 0;
+      })
+      .then(user => {
+        user.directTipCount = 0;
+      })
+      .then(user => {
+        user.hideProfile = true;
+        return user.save();
       });
+
+      const artistProfileAddress = User.findById(id).exec().profileAddress;
+      // const url = '/admin/releases?search=' + (req.query.search ? req.query.search : '');
+      jsonAPI.getAllReleases('', 0, 100000) // we should change this once we scale.
+        .then(result => {
+          const releases = result.releases;
+          for (var i=0; i<releases.length ; i++) {
+            if (artistProfileAddress == releases[i].artistAddress) {
+              const markAsAbuse = releases[i].abuse == "true";
+              jsonAPI.markAsAbuse(releases[i].licenseAddress, markAsAbuse)
+                .then(result => res.json(result))
+                .catch(err => {
+                  console.log("Failed to mark track " + releases[i] +" as abuse: " + err);
+                });
+            }
+          }
+        });
   });
-*/
   app.get('/new-user', (req, res) => {
     if (req.user.draftProfile && req.user.draftProfile.artistName) {
       return res.redirect("/profile");

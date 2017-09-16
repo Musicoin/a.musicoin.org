@@ -161,7 +161,7 @@ function formatNumber(value) {
         <% if (typeof isAdmin != "undefined" && isAdmin) { %>
             <div style="position: absolute; top: 37%; background: none; width: 160px; right: -70px;">
                 <form action="/admin/user/abuse" method="post">
-                    <input type="text" name="profileAddress" value="<%=artist.profileAddress%>" style="visibility: hidden">
+                    <input type="text" name="profileAddress" value="<%=artist._id%>" style="visibility: hidden">
                     <button type="submit" id="abuse1" class="cool"><i class="fa fa-3x fa-exclamation-triangle" aria-hidden="true"></i></button>
                 </form>
             </div>
