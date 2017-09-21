@@ -181,7 +181,7 @@
                                value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
                     </div>
                     <div class="form-group">
-                      <label>Social Accounts</label>
+                      <label>Social Accounts For Verification</label>
                       <br>
 
                       <table class="social-group">
@@ -195,13 +195,14 @@
                                 <a class="mr10" target=_blank href="<%= user.facebook.url %>">
                                   <%= user.facebook.name %>
                                 </a>
+                                <!---
                                 <div class="flex-row">
                                   <label class="switch">
                                             <input id=facebookUrlIsPublic
                                                    type="checkbox" <%= user.facebook && user.facebook.urlIsPublic ? "checked" : "" %>>
                                             <div class="slider round"></div>
                                         </label>
-                                </div>
+                                </div> -->
                               </div>
 
                                 <% if (user.twitter.token) { %>
@@ -209,13 +210,14 @@
                                     <a class="mr10" target=_blank href="<%= user.twitter.url %>">
                                       <%= user.twitter.username %>
                                     </a>
+                                    <!---
                                     <div class="flex-row">
                                       <label class="switch">
                                             <input id=twitterUrlIsPublic
                                                    type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
                                             <div class="slider round"></div>
                                         </label>
-                                    </div>
+                                    </div>-->
                                   </div>
                                   <% } %>
 
@@ -224,13 +226,14 @@
                                       <a class="mr10" target=_blank href="<%= user.twitter.url %>">
                                         <%= user.twitter.username %>
                                       </a>
+                                      <!--
                                       <div class="flex-row">
                                         <label class="switch">
                                             <input id=twitterUrlIsPublic
                                                    type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
                                             <div class="slider round"></div>
                                         </label>
-                                      </div>
+                                      </div>-->
                                     </div>
                                 </td>
                               </tr>
