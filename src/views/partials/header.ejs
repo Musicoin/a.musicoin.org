@@ -171,9 +171,9 @@
     <div class="flex-row">
         <% if (isAuthenticated) { %>
             <% if (user.profileAddress) { %>
-              <% if ((user.verified) || (user.mostRecentReleaseDate == null)) %>
+              <% if ((user.verified) || (user.mostRecentReleaseDate == null)) { %>
                 <a href="/release-manager" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a>
-              <% %>
+              <% } %>
             <% } %>
             <a href="/main" class="header-menu-item" title="discover"><i class="fa fa-compass" aria-hidden="true"></i></a>
             <!--
