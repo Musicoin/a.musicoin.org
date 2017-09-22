@@ -36,6 +36,11 @@
         <div class="col1">
             <div class="flex-row event-header mr10" style="justify-content: space-between; margin-right: 40px">
                 <div style="width: 100px" class="big-screen-only"></div>
+                <% if ((user.verified != true) && (user.mostRecentReleaseDate != null)) { %>
+                    <div>
+                        You have uploaded one track as per quota. In order to upload more tracks, please get verified as a musician.
+                    </div>
+                <% } %>
                 <div>
                     <i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i>My&nbsp;Feed
                 </div>

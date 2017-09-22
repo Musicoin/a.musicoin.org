@@ -138,10 +138,12 @@
 
                     <div class="flex-row" style="justify-content: space-between; width: 100%">
                         <div style="width: 44px"></div>
+                        <% if ((artist.verified) || (isAuthenticated && user.verified)) { %>
                         <div class="audio-track clickable text-large btn mt5"
                              licenseAddress='<%=license.address%>'>
                              <i id="play-button" aria-hidden="true" style="opacity: 0.8; font-size: 150px; position: absolute; top: 140px; left: 120px; color: white; display: inline-block; background: black; padding: 0px 10px; border-radius: 200px;" class="fa fa-play-circle-o"></i>
                         </div>
+                        <% } %>
                         <div class="btn queue-audio-track"
                              licenseAddress='<%=license.address%>'
                              title="Add to now-playing queue"
