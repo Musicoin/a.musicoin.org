@@ -57,6 +57,7 @@
         }
     </style>
 </head>
+<% if ((user.verified) || (user.mostRecentReleaseDate == null)) { %>
 <body>
 <%- include ../partials/header.ejs %>
 <style>
@@ -125,6 +126,11 @@
 </div>
 <%- include ../partials/connect-with-us.ejs %>
 </body>
+<% } else { %>
+  <body>
+    You ahve either not been veriifed as a musician or you have released your first track. Please get verified in order to access the content on this page.
+  </body>
+<% } %>
 <script>
 
     var attemptingRelease = false;
