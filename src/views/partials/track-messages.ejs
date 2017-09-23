@@ -11,10 +11,10 @@
     <% } %>
     <%
       for (var i=0; i<messages.length; i++) {
-        var messageSender = messages[i].sender;
+        var messageSender = messages[i].artist.name;
         var messageBody = messages[i].body;
         for (var j=0; j<messages.length; j++){
-          if ((messages[j].sender == messageSender) && (messages[i].body == messageBody)) {
+          if ((messages[j].artist.name == messageSender) && (messages[i].body == messageBody)) {
             messages.splice(j,1);
             j = j-1;
           }
@@ -24,7 +24,6 @@
       for (var i=0; i<messages.length ; i++){
 
           if (dups.includes(messages[i].body)) {
-              // check if the exact smae release is present earlier in the messages array
               messages.splice(i,1);
               i = i-1;
           }
