@@ -9,7 +9,17 @@
         <%=_noContentMessage%>
     </div>
     <% } %>
-    <% for (var i=0; i < messages.length; i++) {
+    <%
+      for (var i=0; i<messages.length; i++) {
+        var messageSender = messages[i].sender;
+        var messageBody = messages[i].body;
+        for (var j=0; j<messages.length; j++){
+          if ((messages[j].sender == messageSender) && (messages[i].body == messageBody)) {
+            messages.splice(j,1);
+          }
+        }
+      }
+     for (var i=0; i < messages.length; i++) {
         var message = messages[i];
         var icon = message.tips > 0
                 ? '<i class="fa fa-star message-tip" aria-hidden="true"></i>'
