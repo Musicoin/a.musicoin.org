@@ -274,6 +274,11 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             console.log('ERROR!!', error.message);
         });
     });
+    // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
+    // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
+    app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
+        res.render('index-frames.ejs', { mainFrameLocation: req.originalUrl.substr(4) });
+    });
     // =====================================
     // HOME PAGE
     // =====================================
