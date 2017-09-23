@@ -11,16 +11,15 @@
     <% } %>
     <%
       for (var i=0; i<messages.length; i++) {
-        var messageSender = messages[i].sender.draftProfile.artistName;
+        var messageSender = messages[i].sender;
         var messageBody = messages[i].body;
         for (var j=0; j<messages.length; j++){
-          if ((messages[j].sender.draftProfile.artistName == messageSender) && (messages[i].body == messageBody)) {
+          if ((messages[j].sender == messageSender) && (messages[i].body == messageBody)) {
             messages.splice(j,1);
             j = j-1;
           }
         }
       }
-
     var dups = [];
       for (var i=0; i<messages.length ; i++){
 
