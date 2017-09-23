@@ -119,13 +119,15 @@
                                     <% } %>
                                 </div>
                                 <% if (!isArtist) { %>
-                                <div class="follow-toggle-button btn btn-default btn-xs mr10"
+                                <div id ="follow1"
+                                    class="follow-toggle-button btn btn-default btn-xs mr10"
                                      user="<%=artist.id%>"
                                      licenseAddress="<%=license.address%>"
                                      text-following="Following"
                                      class-following="btn-success"
                                      text-not-following="Follow"
-                                     class-not-following="btn-default">
+                                     class-not-following="btn-default"
+                                     onclick = "$('#follow1').css('visibility', 'hidden')">
                                     Follow
                                 </div>
                                 <% } %>

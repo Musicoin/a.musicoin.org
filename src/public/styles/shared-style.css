@@ -12,7 +12,7 @@ body {
     color: #eee;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    font-family: 'Noto Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
 }
 
 label {
@@ -434,7 +434,7 @@ a.morelink {
 }
 
 .play-all-button {
-    font-family: 'Noto Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
     border-radius: 20px;
     padding-right: 10px;
     padding-left: 10px;
@@ -442,7 +442,7 @@ a.morelink {
 }
 
 .party-mode-button {
-    font-family: 'Noto Sans', sans-serif;
+    font-family: 'Raleway', sans-serif;
     border-radius: 20px;
     padding-right: 10px;
     padding-left: 10px;
