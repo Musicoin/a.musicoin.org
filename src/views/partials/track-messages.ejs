@@ -28,7 +28,7 @@
               messages.splice(i,1);
               i = i-1;
           }
-          if(messages[i].slice(0,14) == "[New Release]") {
+          if(messages[i].body.slice(0,14) == "[New Release]") {
               dups.unshift(messages[i].body);
           }
       }
