@@ -9,18 +9,6 @@
         <%=_noContentMessage%>
     </div>
     <% } %>
-    <%
-      for (var i=0; i<messages.length; i++) {
-        var messageSender = messages[i].artist.name;
-        var messageBody = messages[i].body;
-        for (var j=i+1; j<messages.length; j++){
-          if ((messages[j].artist.name == messageSender) && (messages[i].body == messageBody)) {
-            messages.splice(j,1);
-            j = j-1;
-          }
-        }
-      }
-    %>
     <% for (var i=0; i < messages.length; i++) {
         var message = messages[i];
         var icon = message.tips > 0
