@@ -87,10 +87,10 @@
         transform: translate(-50%, -50%);
         display: inline-block;
         height: 370px;
-        position: absolute;
+        position: relative;
         min-width: 400px;
-        left: 50%;
-        top: 50%;
+        left: 25%;
+        top: 25%;
       }
 
       .music-player-container:after {
@@ -273,7 +273,13 @@
 
       <div class="container">
         <h1>
-        <%=license.title%> by <b style="color: green"><a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a></b>
+        <%=license.title%> by
+        <% if (artist.verified) { %>
+        <b style="color: green">
+        <% } else { %>
+        <b style="color: red">
+        <% } %>
+        <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a></b>
 
         <% if (!isArtist) { %>
         <div id ="follow1"
@@ -303,6 +309,7 @@
               <div class="flex-column center-text">
 
                 <div class="music-player-container is-playing" style="width: 400px; height: 370px">
+
                   <div class="music-player">
                     <div class="player-content-container">
                       <div class="music-player-controls">
@@ -314,11 +321,13 @@
                       </div>
                     </div>
                   </div>
+
                   <div class="album">
                     <div class="large-track-image show-off-container album-art" style="background-image: url('/media/cf3919b38acdfa7965b327d2d52613a6d535d63a04127df87e6cabdb82923feb43534b658eb3025c2c6a7e14ad7b'); border-radius: 5px;">
                     </div>
                     <div class="vinyl"></div>
                   </div>
+
                 </div>
 
                 <!--
