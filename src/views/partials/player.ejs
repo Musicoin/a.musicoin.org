@@ -16,6 +16,7 @@
         justify-content: space-around;
         flex-direction: row;
         position: absolute;
+        background: black;
         top: 0;
         left: 0;
         bottom: 5px;
@@ -109,7 +110,7 @@
     .progress-background {
         right: 0;
         width: 100%;
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: #0097D0;
     }
 
     .progress-foreground {
@@ -204,7 +205,7 @@
     .progress-thumb {
         position: absolute;
         border-radius: 50%;
-        background-color: white;
+        background-color: #FFCD00;
         width: 16px;
         height: 16px;
         top: -6px;
@@ -235,7 +236,7 @@
 
 </style>
 <div id="player-section" class="fixed-footer player show-on-play">
-    <div class="player-foreground no_selection">
+    <div class="player-foreground no_selection" style="background: black; opacity: 0.9">
         <img id="player-badge-image" src="/images/default-profile.png" class="song-badge-image big-screen-only">
         <div class="song-badge-info">
             <div id=player-title-area  class="flex-row middle clickable title-link">
@@ -246,7 +247,7 @@
 
         <i id="player-play-button" class="fa fa-play btn btn-plain player-control"
            onclick="audioPlayer.togglePlayState()"
-           style="margin-right: 5px"
+           style="margin-right: 5px; color: #FFCD00"
            aria-hidden="true"></i>
 
         <img id="player-pause-button" onclick="audioPlayer.togglePlayState()" src="/images/player/pause.png"
@@ -255,17 +256,18 @@
 
         <div id=player-progress class="player-progress mr5 big-screen-only">
             <div class="progress-bar progress-background"></div>
-            <div id="player-progress-div" class="progress-bar progress-foreground">
+            <div id="player-progress-div" class="progress-bar progress-foreground" style="background-color: darkorchid">
             </div>
             <div class="spread mt5">
-                <div id="player-time-played" class="player-time-field big-screen-only">00:00</div>
-                <div id="player-time-left" class="player-time-field">00:00</div>
+                <div id="player-time-played" style="color: #FFCD00" class="player-time-field big-screen-only">00:00</div>
+                <div id="player-time-left" style="color: #FFCD00" class="player-time-field">00:00</div>
             </div>
             <div id=progress-thumb class="progress-thumb draggable ui-widget-content"></div>
         </div>
 
-        <i id="player-next-button" class="fa fa-step-forward btn btn-plain player-control"
+        <i id="player-next-button" class="fa fa-lg fa-step-forward btn btn-plain player-control"
            onclick="audioPlayer.skipTrack()"
+           style="color: #AE8C00"
            aria-hidden="true"></i>
 
         <div id="player-tip-button"
@@ -273,13 +275,13 @@
              class="clickable text-large mr10"
              context-type="Release"
              recipient="">
-            <i class="fa fa-heart btn btn-plain btn-sm"
-               style="padding: 5px"
+            <i class="fa fa-2x fa-heart btn btn-plain btn-sm"
+               style="padding: 5px; color: #FFCD00"
                aria-hidden="true"></i>
         </div>
         <div class="clickable text-large mr10">
-            <i id=shuffle class="fa fa-random btn-plain btn-sm toggle-shuffle"
-               style="padding: 5px"
+            <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle"
+               style="padding: 5px; color: #FFCD00"
                aria-hidden="true"></i>
         </div>
 
