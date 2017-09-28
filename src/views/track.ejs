@@ -194,13 +194,8 @@
       }
 
       .control-play {
-        background: transparent url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/83141/play.svg") center/cover no-repeat;
         position: absolute;
         top: 100px;
-      }
-
-      .is-playing .control-play {
-        background: transparent url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/83141/pause.svg") center/cover no-repeat;
       }
 
       @-webkit-keyframes spin {
@@ -279,7 +274,7 @@
         <% } else { %>
         <b style="color: red">
         <% } %>
-        <a href="/artist/<%=license.artistProfileAddress%>"><%=license.artistName%></a></b>
+        <a href="/artist/<%=license.artistProfileAddress%>"style="color: inherit !important"><%=license.artistName%></a></b>
 
         <% if (!isArtist) { %>
         <div id ="follow1"
@@ -315,7 +310,8 @@
                       <div class="music-player-controls">
                         <% if ((artist.verified) || (isAuthenticated && user.verified)) { %>
                           <div class="audio-track clickable text-large btn mt5 control-play" id="play-button" licenseAddress='<%=license.address%>'>
-                            <i id="play-button" aria-hidden="true" style="font-size: 50px; position: relative; left: -10px; color: green; display: inline-block;border-radius: 200px;" class="fa fa-play-circle-o"></i> Play Song
+                            <i id="play-button" aria-hidden="true" style="font-size: 100px; position: relative; left: -10px; color: green; display: inline-block;border-radius: 200px;" class="fa fa-play-circle-o"></i>
+                            <div style="display: inline-block; position: absolute; top: 45px;"> Play Song </div>
                           </div>
                           <% } %>
                       </div>
