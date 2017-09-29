@@ -4664,14 +4664,6 @@ hr {
       color: #999;
       letter-spacing: 0.12em;
   }
-  #signUpCaptcha{
-    position: relative;
-    top: 87%;
-    transform:scale(0.67);
-    -webkit-transform:scale(0.67);
-    transform-origin:0 0;
-    -webkit-transform-origin:0 0;
-  }
 }
 
 @media screen and (max-width: 799px) {
@@ -4679,7 +4671,6 @@ hr {
         visibility: hidden;
     }
     .crazy1{
-        position: absolute;
         float: right;
         cursor: pointer;
         display: inline-block;
@@ -4697,7 +4688,6 @@ hr {
         visibility: hidden;
     }
     #signUpButton{
-        position: absolute;
         top: 100vh;
         left: 10vw;
     }
@@ -4709,20 +4699,6 @@ hr {
     .social{
         position: absolute;
         top: 82vh;
-    }
-    .mt20{
-        width: 50px !important;
-    }
-    #signUpCaptcha{
-      transform:scale(0.50);
-      -webkit-transform:scale(0.50);
-      transform-origin:0 0;
-      -webkit-transform-origin:0 0;
-    }
-    .mt20{
-        position: absolute;
-        top: 78vh !important;
-        width: 50px !important;
     }
     #img1{
         visibility: hidden;
@@ -4736,4 +4712,157 @@ hr {
     .cymw{
         padding-top: 22vh !important;
     }
+}
+
+#wrapper{
+    padding-bottom: 100px;
+    font-family: 'lato', sans-serif;
+}
+
+#header{
+    background: #F8F8F8;
+    padding: 30px 0 10px;
+    text-align: center;
+}
+
+#header h1{
+    letter-spacing: -0.5px;
+}
+
+#header a{
+    color: #F7C461;
+}
+
+#header img{
+    width: 90px;
+    height: auto;
+}
+
+#header .profile-heading{
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #666;
+    margin-top: 30px;
+    margin-bottom: 25px;
+    letter-spacing: -0.5px;
+}
+
+#role-selector a{
+    color: #F7C461
+}
+
+#role-selector a.btn{
+    border: 3px solid #F7C461;
+    display: block;
+    border-radius: 10px;
+    color: #F7C461;
+    padding: 10px;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+#role-selector a.btn:hover{
+    text-decoration: none;
+    background: #f7edd2;
+}
+
+#signUpButton, #signInButton{
+    background: #F7C461;
+    display: block;
+    border-radius: 10px;
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    border: none;
+    margin-top: 20px;
+    font-family: 'lato', sans-serif;
+}
+
+#signUpButton:hover, #signInButton:hover{
+    background: #f79e44;
+
+}
+
+/* CTA animation just in case we want to implement it
+#role-selector a.listener:before{
+    position:absolute;
+    content:"";
+    height:100%;
+    width:100%;
+    left:0;
+    top:0;
+    background-color:transparent;
+    border-radius:8px;
+    box-shadow:0px 0px 2px 2px #F7C461, inset 0px 0px 2px 2px #F7C461;
+    -webkit-animation:active 2s infinite linear;
+    animation:active 2s infinite linear;
+}
+
+@-webkit-keyframes active{
+    0%{ -webkit-transform:scale(1);  opacity:0.7;  }
+    70%{  -webkit-transform:scale(1.5);  opacity:0;  }
+    100%{  opacity:0;  }
+}
+
+@keyframes active{
+    0%{  transform:scale(1);  opacity:0.7;  }
+    70%{  transform:scale(1.5);  opacity:0;  }
+    100%{  opacity:0;  }
+}
+*/
+
+#social-signup{
+    margin-top: 30px;
+}
+
+#social-signup h2{
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+#social-signup a{
+    display: inline-block;
+    background: black;
+    margin-bottom: 10px;
+    color: white;
+    border-radius: 10px;
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#social-signup a.twitter{
+    background-color: #00aced;
+}
+
+#social-signup a.facebook{
+    background-color: #3b5998;
+}
+
+#social-signup a.google{
+    background-color: #dd4b39;
+}
+
+#email-signup h2{
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+}
+
+h4.sign-as{
+    width: 100%;
+    text-align: left;
+    pointer-events: none;
+    font-family: 'lato', sans-serif;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: #999;
+    letter-spacing: 0.12em;
+}
+
+.pointer{
+    cursor: pointer;
+    margin-left: 10px;
 }

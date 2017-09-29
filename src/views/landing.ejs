@@ -59,111 +59,193 @@
 </script>
 
 <body>
-  <div id="main-wrapper">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6 left-side">
-          <header class="cymw">
-            <h3 id="logo">Create your<br>Music Wallet</h3>
-          </header>
-        </div>
-        <div class="col-md-6 right-side">
-          <img id="img1" src="/images/nclogo.svg" height="50" width="125px" style="position: absolute; top: 10px; right: 10px;"></img>
-          <!--<h3 id="heading"><a href="https://musicoin.org" class="href1">musicoin</a> </h3>-->
-          <form name="signupForm" class="signup" action="/signup" target=_top method="post" onsubmit="return validateSignupFields()">
 
-          <div style="position: absolute; left: -50vw; top: 45vh;">
-            <div class="crazy" style="position: relative; left: 260px; top: 25px; color: white; opacity: 1 !important; font-size: 20px; background: #ff5500; border: 1px black solid; border-radius: 50px; width: 120px; opacity: 0.8; text-align: center; cursor: default">I am A</div>
-            <div style="position: absolute; top: 70px; left: 200px;">
-              <div class="cta">
-                <button class="mc1 btn btn-primary pull-left" onclick="$('#attr1').value='musician'" style= "opacity: 1;">Musician</button>
+  <div id="wrapper" class="signup-wrapper">
+      <div id="header">
+          <img src="/images/icon.png" alt="Musicoin Logo" />
+          <h1>Sign Up for a Musicoin Account</h1>
+          <div id="role-selector" class="container">
+              <div class="row">
+                  <div class="col-sm-6 col-sm-push-3">
+                      <p><a id="signin-button" href="#">(I already have an account)</a></p>
+                  </div>
               </div>
-              <div class="cta">
-              <button class="lt1 btn btn-primary pull-left" style="opacity: 1; position: relative; left: 130px;" onclick="$('#attr1').value='listener'">Listener</button>
-              </div>
-            </div>
           </div>
-
-            <input class="hidden" name="attribute" type="text" id="attr1" default="musician"></input>
-            <span class="input input--hoshi">
-                      <input class="input__field input__field--hoshi" type="text" id="screenname" name="name" required />
-                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
-                        <span class="input__label-content input__label-content--hoshi">Name</span>
-            </label>
-            </span>
-            <span class="input input--hoshi">
-                      <input class="input__field input__field--hoshi" type="text" id="email" name="email" required/>
-                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
-                        <span class="input__label-content input__label-content--hoshi">E-mail</span>
-            </label>
-            </span>
-            <span class="input input--hoshi">
-                      <input class="input__field input__field--hoshi" type="password" id="password" name="password" required/>
-                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
-                        <span class="input__label-content input__label-content--hoshi">Password</span>
-            </label>
-            </span>
-            <span class="input input--hoshi">
-                      <input class="input__field input__field--hoshi" type="password" id="password1" name="password2" required/>
-                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password1">
-                        <span class="input__label-content input__label-content--hoshi">Repeat Password</span>
-            </label>
-            </span>
-            <span class="input input--hoshi">
-                      <input class="input__field input__field--hoshi" type="text" id="screenname" name="confirmation" required />
-                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
-                        <span class="input__label-content input__label-content--hoshi">Confirmation Code</span>
-            </label>
-            </span>
-            <span id="confirm" class="crazy1">Get a code</span>
-            <div id="signUpCaptcha" class="mt20" style=""></div>
-            <div class="cta">
-              <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Sign-Up Now</button>
-              <span id="sgin"><a class="href1" style="cursor: pointer" onclick="$('.signin').removeClass('hidden'); $('#signInCaptcha').removeClass('hidden'); $('.signup').hide()">Sign In</a></span>
-            </div>
-            <div class="crazy" style="position: absolute; top: 95vh; right: 10vw; cursor: none;">Social</div>
-            <ul class="social">
-              <li><a href="/signup/twitter" style="font-size: 30px;"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-              <li><a href="/signup/facebook" style="font-size: 30px;"><i class="fa fa-facebook-square" aria-hidden="true"></i></a></li>
-              <li><a href="/signup/google" style="font-size: 30px;"><i class="fa fa-google" aria-hidden="true"></i></a></li>
-            </ul>
-          </form>
-
-
-          <form name="loginForm" class="signin hidden" action="/signin" target=_top method="post">
-
-            <span class="input input--hoshi">
-                      <input class="input__field input__field--hoshi" type="text" id="email" name="email" required/>
-                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
-                        <span class="input__label-content input__label-content--hoshi">E-mail</span>
-            </label>
-            </span>
-            <span class="input input--hoshi">
-                      <input class="input__field input__field--hoshi" type="password" id="password" name="password" required/>
-                      <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
-                        <span class="input__label-content input__label-content--hoshi">Password</span>
-            </label>
-            </span>
-            <div id="signInCaptcha" class="mt20 hidden"></div>
-            <div class="cta">
-              <button type="submit" class="btn btn-primary pull-left" id="signInButton" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">Sign-In Now</button>
-              <span><a class="href1" style="cursor: pointer" onclick="$('.signup').show(); $('.signin').addClass('hidden'); $('#signInCaptcha').addClass('hidden');">Sign Up</a></span>
-            </div>
-            <a class="crazy" href="/login/forgot">Forgot </a>
-            <ul class="social" style="position: relative; top: -25%; left: 63%; display: inline-block">
-              <li><a href="/auth/twitter" style="font-size: 40px;"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-              <li><a href="/auth/facebook" style="font-size: 40px;"><i class="fa fa-facebook-square" aria-hidden="true"></i></a></li>
-              <li><a href="/auth/google" style="font-size: 40px;"><i class="fa fa-google" aria-hidden="true"></i></a></li>
-            </ul>
-            <div style="position: absolute; top: -80px; position: relative; display: inline-block; vertical-align: top; text-align: left;font-family: 'lato', sans-serif;text-transform: uppercase;font-size: 13px;color: #999;letter-spacing: 0.12em;text-decoration: none;">
-            Sign In using Social Handles</div>
-          </form>
-        </div>
       </div>
-    </div>
+      <div id="social-signup">
+          <div class="container">
+              <div class="row">
+                  <div class="col-sm-6 col-sm-push-3">
+                      <h2>Sign up using your social networks</h2>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-4 col-md-push-4">
+                      <div class="row">
+                          <div class="col-md-12">
+                              <a href="/auth/twitter" class="twitter">Sign up using Twitter</a>
+                          </div>
+                          <div class="col-md-12">
+                              <a href="/auth/facebook" class="facebook">Sign up using Facebook</a>
+                          </div>
+                          <div class="col-md-12">
+                              <a href="/auth/google" class="google">Sign up using Google</a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="row">
+                  <div class="col-sm-6 col-sm-push-3">
+                      <hr>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div id="email-signup">
+          <div class="container">
+              <div class="row">
+                  <div class="col-sm-6 col-sm-push-3">
+                      <h2>or continue using your e-mail</h2>
+                  </div>
+                  <div class="col-md-6 col-md-push-3">
+                      <form name="signupForm" class="signup" action="/signup" target=_top method="post"
+                            onsubmit="return validateSignupFields()">
+
+                          <input class="hidden" name="attribute" type="text" id="attr1" value="musician" />
+
+                          <h4 class="col-sm-12 sign-as">I'm signing up as a</h4>
+
+                          <div class="col-sm-6">
+                              <input id="musician-opt" type="radio" name="attribute" value="musician">
+                              <label class="pointer" for="musician-opt">Musician</label>
+                          </div>
+                          <div class="col-sm-6">
+                              <input id="listener-opt" type="radio" name="attribute" value="listener">
+                              <label class="pointer" for="listener-opt">Listener</label>
+                          </div>
+
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="text" id="screenname" name="name" required />
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
+                                  <span class="input__label-content input__label-content--hoshi">Name</span>
+                              </label>
+                          </span>
+
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="text" id="email" name="email" required/>
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
+                                  <span class="input__label-content input__label-content--hoshi">E-mail</span>
+                              </label>
+                          </span>
+
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="password" id="password" name="password" required/>
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
+                                  <span class="input__label-content input__label-content--hoshi">Password</span>
+                              </label>
+                          </span>
+
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="password" id="password1" name="password2" required/>
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password1">
+                                  <span class="input__label-content input__label-content--hoshi">Repeat Password</span>
+                              </label>
+                          </span>
+
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="text" id="screenname" name="confirmation" required />
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
+                                  <span class="input__label-content input__label-content--hoshi">Confirmation Code</span>
+                              </label>
+                          </span>
+
+                          <span id="confirm" class="crazy1">Get a code</span>
+
+                          <div id="signUpCaptcha" class="mt20" style=""></div>
+
+                          <div class="cta">
+                              <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Sign-Up Now</button>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
   </div>
-  </script>
-  <!-- end #main-wrapper -->
+
+  <div id="wrapper" class="signin-wrapper hidden">
+      <div id="header">
+          <img src="/images/icon.png" alt="Musicoin Logo" />
+          <h1>Sign In to your Musicoin Account</h1>
+          <p><a id="signup-button" href="#">I want to create a new account</a></p>
+      </div>
+      <div id="social-signup">
+          <div class="container">
+              <div class="row">
+                  <div class="col-sm-6 col-sm-push-3">
+                      <h2>Sign in using your social networks</h2>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-4 col-md-push-4">
+                      <div class="row">
+                          <div class="col-md-12">
+                              <a href="/auth/twitter" class="twitter">Sign in using Twitter</a>
+                          </div>
+                          <div class="col-md-12">
+                              <a href="/auth/facebook" class="facebook">Sign in using Facebook</a>
+                          </div>
+                          <div class="col-md-12">
+                              <a href="/auth/google" class="google">Sign in using Google</a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="row">
+                  <div class="col-sm-6 col-sm-push-3">
+                      <hr>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div id="email-signup">
+          <div class="container">
+              <div class="row">
+                  <div class="col-sm-6 col-sm-push-3">
+                      <h2>or continue with e-mail and password</h2>
+                  </div>
+                  <div class="col-md-6 col-md-push-3">
+                      <form name="loginForm" class="signin" action="/signin" target=_top method="post">
+
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="text" id="email" name="email" required/>
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
+                                  <span class="input__label-content input__label-content--hoshi">E-mail</span>
+                              </label>
+                          </span>
+
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="password" id="password" name="password" required/>
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
+                                  <span class="input__label-content input__label-content--hoshi">Password</span>
+                              </label>
+                          </span>
+
+                          <div id="signInCaptcha" class="mt20"></div>
+
+                          <div class="cta">
+                              <button type="submit" class="btn btn-primary" id="signInButton" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">Sign-In Now</button>
+                          </div>
+
+                          <a class="crazy" href="/login/forgot">Forgot </a>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
 
   <!-- Scripts -->
   <script src="js/scripts.js"></script>
@@ -189,7 +271,17 @@
               }
             })
         }
-      })
+      });
+        $("#signin-button").on('click', function(e){
+            e.preventDefault();
+            $(".signin-wrapper").toggleClass("hidden");
+            $(".signup-wrapper").toggleClass("hidden");
+        });
+        $("#signup-button").on('click', function(e){
+            e.preventDefault();
+            $(".signup-wrapper").toggleClass("hidden");
+            $(".signin-wrapper").toggleClass("hidden");
+        });
     });
 
     function validateSignupFields() {
@@ -204,11 +296,11 @@
       console.log("CAPTCHA");
       grecaptcha.render(document.getElementById('signUpCaptcha'), {
         'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU',
-        'theme': 'dark'
+        'theme': 'light'
       });
 
       grecaptcha.render(document.getElementById('signInCaptcha'), {
-        'theme': 'dark',
+        'theme': 'light',
         'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
       });
     }
