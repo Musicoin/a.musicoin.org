@@ -882,6 +882,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render('su.ejs', { message: req.flash('loginMessage') });
   });
 
+  app.get('/admin/home2', isLoggedIn, adminOnly, function(req, res) {
+    res.render('home2.ejs'); // pass whatever stuff you may want to pass to the template over here
+  });
+
   // process the login form
   // process the login form
   app.post('/admin/su', isLoggedIn, adminOnly, passport.authenticate('local-su', {
