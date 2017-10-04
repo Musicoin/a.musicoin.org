@@ -8,7 +8,7 @@ check_main_server (){
   if (( $(ps -ef | grep -v grep | grep "node" | wc -l) <= 0 ))
  then
     echo "DANGER"
-    sudo pm2 start /musicoin.org/src/server.js --max-restarts 10000000 -i 0 # restart the server
+    sudo pm2 start /musicoin.org/src/server.js --max-restarts 10000000 # restart the server
     echo `date` "$main_server was stopped... Restarting" >> $logfilePath
     echo "************************************************" >> $logfilePath
     #Send email to notify that the script ran
