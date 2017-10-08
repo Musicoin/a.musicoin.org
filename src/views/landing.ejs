@@ -22,6 +22,7 @@
 <meta property="wb:webmaster" content="388a22fbc545b0b0" />
 <link rel="stylesheet" href="/dependencies/messg-2.1.0/index.css">
 <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css" />
 <link rel="shortcut icon" href="/favicon.ico">
 
 <script src="/dependencies/jquery/js/jquery-3.1.1.js"></script>
@@ -62,42 +63,27 @@
 
   <div id="wrapper" class="signup-wrapper">
       <div id="header">
-          <img src="/images/icon.png" alt="Musicoin Logo" />
-          <h1>Sign Up for a Musicoin Account</h1>
+          <img src="/images/Logo.svg" height="90px" alt="Musicoin Logo" />
           <div id="role-selector" class="container">
               <div class="row">
-                  <div class="col-sm-6 col-sm-push-3">
-                      <p><a id="signin-button" href="#">(I already have an account)</a></p>
-                  </div>
               </div>
           </div>
       </div>
       <div id="social-signup">
           <div class="container">
               <div class="row">
-                  <div class="col-sm-6 col-sm-push-3">
-                      <h2>Sign up using your social networks</h2>
-                  </div>
-              </div>
-              <div class="row">
                   <div class="col-md-4 col-md-push-4">
                       <div class="row">
                           <div class="col-md-12">
-                              <a href="/auth/twitter" class="twitter">Sign up using Twitter</a>
+                              <a href="/auth/twitter" class="twitter">Sign up with Twitter</a>
                           </div>
                           <div class="col-md-12">
-                              <a href="/auth/facebook" class="facebook">Sign up using Facebook</a>
+                              <a href="/auth/facebook" class="facebook">Sign up with Facebook</a>
                           </div>
                           <div class="col-md-12">
-                              <a href="/auth/google" class="google">Sign up using Google</a>
+                              <a href="/auth/google" class="google">Sign up with Google</a>
                           </div>
                       </div>
-                  </div>
-              </div>
-
-              <div class="row">
-                  <div class="col-sm-6 col-sm-push-3">
-                      <hr>
                   </div>
               </div>
           </div>
@@ -105,9 +91,9 @@
       <div id="email-signup">
           <div class="container">
               <div class="row">
-                  <div class="col-sm-6 col-sm-push-3">
-                      <h2>or continue using your e-mail</h2>
-                  </div>
+                  <strong class="line-thru">or</strong>
+                  <h2 class="hdr-l">Sign up with your email address</h2>
+
                   <div class="col-md-6 col-md-push-3">
                       <form name="signupForm" class="signup" action="/signup" target=_top method="post"
                             onsubmit="return validateSignupFields()">
@@ -165,8 +151,9 @@
                           <div id="signUpCaptcha" class="mt20" style=""></div>
 
                           <div class="cta">
-                              <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Sign-Up Now</button>
+                              <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Sign Up</button>
                           </div>
+                          <a id="signin-button" href="#">I already have an account</a>
                       </form>
                   </div>
               </div>
@@ -176,17 +163,10 @@
 
   <div id="wrapper" class="signin-wrapper hidden">
       <div id="header">
-          <img src="/images/icon.png" alt="Musicoin Logo" />
-          <h1>Sign In to your Musicoin Account</h1>
-          <p><a id="signup-button" href="#">I want to create a new account</a></p>
+        <img src="/images/Logo.svg" height="90px" alt="Musicoin Logo" />
       </div>
       <div id="social-signup">
           <div class="container">
-              <div class="row">
-                  <div class="col-sm-6 col-sm-push-3">
-                      <h2>Sign in using your social networks</h2>
-                  </div>
-              </div>
               <div class="row">
                   <div class="col-md-4 col-md-push-4">
                       <div class="row">
@@ -202,20 +182,14 @@
                       </div>
                   </div>
               </div>
-
-              <div class="row">
-                  <div class="col-sm-6 col-sm-push-3">
-                      <hr>
-                  </div>
-              </div>
           </div>
       </div>
       <div id="email-signup">
           <div class="container">
               <div class="row">
-                  <div class="col-sm-6 col-sm-push-3">
-                      <h2>or continue with e-mail and password</h2>
-                  </div>
+                <strong class="line-thru">or</strong>
+                <h2 class="hdr-l">Sign up with your email address</h2>
+
                   <div class="col-md-6 col-md-push-3">
                       <form name="loginForm" class="signin" action="/signin" target=_top method="post">
 
@@ -232,14 +206,13 @@
                                   <span class="input__label-content input__label-content--hoshi">Password</span>
                               </label>
                           </span>
-
+                          <a class="crazy" href="/login/forgot">Forgot Password</a>
                           <div id="signInCaptcha" class="mt20"></div>
 
                           <div class="cta">
                               <button type="submit" class="btn btn-primary" id="signInButton" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">Sign-In Now</button>
                           </div>
 
-                          <a class="crazy" href="/login/forgot">Forgot </a>
                       </form>
                   </div>
               </div>
