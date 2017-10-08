@@ -3378,7 +3378,7 @@ hr {
 .left-side header span {
     margin-bottom: 6px;
     display: block;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Circular';
     text-transform: uppercase;
     font-size: 13px;
     color: #999;
@@ -3424,7 +3424,7 @@ hr {
     color: #fff;
     display: inline-block;
     background: #ff5500;
-    font-family: 'lato', sans-serif;
+    font-family: 'Circular';
     text-transform: uppercase;
     font-size: 13px;
     letter-spacing: 0.12em;
@@ -3446,7 +3446,7 @@ hr {
 }
 
 .right-side .cta span a {
-    font-family: 'lato', sans-serif;
+    font-family: 'Circular';
     text-transform: uppercase;
     font-size: 13px;
     color: #999;
@@ -3476,7 +3476,7 @@ hr {
 }
 
 .right-side .social li a {
-    font-family: 'lato', sans-serif;
+    font-family: 'Circular';
     text-transform: uppercase;
     font-size: 20px;
     color: #999;
@@ -3515,7 +3515,7 @@ hr {
 	border-radius: 0;
 	background: #f0f0f0;
 	font-weight: bold;
-	font-family: 'lato', sans-serif;
+	font-family: 'Circular';
 	-webkit-appearance: none; /* for box shadows to show on iOS */
 }
 
@@ -3632,7 +3632,7 @@ hr {
 	overflow: hidden;
 	max-width: none;
 	width: 100%;
-	font-family: 'lato', sans-serif;
+	font-family: 'Circular';
 }
 
 .input__field--hoshi {
@@ -3640,7 +3640,7 @@ hr {
 	padding: 1.5em 0.15em 1.5em 0;
 	width: 100%;
 	background: transparent;
-	color: #D2D2D2;
+	color: black;
 }
 
 .input__label--hoshi {
@@ -3652,7 +3652,7 @@ hr {
 	height: calc(100% - 1em);
 	text-align: left;
 	pointer-events: none;
-	font-family: 'lato', sans-serif;
+	font-family: 'Circular';
 	text-transform: uppercase;
 	font-size: 13px;
 	color: #999;
@@ -4619,7 +4619,7 @@ hr {
     background: -webkit-linear-gradient(to left, #0C0C0C, #494D50);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to left, #0C0C0C, #494D50); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     border-radius: 5px;
-    color: #D2D2D2;
+    color: black;
     font-weight: 100;
     font-size: 20px;
 }
@@ -4637,7 +4637,7 @@ hr {
     background: -webkit-linear-gradient(to left, #0C0C0C, #494D50);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to left, #0C0C0C, #494D50); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     border-radius: 5px;
-    color: #D2D2D2;
+    color: black;
     font-weight: 100;
     font-size: 20px;
 }
@@ -4666,7 +4666,7 @@ hr {
       cursor: pointer;
       display: inline-block;
       text-align: left;
-      font-family: 'lato', sans-serif;
+      font-family: 'Circular';
       text-transform: uppercase;
       font-size: 13px;
       color: #999;
@@ -4683,7 +4683,7 @@ hr {
         cursor: pointer;
         display: inline-block;
         text-align: left;
-        font-family: 'lato', sans-serif;
+        font-family: 'Circular';
         text-transform: uppercase;
         font-size: 13px;
         color: #999;
@@ -4724,7 +4724,7 @@ hr {
 
 #wrapper{
     padding-bottom: 100px;
-    font-family: 'lato', sans-serif;
+    font-family: 'Circular';
 }
 
 #header{
@@ -4779,7 +4779,6 @@ hr {
     font-size: 14px;
     border: none;
     margin-top: 20px;
-    font-family: 'lato', sans-serif;
     font-family: 'Circular' !important;
     text-transform: uppercase;
     font-weight: 800;
@@ -4957,7 +4956,7 @@ h4.sign-as{
     width: 100%;
     text-align: left;
     pointer-events: none;
-    font-family: 'lato', sans-serif;
+    font-family: 'Circular';
     text-transform: uppercase;
     font-size: 13px;
     color: #999;
