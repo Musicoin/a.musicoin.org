@@ -2151,7 +2151,7 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             return User.findOne({ profileAddress: release.artistAddress })
                 .then(artist => {
                 const verifiedArtist = artist && artist.verified;
-                const hasNoFreePlays = user.freePlaysRemaining <= 0;
+                const hasNoFreePlays = false; //user.freePlaysRemaining <= 0;
                 const payFromProfile = req.isAuthenticated() && (hasNoFreePlays || !verifiedArtist);
                 let p = payFromProfile
                     ? jsonAPI.getPendingPPPPayments(user._id)
@@ -2188,7 +2188,7 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
                             ? hasNoFreePlays
                                 ? "This playback was paid for by you. Thanks!"
                                 : "This playback was paid for by you, because this artist is not yet verified and is therefore not eligible for free plays."
-                            : `This playback was paid for by Musicoin.org, you have ${user.freePlaysRemaining - 1} free ${unit} left`
+                            : `This playback was paid for by UBI, you have infinite free playbacks left`
                     };
                 });
             });
