@@ -745,7 +745,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
   app.post('/admin/user/abuse', (req, res) => {
-
     // First blacklist the user (no invite bonus)
     const id = FormUtils.defaultString(req.body.id, null);
     if (!id) return res.json({ success: false, reason: "No id" });
@@ -754,7 +753,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(user => { // Blacklist user
         console.log(`User has been flagged as a gamer of the system.`)
         user.invite.noReward = req.body.blacklist == "true";
-        return user.save();
       })// Unverify user
       .then(user => {
         console.log(`User verification status changed by ${req.user.draftProfile.artistName}, artist=${user.draftProfile.artistName}, newStatus=${req.body.verified == "true"}`);
@@ -762,9 +760,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })// Next lets lock his account
       .then(user => {
         user.accountLocked = req.body.lock == "true";
-      })
-      .then(user => {
-        user.freePlaysRemaining = 0;
       })
       .then(user => {
         user.followerCount = 0;
@@ -2387,8 +2382,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return User.findOne({ profileAddress: release.artistAddress })
           .then(artist => {
             const verifiedArtist = artist && artist.verified;
-            const hasNoFreePlays = false; //user.freePlaysRemaining <= 0;
-            const payFromProfile = req.isAuthenticated() && (hasNoFreePlays || !verifiedArtist);
+            const hasNoFreePlays = false; //user.freePlaysRemaining <= 0; This should technically never happen
+            const payFromProfile = req.isAuthenticated() && (!verifiedArtist);
             let p = payFromProfile
               ? jsonAPI.getPendingPPPPayments(user._id)
               : Promise.resolve([]);
@@ -2406,7 +2401,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   return { success: false, skip: false, message: "It looks like you don't have enough coins/free plays or are trying to play a track from a non verified artist" }
               }
               else if (hasNoFreePlays) {
-                return { success: false, skip: false, message: "Looks like you ran out of free plays.  Sign up to get more!" }
+                hasNoFreePlays = hasNoFreePlays + 100000; // this part of the code should never get executed, just in case.
               }
               else if (!verifiedArtist) {
                 return { success: false, skip: true, message: "Only tracks from verified artists are eligible for free plays." }
@@ -2423,9 +2418,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 payFromProfile: payFromProfile,
                 message: payFromProfile
                   ? hasNoFreePlays
-                    ? "This playback was paid for by you. Thanks!"
+                    ? "THanks for encouraging musicians to release more wonderful content!"
                     : "This playback was paid for by you, because this artist is not yet verified and is therefore not eligible for free plays."
-                  : `This playback was paid for by UBI, you have infinite free playbacks left`
+                  : `This playback was paid for by UBI, enjoy the music and tip artists!`
               };
             })
           })

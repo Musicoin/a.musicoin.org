@@ -54,7 +54,7 @@
                     <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
                     <input class="form-control text-large pl25"
                            name="search"
-                           value="<%= search %>" placeholder="search users"
+                           value="<%= search %>" placeholder="Search Users"
                            autofocus onfocus="this.value = this.value;">
                 </div>
             </form>
@@ -74,13 +74,13 @@
         </div>
         <div>
             <% if (navigation.start) { %>
-            <a class="history-nav-link" href="<%= navigation.start %>">first</a>
+            <a class="history-nav-link" href="<%= navigation.start %>">First</a>
             <% } %>
             <% if (navigation.back) { %>
-            <a class="history-nav-link" href="<%= navigation.back %>">back</a>
+            <a class="history-nav-link" href="<%= navigation.back %>">Back</a>
             <% } %>
             <% if (navigation.next) { %>
-            <a class="history-nav-link" href="<%= navigation.next %>">next</a>
+            <a class="history-nav-link" href="<%= navigation.next %>">Next</a>
             <% } else { %>
             <span class="history-nav-link-disabled">next</span>
             <% } %>
@@ -96,7 +96,6 @@
             <th class="text-center">Linked</th>
             <th class="text-center">Music<br>Released</th>
             <th class="text-center">Invites<br>Left</th>
-            <th class="text-center">Free<br>plays</th>
         </tr>
 
         <% for (var ivt = 0; ivt < users.length; ivt++) {
@@ -207,12 +206,6 @@
                     <% } %>
                 </div>
             </td>
-            <td class="text-center middle"><%= user.freePlaysRemaining %>
-                <div class="flex-row">
-                    <div class="btn btn-success btn-sm mr5" onclick="addFreePlays('<%= user._id %>', 10)">+10</div>
-                    <div class="btn btn-danger btn-sm" onclick="clearFreePlays('<%= user._id %>', 0)">Zero</div>
-                </div>
-            </td>
         </tr>
         <% } %>
     </table>
@@ -233,19 +226,6 @@
     })
   }
 
-  function clearFreePlays(id) {
-    $.post('/admin/free-plays/clear', {
-      id: id
-    }, function (data) {
-      if (data.success) {
-        new Message("This user will have no more free plays!", "success", 3000);
-      }
-      else {
-        new Message("Failed: " + data.reason, 'error', 5000)
-      }
-    })
-  }
-
   function sendWeeklyReports() {
     new Message("Are you sure you want to send a weekly reports to all user?", 'error', 5000)
       .button("Yes", function () {
@@ -259,20 +239,6 @@
           })
         }
       )
-  }
-
-  function addFreePlays(id, cnt) {
-    $.post('/admin/free-plays/add', {
-      id: id,
-      count: cnt
-    }, function (data) {
-      if (data.success) {
-        new Message("Free plays added!", "success", 3000);
-      }
-      else {
-        new Message("Failed: " + data.reason, 'error', 5000)
-      }
-    })
   }
 
   function blacklist(id, blacklist) {
