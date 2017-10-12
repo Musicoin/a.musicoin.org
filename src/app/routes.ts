@@ -1062,31 +1062,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.post('/admin/free-plays/add', (req, res) => {
-    if (!req.body.id) return res.json({ success: false, reason: "No id" });
-    if (!req.body.count) return res.json({ success: false, reason: "Free plays to add not provided" });
-    User.findById(req.body.id).exec()
-      .then(user => {
-        user.freePlaysRemaining += parseInt(req.body.count);
-        return user.save();
-      })
-      .then(() => {
-        res.json({ success: true })
-      })
-  });
-
-  app.post('/admin/free-plays/clear', (req, res) => {
-    if (!req.body.id) return res.json({ success: false, reason: "No id" });
-    User.findById(req.body.id).exec()
-      .then(user => {
-        user.freePlaysRemaining = 0;
-        return user.save();
-      })
-      .then(() => {
-        res.json({ success: true })
-      })
-  });
-
   app.post('/admin/invites/add', (req, res) => {
     if (!req.body.id) return res.json({ success: false, reason: "No id" });
     if (!req.body.count) return res.json({ success: false, reason: "Invite count to add not provided" });
@@ -2398,10 +2373,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 pendingPayments.forEach(r => totalCoinsPending += r.coins);
                 console.log("Pending ppp payments: " + totalCoinsPending);
                 if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
-                  return { success: false, skip: false, message: "It looks like you don't have enough coins/free plays or are trying to play a track from a non verified artist" }
+                  return { success: false, skip: false, message: "It looks like you don't have enough coins or are trying to play a track from a non verified artist" }
               }
               else if (hasNoFreePlays) {
-                hasNoFreePlays = hasNoFreePlays + 100000; // this part of the code should never get executed, just in case.
+                user.freePlaysRemaining += 1000; // this part of the code should never get executed, just in case.
               }
               else if (!verifiedArtist) {
                 return { success: false, skip: true, message: "Only tracks from verified artists are eligible for free plays." }
@@ -2409,7 +2384,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               else {
                 const diff = new Date(user.nextFreePlayback).getTime() - Date.now();
                 if (diff > 0 && diff < config.freePlayDelay) {
-                  return { success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play." }
+                  return { success: false, skip: false, message: "Sorry, please wait a few more seconds for your next free play." }
                 }
               }
               const unit = user.freePlaysRemaining - 1 == 1 ? "play" : "plays";
@@ -2480,9 +2455,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       // free play.  in this case, just deduct 1 from the number of remaining free plays
       paymentPromise = musicoinApi.getKey(licenseAddress)
         .then(keyResponse => {
-          user.freePlaysRemaining--;
+          user.freePlaysRemaining; // don't deduct from free plays since UBI is in place.
           user.nextFreePlayback = Date.now() + config.freePlayDelay;
-          console.log(`User ${userName} has ${user.freePlaysRemaining} free plays remaining, next free play in ${ttl}ms`);
+          console.log(`User ${userName} has played a song, eligible for the next free play in ${ttl}ms`);
           return keyResponse;
         });
     }
