@@ -18,7 +18,7 @@ variables before authenticating.
 
 ## Musicoin-Frontend
 
-The static front end part is in react and has to be compiled using `npm run build` run inside the musicoin-frontend folder. Once this is done, it has to be manually moved from there to `src/overview/`. To test the frontend part of it as a standalone, run `yarn build` and `yarn start` over at `musicoin-frontend`.
+The static front end part is in react and has to be compiled using `npm run build` run inside the musicoin-frontend folder. Once this is done, it has to be manually moved from there to `src/overview/`. To test the frontend part of it as a standalone, run `yarn build` and `yarn start` over at `musicoin-frontend`. To update the submodule recursive stuff, `git submodule update --recursive`
 
 ## Typescript
 
