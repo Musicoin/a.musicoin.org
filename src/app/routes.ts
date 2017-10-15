@@ -229,6 +229,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render(__dirname + '/../overview/index.html', {});
   });
 
+  app.get('/for-listeners', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
+  app.get('/how-it-works', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
+  app.get('/for-musicians', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
+  app.get('/currency', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
+  app.get('/faq', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
   app.get('/accept/:code', (req, res) => {
     console.log(`Processing /accept/${req.params.code}`)
     if (req.get('host') == 'alpha.musicoin.org') {
@@ -690,7 +710,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   //app.get('/team', (req, res) => doRender(req, res, 'team.ejs', {}));
 
   app.get('/demo/play-queue', (req, res) => doRender(req, res, 'play-queue-page.ejs', {}));
-  app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   // app.get('/landing',  (req, res) => doRender(req, res, 'landing.ejs', {}));
   app.get('/welcome', redirectIfLoggedIn(loginRedirect), (req, res) => {
