@@ -229,6 +229,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render(__dirname + '/../overview/index.html', {});
   });
 
+  app.get('/for-listeners', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
+  app.get('/how-it-works', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
+  app.get('/for-musicians', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
+  app.get('/currency', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
+  app.get('/faq', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
   app.get('/accept/:code', (req, res) => {
     console.log(`Processing /accept/${req.params.code}`)
     if (req.get('host') == 'alpha.musicoin.org') {
@@ -690,7 +710,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   //app.get('/team', (req, res) => doRender(req, res, 'team.ejs', {}));
 
   app.get('/demo/play-queue', (req, res) => doRender(req, res, 'play-queue-page.ejs', {}));
-  app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
   app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   // app.get('/landing',  (req, res) => doRender(req, res, 'landing.ejs', {}));
   app.get('/welcome', redirectIfLoggedIn(loginRedirect), (req, res) => {
@@ -745,7 +764,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
   app.post('/admin/user/abuse', (req, res) => {
-
     // First blacklist the user (no invite bonus)
     const id = FormUtils.defaultString(req.body.id, null);
     if (!id) return res.json({ success: false, reason: "No id" });
@@ -754,7 +772,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(user => { // Blacklist user
         console.log(`User has been flagged as a gamer of the system.`)
         user.invite.noReward = req.body.blacklist == "true";
-        return user.save();
       })// Unverify user
       .then(user => {
         console.log(`User verification status changed by ${req.user.draftProfile.artistName}, artist=${user.draftProfile.artistName}, newStatus=${req.body.verified == "true"}`);
@@ -762,9 +779,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })// Next lets lock his account
       .then(user => {
         user.accountLocked = req.body.lock == "true";
-      })
-      .then(user => {
-        user.freePlaysRemaining = 0;
       })
       .then(user => {
         user.followerCount = 0;
@@ -1065,31 +1079,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             res.json({ success: false, message: "Failed to send report" })
           })
       });
-  });
-
-  app.post('/admin/free-plays/add', (req, res) => {
-    if (!req.body.id) return res.json({ success: false, reason: "No id" });
-    if (!req.body.count) return res.json({ success: false, reason: "Free plays to add not provided" });
-    User.findById(req.body.id).exec()
-      .then(user => {
-        user.freePlaysRemaining += parseInt(req.body.count);
-        return user.save();
-      })
-      .then(() => {
-        res.json({ success: true })
-      })
-  });
-
-  app.post('/admin/free-plays/clear', (req, res) => {
-    if (!req.body.id) return res.json({ success: false, reason: "No id" });
-    User.findById(req.body.id).exec()
-      .then(user => {
-        user.freePlaysRemaining = 0;
-        return user.save();
-      })
-      .then(() => {
-        res.json({ success: true })
-      })
   });
 
   app.post('/admin/invites/add', (req, res) => {
@@ -2358,9 +2347,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   function getPlaybackEligibility(req) {
     const user = req.isAuthenticated() ? req.user : req.anonymousUser;
 
-    if ((!req.anonymousUser) && (!req.user)) {
-      return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request.  (code: 1)" });
-    }
+    // if ((!req.anonymousUser) && (!req.user)) {
+
+    // most probably this guy must be a anonymous user, do nothing
+    //   return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request.  (code: 1)" });
+    // }
 
     if (user.accountLocked) {
       console.log("Blocking playback for locked user.");
@@ -2387,8 +2378,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return User.findOne({ profileAddress: release.artistAddress })
           .then(artist => {
             const verifiedArtist = artist && artist.verified;
-            const hasNoFreePlays = false; //user.freePlaysRemaining <= 0;
-            const payFromProfile = req.isAuthenticated() && (hasNoFreePlays || !verifiedArtist);
+            const hasNoFreePlays = false; //user.freePlaysRemaining <= 0; This should technically never happen
+            const payFromProfile = req.isAuthenticated() && (!verifiedArtist);
             let p = payFromProfile
               ? jsonAPI.getPendingPPPPayments(user._id)
               : Promise.resolve([]);
@@ -2403,10 +2394,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 pendingPayments.forEach(r => totalCoinsPending += r.coins);
                 console.log("Pending ppp payments: " + totalCoinsPending);
                 if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
-                  return { success: false, skip: false, message: "It looks like you don't have enough coins/free plays or are trying to play a track from a non verified artist" }
+                  return { success: false, skip: false, message: "It looks like you don't have enough coins or are trying to play a track from a non verified artist" }
               }
               else if (hasNoFreePlays) {
-                return { success: false, skip: false, message: "Looks like you ran out of free plays.  Sign up to get more!" }
+                user.freePlaysRemaining += 1000; // this part of the code should never get executed, just in case.
               }
               else if (!verifiedArtist) {
                 return { success: false, skip: true, message: "Only tracks from verified artists are eligible for free plays." }
@@ -2414,7 +2405,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               else {
                 const diff = new Date(user.nextFreePlayback).getTime() - Date.now();
                 if (diff > 0 && diff < config.freePlayDelay) {
-                  return { success: false, skip: false, message: "Sorry, wait a few more seconds for your next free play." }
+                  return { success: false, skip: false, message: "Sorry, please wait a few more seconds for your next free play." }
                 }
               }
               const unit = user.freePlaysRemaining - 1 == 1 ? "play" : "plays";
@@ -2423,9 +2414,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 payFromProfile: payFromProfile,
                 message: payFromProfile
                   ? hasNoFreePlays
-                    ? "This playback was paid for by you. Thanks!"
+                    ? "THanks for encouraging musicians to release more wonderful content!"
                     : "This playback was paid for by you, because this artist is not yet verified and is therefore not eligible for free plays."
-                  : `This playback was paid for by UBI, you have infinite free playbacks left`
+                  : `This playback was paid for by UBI, enjoy the music and tip artists!`
               };
             })
           })
@@ -2485,9 +2476,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       // free play.  in this case, just deduct 1 from the number of remaining free plays
       paymentPromise = musicoinApi.getKey(licenseAddress)
         .then(keyResponse => {
-          user.freePlaysRemaining--;
+          user.freePlaysRemaining; // don't deduct from free plays since UBI is in place.
           user.nextFreePlayback = Date.now() + config.freePlayDelay;
-          console.log(`User ${userName} has ${user.freePlaysRemaining} free plays remaining, next free play in ${ttl}ms`);
+          console.log(`User ${userName} has played a song, eligible for the next free play in ${ttl}ms`);
           return keyResponse;
         });
     }

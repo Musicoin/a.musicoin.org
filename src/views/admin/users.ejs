@@ -53,12 +53,11 @@
             <th class="text-center"></th>
             <th class="text-center">Profile</th>
             <th class="text-center">Balance</th>
-            <th class="text-center">Invited</th>
+            <th class="text-center">Invited By</th>
             <th class="text-center">Invite<br>Clicked</th>
             <th class="text-center">Linked</th>
             <th class="text-center">Music<br>Released</th>
             <th class="text-center">Invites<br>Left</th>
-            <th class="text-center">Free<br>plays</th>
         </tr>
 
         <% for (var ivt = 0; ivt < users.length; ivt++) {
@@ -83,11 +82,9 @@
                         <li><a href="javascript:void(0)" onclick="verifyUser(this, '<%= user._id %>', '<%= escapedName %>')"><%= user.verified ? "Unverify" : "Verify"%></a></li>
 
                         <li class="divider"></li>
-                        <li><a href="javascript:void(0)" onclick="addFreePlays('<%= user._id %>', 10)">+10 free plays</a></li>
                         <li><a href="javascript:void(0)" onclick="addInvites('<%= user._id %>', 10)">+10 Invites</a></li>
 
                         <li class="divider"></li>
-                        <li><a href="javascript:void(0)" onclick="clearFreePlays('<%= user._id %>', 0)">Zero free plays</a></li>
                         <% if (user.invite.noReward) { %>
                         <li><a onclick="blacklist('<%= user._id %>', false)">De-Blacklist (allow invite rewards)</a></li>
                         <% } else { %>
@@ -197,7 +194,6 @@
                 <% } %>
             </td>
             <td class="text-center middle"><%= user.invitesRemaining %></td>
-            <td class="text-center middle"><%= user.freePlaysRemaining %></td>
         </tr>
         <% } %>
     </table>
@@ -211,35 +207,6 @@
     }, function (data) {
       if (data.success) {
         new Message("Invites added!", "success", 3000);
-        refreshUserContainer();
-      }
-      else {
-        new Message("Failed: " + data.reason, 'error', 5000)
-      }
-    })
-  }
-
-  function clearFreePlays(id) {
-    $.post('/admin/free-plays/clear', {
-      id: id
-    }, function (data) {
-      if (data.success) {
-        new Message("This user will have no more free plays!", "success", 3000);
-        refreshUserContainer();
-      }
-      else {
-        new Message("Failed: " + data.reason, 'error', 5000)
-      }
-    })
-  }
-
-  function addFreePlays(id, cnt) {
-    $.post('/admin/free-plays/add', {
-      id: id,
-      count: cnt
-    }, function (data) {
-      if (data.success) {
-        new Message("Free plays added!", "success", 3000);
         refreshUserContainer();
       }
       else {
