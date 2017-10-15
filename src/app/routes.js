@@ -191,6 +191,22 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return new Date(timestamp * 1000).toLocaleDateString('en-US', options);
     }
+    app.get('/welcome', redirectIfLoggedIn(loginRedirect), (req, res) => {
+        if (req.user) {
+            console.log("User is already logged in, redirecting away from login page");
+            return res.redirect(loginRedirect);
+        }
+        // render the page and pass in any flash data if it exists
+        if (req.query.redirect) {
+            console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`);
+            req.session.destinationUrl = req.query.redirect;
+        }
+        const message = req.flash('loginMessage');
+        doRender(req, res, 'landing.ejs', {
+            message: message,
+            code: req.session.inviteCode
+        });
+    });
     app.get('/', (req, res) => {
         res.render(__dirname + '/../overview/index.html', {});
     });
@@ -615,22 +631,6 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
     app.get('/faq', (req, res) => doRender(req, res, 'faq.ejs', {}));
     app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
     // app.get('/landing',  (req, res) => doRender(req, res, 'landing.ejs', {}));
-    app.get('/welcome', redirectIfLoggedIn(loginRedirect), (req, res) => {
-        if (req.user) {
-            console.log("User is already logged in, redirecting away from login page");
-            return res.redirect(loginRedirect);
-        }
-        // render the page and pass in any flash data if it exists
-        if (req.query.redirect) {
-            console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`);
-            req.session.destinationUrl = req.query.redirect;
-        }
-        const message = req.flash('loginMessage');
-        doRender(req, res, 'landing.ejs', {
-            message: message,
-            code: req.session.inviteCode
-        });
-    });
     app.get('/invite', (req, res) => {
         res.redirect('/welcome');
     });
