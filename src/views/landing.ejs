@@ -17,6 +17,14 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
   <title>Signup for Musicoin</title>
+  <style>
+    .hidden {
+      visibility: hidden;
+    }
+    .visible {
+      visibility: visible;
+    }
+  </style>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta property="wb:webmaster" content="388a22fbc545b0b0" />
@@ -92,7 +100,9 @@
           <div class="container">
               <div class="row">
                   <strong class="line-thru">or</strong>
-                  <h2 class="hdr-l">Sign up with your email address</h2>
+                  <h2 class="hdr-l hdr-l3">Please sign up with your email address</h2>
+                  <h2 class="hdr-l hidden">Welcome, Listener <br> Please sign up with your email address or social accounts above</h2>
+                  <h2 class="hdr-l hdr-l2 hidden">Welcome, Musician <br> Please sign up with your social accounts</h2>
 
                   <div class="col-md-6 col-md-push-3">
                       <form name="signupForm" class="signup" action="/signup" target=_top method="post"
@@ -103,14 +113,14 @@
                           <h4 class="col-sm-12 sign-as">I'm signing up as a</h4>
 
                           <div class="col-sm-6">
-                              <input id="musician-opt" type="radio" name="attribute" value="musician">
+                              <input id="musician-opt" type="radio" name="attribute" value="musician" onclick="hideThis()">
                               <label class="pointer" for="musician-opt">Musician</label>
                           </div>
-                          <div class="col-sm-6">
-                              <input id="listener-opt" type="radio" name="attribute" value="listener">
+                          <div class="col-sm-6" class="listener1">
+                              <input id="listener-opt" type="radio" name="attribute" value="listener" onclick="showThis()">
                               <label class="pointer" for="listener-opt">Listener</label>
                           </div>
-
+                          <div id="hidethis" class="hidden">
                           <span class="input input--hoshi">
                               <input class="input__field input__field--hoshi" type="text" id="screenname" name="name" required />
                               <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
@@ -153,6 +163,7 @@
                           <div class="cta">
                               <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Sign Up</button>
                           </div>
+                        </div>
                           <a id="signin-button" href="#">I already have an account</a>
                       </form>
                   </div>
@@ -265,6 +276,20 @@
       }
     }
 
+    function hideThis() {
+      $('#hidethis').addClass('hidden').removeClass('visible');
+      $('.hdr-l').addClass('hidden').removeClass('visible');
+      $('.hdr-l2').removeClass('hidden').addClass('visible');
+      $('.hdr-l3').addClass('hidden');
+    }
+
+    function showThis() {
+      $('#hidethis').removeClass('hidden').addClass('visible');
+      $('.hdr-l').removeClass('hidden').addClass('visible');
+      $('.hdr-l2').addClass('hidden').removeClass('visible');
+      $('.hdr-l3').addClass('hidden');
+    }
+
     var onloadCallback = function() {
       console.log("CAPTCHA");
       grecaptcha.render(document.getElementById('signUpCaptcha'), {
@@ -302,7 +327,6 @@
           classie.remove(ev.target.parentNode, 'input--filled');
         }
       }
-
     })();
   </script>
   <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
