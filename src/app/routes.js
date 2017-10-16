@@ -645,7 +645,7 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             code: req.session.inviteCode
         });
     });
-    app.get('/musician-welcome', redirectIfLoggedIn(loginRedirect), (req, res) => {
+    app.get('/welcome-musician', redirectIfLoggedIn(loginRedirect), (req, res) => {
         if (req.user) {
             console.log("User is already logged in, redirecting away from login page");
             return res.redirect(loginRedirect);
@@ -1744,7 +1744,7 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         });
         //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
     });
-    app.get('/musician-login', function (req, res) {
+    app.get('/login-musician', function (req, res) {
         if (req.user) {
             console.log("User is already logged in, redirecting away from login page");
             return res.redirect(loginRedirect);
