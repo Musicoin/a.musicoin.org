@@ -645,6 +645,22 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             code: req.session.inviteCode
         });
     });
+    app.get('/musician-welcome', redirectIfLoggedIn(loginRedirect), (req, res) => {
+        if (req.user) {
+            console.log("User is already logged in, redirecting away from login page");
+            return res.redirect(loginRedirect);
+        }
+        // render the page and pass in any flash data if it exists
+        if (req.query.redirect) {
+            console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`);
+            req.session.destinationUrl = req.query.redirect;
+        }
+        const message = req.flash('loginMessage');
+        doRender(req, res, 'landing_musicians.ejs', {
+            message: message,
+            code: req.session.inviteCode
+        });
+    });
     app.get('/invite', (req, res) => {
         res.redirect('/welcome');
     });
@@ -1724,6 +1740,18 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         // render the page and pass in any flash data if it exists
         const message = req.flash('loginMessage');
         doRender(req, res, 'landing.ejs', {
+            message: message,
+        });
+        //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
+    });
+    app.get('/musician-login', function (req, res) {
+        if (req.user) {
+            console.log("User is already logged in, redirecting away from login page");
+            return res.redirect(loginRedirect);
+        }
+        // render the page and pass in any flash data if it exists
+        const message = req.flash('loginMessage');
+        doRender(req, res, 'landing_musicians.ejs', {
             message: message,
         });
         //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
