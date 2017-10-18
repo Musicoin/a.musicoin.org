@@ -301,7 +301,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // track in the top frame, not the inner frame.  I can't sort out a better way
   // Using the oembed server approach would be MUCH better, but I can't get it to work. :/
   // Twitter just ignores my oembed link.
-  app.get('/nav/track/:address', isLoggedInOrIsPublic, (req, res) => {
+  app.get('/nav/track/:address', (req, res) => {
     console.log("Got external request for a nav/track page, rendering metadata in the outer frame: " + req.params.address);
     jsonAPI.getLicense(req.params.address)
       .then(license => {
