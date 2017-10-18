@@ -2384,6 +2384,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     //   return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request.  (code: 1)" });
     // }
 
+    if (req.anonymousUser) {
+      user.accountLocked == false;
+    }
+    
     if (user.accountLocked) {
       console.log("Blocking playback for locked user.");
       return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request (code: 2)" });
