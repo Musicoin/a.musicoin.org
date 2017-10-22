@@ -47,7 +47,7 @@ then
   echo "Setting boot script " >> mc_install.log
   echo "cd /" >> /mc_boot.sh
   echo "./go-ipfs/ipfs daemon --init=true --migrate=true >> ipfs.log 2>&1 &" >> /mc_boot.sh
-  echo "pm2 start /musicoin.org/src/server.js --max-restarts 10000000 -i 0" >> /mc_boot.sh
+  echo "pm2 start /musicoin.org/src/server.js --max-restarts 10000000" >> /mc_boot.sh
   chmod +x /mc_boot.sh
   echo "@reboot /mc_boot.sh" | crontab
 

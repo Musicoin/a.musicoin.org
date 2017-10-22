@@ -5,7 +5,7 @@ cd /
 /go-ipfs/ipfs daemon --init=true --migrate=true >> ipfs.log 2>&1 &
 
 echo "Starting pm2 script..."
-pm2 start /musicoin.org/src/server.js --max-restarts 10000000 -i 0
+pm2 start /musicoin.org/src/server.js --max-restarts 10000000
 
 echo "Setting up jenkins monitor.."
 touch /home/jenkins/monitor
