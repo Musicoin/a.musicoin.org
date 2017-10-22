@@ -19,6 +19,10 @@ echo "Running npm install..."
   echo "Failed to Run npm install" | mutt -s "Npm Error" varunram@musicoin.org
 }
 
+echo "Updating front-end submodule"
+chmod +x frontend.sh
+./frontend.sh
+
 echo "Compiling type script ..."
 {
   tsc
@@ -29,7 +33,7 @@ echo "Compiling type script ..."
 
 echo "Restarting pm2 processes..."
 {
-  pm2 restart server
+  pm2 restart all
 } || {
   echo "Failed to restart pm2" | mutt -s "PM2 Error" isaac@musicoin.org
   echo "Failed to restart pm2" | mutt -s "PM2 Error" varunram@musicoin.org
