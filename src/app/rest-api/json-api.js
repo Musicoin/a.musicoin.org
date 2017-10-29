@@ -515,6 +515,9 @@ class MusicoinOrgJsonAPI {
         });
     }
     _createHeroFromReleaseRecord(release, image) {
+        if(!release) {
+            return {};
+        }
         return {
             subtitle: release.title,
             subtitleLink: `/track/${release.address}`,
