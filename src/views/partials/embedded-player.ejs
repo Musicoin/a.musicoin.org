@@ -1,0 +1,66 @@
+<audio autoplay id="player"></audio>
+<div id="player-section" class="fixed-footer player show-on-play">
+    <div class="player-foreground no_selection" style="background: black; opacity: 0.9">
+        <img id="player-badge-image" src="/images/default-profile.png" class="song-badge-image big-screen-only">
+        <div class="song-badge-info">
+            <div id=player-title-area  class="flex-row middle clickable title-link">
+                <div id="player-title" class="player-song-name mr10">Song title which styupidly long that will cause some sort of snafu</div>
+            </div>
+            <div id="player-artist" class="player-artist-name clickable">Artist name which styupidly long that will cause some sort of snafu</div>
+        </div>
+
+        <i id="player-play-button" class="fa fa-play btn btn-plain player-control"
+           onclick="audioPlayer.togglePlayState()"
+           style="margin-right: 5px; color: #FFCD00"
+           aria-hidden="true"></i>
+
+        <img id="player-pause-button" onclick="audioPlayer.togglePlayState()" src="/images/player/pause.png"
+             style="width: 55px; height: 55px; padding-right: 5px; margin-right: 4px"
+             class="player-control">
+
+        <div id=player-progress class="player-progress mr5 big-screen-only">
+            <div class="progress-bar progress-background"></div>
+            <div id="player-progress-div" class="progress-bar progress-foreground" style="background-color: darkorchid">
+            </div>
+            <div class="spread mt5">
+                <div id="player-time-played" style="color: #FFCD00" class="player-time-field big-screen-only">00:00</div>
+                <div id="player-time-left" style="color: #FFCD00" class="player-time-field">00:00</div>
+            </div>
+            <div id=progress-thumb class="progress-thumb draggable ui-widget-content"></div>
+        </div>
+
+        <i id="player-next-button" class="fa fa-lg fa-step-forward btn btn-plain player-control"
+           onclick="audioPlayer.skipTrack()"
+           style="color: #AE8C00"
+           aria-hidden="true"></i>
+
+        <div id="player-tip-button"
+             title="Send a tip"
+             class="clickable text-large mr10"
+             context-type="Release"
+             recipient="">
+            <i class="fa fa-2x fa-heart btn btn-plain btn-sm"
+               style="padding: 5px; color: #FFCD00"
+               aria-hidden="true"></i>
+        </div>
+        <div class="clickable text-large mr10">
+            <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle"
+               style="padding: 5px; color: #FFCD00"
+               aria-hidden="true"></i>
+        </div>
+
+        <div title="Show or hide the playlist"
+                class="clickable text-large mr10"
+                style="position: relative">
+            <i id="play-queue-trigger"
+               class="fa fa-list-ul btn-plain btn-sm play-queue-trigger"
+               style="padding: 5px"
+               aria-hidden="true"></i>
+            <i id="play-queue-count"
+               class="queue-size"
+               aria-hidden="true"
+               style="position: absolute;bottom: -9px;right: -13px;">0</i>
+        </div>
+    </div>
+    <div id="player-background" class="player-background" style="background-image: url('')"></div>
+</div>

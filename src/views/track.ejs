@@ -5,6 +5,8 @@
   <title>Musicoin</title>
   <%- include partials/page-head.ejs %>
 
+  <link rel="stylesheet" href="/dependencies/bootstrap-social.css">
+
 
     <meta name="keywords" content="Musicoin, Music, Blockchain, Crypto, Cryptocurrency">
     <meta name="description" content="Musicoin, revolutionizing the music industry with the help of the blockchain">
@@ -395,6 +397,10 @@
                         <%- include('partials/tag-list.ejs', { tags: license.languages, tagType: "search", "tagClass": "language-tag" }) %>
                           <%- include('partials/tag-list.ejs', { tags: license.moods, tagType: "search", "tagClass": "mood-tag" }) %>
                             <%- include('partials/tag-list.ejs', { tags: license.regions, tagType: "search", "tagClass": "region-tag" }) %>
+                      </div>
+                      <div class="mt20">Share</div>
+                      <div class="m5 flex-row" style="flex-wrap: wrap">
+                        <%- include('partials/share-button.ejs') %>
                       </div>
                     </td>
                   </tr>

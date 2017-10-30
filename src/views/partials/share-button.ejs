@@ -1,0 +1,70 @@
+<div class="share-track-component">
+  <div class="share-button-container">
+    <button class="share-button">Share</button>
+  </div>
+  <div id="share-track-options-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <!--         <div class="modal-header">
+          <h5 class="modal-title">Share</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div> -->
+        <div class="modal-body">
+          <ul class="nav nav-tabs" id="share-track-options-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="share-track-tab" data-toggle="tab" href="#share-track-tab" role="tab" aria-controls="home" aria-selected="true">Share</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="embed-track-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Embed</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="share-track-options-tab-content">
+            <div class="tab-pane fade show active" id="share-track-tab-content" role="tabpanel" aria-labelledby="share-track-tab">
+              <div class="embedded-track-player">
+                <iframe src="/embedded-player/<%=license.address%>"></iframe>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="embed-track-tab-content" role="tabpanel" aria-labelledby="embed-track-tab">
+              <ul class="share-options">
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-twitter" href="https://twitter.com/share?url=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%twitter">
+    				<span class="fa fa-twitter"></span>
+  					</a>
+                </li>
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dfacebook">
+    				<span class="fa fa-facebook"></span>
+  					</a>
+                </li>
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-tumblr" href="https://plus.google.com/share?url=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dgoogleplus">
+    				<span class="fa fa-tumblr"></span>
+  					</a>
+                </li>
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-google" href="http://pinterest.com/pin/create/button/?url=https%3A//musicoin.org/nav/track/<%=license.address%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dpinterest&media=https://musicoin.org<%=license.image%>&description=<%=description%>&is_video=true">
+    				<span class="fa fa-google"></span>
+  					</a>
+                </li>
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-pinterenst">
+    				<span class="fa fa-pinterenst"></span>
+  					</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+
+  $('#share-track-options-dialog').modal();
+
+});
+</script>

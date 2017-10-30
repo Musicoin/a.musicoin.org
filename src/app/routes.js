@@ -251,8 +251,13 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             }
         });
     });
+
     app.get('/player', isLoggedInOrIsPublic, (req, res) => {
         res.render('player-frame.ejs');
+    });
+
+    app.get('/embedded-player/:address', isLoggedInOrIsPublic, (req, res) => {
+        res.render('embedded-player-frame.ejs', {address: req.params.address});
     });
     // This sucks.  If I want twitter cards to work, we need metadata about the
     // track in the top frame, not the inner frame.  I can't sort out a better way
