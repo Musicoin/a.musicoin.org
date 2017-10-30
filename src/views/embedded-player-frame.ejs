@@ -3,11 +3,18 @@
 
 <head>
   <%- include partials/page-head.ejs %>
+  <link rel="stylesheet" type="text/css" href="/styles/player.css">
 </head>
 
 <body>
-  <%- include partials/player.ejs %>
+  <%- include partials/embedded-player.ejs %>
   <script type="text/javascript" src="/js/player.js"></script>
+  <script>
+
+  $(document).ready(function () {
+    audioPlayer.queueTrack('<%=address%>');
+  });
+</script>
 </body>
 
 </html>
