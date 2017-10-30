@@ -398,6 +398,10 @@
                           <%- include('partials/tag-list.ejs', { tags: license.moods, tagType: "search", "tagClass": "mood-tag" }) %>
                             <%- include('partials/tag-list.ejs', { tags: license.regions, tagType: "search", "tagClass": "region-tag" }) %>
                       </div>
+                      <div class="mt20">Share</div>
+                      <div class="m5 flex-row" style="flex-wrap: wrap">
+                        <%- include('partials/share-button.ejs') %>
+                      </div>
                     </td>
                   </tr>
                   <tr>
