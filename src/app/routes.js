@@ -288,6 +288,35 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
     });
     app.get('/embedded-player/:address', isLoggedInOrIsPublic, (req, res) => {
         res.render('embedded-player-frame.ejs', { address: req.params.address });
+        console.log("Loading track page for track address: " + req.params.address);
+        const address = FormUtils.defaultString(req.params.address, null);
+        if (!address) {
+            console.log(`Failed to load track page, no address provided`);
+            return res.render('not-found.ejs');
+        }
+        const ms = jsonAPI.getLicenseMessages(address, 20);
+        const l = jsonAPI.getLicense(address);
+        const r = Release.findOne({ contractAddress: address, state: 'published' });
+        const x = exchangeRateProvider.getMusicoinExchangeRate();
+        bluebird_1.Promise.join(l, ms, r, x, (license, messages, release, exchangeRate) => {
+            if (!license || !release) {
+                console.log(`Failed to load track page for license: ${address}, err: Not found`);
+                return res.render('not-found.ejs');
+            }
+            const ras = addressResolver.resolveAddresses("", license.contributors);
+            const a = jsonAPI.getArtist(license.artistProfileAddress, false, false);
+            bluebird_1.Promise.join(a, ras, (response, resolvedAddresses) => {
+                let totalShares = 0;
+                resolvedAddresses.forEach(r => totalShares += parseInt(r.shares));
+                resolvedAddresses.forEach(r => r.percentage = _formatNumber(100 * r.shares / totalShares, 1));
+                const plays = release.directPlayCount || 0;
+                const tips = release.directTipCount || 0;
+                const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
+            });
+        }).catch(err => {
+            console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
+            res.render('not-found.ejs');
+        });
     });
     app.get('/nav/artist/:address', isLoggedInOrIsPublic, (req, res) => {
         console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);
