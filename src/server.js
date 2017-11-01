@@ -128,37 +128,9 @@ ConfigUtils.loadConfig()
         cb(null, { options: opts, certs: certs });
     }
 });
-//helmet middleware to enhance security
-/*
-const oneDayinSeconds = 5184000 // verify header every one day
-app.use(helmet.hpkp({
-  maxAge: oneDayinSeconds,
-  sha256s: ['Qj0Lpmhq1bu3ksR36/IKlNy17cy6tKDmLYnvoE631Lw=','xmvvalwaPni4IBbhPzFPPMX6JbHlKqua257FmJsWWto='],
-  includeSubdomains: true
-}))
-*/
-app.use(helmet());
-//app.use(helmet.referrerPolicy({ policy: 'same-origin' }))
-/*
-app.use(expectCt({
-  enforce: true,
-  maxAge: 90
-}))
-
-/*
-app.use(csp({
-  directives: {
-    defaultSrc: ["'self'"],
-    styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com', 'https://fonts.googleapis.com'],
-    fontSrc: ["'self'", 'https://fonts.gstatic.com data:'],
-    scriptSrc: ["'self'", 'https://ajax.googleapis.com'],
-    sandbox: ['allow-forms', 'allow-scripts'],
-    // reportUri: ['/report-violation'],
-    objectSrc: ["'none'"],
-  }
-}))
-*/
-// gettext
+app.use(helmet({
+    frameguard: false
+}));
 app.use(gettext(app, {
     directory: path.join(__dirname, 'locales'),
     useAcceptedLanguageHeader: true,

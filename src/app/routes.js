@@ -254,11 +254,6 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
     app.get('/player', isLoggedInOrIsPublic, (req, res) => {
         res.render('player-frame.ejs');
     });
-
-    app.get('/embedded-player/:address', isLoggedInOrIsPublic, (req, res) => {
-        res.render('embedded-player-frame.ejs', {address: req.params.address});
-    });
-
     // This sucks.  If I want twitter cards to work, we need metadata about the
     // track in the top frame, not the inner frame.  I can't sort out a better way
     // Using the oembed server approach would be MUCH better, but I can't get it to work. :/
@@ -285,11 +280,14 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
                 console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
                 return res.render('not-found.ejs');
             }
-            res.render('index-frames-with-player.ejs', {
+            res.render('index-frames.ejs', {
                 license: license,
                 mainFrameLocation: req.originalUrl.substr(4)
             });
         });
+    });
+    app.get('/embedded-player/:address', isLoggedInOrIsPublic, (req, res) => {
+        res.render('embedded-player-frame.ejs', { address: req.params.address });
     });
     app.get('/nav/artist/:address', isLoggedInOrIsPublic, (req, res) => {
         console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);

@@ -331,6 +331,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/embedded-player/:address', isLoggedInOrIsPublic, (req, res) => {
+    res.render('embedded-player-frame.ejs', {address: req.params.address});
+  });
+
   app.get('/nav/artist/:address', isLoggedInOrIsPublic, (req, res) => {
     console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);
     jsonAPI.getArtist(req.params.address, false, false)
