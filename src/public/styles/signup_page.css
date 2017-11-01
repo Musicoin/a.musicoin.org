@@ -4967,3 +4967,8 @@ h4.sign-as{
     cursor: pointer;
     margin-left: 10px;
 }
+
+#passworddetail {
+    visibility: hidden;
+    width: 500px;
+}
