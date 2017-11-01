@@ -127,6 +127,7 @@
                                   <span class="input__label-content input__label-content--hoshi">Password</span>
                               </label>
                           </span>
+                          <span class="input input--hoshi input__label-content" style="display: inline-block" id ="passworddetail">Password must contain a minimum of <br> 10 characters,<br>1 Special character & 1 letter from both cases</span>
 
                           <span class="input input--hoshi">
                               <input class="input__field input__field--hoshi" type="password" id="password1" name="password2" required/>
@@ -274,6 +275,18 @@
         'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
       });
     }
+    $('#passworddetail').css('display', 'none');
+    $('#password').on('focus', function(){
+      $('#passworddetail').css('visibility', 'visible');
+      $('#passworddetail').css('display', 'block');
+
+    });
+
+    $('#password').on('focusout', function(){
+      $('#passworddetail').css('visibility', 'hidden');
+      $('#passworddetail').css('display', 'none');
+    });
+
   </script>
 
   <script>
