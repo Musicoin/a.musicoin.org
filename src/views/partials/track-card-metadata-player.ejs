@@ -19,4 +19,139 @@
 <meta property="og:title" content="<%=license.title%> by <%=license.artistName%>">
 <meta property="og:site_name" content="Musicoin"/>
 <meta property="fb:app_id" content="1845789109028247"/>
+
+<noscript><article itemscope itemtype="http://schema.org/MusicRecording">
+  <header>
+    <h1 itemprop="name"><a itemprop="url" href="/nav/track/<%=license.address%>"><%=license.title%></a>
+    by <a href="/artist/<%=artist.address%>"><%=license.artistName%></a></h1>
+    published on <time pubdate>2012-01-20T22:06:27Z</time>
+
+<!--         <meta itemprop="duration" content="PT00H43M52S" />
+        <meta itemprop="genre" content="Comedy" />
+
+        <meta itemprop="interactionCount" content="UserLikes:415" />
+        <meta itemprop="interactionCount" content="UserDownloads:25308" />
+        <meta itemprop="interactionCount" content="UserComments:70" /> -->
+
+      <div itemscope itemprop="audio" itemtype="http://schema.org/AudioObject"><meta itemprop="embedUrl" content="https://musicoin.org/embedded-player/<%=license.address%>" /><meta itemprop="height" content="400px" /></div>
+      <div itemscope itemprop="byArtist" itemtype="http://schema.org/MusicGroup"><meta itemprop="name" content="The Bugle" /><meta itemprop="url" content="/artist/<%=artist.address%>" /></div>
+      <div itemscope itemprop="provider" itemtype="http://schema.org/Organization"><meta itemprop="name" content="SoundCloud" /><meta itemprop="image" content="http://developers.soundcloud.com/assets/logo_white-8bf7615eb575eeb114fc65323068e1e4.png" /></div>
+  </header>
+  <p>
+    <img src="https://musicoin.org<%=license.image%>" width="500" height="500" alt="<%=license.title%>" itemprop="image">
+    <%=license.description || "Find this track and other amazing tracks on musicoin.org"%>
+    <meta itemprop="description" content="<%=license.description || "Find this track and other amazing tracks on musicoin.org"%>" />
+  </p>
+    <!-- <dl>
+      <dt>Genre</dt>
+      <dd><a href="/tags/Comedy">Comedy</a></dd>
+    </dl>
+
+    <section class="comments">
+      <h2>Comment by <a href="/arrowbeefgaming-longlegs3">arrowbeefgaming longlegs3</a></h2>
+      <p>mmmmhhmmmm</p>
+      <time pubdate>2016/05/22 13:03:09 +0000</time>
+      <h2>Comment by <a href="/fel1p">Felip Barbosa</a></h2>
+      <p>Foi mal</p>
+      <time pubdate>2015/03/21 18:58:44 +0000</time>
+      <h2>Comment by <a href="/johannes-zebuloon-leek">Johannes Zebuloon Leek</a></h2>
+      <p>poopie</p>
+      <time pubdate>2015/01/25 10:01:21 +0000</time>
+      <h2>Comment by <a href="/joel2022">joel2022</a></h2>
+      <p>pipi!!!!!!</p>
+      <time pubdate>2015/01/05 00:47:54 +0000</time>
+      <h2>Comment by <a href="/hoang-hon">Hoang Hon 2</a></h2>
+      <p>leminhhaipro1982</p>
+      <time pubdate>2014/09/18 22:33:07 +0000</time>
+      <h2>Comment by <a href="/dj-dex-gusdek">DJ dex gusdek</a></h2>
+      <p>SURAM BROOO I LICE DJ BUGLE :D</p>
+      <time pubdate>2014/07/03 12:31:03 +0000</time>
+      <h2>Comment by <a href="/brisa-prado">Brisa BieberGomez</a></h2>
+      <p></p>
+      <time pubdate>2014/06/29 14:50:23 +0000</time>
+      <h2>Comment by <a href="/jorge-santiago-rosario">Jorge Santiago Rosario</a></h2>
+      <p>my gente gracias por senti lrrrre</p>
+      <time pubdate>2014/06/24 01:22:34 +0000</time>
+      <h2>Comment by <a href="/rihanna-navy-georgia">Rihanna Navy Georgia</a></h2>
+      <p></p>
+      <time pubdate>2014/06/15 10:47:21 +0000</time>
+      <h2>Comment by <a href="/pmoey">Pmoey</a></h2>
+      <p>Go right</p>
+      <time pubdate>2014/06/01 14:13:36 +0000</time>
+      <h2>Comment by <a href="/just-noise-03">Just Noise 03</a></h2>
+      <p>check us out college lads talking about news young opinions!!</p>
+      <time pubdate>2014/05/07 16:27:47 +0000</time>
+      <h2>Comment by <a href="/just-noise-03">Just Noise 03</a></h2>
+      <p>Check us out new podcasts very wednesday</p>
+      <time pubdate>2014/05/07 16:26:59 +0000</time>
+      <h2>Comment by <a href="/frederic-bohmert">MAD FRED</a></h2>
+      <p>cool</p>
+      <time pubdate>2014/05/01 16:46:17 +0000</time>
+      <h2>Comment by <a href="/deleonsoyo">Deleonsoyo</a></h2>
+      <p>deleonsoyyo</p>
+      <time pubdate>2014/04/08 20:07:19 +0000</time>
+      <h2>Comment by <a href="/agelessangels">Ageless Angels</a></h2>
+      <p>https://soundcloud.com/checkered-sexy</p>
+      <time pubdate>2014/02/12 20:28:51 +0000</time>
+      <h2>Comment by <a href="/christiam-clark-s4">CHRISTIAM CLARK S4</a></h2>
+      <p>wath?</p>
+      <time pubdate>2014/01/03 23:46:38 +0000</time>
+      <h2>Comment by <a href="/dj-archiflow">Dj Archiflow</a></h2>
+      <p>dj archiflow</p>
+      <time pubdate>2013/12/11 03:47:47 +0000</time>
+      <h2>Comment by <a href="/sennid">SENNID</a></h2>
+      <p>BIG UP!!</p>
+      <time pubdate>2013/11/27 03:49:15 +0000</time>
+      <h2>Comment by <a href="/isp-lowkey">Isplowkey LaJames</a></h2>
+      <p>thats funny</p>
+      <time pubdate>2013/11/05 07:58:34 +0000</time>
+      <h2>Comment by <a href="/ikanji-kanjimusic-gayle">Ikanji KanjiMusic Gayle</a></h2>
+      <p>love this </p>
+      <time pubdate>2013/09/04 22:52:07 +0000</time>
+      <h2>Comment by <a href="/laurartunduaga_06">LaurArtunduaga_06</a></h2>
+      <p>lauraartunduaga_06</p>
+      <time pubdate>2013/05/24 02:04:31 +0000</time>
+      <h2>Comment by <a href="/fabio-ricali">Fabio Ricali</a></h2>
+      <p>ciao</p>
+      <time pubdate>2013/04/12 10:21:59 +0000</time>
+      <h2>Comment by <a href="/brapse">brapse</a></h2>
+      <p>too good</p>
+      <time pubdate>2013/03/12 13:07:51 +0000</time>
+      <h2>Comment by <a href="/dj-science">DJ Science</a></h2>
+      <p>yo!</p>
+      <time pubdate>2013/02/26 23:39:47 +0000</time>
+      <h2>Comment by <a href="/antonia-veras">Antônia Veras</a></h2>
+      <p>kkkkkk cale - se cale  . vocês me deicham loucooooo</p>
+      <time pubdate>2013/01/23 04:08:10 +0000</time>
+      <h2>Comment by <a href="/antonia-veras">Antônia Veras</a></h2>
+      <p>Legal o canto do galo</p>
+      <time pubdate>2013/01/23 03:54:50 +0000</time>
+      <h2>Comment by <a href="/hollyhood-rockstarz-int">Hollyhood Rockstarz Int</a></h2>
+      <p>The Bugle</p>
+      <time pubdate>2012/09/16 22:12:02 +0000</time>
+      <h2>Comment by <a href="/bluemoon1">bluemoon1</a></h2>
+      <p>My first time with SoundCloud..off to a good start!</p>
+      <time pubdate>2012/08/25 11:12:20 +0000</time>
+      <h2>Comment by <a href="/czzarr">czzarr</a></h2>
+      <p>etgergerg</p>
+      <time pubdate>2012/07/26 09:39:01 +0000</time>
+      <h2>Comment by <a href="/ashton-wong-1">Ashton Wong 1</a></h2>
+      <p>Hello!</p>
+      <time pubdate>2012/07/11 10:17:26 +0000</time>
+    </section> -->
+
+<!--   <footer>
+      <a href="https://api.soundcloud.com/tracks/34019569/download">Download Bugle 179 - Playas gon play</a>
+      <ul>
+        <li><a href="/the-bugle/bugle-179-playas-gon-play/likes">Users who like Bugle 179 - Playas gon play</a></li>
+        <li><a href="/the-bugle/bugle-179-playas-gon-play/reposts">Users who reposted Bugle 179 - Playas gon play</a></li>
+        <li><a href="/the-bugle/bugle-179-playas-gon-play/sets">Playlists containing Bugle 179 - Playas gon play</a></li>
+        <li><a href="/the-bugle/bugle-179-playas-gon-play/groups">Groups containing Bugle 179 - Playas gon play</a></li>
+        <li><a href="/the-bugle/bugle-179-playas-gon-play/recommended">More tracks like Bugle 179 - Playas gon play</a></li>
+      </ul>
+    License: all-rights-reserved
+  </footer> -->
+</article>
+</noscript>
+
 <% } %>
