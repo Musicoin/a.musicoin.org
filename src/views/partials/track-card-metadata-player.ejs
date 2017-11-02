@@ -19,4 +19,23 @@
 <meta property="og:title" content="<%=license.title%> by <%=license.artistName%>">
 <meta property="og:site_name" content="Musicoin"/>
 <meta property="fb:app_id" content="1845789109028247"/>
+
+<noscript><article itemscope itemtype="http://schema.org/MusicRecording">
+  <header>
+    <h1 itemprop="name"><a itemprop="url" href="/nav/track/<%=license.address%>"><%=license.title%></a>
+    by <a href="/artist/<%=artist.address%>"><%=license.artistName%></a></h1>
+    published on <time pubdate>2012-01-20T22:06:27Z</time>
+
+      <div itemscope itemprop="audio" itemtype="http://schema.org/AudioObject"><meta itemprop="embedUrl" content="https://musicoin.org/embedded-player/<%=license.address%>" /><meta itemprop="height" content="400px" /></div>
+      <div itemscope itemprop="byArtist" itemtype="http://schema.org/MusicGroup"><meta itemprop="name" content="The Bugle" /><meta itemprop="url" content="/artist/<%=artist.address%>" /></div>
+      <div itemscope itemprop="provider" itemtype="http://schema.org/Organization"><meta itemprop="name" content="Musicoin" /><meta itemprop="image" content="https://musicoin.org/images/logon.svg" /></div>
+  </header>
+  <p>
+    <img src="https://musicoin.org<%=license.image%>" width="500" height="500" alt="<%=license.title%>" itemprop="image">
+    <%=license.description || "Find this track and other amazing tracks on musicoin.org"%>
+    <meta itemprop="description" content="<%=license.description || "Find this track and other amazing tracks on musicoin.org"%>" />
+  </p>
+</article>
+</noscript>
+
 <% } %>
