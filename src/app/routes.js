@@ -1903,7 +1903,7 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         failureRedirect: '/login',
         failureFlash: true // allow flash messages
     }));
-    app.post('/signin', setSignUpFlag(false), validateLoginEmail('/welcome'), passport.authenticate('local', {
+    app.post('/signin/newroutethat', setSignUpFlag(false), validateLoginEmail('/welcome'), passport.authenticate('local', {
         successRedirect: loginRedirect,
         failureRedirect: '/welcome',
         failureFlash: true // allow flash messages

@@ -2116,7 +2116,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     failureFlash: true // allow flash messages
   }));
 
-  app.post('/signin', setSignUpFlag(false), validateLoginEmail('/welcome'), passport.authenticate('local', {
+  app.post('/signin/newroutethat', setSignUpFlag(false), validateLoginEmail('/welcome'), passport.authenticate('local', {
     successRedirect: loginRedirect, // redirect to the secure profile section
     failureRedirect: '/welcome', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
