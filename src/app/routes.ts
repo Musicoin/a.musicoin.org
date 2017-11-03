@@ -167,7 +167,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.json({ ok: true })
   });
 
-  app.get('/json-api/demo', isLoggedIn, (req, res) => doRender(req, res, 'api-demo.ejs', {}));
+  // app.get('/json-api/demo', isLoggedIn, (req, res) => doRender(req, res, 'api-demo.ejs', {}));
   app.use('/json-api', restAPI.getRouter());
 
   app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
@@ -756,11 +756,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  //app.get('/projects', (req, res) => doRender(req, res, 'projects.ejs', {}));
-  //app.get('/team', (req, res) => doRender(req, res, 'team.ejs', {}));
 
-  app.get('/demo/play-queue', (req, res) => doRender(req, res, 'play-queue-page.ejs', {}));
-  app.get('/info', (req, res) => doRender(req, res, 'info.ejs', {}));
   // app.get('/landing',  (req, res) => doRender(req, res, 'landing.ejs', {}));
   app.get('/welcome', redirectIfLoggedIn(loginRedirect), (req, res) => {
     if (req.user) {
@@ -876,16 +872,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           }
         });
   });
-  app.get('/new-user', (req, res) => {
-    if (req.user.draftProfile && req.user.draftProfile.artistName) {
-      return res.redirect("/profile");
-    }
-    doRender(req, res, 'new-user.ejs', {})
-  });
   app.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
   app.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
 
-  app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
+  // app.get('/api', (req, res) => doRender(req, res, 'api.ejs', {}));
   app.post('/invite', isLoggedIn, function(req, res) {
     if (canInvite(req.user)) {
       jsonAPI.sendInvite(req.user, req.body.email)
@@ -2148,6 +2138,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const email = req.body.email || "";
     if (re.test(email.trim()) == false)  /// a@b.c is the smallest possible email address (5 chars)
       return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
+
+    if (checkCaptcha(req) == false) {
+      return doRender(req, res, "password-forgot.ejs", { message: "Nice try, but you aren't a human" });
+    }
 
     User.findOne({ "local.email": req.body.email }).exec()
       .then(user => {
