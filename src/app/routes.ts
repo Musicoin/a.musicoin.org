@@ -2139,9 +2139,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     if (re.test(email.trim()) == false)  /// a@b.c is the smallest possible email address (5 chars)
       return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
 
-    if (checkCaptcha(req) == false) {
-      return doRender(req, res, "password-forgot.ejs", { message: "Nice try, but you aren't a human" });
-    }
+    checkCaptcha(req)
+      .then(captchaOk => {
+        if (!captchaOk) {
+          req.flash('loginMessage', `The captcha check failed`);
+          return res.redirect('/login/forgot');
+        }
+      });
 
     User.findOne({ "local.email": req.body.email }).exec()
       .then(user => {
