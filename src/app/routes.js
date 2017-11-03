@@ -1921,11 +1921,11 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         const email = req.body.email || "";
         if (re.test(email.trim()) == false)
             return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
-        checkCaptcha(req)
-            .then(captchaOk => {
+        const cp = checkCaptcha(req);
+        return bluebird_1.Promise.join(cp, function (captchaOk) {
             if (!captchaOk) {
-                req.flash('loginMessage', `The captcha check failed`);
-                return res.redirect('/login/forgot');
+                req.flash('loginMessage', "The reCAPTCHA validation failed.");
+                return doRender(req, res, "password-forgot.ejs", { message: "Invalid captcha response" });
             }
         });
         User.findOne({ "local.email": req.body.email }).exec()
