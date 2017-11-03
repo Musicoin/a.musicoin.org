@@ -2143,7 +2143,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       .then(captchaOk => {
         if (!captchaOk) {
           req.flash('loginMessage', `The captcha check failed`);
-          return res.redirect('/login/forgot');
+          return doRender(req, res, "password-forgot.ejs", { message: "You are not a human. Please try again."});
         }
       });
 
