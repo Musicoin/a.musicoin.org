@@ -2132,19 +2132,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     doRender(req, res, "password-forgot.ejs", {});
   });
 
-  app.post('/login/forgot', (req, res) => {
+  app.post('/login/forgot/reset', (req, res) => {
     var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
     const email = req.body.email || "";
     if (re.test(email.trim()) == false)  /// a@b.c is the smallest possible email address (5 chars)
       return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
 
-      const cp = checkCaptcha(req);
-
-      return Promise.join(cp, function( captchaOk) {
+    checkCaptcha(req)
+      .then(captchaOk => {
         if (!captchaOk) {
-          req.flash('loginMessage', "The reCAPTCHA validation failed.");
-          return doRender(req, res, "password-forgot.ejs", { message: "Invalid captcha response"});
+          req.flash('loginMessage', `The captcha check failed`);
+          return res.redirect('/login/forgot');
         }
       });
 

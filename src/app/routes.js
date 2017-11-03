@@ -1916,16 +1916,16 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
     app.get('/login/forgot', redirectIfLoggedIn(loginRedirect), (req, res) => {
         doRender(req, res, "password-forgot.ejs", {});
     });
-    app.post('/login/forgot', (req, res) => {
+    app.post('/login/forgot/reset', (req, res) => {
         var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
         const email = req.body.email || "";
         if (re.test(email.trim()) == false)
             return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
-        const cp = checkCaptcha(req);
-        return bluebird_1.Promise.join(cp, function (captchaOk) {
+        checkCaptcha(req)
+            .then(captchaOk => {
             if (!captchaOk) {
-                req.flash('loginMessage', "The reCAPTCHA validation failed.");
-                return doRender(req, res, "password-forgot.ejs", { message: "Invalid captcha response" });
+                req.flash('loginMessage', `The captcha check failed`);
+                return res.redirect('/login/forgot');
             }
         });
         User.findOne({ "local.email": req.body.email }).exec()
