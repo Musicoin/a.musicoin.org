@@ -1,5 +1,6 @@
 "use strict";
 const express = require("express");
+const cors = require("cors");
 const gettext = require("express-gettext");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -32,6 +33,7 @@ ConfigUtils.loadConfig()
     mongoose.Promise = require('bluebird');
     mongoose.connect(config.database.url);
     passportConfigurer.configure(passport, mediaProvider, config.auth);
+    app.use(cors(config.cors));
     const get_ip = require('ipware')().get_ip;
     app.use(function (req, res, next) {
         get_ip(req);

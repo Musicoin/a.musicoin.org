@@ -171,6 +171,9 @@ function getStructuredConfig(keyValueConfig) {
         },
         certificate: {
             approveDomains: keyValueConfig.domains.split(',').map(s => s.trim()).filter(s => s)
+        },
+        cors: {
+            origin: ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com']
         }
     };
 }
