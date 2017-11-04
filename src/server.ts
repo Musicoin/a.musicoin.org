@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as cors from 'cors';
 import * as gettext from 'express-gettext';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
@@ -38,6 +39,7 @@ ConfigUtils.loadConfig()
 
     passportConfigurer.configure(passport as any, mediaProvider, config.auth);
 
+    app.use(cors(config.cors));
     const get_ip = require('ipware')().get_ip;
     app.use(function(req, res, next) {
       get_ip(req);
