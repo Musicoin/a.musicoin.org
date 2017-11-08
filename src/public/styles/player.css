@@ -234,3 +234,26 @@
   background-color: white;
   color: #333;
 }
+
+#embedded-player-main {
+  color: #000;
+}
+
+#track-title {
+  font-weight: bold;
+    padding: 0 0 0 5px;
+    font-size: 16px;
+}
+
+#track-description {
+      padding: 5px 0 5px 5px;
+    font-size: 14px;
+}
+
+#track-image {
+  
+}
+
+#track-image-element {
+      width: 100%;
+}

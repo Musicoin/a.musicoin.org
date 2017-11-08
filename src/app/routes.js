@@ -287,18 +287,16 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
         });
     });
     app.get('/embedded-player/:address', isLoggedInOrIsPublic, (req, res) => {
-        res.render('embedded-player-frame.ejs', { address: req.params.address });
-        console.log("Loading track page for track address: " + req.params.address);
         const address = FormUtils.defaultString(req.params.address, null);
         if (!address) {
             console.log(`Failed to load track page, no address provided`);
-            return res.render('not-found.ejs');
+            return res.render('not-found.ejs', { error: 'Failed to load track page, no address provided' }); // TODO: Change later
         }
-        const ms = jsonAPI.getLicenseMessages(address, 20);
-        const l = jsonAPI.getLicense(address);
-        const r = Release.findOne({ contractAddress: address, state: 'published' });
-        const x = exchangeRateProvider.getMusicoinExchangeRate();
-        bluebird_1.Promise.join(l, ms, r, x, (license, messages, release, exchangeRate) => {
+        const messagePromise = jsonAPI.getLicenseMessages(address, 20);
+        const licensePromise = jsonAPI.getLicense(address);
+        const releasePromise = Release.findOne({ contractAddress: address, state: 'published' });
+        const exchangeRatePromise = exchangeRateProvider.getMusicoinExchangeRate();
+        bluebird_1.Promise.join(licensePromise, messagePromise, releasePromise, exchangeRatePromise, (license, messages, release, exchangeRate) => {
             if (!license || !release) {
                 console.log(`Failed to load track page for license: ${address}, err: Not found`);
                 return res.render('not-found.ejs');
@@ -312,10 +310,31 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
                 const plays = release.directPlayCount || 0;
                 const tips = release.directTipCount || 0;
                 const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
+                doRender(req, res, 'embedded-player-frame.ejs', {
+                    address: address,
+                    data: {
+                        artist: response.artist,
+                        license: license,
+                        contributors: resolvedAddresses,
+                        releaseId: release._id,
+                        description: release.description,
+                        messages: messages,
+                        isArtist: req.user && req.user.profileAddress == license.artistProfileAddress,
+                        abuseMessage: config.ui.admin.markAsAbuse,
+                        exchangeRate: exchangeRate,
+                        trackStats: {
+                            playCount: plays,
+                            tipCount: tips,
+                            totalEarned: (plays + tips),
+                            formattedTotalUSD: usd
+                        }
+                    }
+                });
             });
-        }).catch(err => {
+        })
+            .catch(err => {
             console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
-            res.render('not-found.ejs');
+            res.render('not-found.ejs', { error: err }); // TODO: Change later
         });
     });
     app.get('/nav/artist/:address', isLoggedInOrIsPublic, (req, res) => {

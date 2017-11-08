@@ -112,10 +112,44 @@ var tipModule = {
         element.attr('count', 0);
       }, 3000)
     }
+  },
+
+  initialize: function initialize() {
+    
+    var queryOptions = musicoin.utils.queryParamsToObject();
+
+    if(queryOptions.autoTip === 'true') {
+
+      var mainFrameDocument = musicoin.utils.getFrameDocument('mainFrame');
+
+      if(!mainFrameDocument) {
+        return;
+      }
+
+      $(mainFrameDocument).ready(function onReady() {
+        
+        var playerDocument = musicoin.utils.getFrameDocument('playerFrame');
+
+        if(!playerDocument) {
+          return;
+        }
+
+        setTimeout(function f() {
+          tipModule.accumulateTips($(playerDocument.getElementById('player-tip-button')));
+        }, 3000);
+
+      });
+
+    }
+
   }
+
 };
 
 $( document ).ready(function() {
+
+  tipModule.initialize();
+
   $(document).on('click', '.tip-button', function() {
     var tipButton = $(this);
     if ($(this).attr('confirm-message')) {
@@ -130,5 +164,5 @@ $( document ).ready(function() {
     else {
       tipModule.tipButtonClicked($(this))
     }
-  })
+  });
 });
