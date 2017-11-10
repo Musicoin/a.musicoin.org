@@ -84,3 +84,19 @@
 .embedded-player .player-artist-name::before {
 	content: "By ";
 }
+
+.embedded-player div#player-section {
+    height: 150px;
+    width: 435px;
+}
+
+.embedded-player #player-badge-image {
+	max-width: 145px;
+    width: 145px;
+    height: 145px;
+    display: block !important;
+}
+
+.embedded-player .player-progress {
+	display: block !important;
+}
