@@ -10,7 +10,7 @@
           <div id="player-title" class="player-song-name mr10">Song title which styupidly long that will cause some sort of snafu</div>
         </div>
         <div id="player-artist" class="player-artist-name clickable">Artist name which styupidly long that will cause some sort of snafu</div>
-        <div id="track-description-in-player"></div>
+        <div id="track-description-in-player"><%=data.license.description || "Find this track and other amazing tracks on musicoin.org"%></div>
       </div>
       <div class="player-controls-wrapper">
         <i id="player-play-button" class="fa fa-play btn btn-plain player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="margin-right: 5px; color: #FFCD00" aria-hidden="true"></i>
