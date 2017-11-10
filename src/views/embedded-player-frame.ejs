@@ -10,10 +10,11 @@
     }
   </style>
   <link rel="stylesheet" type="text/css" href="/styles/player.css">
+  <link rel="stylesheet" type="text/css" href="/styles/embedded-player.css">
 </head>
 
 <body>
-	<div id="embedded-player-main">
+	<div id="embedded-player-main" class="embedded-player">
 		<div id="track-title"><%=data.license.title%> by <%=data.license.artistName%></div>
 		<div id="track-description"><%=data.license.description || "Find this track and other amazing tracks on musicoin.org"%></div>
 		<div id="track-image"><img id="track-image-element" src="https://musicoin.org<%=data.license.image%>" /></div>
