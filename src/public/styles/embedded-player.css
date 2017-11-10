@@ -87,7 +87,7 @@
 
 .embedded-player div#player-section {
     height: 150px;
-    width: 435px;
+    /*width: 435px;*/
 }
 
 .embedded-player #player-badge-image {
