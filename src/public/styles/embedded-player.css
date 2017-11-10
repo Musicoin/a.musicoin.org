@@ -1,0 +1,86 @@
+/* .player {
+  width: 400px;
+  height: 200px;
+} */
+
+#player-badge-image {}
+
+.player-foreground {}
+
+.song-badge-info {}
+
+.player-controls-wrapper {
+  flex: 0 1 80%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+}
+
+.player-widget-right {
+    display: flex;
+    flex-flow: row;
+    flex: 0 1 95%;
+}
+
+.player-badge-image-wrapper.player-widget-left {
+    flex: 0 1 auto;
+}
+
+.musicoin-declaration-banner {
+	display: none;
+	color: #FFF;
+	font-size: 14px;
+	margin-left: 10px;
+}
+
+#track-description-in-player {
+	display: none;
+}
+
+.embedded-player div#player-section {
+    height: 150px;
+    width: 435px;
+}
+
+.embedded-player .player-badge-image-wrapper {
+    padding: 5px 0;
+    /* width: 100%; */
+    box-sizing: border-box;
+}
+
+.embedded-player .player-foreground {
+    align-items: flex-start;
+    padding: 0 5px;
+}
+
+.embedded-player .musicoin-declaration-banner {
+	display: block;
+}
+
+.embedded-player .player-widget-right {
+    flex-flow: column;
+}
+
+.embedded-player #track-description-in-player {
+	display: block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	color: #e2e2e2;
+	height: 22px;
+}
+
+.embedded-player .player-artist-name {padding: 3px;}
+
+
+.embedded-player div#player-title-area {
+}
+
+.embedded-player .song-badge-info {
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.embedded-player .player-artist-name::before {
+	content: "By ";
+}
