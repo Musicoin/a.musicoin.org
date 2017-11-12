@@ -258,6 +258,7 @@
       options = this.extendOptions(options);
 
       audioPlayer.embedded = options.embedded;
+      audioPlayer.autoQueue = options.autoQueue === 'true';
 
       if (!audioPlayer.audioElement) {
         audioPlayer.audioElement = $('#player')[0];

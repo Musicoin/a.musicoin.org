@@ -21,8 +21,11 @@
     <script type="text/javascript" src="/js/player.js"></script>
     <script>
       $(document).ready(function() {
-        musicoin.audioPlayer.initialize({embedded: true, onReady: function onReady() {
-          musicoin.audioPlayer.queueTrack('<%=address%>');
+        var audioPlayer = musicoin.audioPlayer;
+        audioPlayer.initialize({embedded: true, onReady: function onReady() {
+          if(audioPlayer.autoQueue) {
+            audioPlayer.queueTrack('<%=address%>');
+          }
         }});
       });
     </script>
