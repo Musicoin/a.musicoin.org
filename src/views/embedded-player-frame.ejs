@@ -22,7 +22,7 @@
     <script>
       $(document).ready(function() {
         var audioPlayer = musicoin.audioPlayer;
-        audioPlayer.initialize({embedded: true, onReady: function onReady() {
+        audioPlayer.initialize({embedded: true, autoQueue: 'true', onReady: function onReady() {
           if(audioPlayer.autoQueue) {
             audioPlayer.queueTrack('<%=address%>');
           }
