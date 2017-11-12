@@ -18,85 +18,98 @@
 }
 
 .player-widget-right {
-    display: flex;
-    flex-flow: row;
-    flex: 0 1 95%;
+  display: flex;
+  flex-flow: row;
+  flex: 0 1 95%;
 }
 
 .player-badge-image-wrapper.player-widget-left {
-    flex: 0 1 auto;
+  flex: 0 1 auto;
 }
 
 .musicoin-declaration-banner {
-	display: none;
-	color: #FFF;
-	font-size: 14px;
-	margin-left: 10px;
+  display: none;
+  color: #FFF;
+  font-size: 14px;
+  margin-left: 10px;
 }
 
 #track-description-in-player {
-	display: none;
+  display: none;
 }
 
 .embedded-player div#player-section {
-    height: 150px;
-    width: 435px;
+  height: 150px;
+  width: 435px;
 }
 
 .embedded-player .player-badge-image-wrapper {
-    padding: 5px 0;
-    /* width: 100%; */
-    box-sizing: border-box;
+  padding: 5px 0;
+  /* width: 100%; */
+  box-sizing: border-box;
 }
 
 .embedded-player .player-foreground {
-    align-items: flex-start;
-    padding: 0 5px;
+  align-items: flex-start;
+  padding: 0 5px;
 }
 
 .embedded-player .musicoin-declaration-banner {
-	display: block;
+  display: block;
 }
 
 .embedded-player .player-widget-right {
-    flex-flow: column;
+  flex-flow: column;
 }
 
 .embedded-player #track-description-in-player {
-	display: block;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	color: #e2e2e2;
-	height: 22px;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #e2e2e2;
+  height: 22px;
+  width: 100%;
+  white-space: nowrap;
 }
 
-.embedded-player .player-artist-name {padding: 3px;}
+.embedded-player .player-artist-name {
+  padding: 3px;
+  flex: 0 1 36%;
+}
 
 
 .embedded-player div#player-title-area {
+  flex: 0 1 64%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .embedded-player .song-badge-info {
-	flex-direction: row;
-	flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 260px;
 }
 
 .embedded-player .player-artist-name::before {
-	content: "By ";
+  content: "By ";
 }
 
 .embedded-player div#player-section {
-    height: 150px;
-    /*width: 435px;*/
+  height: 150px;
+  /*width: 435px;*/
 }
 
 .embedded-player #player-badge-image {
-	max-width: 145px;
-    width: 145px;
-    height: 145px;
-    display: block !important;
+  max-width: 145px;
+  width: 145px;
+  height: 145px;
+  display: block !important;
 }
 
 .embedded-player .player-progress {
-	display: block !important;
+  display: block !important;
 }
+
+
+.embedded-player #player-title {}
