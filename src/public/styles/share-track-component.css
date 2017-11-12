@@ -1,0 +1,16 @@
+.share-button {
+	display: none;
+}
+.share-track-component {
+	font-size: 10px;
+}
+
+.share-options {
+	margin: 0;
+    padding: 0;
+    overflow: auto;
+}
+
+.share-option {
+	float: left;
+}

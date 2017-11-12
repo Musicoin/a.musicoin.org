@@ -1,7 +1,6 @@
+<link rel="stylesheet" type="text/css" href="/styles/share-track-component.css">
+<button class="share-button">Share</button>
 <div class="share-track-component">
-  <div class="share-button-container">
-    <button class="share-button">Share</button>
-  </div>
   <div id="share-track-options-dialog" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -17,13 +16,13 @@
               <a class="nav-link active" id="share-track-tab" data-toggle="tab" href="#share-track-tab" role="tab" aria-controls="home" aria-selected="true">Share</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="embed-track-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Embed</a>
+              <a class="nav-link" id="embed-track-tab" data-toggle="tab" href="#embed-track-tab" role="tab" aria-controls="profile" aria-selected="false">Embed</a>
             </li>
           </ul>
           <div class="tab-content" id="share-track-options-tab-content">
             <div class="tab-pane fade show active" id="share-track-tab-content" role="tabpanel" aria-labelledby="share-track-tab">
               <div class="embedded-track-player">
-                <iframe src="/embedded-player/<%=license.address%>"></iframe>
+                <iframe src="https://musicoin.org/embedded-player/<%=license.address%>?embedded=true&autoQueue=false"></iframe>
               </div>
             </div>
             <div class="tab-pane fade" id="embed-track-tab-content" role="tabpanel" aria-labelledby="embed-track-tab">
@@ -64,7 +63,11 @@
 <script type="text/javascript">
 $(document).ready(function() {
 
-  $('#share-track-options-dialog').modal();
+  $('.share-button').on('click', function onShareButtonClick(event) {
+    event.preventDefault();
+    $('#share-track-options-dialog').modal();
+    return false;
+  });
 
 });
 </script>
