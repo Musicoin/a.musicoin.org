@@ -17,11 +17,22 @@
 <!-- Open Graph -->
 <meta property="og:image" content="https://musicoin.org<%=license.image%>">
 <meta property="og:description" content="<%=license.description || "Find this track and other amazing tracks on musicoin.org"%>">
-<meta property="og:type" content="website">
+<meta property="og:type" content="song">
 <meta property="og:url" content="https://musicoin.org/nav/track/<%=license.address%>">
 <meta property="og:title" content="<%=license.title%> by <%=license.artistName%>">
 <meta property="og:site_name" content="Musicoin"/>
 <meta property="fb:app_id" content="1845789109028247"/>
+
+<meta name="medium"         content="video">
+<meta name="video_height"   content="150">
+<meta name="video_width"    content="435">
+<meta name="video_type"     content="application/x-shockwave-flash">
+
+<meta property="og:video" content="https://musicoin.org/embedded-player/<%=license.address%>?embedded=true&autoQueue=true">
+<meta property="og:video:secure_url" content="https://musicoin.org/embedded-player/<%=license.address%>?embedded=true&autoQueue=true">
+<meta property="og:video:type" content="text/html">
+<meta property="og:video:height" content="150">
+<meta property="og:video:width" content="435">
 
 <noscript><article itemscope itemtype="http://schema.org/MusicRecording">
   <header>
