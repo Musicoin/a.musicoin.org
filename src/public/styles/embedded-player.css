@@ -39,14 +39,10 @@
   display: none;
 }
 
-.embedded-player div#player-section {
-  height: 150px;
-}
-
 .embedded-player .player-badge-image-wrapper {
-  padding: 5px 0;
-  /* width: 100%; */
-  box-sizing: border-box;
+    padding: 5px 0;
+    width: 47%;
+    box-sizing: border-box;
 }
 
 .embedded-player .player-foreground {
@@ -96,15 +92,14 @@
 }
 
 .embedded-player div#player-section {
-  height: 150px;
-  /*width: 435px;*/
+  height: 100%;
 }
 
 .embedded-player #player-badge-image {
-  max-width: 145px;
-  width: 145px;
-  height: 145px;
-  display: block !important;
+      max-width: 100%;
+    width: 100%;
+    height: 100%;
+    display: block !important;
 }
 
 .embedded-player .player-progress {
