@@ -564,10 +564,13 @@
       if(!audioPlayer.random) {
         return
       }
-      var qs = musicoin.utils.objectToQueryParams({
-        limit: 1,
-        artist: audioPlayer.randomByArtist && audioPlayer.previouslyPlayedTrack ? audioPlayer.previouslyPlayedTrack.artistProfileAddress : null
-      });
+      var queryOptions = {
+        limit: 1
+      };
+      if(audioPlayer.randomByArtist && audioPlayer.previouslyPlayedTrack) {
+        queryOptions.artist = audioPlayer.previouslyPlayedTrack.artistProfileAddress;
+      }
+      var qs = musicoin.utils.objectToQueryParams(queryOptions);
       $.get('/json-api/tracks/random/new' + qs, function onSuccess(tracks) {
         if(!tracks.length) {
           if(audioPlayer.randomTracksFetchCount <= 3) {
