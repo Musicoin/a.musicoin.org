@@ -22,12 +22,18 @@
     shuffle: false,
     playlistListener: null,
 
+    randomTracksFetchCount: 0,
+
+    currentlyPlayingTrack: null,
+    previouslyPlayedTrack: null,
+
     playItemById: function(licenseAddress, callback) {
       console.log("Checking eligibility for " + licenseAddress);
       $.post("/user/canPlay", { address: licenseAddress }, function(eligibility) {
         if (eligibility.success) {
           console.log("Getting details for " + licenseAddress);
           $.get("/json-api/track/" + licenseAddress, function(data) {
+            audioPlayer.currentlyPlayingTrack = data;
             var result = audioPlayer.playItem({
               element: null,
               audioUrl: data.audioUrl,
@@ -50,7 +56,11 @@
     },
 
     queueTrack: function(licenseAddress, startIfPaused) {
-      var newLength = audioPlayer.currentPlaylist.push(licenseAddress);
+      audioPlayer.queueTracks([licenseAddress], startIfPaused);
+    },
+
+    queueTracks: function(addresses, startIfPaused) {
+      var newLength = audioPlayer.currentPlaylist.push.apply(audioPlayer.currentPlaylist, addresses);
       audioPlayer._playlistChanged();
 
       // auto play this new track if the player is paused
@@ -123,6 +133,15 @@
     },
 
     playNextItem: function() {
+      if(audioPlayer.internal) {
+        audioPlayer.playNextItemWIP();
+      }
+      else {
+        audioPlayer.playNextItemCurrent();
+      }
+    },
+
+    playNextItemCurrent: function() {
       if (audioPlayer.embedded) {
         return;
       }
@@ -132,6 +151,30 @@
 
       console.log("Playing next item at index: " + nextIdx);
       audioPlayer.jumpToIndex(nextIdx);
+    },
+
+    playNextItemWIP: function() {
+      var nextIdx = 0;
+
+      if(audioPlayer.shuffle) {
+        nextIdx = Math.floor(Math.random() * audioPlayer.currentPlaylist.length);
+      } 
+      else {
+        nextIdx = audioPlayer.currentIdx + 1;
+      }
+
+      if(nextIdx >= audioPlayer.currentPlaylist.length) {
+        if(audioPlayer.playerOptionsPopupShown) {
+          audioPlayer.fetchRandomTracks();
+        }
+        else {
+          audioPlayer.showPlayerOptionsOverlay();
+        }
+      }
+      else {
+        console.log("Playing next item at index: " + nextIdx);
+        audioPlayer.jumpToIndex(nextIdx);
+      }
     },
 
     pause: function() {
@@ -259,6 +302,9 @@
 
       audioPlayer.embedded = options.embedded;
       audioPlayer.autoQueue = options.autoQueue === 'true';
+      audioPlayer.random = options.random === 'true';
+      audioPlayer.randomByArtist = options.randomByArtist === 'true';
+      audioPlayer.internal = options.internal === 'true';
 
       if (!audioPlayer.audioElement) {
         audioPlayer.audioElement = $('#player')[0];
@@ -328,6 +374,8 @@
         audioPlayer.audioElement.addEventListener('ended', function() {
           audioPlayer.nowPlayingLicenseAddress = null;
           audioPlayer.audioElement.src = null;
+          audioPlayer.previouslyPlayedTrack = audioPlayer.currentlyPlayingTrack;
+          audioPlayer.currentlyPlayingTrack = null;
           audioPlayer.playNextItem();
         })
 
@@ -464,6 +512,20 @@
         }
       });
 
+      $('#player-options-overlay').on('click', function onClick(event) {
+        event.preventDefault();
+        $('#player-options-overlay').hide();
+        return false;
+      });
+
+      $('#continue-random-tracks-button, #continue-artist-random-tracks-button').on('click', function onClick(event) {
+        event.preventDefault();
+        $('#player-options-overlay').hide();
+        audioPlayer.setRandomTrackFetchOptions(event.target.id === 'continue-random-tracks-button');
+        audioPlayer.fetchRandomTracks();
+        return false;
+      });
+
       callback();
     },
 
@@ -485,6 +547,42 @@
       if (!audioPlayer.embedded) {
         parent.showMessage(options.message, options.type, options.timeout);
       }
+    },
+
+    showPlayerOptionsOverlay: function showPlayerOptionsOverlay() {
+      audioPlayer.playerOptionsPopupShown = true;
+      $('#player-options-overlay').css({display: 'table'});
+    },
+
+    setRandomTrackFetchOptions: function setRandomTrackFetchOptions(randomByArtist) {
+      audioPlayer.randomByArtist = randomByArtist;
+      audioPlayer.random = true;
+    },
+
+    fetchRandomTracks: function fetchRandomTracks() {
+      if(!audioPlayer.random) {
+        return
+      }
+      var qs = musicoin.utils.objectToQueryParams({
+        limit: 1,
+        artist: audioPlayer.randomByArtist && audioPlayer.previouslyPlayedTrack ? audioPlayer.previouslyPlayedTrack.artistProfileAddress : null
+      });
+      $.get('/json-api/tracks/random/new' + qs, function onSuccess(tracks) {
+        if(!tracks.length) {
+          if(audioPlayer.randomTracksFetchCount <= 3) {
+            audioPlayer.randomTracksFetchCount++;
+            return audioPlayer.fetchRandomTracks();
+          }
+          return;
+        }
+        audioPlayer.randomTracksFetchCount = 0;
+        audioPlayer.queueTracks(tracks.map(function f(track) {
+          return track.address;
+        }));
+        audioPlayer.playNextItem();
+      }).fail(function onFail(error) {
+        console.error(error);
+      });
     }
   }
 
