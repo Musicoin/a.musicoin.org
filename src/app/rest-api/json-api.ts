@@ -777,17 +777,16 @@ export class MusicoinOrgJsonAPI {
 
   doGetRandomReleases({limit = 1, genre, artist}: {limit: number, genre: string, artist: string}): Promise<any> {
 
-    let filter = {};
-    let filterDefaults = {state: 'published', markedAsAbuse: {$ne: true}};
+    let filter = {state: 'published', markedAsAbuse: {$ne: true}};
 
     if(genre) {
-      filter = {...filterDefaults, ...filter, genre: genre};
+      filter = {...filter, genre: genre};
     }
 
     if(artist) {
-      filter = {...filterDefaults, ...filter, artistAddress: artist};
+      filter = {...filter, artistAddress: artist};
     }
-    console.log('doGetRandomReleases', JSON.stringify(filter));
+    
     let query = Release.find(filter).populate('artist');
 
     return query.exec()
