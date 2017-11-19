@@ -2808,7 +2808,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.get('/track/:address/json', isLoggedInOrIsPublic, function(req, res) {
+  app.get('/api/track/:address', isLoggedInOrIsPublic, function(req, res) {
     console.log("Loading track page for track address: " + req.params.address);
     const address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
@@ -2860,7 +2860,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.get('/random/tracks', function(req, res) {
+  app.get('/api/random/tracks', function(req, res) {
     
     res.json({type: 'success', data: {name: 'Not implemented yet'}});
 
