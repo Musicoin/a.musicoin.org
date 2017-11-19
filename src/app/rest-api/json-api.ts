@@ -788,9 +788,14 @@ export class MusicoinOrgJsonAPI {
       filter = {...filterDefaults, ...filter, artistAddress: artist};
     }
     console.log('doGetRandomReleases', JSON.stringify(filter));
-    let query = Release.find(filter).populate('artist').aggregate({$sample: {size: limit}});
+    let query = Release.find(filter).populate('artist');
 
-    return query.exec().then(items => Promise.all(items.map(item => this._convertDbRecordToLicense(item))));
+    return query.exec()
+      .then(items => {
+        this.shuffle(items);
+        return items.length > limit ? items.slice(0, limit) : items;
+      })
+      .then(items => Promise.all(items.map(item => this._convertDbRecordToLicense(item))));
   }
 
   getAllContracts() {
