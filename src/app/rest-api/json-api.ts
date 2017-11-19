@@ -772,7 +772,7 @@ export class MusicoinOrgJsonAPI {
   }
 
   getRandomReleases(limit: number, genre?: string): Promise<any> {
-    return this.doGetRandomReleases({limit: limit, genre: genre});
+    return this.doGetRandomReleases({limit: limit, genre: genre, artist: null});
   }
 
   doGetRandomReleases({limit = 1, genre, artist}: {limit: number, genre: string, artist: string}): Promise<any> {
