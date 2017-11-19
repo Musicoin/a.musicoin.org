@@ -552,6 +552,7 @@
     showPlayerOptionsOverlay: function showPlayerOptionsOverlay() {
       audioPlayer.playerOptionsPopupShown = true;
       $('#player-options-overlay').css({display: 'table'});
+      $('#continue-artist-random-tracks-button').text('Continue with random songs of ' + audioPlayer.previouslyPlayedTrack.artistName);
     },
 
     setRandomTrackFetchOptions: function setRandomTrackFetchOptions(randomByArtist) {
