@@ -83,7 +83,7 @@ export class MusicoinRestAPI {
     jsonRouter.get('/tracks/recent', (req) => jsonAPI.getRecentPlays(this._getLimit(req)));
     jsonRouter.get('/tracks/top', req => jsonAPI.getTopPlayed(this._getLimit(req), req.query.genre));
     jsonRouter.get('/tracks/random', (req) => jsonAPI.getSampleOfVerifiedTracks(this._getLimit(req), req.query.genre));
-    jsonRouter.get('/tracks/random/new', (req) => jsonAPI.doGetRandomReleases({...req.query, this._getLimit(req)}));
+    jsonRouter.get('/tracks/random/new', (req) => jsonAPI.doGetRandomReleases({...req.query, limit: this._getLimit(req)}));
     jsonRouter.get('/tracks/details', (req) => jsonAPI.getTrackDetailsByIds(req.query.addresses));
 
     jsonRouter.post('/track/earnings/', req => jsonAPI.getTrackEarnings(req.body.releaseid));
