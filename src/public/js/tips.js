@@ -121,6 +121,7 @@ var tipModule = {
     if(queryOptions.autoTip === 'true') {
 
       var mainFrameDocument = musicoin.utils.getFrameDocument('mainFrame');
+      var trackAddress = window.location.pathname.split('/').pop(); 
 
       if(!mainFrameDocument) {
         return;
@@ -135,16 +136,25 @@ var tipModule = {
         }
 
         $(playerDocument).ready(function onReady() {
-
-          setTimeout(function f() {
-            tipModule.accumulateTips($(playerDocument.getElementById('player-tip-button')));
-          }, 3000);
-
+          //Question: Lets show a dialog which asks user to really "tip" & ask for number of coins?
+          tipModule.automaticTip(trackAddress, 1);
         });
 
       });
 
     }
+
+  },
+
+  automaticTip: function automaticTip(trackAddress, coins) {
+
+    this.sendTip(trackAddress, coins, 'Release', null, function onTipped(error, data) {
+      if(error) {
+        return new Message('Tip failed to send', 'error', 3000);
+      }
+      var message = 'You tipped ' + coins + ' coin' + (coins > 1 ? 's' : '') + '!';
+      new Message(message, 'success', 3000);
+    });
 
   }
 

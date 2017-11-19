@@ -772,15 +772,25 @@ export class MusicoinOrgJsonAPI {
   }
 
   getRandomReleases(limit: number, genre?: string): Promise<any> {
-    const filter = genre ? {state: 'published', genres: genre, markedAsAbuse: {$ne: true}} : {state: 'published', markedAsAbuse: {$ne: true}};
-    if (!limit || limit < 1 || limit > 10) {
-      limit = 1;
-    }
-    let query = Release.find(filter).aggregate({$sample: {size: limit}});
+    return this.doGetRandomReleases({limit: limit, genre: genre});
+  }
 
-    return query.exec()
-      .then(items => items.map(item => this._convertDbRecordToLicense(item)))
-      .then(promises => Promise.all(promises));
+  doGetRandomReleases({limit = 1, genre, artist}: {limit: number, genre: string, artist: string}): Promise<any> {
+
+    let filter = {};
+    let filterDefaults = {state: 'published', markedAsAbuse: {$ne: true}};
+
+    if(genre) {
+      filter = {...filterDefaults, ...filter, genre: genre};
+    }
+
+    if(artist) {
+      filter = {...filterDefaults, ...filter, artistAddress: artist};
+    }
+    console.log('doGetRandomReleases', JSON.stringify(filter));
+    let query = Release.find(filter).populate('artist').aggregate({$sample: {size: limit}});
+
+    return query.exec().then(items => Promise.all(items.map(item => this._convertDbRecordToLicense(item))));
   }
 
   getAllContracts() {
