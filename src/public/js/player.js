@@ -521,7 +521,7 @@
       $('#continue-random-tracks-button, #continue-artist-random-tracks-button').on('click', function onClick(event) {
         event.preventDefault();
         $('#player-options-overlay').hide();
-        audioPlayer.setRandomTrackFetchOptions(event.target.id === 'continue-random-tracks-button');
+        audioPlayer.setRandomTrackFetchOptions(event.target.id === 'continue-artist-random-tracks-button');
         audioPlayer.fetchRandomTracks();
         return false;
       });
