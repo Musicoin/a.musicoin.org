@@ -2862,7 +2862,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/api/random/tracks', function(req, res) {
     
-    res.json({type: 'success', data: {name: 'Not implemented yet'}});
+    jsonAPI.doGetRandomReleases(req.query)
+    .then((releases) => res.json({type: 'success', data: releases}), (error) => res.json({type: 'error': data: error}))
+    .catch((execption) => res.json({type: 'error', data: execption}));
 
   });
 
