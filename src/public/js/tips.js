@@ -134,9 +134,13 @@ var tipModule = {
           return;
         }
 
-        setTimeout(function f() {
-          tipModule.accumulateTips($(playerDocument.getElementById('player-tip-button')));
-        }, 3000);
+        $(playerDocument).ready(function onReady() {
+
+          setTimeout(function f() {
+            tipModule.accumulateTips($(playerDocument.getElementById('player-tip-button')));
+          }, 3000);
+
+        });
 
       });
 
