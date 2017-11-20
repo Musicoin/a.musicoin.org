@@ -703,14 +703,23 @@ class MusicoinOrgJsonAPI {
         });
     }
     getRandomReleases(limit, genre) {
-        const filter = genre ? { state: 'published', genres: genre, markedAsAbuse: { $ne: true } } : { state: 'published', markedAsAbuse: { $ne: true } };
-        if (!limit || limit < 1 || limit > 10) {
-            limit = 1;
+        return this.doGetRandomReleases({ limit: limit, genre: genre, artist: null });
+    }
+    doGetRandomReleases({ limit = 1, genre, artist }) {
+        let filter = { state: 'published', markedAsAbuse: { $ne: true } };
+        if (genre) {
+            filter = Object.assign({}, filter, { genre: genre });
         }
-        let query = Release.find(filter).aggregate({ $sample: { size: limit } });
+        if (artist) {
+            filter = Object.assign({}, filter, { artistAddress: artist });
+        }
+        let query = Release.find(filter).populate('artist');
         return query.exec()
-            .then(items => items.map(item => this._convertDbRecordToLicense(item)))
-            .then(promises => bluebird_1.Promise.all(promises));
+            .then(items => {
+            this.shuffle(items);
+            return items.length > limit ? items.slice(0, limit) : items;
+        })
+            .then(items => bluebird_1.Promise.all(items.map(item => this._convertDbRecordToLicense(item))));
     }
     getAllContracts() {
         const filter = { state: 'published' };

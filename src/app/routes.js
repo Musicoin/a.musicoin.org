@@ -2530,58 +2530,6 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             res.send(err);
         });
     });
-    app.get('/api/track/:address', isLoggedInOrIsPublic, function (req, res) {
-        console.log("Loading track page for track address: " + req.params.address);
-        const address = FormUtils.defaultString(req.params.address, null);
-        if (!address) {
-            console.log(`Failed to load track page, no address provided`);
-            return res.json({ type: 'error', data: { name: 'No address provided' } });
-        }
-        const ms = jsonAPI.getLicenseMessages(address, 20);
-        const l = jsonAPI.getLicense(address);
-        const r = Release.findOne({ contractAddress: address, state: 'published' });
-        const x = exchangeRateProvider.getMusicoinExchangeRate();
-        bluebird_1.Promise.join(l, ms, r, x, (license, messages, release, exchangeRate) => {
-            if (!license || !release) {
-                console.log(`Failed to load track page for license: ${address}, err: Not found`);
-                return res.json({ type: 'error', data: { name: `Failed to load track page for license: ${address}, err: Not found` } });
-            }
-            const ras = addressResolver.resolveAddresses("", license.contributors);
-            const a = jsonAPI.getArtist(license.artistProfileAddress, false, false);
-            bluebird_1.Promise.join(a, ras, (response, resolvedAddresses) => {
-                let totalShares = 0;
-                resolvedAddresses.forEach(r => totalShares += parseInt(r.shares));
-                resolvedAddresses.forEach(r => r.percentage = _formatNumber(100 * r.shares / totalShares, 1));
-                const plays = release.directPlayCount || 0;
-                const tips = release.directTipCount || 0;
-                const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
-                res.json({ type: 'success', data: {
-                        artist: response.artist,
-                        license: license,
-                        contributors: resolvedAddresses,
-                        releaseId: release._id,
-                        description: release.description,
-                        messages: messages,
-                        isArtist: req.user && req.user.profileAddress == license.artistProfileAddress,
-                        abuseMessage: config.ui.admin.markAsAbuse,
-                        exchangeRate: exchangeRate,
-                        trackStats: {
-                            playCount: plays,
-                            tipCount: tips,
-                            totalEarned: (plays + tips),
-                            formattedTotalUSD: usd
-                        }
-                    } });
-            });
-        })
-            .catch(err => {
-            console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
-            return res.json({ type: 'error', data: { name: `Failed to load track page for license: ${req.params.address}, err: ${err}` } });
-        });
-    });
-    app.get('/api/random/tracks', function (req, res) {
-        res.json({ type: 'success', data: { name: 'Not implemented yet' } });
-    });
 }
 exports.configure = configure;
 function isAdmin(user) {
