@@ -59,7 +59,342 @@
 </head>
 <% if ((user.verified) || (user.mostRecentReleaseDate == null)) { %>
 <body>
-<%- include ../partials/header.ejs %>
+  <style>
+      .header {
+          display: flex;
+          flex-direction: row;
+          padding-left: 20px;
+          padding-right: 20px;
+          justify-content: space-between;
+          align-items: center;
+          z-index: 1;
+          /*background-color: rgba(255,255,255,0.1);*/
+      }
+      .logo_image {
+          height: 32px;
+          vertical-align: middle;
+          margin-top: -6px;
+      }
+      .sign-in {
+          height: 30px;
+          vertical-align: middle;
+          margin-top: -6px;
+      }
+      .header-fill {
+          flex-grow: 1;
+      }
+      .header-menu-item {
+          margin-left: 10px;
+          margin-right: 10px;
+          color: #aaa;
+          font-size: 1.5em;
+          cursor: pointer;
+      }
+      .header-admin-item {
+          margin-left: 10px;
+          margin-right: 10px;
+          color: #aaa;
+          font-size: 1.1em;
+          cursor: pointer;
+      }
+      .header-menu-item-personal {
+      }
+      .header-menu-item:hover {
+          text-decoration: underline;
+      }
+      .header-nav {
+          display: flex;
+          justify-content: space-between;
+          padding-right: 20px;
+          margin-bottom: 20px;
+      }
+      .brand-logo {
+          font-size: 2em;
+          margin-right: 5px;
+          color: inherit;
+          font-style: italic;
+          font-weight: 600;
+          font-family: 'Raleway', sans-serif;
+      }
+      .background-cover {
+          background-color: rgba(0,0,0,0.9);
+          position: fixed;
+          top:0;
+          left:0;
+          right:0;
+          bottom:0;
+          z-index: -1;
+      }
+      .header-separator {
+          border-right: 1px solid #aaa;
+          margin-left: 10px;
+          margin-right: 10px;
+      }
+      .flex-row {
+          display: flex;
+          align-items: center;
+      }
+      .user-badge-image {
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          margin: 5px;
+      }
+
+      .trigger {
+      }
+      .popoverContentContainer {
+          position:relative;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+      }
+      #optionMenu,
+      .optionView {
+          display: flex;
+          flex-direction: column;
+      }
+      #optionMenu button,
+      #optionMenu a {
+          width:100%;
+          margin:5px 0;
+      }
+      .optionView button {
+          float:left;
+      }
+      .popover {
+          width:400px;
+      }
+      .popover-inner {
+          position:relative;
+      }
+      .popover-title {
+          text-align:center;
+          color:#555;
+      }
+
+      .admin-area {
+          color: black;
+          background-color: #fee;
+          margin-top: 20px;
+      }
+      @media only screen and (min-width: 500px) {
+          .beta{
+              visibility: visible;
+          }
+      }
+      @media only screen and (max-width: 499px) {
+          .beta{
+              visibility: hidden;
+          }
+      }
+
+  </style>
+  <div class="background-cover"></div>
+  <!-- The Modal -->
+  <div id="thread-modal" class="modal-behavior modal-ui">
+      <!-- Modal content -->
+      <div class="modal-content-behavior modal-content-ui"></div>
+  </div>
+
+  <!-- The Modal -->
+  <div id="play-queue-modal" class="modal-behavior play-queue-modal-ui">
+      <!-- Modal content -->
+      <div class="modal-content-behavior play-queue-modal-content-ui">
+          <%- include ../partials/play-queue-active.ejs %>
+      </div>
+  </div>
+
+  <div class="header">
+      <div>
+          <a href="/feed"><img width="200px" height="50px" class="big-screen-only" src="/images/Logo.svg"></img></a>
+          <p class="beta" style="font: 'Lato'; color: grey; position: absolute; top: 2px; left: 215px;"> beta </p>
+      </div>
+
+      <% if (isAuthenticated) { %>
+      <form action="/browse?genre=<%= typeof genreFilter != "undefined" ? genreFilter : "" %>&sort=<%= typeof sort != "undefined" ? sort : "" %>" method="post">
+          <div class="flex-row">
+              <a href="/browse" class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></a>
+              <input class="form-control text-large pl25"
+                     name="search"
+                     style="color:inherit; border-radius: 15px; background-color: #efefef; float: left; color: black"
+                     value="<%= typeof searchTerm != "undefined" ? searchTerm : ""  %>" placeholder="">
+          </div>
+      </form>
+      <% } %>
+
+      <div class="flex-row">
+          <% if (isAuthenticated) { %>
+              <% if (user.profileAddress) { %>
+                <% if ((user.verified) || (user.mostRecentReleaseDate == null)) { %>
+                  <a href="/release-manager" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a>
+                <% } %>
+              <% } %>
+              <a href="/main" class="header-menu-item" title="discover"><i class="fa fa-home" aria-hidden="true"></i></a>
+              <!--
+              <% if(!user.twitter.token  && !user.facebook.token) { %>
+                  <div id='delete1' style="z-index: 100 ;position: fixed; top: 65px !important; padding-left: 20px; background: #B7950B; width: 100vw; height: 22vh">
+                    <br>
+                    <div id="bold-text" style="font-weight: 900 !important; font-size: 30px;  color: black; font-family: 'Lato' !important;">
+                      Your Profile is not verified yet
+                    </div>
+                    <br>
+                    <div id='sub-text' style="width: 50vw; color: black; font-size: 15px; letter-spacing: 0em; line-height: 1">
+                      <strong>
+                      Please note that the verification process is not automatic and may take upto 3 days.
+                      The admins will verify your profile and you'll get a verified icon on your profile page.
+                    </strong>
+                    </div>
+                    <button style="display: block; float: right; border: none; position: relative; top: -8vh; left: -20vw; width: 100px; border-radius: 50px; color: white; font-family: 'Lato'; font-weight: 900px; font-size: 11px;background: black; cursor: pointer" onclick=""> VERIFY </button>
+                      <i class="fa fa-times fa-2x" style="color: black; position: relative; float: right; top: -8vh; left: -10vw; cursor: pointer" onclick = "$('#delete1').css('visibility', 'hidden')"></i>
+                  </div>
+              <% } %>
+              -->
+              <div class="popover-markup" style="display:inline;">
+                  <a href="#" class="trigger">
+                      <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
+                  </a>
+                  <div class="head hide"><%=user.profile.artistName%></div>
+                  <div class="content hide">
+                      <div class="popoverContentContainer">
+                          <div id="optionMenu">
+                              <a href="/profile" class="btn btn-default">Profile</a>
+                              <a href="/logout" target="_top" class="btn btn-danger">Sign Out</a>
+                          </div>
+
+                          <% if(!user.google.token || !user.twitter.token || !user.facebook.token) { %>
+                          <div class="center-text subtle-text flex-column mb5 mt10">
+                              <div>Link another account (<a class=text-small href="/faq#WhyLinkAccounts">Why?</a>)</div>
+                              <div class="flex-row center-text">
+                                  <% if(!user.google.token) { %>
+                                  <div class="mr5"><a href="/connect/google" target="_top" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>
+                                  <% } %>
+
+                                  <% if(!user.twitter.token) { %>
+                                  <div class="mr5"><a href="/connect/twitter" target="_top" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>
+                                  <% } %>
+
+                                  <% if(!user.facebook.token) { %>
+                                  <div class="mr5"><a href="/connect/facebook" target="_top" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>
+                                  <% } %>
+
+                                  <% if(!user.local.id) { %>
+                                  <div class="mr5"><a href="/connect/email" target="_top" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></a></div>
+                                  <% } else { %>
+                                  <div class="mr5"><a href="/connect/email" target="_top" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></a></div>
+                                  <% } %>
+                              </div>
+                          </div>
+                          <% } %>
+
+                          <% if(user.google.id || user.twitter.id || user.facebook.id) { %>
+                          <div class="center-text subtle-text flex-column mt20">
+                              <a onclick='$("#unlink").toggle()' class="clickable">Want to unlink an account?</a>
+                              <div id=unlink  style="display: none" class="alert alert-danger">
+                                  <div class="flex-row center-text mt10">
+                                      <% if(user.google.token) { %>
+                                      <div class="mr5"><div onclick="unlink('google')" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></div></div>
+                                      <% } %>
+
+                                      <% if(user.twitter.token) { %>
+                                      <div class="mr5"><div onclick="unlink('twitter')" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></div></div>
+                                      <% } %>
+
+                                      <% if(user.facebook.token) { %>
+                                      <div class="mr5"><div onclick="unlink('facebook')" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></div></div>
+                                      <% } %>
+
+                                      <% if(user.local.id) { %>
+                                      <div class="mr5"><div onclick="unlink('local')" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></div></div>
+                                      <% } %>
+                                  </div>
+                                  <div class="center-text">
+                                      Select an account to unlink
+                                  </div>
+                              </div>
+                          </div>
+                          <% } %>
+
+
+                          <% if (typeof isAdmin != "undefined" && isAdmin) { %>
+                          <div class="admin-area">
+                              <div class="text-normal text-center">Admin Functions</div>
+                              <div class="flex-row">
+                                  <a href="/admin/errors" class="header-admin-item text-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></a>
+                                  <a href="/admin/users" class="header-admin-item text-danger"><i class="fa fa-users" aria-hidden="true" title="users"></i></a>
+                                  <a href="/admin/contacts" class="header-admin-item text-danger"><i class="fa fa-address-card" aria-hidden="true"></i></a>
+                                  <a href="/admin/overview" class="header-admin-item text-danger" title="admin"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>
+                                  <a href="/admin/su" class="header-admin-item text-danger" title="log in as...">su</a>
+                              </div>
+                          </div>
+                          <% } %>
+                      </div>
+                  </div>
+              </div>
+              <div class="ml10" title="my balance">
+                  <a href="/profile" class="plain">
+                      <span class="text-large"><%= user.formattedBalance%></span> <span class="subtle-text">MC</span>
+                  </a>
+              </div>
+          <% } %>
+      </div>
+  </div>
+
+  <script>
+
+      function unlink(method) {
+        var type = method == "local" ? "email" : method;
+        new Message("Are you sure you want to unlink your " + type + " account?", "warning", 5000)
+          .button('ok', function() {
+            $.post("/unlink/" + method, {}, function (data) {
+              if (data.success) {
+                new Message(data.message, "success", 3000);
+              }
+              else {
+                new Message(data.message, "error", 3000);
+              }
+            })
+          })
+      }
+
+    $( document ).ready(function() {
+      $('.optionView').hide();
+
+      $(document).on('change', '#messagePreference', function () {
+        var checked = $("#messagePreference")[0].checked;
+        $.post("/preferences/update", {
+          notifyOnComment: checked
+        }, function (data) {
+          if (data.success) {
+
+          }
+          else {
+            new Message("Failed to update preferences", "error", 3000);
+            $("#messagePreference")[0].checked = !checked;
+          }
+        })
+      })
+
+      // Popover
+      $(function(){
+        $('.popover-markup > .trigger').popover({
+          html: true,
+          placement: "bottom",
+          title: function () {
+            return $(this).parent().find('.head').html();
+          },
+          content: function () {
+            return $(this).parent().find('.content').html();
+          },
+          template: '<div class="popover dashboardPopover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"></div></div></div>'
+        });
+      });
+    });
+  </script>
+
 <style>
     .background-cover {
         /*background-color: rgba(0,0,0,0.5);*/
