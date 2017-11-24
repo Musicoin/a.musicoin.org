@@ -17,7 +17,7 @@ class ReleaseManagerRouter {
         config, doRender) {
         router.get('/', function (req, res) {
             doRender(req, res, 'release-manager/release-manager.ejs', {
-                showTermsOfUse: config.termsOfUseVersion != req.user.termsOfUseVersion,
+                showTermsOfUse: true,
                 metadata: {
                     languages: MetadataLists.languages,
                     moods: MetadataLists.moods,

@@ -120,8 +120,8 @@ function getStructuredConfig(keyValueConfig) {
         rewards: {
             verifiedSender: {
                 forSendingInvite: 0,
-                forAcceptingInvite: 10,
-                forInviteeJoining: 10,
+                forAcceptingInvite: 50,
+                forInviteeJoining: 50,
                 forInviteeReleasing: 0,
             },
             unverifiedSender: {

@@ -272,20 +272,6 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             });
         });
     });
-    app.get('/nav/track2/:address', (req, res) => {
-        console.log("Got external request for a nav/track page, rendering metadata in the outer frame: " + req.params.address);
-        jsonAPI.getLicense(req.params.address)
-            .then(license => {
-            if (!license) {
-                console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
-                return res.render('not-found.ejs');
-            }
-            res.render('index-frames.ejs', {
-                license: license,
-                mainFrameLocation: req.originalUrl.substr(4)
-            });
-        });
-    });
     app.get('/embedded-player/:address', isLoggedInOrIsPublic, (req, res) => {
         const address = FormUtils.defaultString(req.params.address, null);
         if (!address) {
@@ -1326,55 +1312,6 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
                 const tips = release.directTipCount || 0;
                 const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
                 doRender(req, res, "track.ejs", {
-                    artist: response.artist,
-                    license: license,
-                    contributors: resolvedAddresses,
-                    releaseId: release._id,
-                    description: release.description,
-                    messages: messages,
-                    isArtist: req.user && req.user.profileAddress == license.artistProfileAddress,
-                    abuseMessage: config.ui.admin.markAsAbuse,
-                    exchangeRate: exchangeRate,
-                    trackStats: {
-                        playCount: plays,
-                        tipCount: tips,
-                        totalEarned: (plays + tips),
-                        formattedTotalUSD: usd
-                    }
-                });
-            });
-        })
-            .catch(err => {
-            console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
-            res.render('not-found.ejs');
-        });
-    });
-    app.get('/track2/:address', isLoggedInOrIsPublic, function (req, res) {
-        console.log("Loading track page for track address: " + req.params.address);
-        const address = FormUtils.defaultString(req.params.address, null);
-        if (!address) {
-            console.log(`Failed to load track page, no address provided`);
-            return res.render('not-found.ejs');
-        }
-        const ms = jsonAPI.getLicenseMessages(address, 20);
-        const l = jsonAPI.getLicense(address);
-        const r = Release.findOne({ contractAddress: address, state: 'published' });
-        const x = exchangeRateProvider.getMusicoinExchangeRate();
-        bluebird_1.Promise.join(l, ms, r, x, (license, messages, release, exchangeRate) => {
-            if (!license || !release) {
-                console.log(`Failed to load track page for license: ${address}, err: Not found`);
-                return res.render('not-found.ejs');
-            }
-            const ras = addressResolver.resolveAddresses("", license.contributors);
-            const a = jsonAPI.getArtist(license.artistProfileAddress, false, false);
-            bluebird_1.Promise.join(a, ras, (response, resolvedAddresses) => {
-                let totalShares = 0;
-                resolvedAddresses.forEach(r => totalShares += parseInt(r.shares));
-                resolvedAddresses.forEach(r => r.percentage = _formatNumber(100 * r.shares / totalShares, 1));
-                const plays = release.directPlayCount || 0;
-                const tips = release.directTipCount || 0;
-                const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
-                doRender(req, res, "track2.ejs", {
                     artist: response.artist,
                     license: license,
                     contributors: resolvedAddresses,
