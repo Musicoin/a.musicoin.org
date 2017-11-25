@@ -48,9 +48,9 @@
     "@types/formidable": "*",
     "@types/node": "*",
     "@types/passport": "*",
-    "mocha": "*",
     "chai": "*",
     "chai-http": "*",
+    "mocha": "^4.0.0",
     "recursive-readdir-sync": "*",
     "ts-node": "*",
     "typescript": "*",
@@ -58,7 +58,7 @@
     "xgettext-template": "*"
   },
   "scripts": {
-    "test": "mocha test",
+    "test": "mocha --exit",
     "start": "node src/server.js"
   }
 }
