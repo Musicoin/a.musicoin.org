@@ -6,7 +6,7 @@ machine:
 database:
   pre:
     - npm install --save-dev sharp
-    - npm install mocha chai bcrypt-nodejs bluebird body-parser cached-request chai-http connect-flash connect-mongo cookie-parser ejs express express-gettext express-session feed formidable ipware letsencrypt-express logrotator moment mongoose morgan passport passport-facebook passport-google-oauth passport-local passport-soundcloud passport-twitter request send-seekable sendgrid serve-favicon sharp tmp uuid helmet qr-image ddos owasp-password-strength-test
+    - npm install mocha chai bcrypt-nodejs bluebird body-parser cached-request chai-http connect-flash connect-mongo cookie-parser ejs express express-gettext express-session feed formidable ipware letsencrypt-express logrotator moment mongoose morgan passport passport-facebook passport-google-oauth passport-local passport-soundcloud passport-twitter request send-seekable sendgrid serve-favicon sharp tmp uuid helmet qr-image ddos owasp-password-strength-test cors
 
 dependencies:
   override:
