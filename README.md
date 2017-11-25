@@ -1,7 +1,5 @@
 # Musicoin.org ![Build Status](https://circleci.com/gh/Varunram/musicoin.org.svg?style=shield&circle-token=0fcff59380b4901125cf66e4d37a8a05c03649b1)
 
-insert test2
-insert test
 ## Getting started
 
  * run `npm install`
