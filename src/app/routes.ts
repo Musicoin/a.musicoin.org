@@ -117,18 +117,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               return res.end();
             }
             const json = {
-              "version": 1.0,
-              "type": "rich",
-              "provider_name": "Musicoin",
-              "provider_url": "https://musicoin.org",
-              "height": 65,
-              "width": "100%",
-              "title": release.title,
-              "description": release.description || `${release.title} by ${release.artistName}`,
-              "thumbnail_url": "https://musicoin.org/images/thumbnail.png",
-              "html": `\u003Ciframe width=\"300\" height=\"64\" scrolling=\"no\" frameborder=\"no\" src=\"https://musicoin.org/eplayer?track=${id}\"\u003E\u003C/iframe\u003E`,
-              "author_name": release.artistName,
-              "author_url": `https://musicoin.org/nav/artist/${release.artistAddress}`
+              version: '1.0',
+              type: 'rich',
+              provider_name: 'Musicoin',
+              provider_url: 'https://musicoin.org',
+              height: 65,
+              width: '100%',
+              title: release.title,
+              description: release.description || `${release.title} by ${release.artistName}`,
+              thumbnail_url: 'https://musicoin.org/images/thumbnail.png',
+              html: `\u003Ciframe width=\"300\" height=\"64\" scrolling=\"no\" frameborder=\"no\" src=\"https://musicoin.org/embedded-player/${id}\"\u003E\u003C/iframe\u003E`,
+              author_name: release.artistName,
+              author_url: `https://musicoin.org/nav/artist/${release.artistAddress}`
             };
             console.log("Responding with: " + JSON.stringify(json, null, 2));
             res.json(json);
