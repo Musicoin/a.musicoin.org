@@ -12,6 +12,7 @@
     "connect-mongo": "*",
     "cookie-parser": "*",
     "cors": "^2.8.4",
+    "data2xml": "^1.2.5",
     "ejs": "*",
     "express": "*",
     "express-gettext": "*",

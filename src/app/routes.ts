@@ -17,6 +17,7 @@ import Feed = require('feed');
 import * as request from 'request';
 import * as qr from 'qr-image';
 import * as fs from 'fs';
+import * as data2xml from 'data2xml';
 import {ReleaseManagerRouter} from "./release-manager-routes";
 import {DashboardRouter} from "./admin-dashboard-routes";
 import {RequestCache} from "./cached-request";
@@ -38,6 +39,7 @@ const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
 const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"];
+const objectToXMLConverter = data2xml();
 
 const MESSAGE_TYPES = {
   admin: "admin",
@@ -130,8 +132,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               author_name: release.artistName,
               author_url: `https://musicoin.org/nav/artist/${release.artistAddress}`
             };
-            console.log("Responding with: " + JSON.stringify(json, null, 2));
+            console.log("Responding with: " + JSON.stringify(json, null, 2), req.query);
+
+            if(req.query.format.indexOf('xml') !== -1) {
+              return res.end(objectToXMLConverter('oembed', json));
+            }
+            
             res.json(json);
+
           });
 
       }
