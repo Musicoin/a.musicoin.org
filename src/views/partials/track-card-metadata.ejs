@@ -2,25 +2,14 @@
 
 <meta content="record, sounds, share, sound, audio, tracks, music, musicoin" name="keywords">
 
-<!-- Twitter card -->
-<!-- <meta name="twitter:card" content="summary"> -->
-<meta name="twitter:site" content="@musicoins">
-<meta name="twitter:title" content="<%=license.title%> by <%=license.artistName%>">
-<meta name="twitter:description" content="Listen to <%=license.artistName%> and more amazing artists on musicoin.org">
-<meta name="twitter:image" content="https://musicoin.org<%=license.image%>">
-<meta name="description" content="Musicoin is the pioneer of connecting the blockchain with the Music industry. Powered by Smart Contracts and a unique PPV model, Musicoin pays artists 100% of the streams they receive.">
-<meta property="twitter:player" content="https://musicoin.org/embedded-player/<%=license.address%>?embedded=true&autoQueue=true">
-<meta property="twitter:player:height" content="150">
-<meta property="twitter:player:width" content="435">
-<meta property="twitter:card" content="player">
-
 <!-- Open Graph -->
-<meta property="og:image" content="https://musicoin.org<%=license.image%>">
-<meta property="og:description" content="<%=license.description || "Find this track and other amazing tracks on musicoin.org"%>">
-<meta property="og:type" content="song">
-<meta property="og:url" content="https://musicoin.org/nav/track/<%=license.address%>">
+<meta name="title" content="<%=license.title%> by <%=license.artistName%>">
 <meta property="og:title" content="<%=license.title%> by <%=license.artistName%>">
+<meta property="og:type" content="song">
 <meta property="og:site_name" content="Musicoin"/>
+<meta property="og:description" content="<%=license.description || "Find this track and other amazing tracks on musicoin.org"%>">
+<meta property="og:image" content="https://musicoin.org<%=license.image%>">
+<meta property="og:url" content="https://musicoin.org/nav/track/<%=license.address%>">
 <meta property="fb:app_id" content="1845789109028247"/>
 
 <meta name="medium"         content="video">
@@ -33,6 +22,19 @@
 <meta property="og:video:type" content="text/html">
 <meta property="og:video:height" content="150">
 <meta property="og:video:width" content="435">
+
+<!-- Twitter card -->
+<!-- <meta name="twitter:card" content="summary"> -->
+<meta name="twitter:site" content="@musicoins">
+<meta name="twitter:title" content="<%=license.title%> by <%=license.artistName%>">
+<meta name="twitter:description" content="Listen to <%=license.artistName%> and more amazing artists on musicoin.org">
+<meta name="twitter:image" content="https://musicoin.org<%=license.image%>">
+<meta name="description" content="Musicoin is the pioneer of connecting the blockchain with the Music industry. Powered by Smart Contracts and a unique PPV model, Musicoin pays artists 100% of the streams they receive.">
+<meta property="twitter:player" content="https://musicoin.org/embedded-player/<%=license.address%>?embedded=true&autoQueue=true">
+<meta property="twitter:player:height" content="150">
+<meta property="twitter:player:width" content="435">
+<meta property="twitter:card" content="player">
+
 <link rel="alternate" type="application/json+oembed" href="https://musicoin.org/services/oembed?url=https://musicoin.org/nav/track/<%=license.address%>&format=json" title="<%=license.title%>" />
 <link rel="alternate" type="text/xml+oembed" href="https://musicoin.org/services/oembed?url=https://musicoin.org/nav/track/<%=license.address%>&format=xml" title="<%=license.title%>" />
 
