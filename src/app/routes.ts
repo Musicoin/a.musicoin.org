@@ -119,12 +119,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               return res.end();
             }
 
-            const json = {
+            let maxHeight = +(req.query.maxHeight || '65');
+            let maxWidth = +(req.query.maxWidth || '480');
+            let json = {
               thumbnail_width: 480,
               html: `<iframe width="480" height="270" src="https://musicoin.org/embedded-player/${id}" frameborder="0" gesture="media" allowfullscreen></iframe>`,
               thumbnail_height: 360,
-              height: 270,
-              width: 480,
+              height: maxHeight > 65 ? 65 : maxHeight,
+              width: maxWidth > 480 ? 480 : maxWidth,
               title: release.title,
               thumbnail_url: 'https://musicoin.org/images/thumbnail.png',
               author_name: release.artistName,
