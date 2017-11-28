@@ -134,7 +134,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             };
             console.log("Responding with: " + JSON.stringify(json, null, 2), req.query);
 
-            if(req.query.format.indexOf('xml') !== -1) {
+            if((req.query.format || '').indexOf('xml') !== -1) {
               return res.end(objectToXMLConverter('oembed', json));
             }
             
