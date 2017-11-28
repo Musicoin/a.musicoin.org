@@ -17,6 +17,7 @@ const moment = require("moment");
 const Feed = require("feed");
 const request = require("request");
 const qr = require("qr-image");
+const data2xml = require("data2xml");
 const release_manager_routes_1 = require("./release-manager-routes");
 const admin_dashboard_routes_1 = require("./admin-dashboard-routes");
 const cached_request_1 = require("./cached-request");
@@ -38,6 +39,7 @@ const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
 const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"];
+const objectToXMLConverter = data2xml();
 const MESSAGE_TYPES = {
     admin: "admin",
     comment: "comment",
@@ -94,20 +96,24 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
                         return res.end();
                     }
                     const json = {
-                        "version": 1.0,
-                        "type": "rich",
-                        "provider_name": "Musicoin",
-                        "provider_url": "https://musicoin.org",
-                        "height": 65,
-                        "width": "100%",
-                        "title": release.title,
-                        "description": release.description || `${release.title} by ${release.artistName}`,
-                        "thumbnail_url": "https://musicoin.org/images/thumbnail.png",
-                        "html": `\u003Ciframe width=\"300\" height=\"64\" scrolling=\"no\" frameborder=\"no\" src=\"https://musicoin.org/eplayer?track=${id}\"\u003E\u003C/iframe\u003E`,
-                        "author_name": release.artistName,
-                        "author_url": `https://musicoin.org/nav/artist/${release.artistAddress}`
+                        thumbnail_width: 480,
+                        html: `<iframe width="480" height="270" src="https://musicoin.org/embedded-player/${id}" frameborder="0" gesture="media" allowfullscreen></iframe>`,
+                        thumbnail_height: 360,
+                        height: 270,
+                        width: 480,
+                        title: release.title,
+                        thumbnail_url: 'https://musicoin.org/images/thumbnail.png',
+                        author_name: release.artistName,
+                        provider_url: 'https://musicoin.org/',
+                        type: "video",
+                        version: "1.0",
+                        provider_name: 'Musicoin',
+                        author_url: `https://musicoin.org/nav/artist/${release.artistAddress}`
                     };
-                    console.log("Responding with: " + JSON.stringify(json, null, 2));
+                    console.log("Responding with: " + JSON.stringify(json, null, 2), req.query);
+                    if ((req.query.format || '').indexOf('xml') !== -1) {
+                        return res.end(objectToXMLConverter('oembed', json));
+                    }
                     res.json(json);
                 });
             }
