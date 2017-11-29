@@ -158,11 +158,6 @@ function getStructuredConfig(keyValueConfig) {
         'consumerSecret': keyValueConfig.twitterClientSecret,
         'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/twitter/callback`
       },
-      'soundcloudAuth' : {
-        'clientID'   : keyValueConfig.soundcloudClientId,
-        'clientSecret': keyValueConfig.soundcloudClientSecret,
-        'callbackURL' : keyValueConfig.soundcloudCallbackEndpoint
-      },
       'facebookAuth'  : {
         'clientID'    : keyValueConfig.facebookClientId,
         'clientSecret': keyValueConfig.facebookClientSecret,
@@ -256,11 +251,7 @@ function getDefaultKeyValueConfig() {
         facebookClientId: env.FACEBOOK_CLIENT_ID || "yourClientId",
         facebookClientSecret: env.FACEBOOK_SECRET || "yourClientSecret",
 
-        soundcloudClientId: env.SOUNDCLOUD_CLIENT_ID || "yourClientId",
-        soundcloudClientSecret: env.SOUNDCLOUD_SECRET || "yourClientSecret",
-        soundcloudCallbackEndpoint: env.SOUNDCLOUD_CALLBACK_ENDPOINT || `http://alpha.musicoin.org/auth/soundcloud/callback`,
-
-        domains: env.CERTIFICATE_DOMAINS || "alpha.musicoin.org,musicoin.org,orbiter.musicoin.org",
+        domains: env.CERTIFICATE_DOMAINS || "musicoin.org,orbiter.musicoin.org",
 
         termsOfUseVersion: env.TERMS_OF_USE_VERSION || "1.0"
       };
