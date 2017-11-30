@@ -1,0 +1,32 @@
+.musicoin-tab-root {
+
+}
+
+.tab-links-container {float: left;width: 100%;z-index: 2;}
+
+.tab-links {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  float: left;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.tab-link-item {list-style: none;display: inline-block;font-weight: bold;font-size: 20px;padding: 0 6px;z-index: 12;}
+
+.tab-link {color: #000;text-decoration: none;}
+
+.tab-contents {float: left;width: 100%;border-top: 2px solid #dcdcdc;padding: 5px;}
+
+.tab-link-item.active {}
+
+.tab-contents > * {
+  display: none;
+}
+
+.tab-contents > .active {
+  display: block;
+}
+
+.tab-link-item.active .tab-link {color: #ffb701;}
