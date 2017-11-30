@@ -46,7 +46,7 @@ function getStructuredConfig(keyValueConfig) {
     },
     ui: {
       admin: {
-        markAsAbuse: `This track was reported as abuse and is temporarily locked.  Please contact copyright@berry.ai with any relevant documentation to resolve.`,
+        markAsAbuse: `This track was reported as abuse and is temporarily locked.  Please contact copyright@musicoin.org.ai with any relevant documentation to resolve.`,
         unmarkAsAbuse: `The abuse flag on this track has been removed.`
       },
       thread: {
@@ -124,7 +124,7 @@ function getStructuredConfig(keyValueConfig) {
     rewards: {
       verifiedSender: {
         forSendingInvite: 0,
-        forAcceptingInvite: 50,
+        forAcceptingInvite: 250,
         forInviteeJoining: 50,
         forInviteeReleasing: 0,
       },
