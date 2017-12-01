@@ -1,4 +1,4 @@
-.share-options {
+#share-options {
   padding: 0;
   margin: 0;
 }
@@ -19,7 +19,8 @@
 }
 
 #embedded-player-preview-frame {
-
+	border: 0;
+	    width: 100%;
 }
 
 #embedded-player-source-code {
@@ -27,5 +28,22 @@
 }
 
 #embedded-player-source-code-field {
-	
+
+}
+
+#social-sharing-preview-frame {
+	border: 0;
+	    width: 100%;
+}
+
+.social-sharing-preview {
+
+}
+
+#share-options-container {
+
+}
+
+#share-options-header {
+
 }

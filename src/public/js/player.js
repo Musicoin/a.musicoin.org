@@ -291,7 +291,9 @@
       var heartButton = $("#player-tip-button");
       heartButton.attr("recipient", licenseAddress);
 
-      audioPlayer.audioElement.play();
+      if(!audioPlayer.previewMode) {
+        audioPlayer.audioElement.play();
+      }
       audioPlayer.resetProgressNow();
       return true;
     },
@@ -305,6 +307,7 @@
       audioPlayer.random = options.random === 'true';
       audioPlayer.randomByArtist = options.randomByArtist === 'true';
       audioPlayer.internal = options.internal === 'true';
+      audioPlayer.previewMode = options.preview === 'true';
 
       if (!audioPlayer.audioElement) {
         audioPlayer.audioElement = $('#player')[0];
@@ -469,6 +472,7 @@
     togglePlayState: function() {
       if (audioPlayer.audioElement.paused) {
         if (audioPlayer.audioElement.readyState > 0) {
+          audioPlayer.unsetPreviewMode();
           audioPlayer.audioElement.play();
         }
       } else {
@@ -587,7 +591,12 @@
       }).fail(function onFail(error) {
         console.error(error);
       });
+    },
+
+    unsetPreviewMode: function unsetPreviewMode() {
+      audioPlayer.previewMode = false;
     }
-  }
+
+  };
 
 })(window);
