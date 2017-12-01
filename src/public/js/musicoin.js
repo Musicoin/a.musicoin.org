@@ -1,3 +1,3 @@
 (function () {
-	window.musicoin = {};
+	window.musicoin = musicoin || {};
 })();
