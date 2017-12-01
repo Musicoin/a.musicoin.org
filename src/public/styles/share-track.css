@@ -1,0 +1,15 @@
+.share-options {
+  padding: 0;
+  margin: 0;
+}
+
+.share-option {
+  list-style: none;
+  display: inline-block;
+}
+
+.share-option a {}
+
+#open-share-dialog {
+	display: none;
+}

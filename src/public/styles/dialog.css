@@ -1,0 +1,10 @@
+.musicoin-dialog {position: absolute;top: 0;bottom: 0;left: 0;right: 0;background-color: #0000002e;z-index: 1; display: none;}
+
+.dialog-wrapper {margin: 10px auto;background: #FFF;}
+
+.dialog-header {width: 100%;float: left;}
+
+.dialog-body {
+	float: left;
+	width: 100%;
+}

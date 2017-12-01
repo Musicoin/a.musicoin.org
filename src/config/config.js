@@ -109,7 +109,6 @@ function getStructuredConfig(keyValueConfig) {
             getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,
             getAccountBalance: `${keyValueConfig.musicoinApiEndpoint}/balance`,
             clientID: keyValueConfig.musicoinApiClientId,
-            clientSecret: keyValueConfig.musicoinApiClientSecret
         },
         exchangeRateService: {
             endpoint: "https://api.coinmarketcap.com/v1/ticker/musicoin/",
@@ -226,7 +225,6 @@ function getDefaultKeyValueConfig() {
             musicoinAutoFollowUserId: env.MUSICOIN_AUTO_FOLLOW_USER_ID || "5920465fb96d777b14888cad",
             musicoinApiEndpoint: env.MUSICOIN_API_ENDPOINT || "http://localhost:8082",
             musicoinApiClientId: env.MUSICOIN_CLIENT_ID || "clientID",
-            musicoinApiClientSecret: env.MUSICOIN_CLIENT_SECRET || "clientSecret",
             mongoEndpoint: env.MONGO_ENDPOINT || "mongodb://localhost",
             ipfsReadEndpoint: env.IPFS_READ_ENDPOINT || "http://localhost:8080",
             ipfsAddEndpoint: env.IPFS_ADD_ENDPOINT || 'http://localhost:5001',
@@ -242,7 +240,7 @@ function getDefaultKeyValueConfig() {
             soundcloudClientId: env.SOUNDCLOUD_CLIENT_ID || "yourClientId",
             soundcloudClientSecret: env.SOUNDCLOUD_SECRET || "yourClientSecret",
             soundcloudCallbackEndpoint: env.SOUNDCLOUD_CALLBACK_ENDPOINT || `http://alpha.musicoin.org/auth/soundcloud/callback`,
-            domains: env.CERTIFICATE_DOMAINS || "alpha.musicoin.org,musicoin.org,orbiter.musicoin.org",
+            domains: env.CERTIFICATE_DOMAINS || "musicoin.org,orbiter.musicoin.org",
             termsOfUseVersion: env.TERMS_OF_USE_VERSION || "1.0"
         };
     });
