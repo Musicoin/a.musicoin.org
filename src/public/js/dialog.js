@@ -4,10 +4,10 @@
 
   function Dialog(options) {
     if (options.width) {
-      this.width = +options.width;
+      this.width = options.width;
     }
     if (options.height) {
-      this.height = +options.height;
+      this.height = options.height;
     }
     if (!options.root) {
       throw new Error('Dialog: Invalid root element');
@@ -20,7 +20,7 @@
     }
 
     this.$rootEl = $(rootEl);
-    this.$rootEl.find('.dialog-wrapper').css({ width: this.width + 'px', height: this.height + 'px' });
+    this.$rootEl.find('.dialog-wrapper').css({ width: this.width, height: this.height });
 
     if(options.display) {
     	this.open();

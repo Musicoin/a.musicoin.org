@@ -1,3 +1,7 @@
+#share-track-options-dialog .dialog-wrapper {
+	margin-top: 100px;
+}
+
 #share-options {
   padding: 0;
   margin: 0;
@@ -11,7 +15,7 @@
 .share-option a {}
 
 #open-share-dialog {
-	display: none;
+	display: inline-block;
 }
 
 #embedded-player-preview {
@@ -28,7 +32,15 @@
 }
 
 #embedded-player-source-code-field {
-
+    width: 100%;
+    font-size: 12px;
+    color: #000;
+    display: block;
+    padding: 5px;
+    margin: 5px 0;
+    box-shadow: 0px 0px -1px 0px #000 inset;
+    resize: none;
+    height: 50px;
 }
 
 #social-sharing-preview-frame {
@@ -41,13 +53,27 @@
 }
 
 #share-options-container {
-
+	padding: 0;
 }
 
 #share-options-header {
 
 }
 
+#share-options-header, #embedded-player-source-code-header {
+    color: #000;
+    font-weight: bold;
+    margin-bottom: 0;
+    border-top: 3px solid #dcdcdc;
+    margin-top: 0px;
+    font-size: 16px;
+    padding-top: 5px;
+    margin-left: -5px;
+    margin-right: -5px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
 #embedded-player-source-code-header {
-	
+
 }

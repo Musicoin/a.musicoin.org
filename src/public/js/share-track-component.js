@@ -1,6 +1,6 @@
 (function(musicoin) {
 	
-	var shareDialog = new musicoin.Dialog({width: 300, root: 'share-track-options-dialog'});
+	var shareDialog = new musicoin.Dialog({width: '50%', root: 'share-track-options-dialog'});
 	var shareTab = new musicoin.Tab({root: 'share-options-tab'});
 
 	musicoin.shareDialog = shareDialog;
