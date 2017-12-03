@@ -112,7 +112,8 @@
     }
     .popover-title {
         text-align:center;
-        color:#555;
+        color:black;
+        font-weight: bolder
     }
 
     .admin-area {
@@ -156,11 +157,11 @@
     <% if (isAuthenticated) { %>
     <form action="/browse?genre=<%= typeof genreFilter != "undefined" ? genreFilter : "" %>&sort=<%= typeof sort != "undefined" ? sort : "" %>" method="post">
         <div class="flex-row">
-            <a href="/browse" class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></a>
+            <a href="/browse" class="fa fa-search shift-r20" style="color: black" aria-hidden="true"></a>
             <input class="form-control text-large pl25"
                    name="search"
-                   style="color:inherit; border-radius: 15px; background-color: #efefef; float: left; color: black"
-                   value="<%= typeof searchTerm != "undefined" ? searchTerm : ""  %>" placeholder="">
+                   style="color:inherit;border-radius: 5px;background-color: white;float: left;color: black;width: 50vw;"
+                   value="<%= typeof searchTerm != "undefined" ? searchTerm : ""  %>" placeholder="Search for your favorite tracks">
         </div>
     </form>
     <% } %>
@@ -200,7 +201,7 @@
                 <div class="content hide">
                     <div class="popoverContentContainer">
                         <div id="optionMenu">
-                            <a href="/profile" class="btn btn-default">Profile</a>
+                            <a href="/profile" class="btn btn-default">My Profile</a>
                             <a href="/logout" target="_top" class="btn btn-danger">Sign Out</a>
                         </div>
 

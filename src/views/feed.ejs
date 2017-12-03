@@ -32,18 +32,14 @@
     <%- include('partials/hero.ejs', { display: !minimizeHeroInFeed }) %>
     <% var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image" %>
 
-    <div class="columns-2-to-1 white-well box-shadow-top">
-        <div class="col1">
+    <div class="columns-2-to-1 white-well box-shadow-top" style="background-color: black">
+        <div class="col1" style="background: #fff;margin: 10px 10px 10px 10px;border-radius: 5px;padding: 50px 50px 20px 50px;">
             <div class="flex-row event-header mr10" style="justify-content: space-between; margin-right: 40px">
                 <div style="width: 100px" class="big-screen-only"></div>
-                <% if ((user.verified != true) && (user.mostRecentReleaseDate != null)) { %>
-                    <div>
-                        You have uploaded one track as per quota. In order to upload more tracks, please get verified as a musician.
-                    </div>
-                <% } %>
                 <div>
                     <i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i>My&nbsp;Feed
                 </div>
+                <!--
                 <% if (typeof showFeedPlayAll != "undefined" && showFeedPlayAll) { %>
                 <div class="btn btn-success play-list pad5 party-mode-button"
                      target="de-track-messages"
@@ -52,9 +48,16 @@
                     <i class="fa fa-play text-large mr5 text-default" aria-hidden="true"></i> PARTY MODE
                 </div>
                 <% } else { %>
-                <div></div>
                 <% } %>
+                -->
+                <div></div>
             </div>
+
+            <% if ((user.verified != true) && (user.mostRecentReleaseDate != null)) { %>
+                <div style="padding: 30px 10px 10px 50px;font-size: 25px;color: red;font-weight: bolder;">
+                Congrats on uploading your first song, unverified musicians are allowed to upload only one track as per policy and the Review Team will update your account status shortly.
+                </div>
+            <% } %>
 
             <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
                 <a href="/artist/<%=user.profileAddress%>"><div style="background-image: url('<%=user.profile.image%>')" class="<%=senderClass%>"></div></a>
@@ -106,7 +109,7 @@
             </div>
         </div>
 
-        <div class="pad10 col2" style="background-color: rgba(0,0,0,0.02)">
+        <div class="pad10 col2" style="background-color: #fff;margin: 10px 10px 10px 0px;border-radius: 5px; padding: 20px 20px 20px 20px;">
             <%- include('partials/mini-hero.ejs', { display: minimizeHeroInFeed }) %>
 
             <% if (typeof recentlyPlayed != "undefined" && recentlyPlayed.length > 0) { %>
@@ -141,11 +144,11 @@
             <% } %>
 
             <% if (typeof topTippedLastWeek != "undefined") { %>
-                <%- include('partials/top-release-chart.ejs', {releases: topTippedLastWeek, title: "top tipped", elementEndpoint: "top-tipped-period"}) %>
+                <%- include('partials/top-release-chart.ejs', {releases: topTippedLastWeek, title: "Top Tipped", elementEndpoint: "top-tipped-period"}) %>
             <% } %>
 
             <% if (typeof topPlayedLastWeek != "undefined") { %>
-                <%- include('partials/top-release-chart.ejs', {releases: topPlayedLastWeek, title: "top played", elementEndpoint: "top-played-period"}) %>
+                <%- include('partials/top-release-chart.ejs', {releases: topPlayedLastWeek, title: "Top Played", elementEndpoint: "top-played-period"}) %>
             <% } %>
         </div>
     </div>
