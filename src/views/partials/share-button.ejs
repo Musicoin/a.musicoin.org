@@ -13,45 +13,53 @@
               <a href="#social-network-sharing" class="tab-link">Share</a>
             </li>
             <li class="tab-link-item">
-              <a href="#embed-player-source-code" class="tab-link">Embed</a>
+              <a href="#embedded-player-source-code-container" class="tab-link">Embed</a>
             </li>
           </ul>
         </div>
         <div class="tab-contents">
           <div id='social-network-sharing'>
-            <img id="track-preview" src="" height="65px" width="100%">
-            <ul class="share-options">
-              <li class="share-option">
-                <a class="btn btn-social-icon btn-twitter" href="https://twitter.com/share?url=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%twitter">
+            <div class="social-sharing-preview">
+              <iframe id="social-sharing-preview-frame" src="https://musicoin.org/embedded-player/<%=license.address%>?embedded=true&autoQueue=true&preview=true"></iframe>
+            </div>
+            <div id="share-options-container">
+              <h5 id="share-options-header">Share on</h5>
+              <ul id="share-options">
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-twitter" href="https://twitter.com/share?url=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%twitter" target="_blank">
                   <span class="fa fa-twitter"></span>
                 </a>
-              </li>
-              <li class="share-option">
-                <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dfacebook">
+                </li>
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dfacebook" target="_blank">
                   <span class="fa fa-facebook"></span>
                 </a>
-              </li>
-              <li class="share-option">
-                <a class="btn btn-social-icon btn-tumblr" href="https://plus.google.com/share?url=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dgoogleplus">
+                </li>
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-tumblr" href="https://www.tumblr.com/widgets/share/tool?canonicalUrl=https%3A//musicoin.org/nav/track/<%=license.address%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dtumblr&posttype=audio&tags=musicoin%2Cmusic%2C<%=license.artistName%>%2C<%=license.title%>%2C%20bugle%20%20%2Cjohn%20oliver%2Candy%20zaltzman&caption=<%=description%>" target="_blank">
                   <span class="fa fa-tumblr"></span>
                 </a>
-              </li>
-              <li class="share-option">
-                <a class="btn btn-social-icon btn-google" href="http://pinterest.com/pin/create/button/?url=https%3A//musicoin.org/nav/track/<%=license.address%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dpinterest&media=https://musicoin.org<%=license.image%>&description=<%=description%>&is_video=true">
+                </li>
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-google" href="https://plus.google.com/share?url=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dgoogleplus" target="_blank">
                   <span class="fa fa-google"></span>
                 </a>
-              </li>
-              <li class="share-option">
-                <a class="btn btn-social-icon btn-pinterenst">
-                  <span class="fa fa-pinterenst"></span> 
+                </li>
+                <li class="share-option">
+                  <a class="btn btn-social-icon btn-pinterest" href="http://pinterest.com/pin/create/button/?url=https%3A//musicoin.org/nav/track/<%=license.address%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dpinterest&media=https://musicoin.org<%=license.image%>&description=<%=description%>&is_video=true" target="_blank">
+                  <span class="fa fa-pinterest"></span>
                 </a>
-              </li>
-            </ul>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div id='embed-player-source-code'>
-            <div class="embedded-track-player">
-              <img src="" height="65px" width="100%">
-              <!-- <iframe src="https://musicoin.org/embedded-player/<%=license.address%>?embedded=true&autoQueue=false"></iframe> -->
+          <div id='embedded-player-source-code-container'>
+            <div class="embedded-player-preview">
+              <iframe id="embedded-player-preview-frame" src="https://musicoin.org/embedded-player/<%=license.address%>?embedded=true&autoQueue=true&preview=true"></iframe>
+            </div>
+            <div id="embedded-player-source-code">
+              <h5 id="embedded-player-source-code-header">Source Code</h5>
+              <textarea type="text" id="embedded-player-source-code-field"><iframe id=&quot;embedded-player-preview-frame&quot; src=&quot;https://musicoin.org/embedded-player/0x8f505c0909c2dbacf24b5c24833eb0eecb3ec504?embedded=true&amp;autoQueue=true&amp;preview=true&quot;></iframe></textarea>
             </div>
           </div>
         </div>

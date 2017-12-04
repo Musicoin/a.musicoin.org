@@ -312,6 +312,7 @@
       audioPlayer.random = options.random === 'true';
       audioPlayer.randomByArtist = options.randomByArtist === 'true';
       audioPlayer.internal = options.internal === 'true';
+      audioPlayer.previewMode = options.preview === 'true';
 
       if (!audioPlayer.audioElement) {
         audioPlayer.audioElement = $('#player')[0];
@@ -476,6 +477,10 @@
     togglePlayState: function() {
       if (audioPlayer.audioElement.paused) {
         if (audioPlayer.audioElement.readyState > 0) {
+          audioPlayer.unsetPreviewMode();
+          audioPlayer.play();
+        }
+        else if($("#player").data('audioUrl')) {
           audioPlayer.unsetPreviewMode();
           audioPlayer.play();
         }
