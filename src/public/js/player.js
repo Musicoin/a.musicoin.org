@@ -312,6 +312,7 @@
       audioPlayer.random = options.random === 'true';
       audioPlayer.randomByArtist = options.randomByArtist === 'true';
       audioPlayer.internal = options.internal === 'true';
+      audioPlayer.previewMode = options.preview === 'true';
 
       if (!audioPlayer.audioElement) {
         audioPlayer.audioElement = $('#player')[0];
