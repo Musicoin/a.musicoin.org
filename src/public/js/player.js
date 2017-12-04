@@ -480,6 +480,10 @@
           audioPlayer.unsetPreviewMode();
           audioPlayer.play();
         }
+        else if($("#player").data('audioUrl')) {
+          audioPlayer.unsetPreviewMode();
+          audioPlayer.play();
+        }
       } else {
         audioPlayer.audioElement.pause();
       }
