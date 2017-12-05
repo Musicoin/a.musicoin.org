@@ -78,8 +78,7 @@ function formatNumber(value) {
 
 <div class="box-shadow-top white-well pad20 columns-2-to-1">
     <div id=description class="text-justify more col1">
-        <div class="more-content" style="max-height: 1000px; font-weight: normal; font-size: 17px; width: 65vw;">
-            <b> What Describes me? </b><br>
+        <div class="more-content">
             <%
             var paragraphs = artist.description ? artist.description.split("\n").map(s => s.trim()).filter(s => s) : [];
             for (var i = 0; i < paragraphs.length; i++) {
@@ -147,7 +146,7 @@ function formatNumber(value) {
                         text-default="<%=amount%> MC">
                         <%=amount%> MC
                     </li>
-                    <% } %>
+                    <% } %> 
                 </ul>
             </div>
             <div class="subtle-text"><span data-behavior="total-tips"><%= formatNumber(artistStats.tipCount)%></span> tipped</div>
@@ -155,7 +154,7 @@ function formatNumber(value) {
 
         <div class="text-large flex-column center-text mr10 earnings-container" >
             <div style="top: -6px; position: relative;">
-                <span class="text-large" data-behavior="total-earned" style="font-size: 50px"><b><%=formatNumber(artistStats.totalEarned)%></b></span><span class="text-medium-small"><b>MC</b></span>
+                <span class="text-large" data-behavior="total-earned"><%=formatNumber(artistStats.totalEarned)%></span><span class="text-medium-small">MC</span>
             </div>
             <span class="text-medium-small subtle-text" style="position: relative; top: -11px;"><span data-behavior="total-earned-usd"><%=artistStats.formattedTotalUSD%></span> earned</span>
         </div>
@@ -170,10 +169,10 @@ function formatNumber(value) {
     </div>
 </div>
 
-<div class="two-columns white-well" style="background: black">
+<div class="two-columns white-well">
     <% if (artist.verified) { %>
-      <div class="pad10" style="padding: 20px 20px 20px 20px;margin: 10px 10px 10px 10px;background: white;border-radius: 5px;">
-      <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true" style="color: bolder"></i> Posts </div>
+    <div class="pad10">
+        <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i> Posts </div>
         <div class="dynamic-element message-scroller"
              data-behavior="chat-message-area"
              style="min-height: 180px"
@@ -189,7 +188,7 @@ function formatNumber(value) {
         </div>
     </div>
     <% } else { %>
-        <div class="pad10" style="padding: 20px 20px 20px 20px;margin: 10px 10px 10px 10px;background: white;border-radius: 5px;">
+        <div class="pad10">
             <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i> Posts (Unverified musician) </div>
             <div class="dynamic-element message-scroller"
                  data-behavior="chat-message-area"
@@ -207,10 +206,10 @@ function formatNumber(value) {
         </div>
     <% } %>
 
-    <div class="pad10" style="padding: 20px 20px 20px 20px;margin: 10px 10px 10px 0px;background: white;border-radius: 5px;">
+    <div class="pad10">
         <% if (releases.length > 0) { %>
           <% if (artist.verified) { %>
-            <div class="event-header text-center" stye="color: black; font-weight: bolder">
+            <div class="event-header text-center">
                 Releases
                 <% if (typeof showPlayAll != "undefined" && showPlayAll) { %>
                 <div>
