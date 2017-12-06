@@ -368,8 +368,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
   // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
   app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
+    console.log(req.path, '/nav/*');
     res.render('index-frames.ejs', { mainFrameLocation: req.originalUrl.substr(4) });
   });
+
+  // app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
+  //   let mainFrameLocation = req.originalUrl.substr(4);
+  //   let promise = null;
+  //   if(req.path.indexOf('track') !== -1) {
+  //     promise = jsonAPI.getLicense(req.params.address)
+  //       .then(license => license ? Promise.resolve({ mainFrameLocation: mainFrameLocation, license: license}) : Promise.reject());
+  //   }
+  //   else {
+  //     promise = jsonAPI.getArtist(req.params.address, false, false).then((result) => Promise.resolve(...result, mainFrameLocation: mainFrameLocation}));
+  //   }
+  //   promise
+  //   .then((result) => res.render('index-frames.ejs', result), () => res.render('not-found.ejs'))
+  //   .catch(() => res.render('not-found.ejs'));
+  // });
 
   // =====================================
   // HOME PAGE
@@ -717,12 +733,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       musicoinApi.getTransactionHistory(req.params.address, length, start),
       addressResolver.lookupAddress(req.user.profileAddress, req.params.address),
       function(history, name) {
+        if(!Array.isArray(history)) {
+          history = [];
+        }
         history.forEach(h => {
           h.formattedDate = _formatAsISODateTime(h.timestamp);
           h.musicoins = _formatNumber(h.musicoins, 5);
-        }).catch (function(e) {
-          console.log(e);
         });
+
+        // commenting out because, Array doesn't has .catch method. Not removed because, I dont know why this is added.
+        // .catch (function(e) {
+        //   console.log(e);
+        // });
         doRender(req, res, 'history.ejs', {
           address: req.params.address,
           name: name ? name : "Transaction History",

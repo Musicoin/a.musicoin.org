@@ -162,7 +162,8 @@
 }
 
 .track-description-header {
-    color: #333
+    color: #333;
+    white-space: pre-wrap;
 }
 
 blockquote {
