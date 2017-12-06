@@ -375,13 +375,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
     
     let mainFrameLocation = req.originalUrl.substr(4);
-    let promise = null;
+    let promise = Promise.resolve({ mainFrameLocation: mainFrameLocation});
     if(req.path.indexOf('track') !== -1) {
       promise = jsonAPI.getLicense(req.params.address)
         .then(license => license ? Promise.resolve({ mainFrameLocation: mainFrameLocation, license: license}) : Promise.reject());
+      console.log(typeof promise, 'track');
     }
     else {
       promise = jsonAPI.getArtist(req.params.address, false, false).then((result) => Promise.resolve(...result, mainFrameLocation: mainFrameLocation}));
+      console.log(typeof promise, 'artist');
     }
 
     promise
