@@ -382,7 +382,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       console.log(typeof promise, 'track');
     }
     else {
-      promise = jsonAPI.getArtist(req.params.address, false, false).then((result) => Promise.resolve(...result, mainFrameLocation: mainFrameLocation}));
+      promise = jsonAPI.getArtist(req.params.address, false, false).then((result) => Promise.resolve({...result, mainFrameLocation: mainFrameLocation}));
       console.log(typeof promise, 'artist');
     }
 
