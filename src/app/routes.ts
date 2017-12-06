@@ -717,12 +717,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       musicoinApi.getTransactionHistory(req.params.address, length, start),
       addressResolver.lookupAddress(req.user.profileAddress, req.params.address),
       function(history, name) {
+        if(!Array.isArray(history)) {
+          history = [];
+        }
         history.forEach(h => {
           h.formattedDate = _formatAsISODateTime(h.timestamp);
           h.musicoins = _formatNumber(h.musicoins, 5);
-        }).catch (function(e) {
-          console.log(e);
         });
+
+        // commenting out because, Array doesn't has .catch method. Not removed because, I dont know why this is added.
+        // .catch (function(e) {
+        //   console.log(e);
+        // });
         doRender(req, res, 'history.ejs', {
           address: req.params.address,
           name: name ? name : "Transaction History",
