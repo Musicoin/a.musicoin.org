@@ -309,6 +309,26 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render('player-frame.ejs');
   });
 
+
+  // This sucks.  If I want twitter cards to work, we need metadata about the
+  // track in the top frame, not the inner frame.  I can't sort out a better way
+  // Using the oembed server approach would be MUCH better, but I can't get it to work. :/
+  // Twitter just ignores my oembed link.
+  app.get('/nav/track/:address', (req, res) => {
+    console.log("Got external request for a nav/track page, rendering metadata in the outer frame: " + req.params.address);
+    jsonAPI.getLicense(req.params.address)
+      .then(license => {
+        if (!license) {
+          console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
+          return res.render('not-found.ejs');
+        }
+        res.render('index-frames.ejs', {
+          license: license,
+          mainFrameLocation: req.originalUrl.substr(4)
+        });
+      });
+  });
+
   app.get('/embedded-player/:address', isLoggedInOrIsPublic, (req, res) => {
 
     const address = FormUtils.defaultString(req.params.address, null);
@@ -365,31 +385,28 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   });
 
+  app.get('/nav/artist/:address', isLoggedInOrIsPublic, (req, res) => {
+    console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);
+    jsonAPI.getArtist(req.params.address, false, false)
+      .then(result => {
+        try {
+          res.render('index-frames.ejs', {
+            artist: result.artist,
+            mainFrameLocation: req.originalUrl.substr(4)
+          });
+        } catch(Error) {
+          res.render('not-found.ejs')
+        }
+      }
+    ).catch(error => {
+      console.log('ERROR!!', error.message);
+    });
+  });
+
   // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
   // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
-  // app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
-  //   console.log(req.path, '/nav/*');
-  //   res.render('index-frames.ejs', { mainFrameLocation: req.originalUrl.substr(4) });
-  // });
-
   app.get('/nav/*', isLoggedInOrIsPublic, (req, res) => {
-    
-    let mainFrameLocation = req.originalUrl.substr(4);
-    let promise = Promise.resolve({ mainFrameLocation: mainFrameLocation});
-    if(req.path.indexOf('track') !== -1) {
-      promise = jsonAPI.getLicense(req.params.address)
-        .then(license => license ? Promise.resolve({ mainFrameLocation: mainFrameLocation, license: license}) : Promise.reject());
-      console.log(typeof promise, 'track');
-    }
-    else {
-      promise = jsonAPI.getArtist(req.params.address, false, false).then((result) => Promise.resolve({...result, mainFrameLocation: mainFrameLocation}));
-      console.log(typeof promise, 'artist');
-    }
-
-    promise
-    .then((result) => res.render('index-frames.ejs', result), () => res.render('not-found.ejs'))
-    .catch(() => res.render('not-found.ejs'));
-
+    res.render('index-frames.ejs', { mainFrameLocation: req.originalUrl.substr(4) });
   });
 
   // =====================================
@@ -745,10 +762,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           h.formattedDate = _formatAsISODateTime(h.timestamp);
           h.musicoins = _formatNumber(h.musicoins, 5);
         });
-
-        // commenting out because, Array doesn't has .catch method. Not removed because, I dont know why this is added.
         // .catch (function(e) {
-        //   console.log(e);
+        //  console.log(e);
         // });
         doRender(req, res, 'history.ejs', {
           address: req.params.address,
