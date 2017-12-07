@@ -431,10 +431,10 @@ function configure(app, passport, musicoinApi, mediaProvider, config) {
             res.redirect('/error');
         });
     }
-    app.post('/browse', isLoggedIn, function (req, res) {
+    app.post('/browse', function (req, res) {
         handleBrowseRequest(req, res, req.body.search, req.body.genre || req.query.genre);
     });
-    app.get('/browse', isLoggedIn, function (req, res) {
+    app.get('/browse', function (req, res) {
         handleBrowseRequest(req, res, req.query.search, req.query.genre);
     });
     app.post('/elements/musicoin-balance', function (req, res) {
