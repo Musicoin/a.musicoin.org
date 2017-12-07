@@ -1,0 +1,5060 @@
+
+
+.a11 {
+  width               : 100%;
+  min-width           : 1920px;
+  height              : 100%;
+  min-height          : 6980px;
+  position            : relative;
+  overflow            : hidden;
+  margin              : 0px;
+  background          : rgba(251, 250, 248, 1.0);
+}
+a {
+  text-decoration     : none;
+}
+div {
+  -webkit-text-size-adjust: none;
+}
+.a11 .b-g {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 750px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  overflow            : hidden;
+}
+.a11 .b-g .mask {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 750px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .b-g .rectangle {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 1083px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.4;
+}
+.a11 .rectangle20 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 5509px;
+  height              : 800px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .group8 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 6309px;
+  height              : 565px;
+  width               : 1343px;
+  position            : absolute;
+  margin              : 0;
+  left                : 577px;
+}
+.a11 .group8 .rectangle19 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 561px;
+  height              : 4px;
+  width               : 1073px;
+  position            : absolute;
+  margin              : 0;
+  left                : 270px;
+}
+.a11 .group8 .view1 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 550px;
+  height              : 4px;
+  width               : 1050px;
+  position            : absolute;
+  margin              : 0;
+  left                : 293px;
+}
+.a11 .group8 .view2 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 539px;
+  height              : 4px;
+  width               : 996px;
+  position            : absolute;
+  margin              : 0;
+  left                : 347px;
+}
+.a11 .group8 .view3 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 528px;
+  height              : 4px;
+  width               : 1022px;
+  position            : absolute;
+  margin              : 0;
+  left                : 321px;
+}
+.a11 .group8 .view4 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 517px;
+  height              : 4px;
+  width               : 1075px;
+  position            : absolute;
+  margin              : 0;
+  left                : 268px;
+}
+.a11 .group8 .view5 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 506px;
+  height              : 4px;
+  width               : 1105px;
+  position            : absolute;
+  margin              : 0;
+  left                : 238px;
+}
+.a11 .group8 .view6 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 495px;
+  height              : 4px;
+  width               : 1070px;
+  position            : absolute;
+  margin              : 0;
+  left                : 273px;
+}
+.a11 .group8 .view7 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 484px;
+  height              : 4px;
+  width               : 1089px;
+  position            : absolute;
+  margin              : 0;
+  left                : 254px;
+}
+.a11 .group8 .view8 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 473px;
+  height              : 4px;
+  width               : 1113px;
+  position            : absolute;
+  margin              : 0;
+  left                : 230px;
+}
+.a11 .group8 .view9 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 462px;
+  height              : 4px;
+  width               : 1099px;
+  position            : absolute;
+  margin              : 0;
+  left                : 244px;
+}
+.a11 .group8 .view10 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 451px;
+  height              : 4px;
+  width               : 1115px;
+  position            : absolute;
+  margin              : 0;
+  left                : 228px;
+}
+.a11 .group8 .view11 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 440px;
+  height              : 4px;
+  width               : 1061px;
+  position            : absolute;
+  margin              : 0;
+  left                : 282px;
+}
+.a11 .group8 .view12 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 429px;
+  height              : 4px;
+  width               : 1090px;
+  position            : absolute;
+  margin              : 0;
+  left                : 253px;
+}
+.a11 .group8 .view13 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 418px;
+  height              : 4px;
+  width               : 1094px;
+  position            : absolute;
+  margin              : 0;
+  left                : 249px;
+}
+.a11 .group8 .view14 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 407px;
+  height              : 4px;
+  width               : 1056px;
+  position            : absolute;
+  margin              : 0;
+  left                : 287px;
+}
+.a11 .group8 .view15 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 396px;
+  height              : 4px;
+  width               : 1072px;
+  position            : absolute;
+  margin              : 0;
+  left                : 271px;
+}
+.a11 .group8 .view16 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 385px;
+  height              : 4px;
+  width               : 1105px;
+  position            : absolute;
+  margin              : 0;
+  left                : 238px;
+}
+.a11 .group8 .view17 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 374px;
+  height              : 4px;
+  width               : 1030px;
+  position            : absolute;
+  margin              : 0;
+  left                : 313px;
+}
+.a11 .group8 .view18 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 363px;
+  height              : 4px;
+  width               : 1010px;
+  position            : absolute;
+  margin              : 0;
+  left                : 333px;
+}
+.a11 .group8 .view19 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 352px;
+  height              : 4px;
+  width               : 965px;
+  position            : absolute;
+  margin              : 0;
+  left                : 378px;
+}
+.a11 .group8 .view20 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 341px;
+  height              : 4px;
+  width               : 991px;
+  position            : absolute;
+  margin              : 0;
+  left                : 352px;
+}
+.a11 .group8 .view21 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 330px;
+  height              : 4px;
+  width               : 1030px;
+  position            : absolute;
+  margin              : 0;
+  left                : 313px;
+}
+.a11 .group8 .view22 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 319px;
+  height              : 4px;
+  width               : 1011px;
+  position            : absolute;
+  margin              : 0;
+  left                : 332px;
+}
+.a11 .group8 .view23 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 308px;
+  height              : 4px;
+  width               : 1056px;
+  position            : absolute;
+  margin              : 0;
+  left                : 287px;
+}
+.a11 .group8 .view24 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 297px;
+  height              : 4px;
+  width               : 1030px;
+  position            : absolute;
+  margin              : 0;
+  left                : 313px;
+}
+.a11 .group8 .view25 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 286px;
+  height              : 4px;
+  width               : 1000px;
+  position            : absolute;
+  margin              : 0;
+  left                : 343px;
+}
+.a11 .group8 .view26 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 275px;
+  height              : 4px;
+  width               : 1061px;
+  position            : absolute;
+  margin              : 0;
+  left                : 282px;
+}
+.a11 .group8 .view27 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 264px;
+  height              : 4px;
+  width               : 1130px;
+  position            : absolute;
+  margin              : 0;
+  left                : 213px;
+}
+.a11 .group8 .view28 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 253px;
+  height              : 4px;
+  width               : 1080px;
+  position            : absolute;
+  margin              : 0;
+  left                : 263px;
+}
+.a11 .group8 .view29 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 242px;
+  height              : 4px;
+  width               : 1177px;
+  position            : absolute;
+  margin              : 0;
+  left                : 166px;
+}
+.a11 .group8 .view30 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 231px;
+  height              : 4px;
+  width               : 1243px;
+  position            : absolute;
+  margin              : 0;
+  left                : 100px;
+}
+.a11 .group8 .view31 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 220px;
+  height              : 4px;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 171px;
+}
+.a11 .group8 .view32 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 209px;
+  height              : 4px;
+  width               : 1085px;
+  position            : absolute;
+  margin              : 0;
+  left                : 258px;
+}
+.a11 .group8 .view33 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 198px;
+  height              : 4px;
+  width               : 1147px;
+  position            : absolute;
+  margin              : 0;
+  left                : 196px;
+}
+.a11 .group8 .view34 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 187px;
+  height              : 4px;
+  width               : 1177px;
+  position            : absolute;
+  margin              : 0;
+  left                : 166px;
+}
+.a11 .group8 .view35 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 176px;
+  height              : 4px;
+  width               : 1067px;
+  position            : absolute;
+  margin              : 0;
+  left                : 276px;
+}
+.a11 .group8 .view36 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 165px;
+  height              : 4px;
+  width               : 1160px;
+  position            : absolute;
+  margin              : 0;
+  left                : 183px;
+}
+.a11 .group8 .view37 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 154px;
+  height              : 4px;
+  width               : 1239px;
+  position            : absolute;
+  margin              : 0;
+  left                : 104px;
+}
+.a11 .group8 .view38 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 143px;
+  height              : 4px;
+  width               : 1209px;
+  position            : absolute;
+  margin              : 0;
+  left                : 134px;
+}
+.a11 .group8 .view39 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 132px;
+  height              : 4px;
+  width               : 1155px;
+  position            : absolute;
+  margin              : 0;
+  left                : 188px;
+}
+.a11 .group8 .view40 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 121px;
+  height              : 4px;
+  width               : 1050px;
+  position            : absolute;
+  margin              : 0;
+  left                : 293px;
+}
+.a11 .group8 .view41 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 110px;
+  height              : 4px;
+  width               : 1110px;
+  position            : absolute;
+  margin              : 0;
+  left                : 233px;
+}
+.a11 .group8 .view42 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 99px;
+  height              : 4px;
+  width               : 1163px;
+  position            : absolute;
+  margin              : 0;
+  left                : 180px;
+}
+.a11 .group8 .view43 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 88px;
+  height              : 4px;
+  width               : 1043px;
+  position            : absolute;
+  margin              : 0;
+  left                : 300px;
+}
+.a11 .group8 .view44 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 77px;
+  height              : 4px;
+  width               : 1183px;
+  position            : absolute;
+  margin              : 0;
+  left                : 160px;
+}
+.a11 .group8 .view45 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 66px;
+  height              : 4px;
+  width               : 1090px;
+  position            : absolute;
+  margin              : 0;
+  left                : 253px;
+}
+.a11 .group8 .view46 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 55px;
+  height              : 4px;
+  width               : 1343px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .group8 .view47 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 44px;
+  height              : 4px;
+  width               : 1194px;
+  position            : absolute;
+  margin              : 0;
+  left                : 149px;
+}
+.a11 .group8 .view48 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 33px;
+  height              : 4px;
+  width               : 1243px;
+  position            : absolute;
+  margin              : 0;
+  left                : 100px;
+}
+.a11 .group8 .view49 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 22px;
+  height              : 4px;
+  width               : 1133px;
+  position            : absolute;
+  margin              : 0;
+  left                : 210px;
+}
+.a11 .group8 .view50 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 11px;
+  height              : 4px;
+  width               : 1213px;
+  position            : absolute;
+  margin              : 0;
+  left                : 130px;
+}
+.a11 .group8 .view51 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 0px;
+  height              : 4px;
+  width               : 1313px;
+  position            : absolute;
+  margin              : 0;
+  left                : 30px;
+}
+.a11 .rectangle15 {
+  background          : rgba(251, 250, 248, 1.0);
+  top                 : 750px;
+  height              : 648px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .group {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 544px;
+  height              : 166px;
+  width               : 163px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+}
+.a11 .group .a690 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Light", Helvetica, Arial, serif;
+  font-size           : 80.0px;
+  color               : rgba(244, 244, 244, 1.0);
+  text-align          : left;
+  line-height         : 109.0px;
+}
+.a11 .group .musicians {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 112px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .view52 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 544px;
+  height              : 166px;
+  width               : 238px;
+  position            : absolute;
+  margin              : 0;
+  left                : 790px;
+}
+.a11 .view52 .a129k {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Light", Helvetica, Arial, serif;
+  font-size           : 80.0px;
+  color               : rgba(244, 244, 244, 1.0);
+  text-align          : left;
+  line-height         : 109.0px;
+}
+.a11 .view52 .releases {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 112px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .view53 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 544px;
+  height              : 166px;
+  width               : 223px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1160px;
+}
+.a11 .view53 .a12kk {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Light", Helvetica, Arial, serif;
+  font-size           : 80.0px;
+  color               : rgba(244, 244, 244, 1.0);
+  text-align          : left;
+  line-height         : 109.0px;
+}
+.a11 .view53 .paid {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 112px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .circleright09 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 328px;
+  height              : 64px;
+  width               : 64px;
+  position            : absolute;
+  margin              : 0;
+  left                : 928px;
+}
+.a11 .circleright09 .shape {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 64px;
+  width               : 64px;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : 40px;
+  width               : 1084px;
+  position            : absolute;
+  margin              : 0;
+  left                : 416px;
+}
+.a11 .header-horizontal1440-black .stacked-group {
+  /* Flexbox */
+  display: flex;
+  justify-content     : flex-start;
+  flex-direction      : row;
+  align-items         : center;
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 8px;
+  height              : 36px;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 232px;
+}
+.a11 .header-horizontal1440-black .stacked-group .for-musicians {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 16px;
+  margin              : 0;
+  width               : 110px;
+}
+.a11 .header-horizontal1440-black .stacked-group .for-musicians .label6 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 110px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .for-listners {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 16px;
+  margin              : 0 0 0 40px;
+  width               : 100px;
+}
+.a11 .header-horizontal1440-black .stacked-group .for-listners .label5 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 100px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .how-it-works {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 16px;
+  margin              : 0 0 0 40px;
+  width               : 98px;
+}
+.a11 .header-horizontal1440-black .stacked-group .how-it-works .label4 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 98px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .c-urrency {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 16px;
+  margin              : 0 0 0 40px;
+  width               : 72px;
+}
+.a11 .header-horizontal1440-black .stacked-group .c-urrency .label3 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 72px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .f-aq {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 16px;
+  margin              : 0 0 0 40px;
+  width               : 37px;
+}
+.a11 .header-horizontal1440-black .stacked-group .f-aq .content {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 37px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 68px;
+  margin              : 0 0 0 40px;
+  width               : 251px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .sign-up {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 11.76%;
+  height              : 52.94%;
+  width               : 39.84%;
+  position            : absolute;
+  margin              : 0;
+  left                : 53.78%;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .sign-up .container {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 100%;
+  width               : 100%;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 18px;
+  overflow            : hidden;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .sign-up .container .view54 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 36px;
+  width               : 100px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 18px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .sign-up .container .color {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 100%;
+  width               : 100%;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .sign-up .container .color .box {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 0px;
+  height              : 100%;
+  width               : 100%;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .sign-up .text {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 27.78%;
+  height              : 44.44%;
+  width               : calc(100.00% - 32px);
+  position            : absolute;
+  margin              : 0;
+  left                : 16px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .sign-up .text .label1 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 68px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .view55 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 11.76%;
+  height              : 52.94%;
+  width               : 39.84%;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .view55 .text-caption2-normal-active-centered {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 27.78%;
+  height              : 44.44%;
+  width               : 47.00%;
+  position            : absolute;
+  margin              : 0;
+  left                : 27.00%;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .view55 .text-caption2-normal-active-centered .label2 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 47px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .header-horizontal1440-black .stacked-group .group2 .view55 .view56 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 100%;
+  width               : 100%;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 18px;
+  border-style        : solid;
+  border-width        : 2;
+  border-color        : rgba(255, 255, 255, 1.0);
+}
+.a11 .header-horizontal1440-black .musicoin {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 6px;
+  height              : 38px;
+  width               : 135px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .musicoin .icon-logomark {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 38px;
+  width               : 39px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .musicoin .icon-logomark .bounding-box {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 40px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .musicoin .icon-logomark .combined-shape {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 5px;
+  height              : 30px;
+  width               : 30px;
+  position            : absolute;
+  margin              : 0;
+  left                : 4px;
+}
+.a11 .header-horizontal1440-black .musicoin .icon-logomark .view57 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 38px;
+  width               : 39px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .musicoin .icon-logomark .view57 .view58 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 40px;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .musicoin .fill5 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 14px;
+  height              : 13px;
+  width               : 21px;
+  position            : absolute;
+  margin              : 0;
+  left                : 40px;
+}
+.a11 .header-horizontal1440-black .musicoin .fill6 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 14px;
+  height              : 13px;
+  width               : 14px;
+  position            : absolute;
+  margin              : 0;
+  left                : 61px;
+}
+.a11 .header-horizontal1440-black .musicoin .fill7 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 14px;
+  height              : 13px;
+  width               : 13px;
+  position            : absolute;
+  margin              : 0;
+  left                : 74px;
+}
+.a11 .header-horizontal1440-black .musicoin .fill8 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 9px;
+  height              : 18px;
+  width               : 6px;
+  position            : absolute;
+  margin              : 0;
+  left                : 87px;
+}
+.a11 .header-horizontal1440-black .musicoin .fill9 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 14px;
+  height              : 13px;
+  width               : 13px;
+  position            : absolute;
+  margin              : 0;
+  left                : 92px;
+}
+.a11 .header-horizontal1440-black .musicoin .fill10 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 14px;
+  height              : 13px;
+  width               : 14px;
+  position            : absolute;
+  margin              : 0;
+  left                : 103px;
+}
+.a11 .header-horizontal1440-black .musicoin .group14 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 8px;
+  height              : 18px;
+  width               : 19px;
+  position            : absolute;
+  margin              : 0;
+  left                : 117px;
+}
+.a11 .header-horizontal1440-black .musicoin .group14 .fill11 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1px;
+  height              : 18px;
+  width               : 6px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .header-horizontal1440-black .musicoin .group14 .fill13 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 6px;
+  height              : 13px;
+  width               : 13px;
+  position            : absolute;
+  margin              : 0;
+  left                : 6px;
+}
+.a11 .bitmap {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 6202px;
+  height              : 534px;
+  width               : 436px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1064px;
+}
+.a11 .artist-of-the-week {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 402px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 881px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 32.0px;
+}
+.a11 .godsmack {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 434px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 900px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 24.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 36.0px;
+}
+.a11 .second-block {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 896px;
+  height              : 574px;
+  width               : 1500px;
+  position            : absolute;
+  margin              : 0;
+  left                : 415px;
+}
+.a11 .second-block .view59 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 565px;
+  width               : 1343px;
+  position            : absolute;
+  margin              : 0;
+  left                : 157px;
+}
+.a11 .second-block .view59 .pattern {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 565px;
+  width               : 1343px;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .second-block .view59 .pattern .view60 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 561px;
+  height              : 4px;
+  width               : 1073px;
+  position            : absolute;
+  margin              : 0;
+  left                : 270px;
+}
+.a11 .second-block .view59 .pattern .view61 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 550px;
+  height              : 4px;
+  width               : 1050px;
+  position            : absolute;
+  margin              : 0;
+  left                : 293px;
+}
+.a11 .second-block .view59 .pattern .view62 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 539px;
+  height              : 4px;
+  width               : 996px;
+  position            : absolute;
+  margin              : 0;
+  left                : 347px;
+}
+.a11 .second-block .view59 .pattern .view63 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 528px;
+  height              : 4px;
+  width               : 1022px;
+  position            : absolute;
+  margin              : 0;
+  left                : 321px;
+}
+.a11 .second-block .view59 .pattern .view64 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 517px;
+  height              : 4px;
+  width               : 1075px;
+  position            : absolute;
+  margin              : 0;
+  left                : 268px;
+}
+.a11 .second-block .view59 .pattern .view65 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 506px;
+  height              : 4px;
+  width               : 1105px;
+  position            : absolute;
+  margin              : 0;
+  left                : 238px;
+}
+.a11 .second-block .view59 .pattern .view66 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 495px;
+  height              : 4px;
+  width               : 1070px;
+  position            : absolute;
+  margin              : 0;
+  left                : 273px;
+}
+.a11 .second-block .view59 .pattern .view67 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 484px;
+  height              : 4px;
+  width               : 1089px;
+  position            : absolute;
+  margin              : 0;
+  left                : 254px;
+}
+.a11 .second-block .view59 .pattern .view68 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 473px;
+  height              : 4px;
+  width               : 1113px;
+  position            : absolute;
+  margin              : 0;
+  left                : 230px;
+}
+.a11 .second-block .view59 .pattern .view69 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 462px;
+  height              : 4px;
+  width               : 1099px;
+  position            : absolute;
+  margin              : 0;
+  left                : 244px;
+}
+.a11 .second-block .view59 .pattern .view70 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 451px;
+  height              : 4px;
+  width               : 1115px;
+  position            : absolute;
+  margin              : 0;
+  left                : 228px;
+}
+.a11 .second-block .view59 .pattern .view71 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 440px;
+  height              : 4px;
+  width               : 1061px;
+  position            : absolute;
+  margin              : 0;
+  left                : 282px;
+}
+.a11 .second-block .view59 .pattern .view72 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 429px;
+  height              : 4px;
+  width               : 1090px;
+  position            : absolute;
+  margin              : 0;
+  left                : 253px;
+}
+.a11 .second-block .view59 .pattern .view73 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 418px;
+  height              : 4px;
+  width               : 1094px;
+  position            : absolute;
+  margin              : 0;
+  left                : 249px;
+}
+.a11 .second-block .view59 .pattern .view74 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 407px;
+  height              : 4px;
+  width               : 1056px;
+  position            : absolute;
+  margin              : 0;
+  left                : 287px;
+}
+.a11 .second-block .view59 .pattern .view75 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 396px;
+  height              : 4px;
+  width               : 1072px;
+  position            : absolute;
+  margin              : 0;
+  left                : 271px;
+}
+.a11 .second-block .view59 .pattern .view76 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 385px;
+  height              : 4px;
+  width               : 1105px;
+  position            : absolute;
+  margin              : 0;
+  left                : 238px;
+}
+.a11 .second-block .view59 .pattern .view77 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 374px;
+  height              : 4px;
+  width               : 1030px;
+  position            : absolute;
+  margin              : 0;
+  left                : 313px;
+}
+.a11 .second-block .view59 .pattern .view78 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 363px;
+  height              : 4px;
+  width               : 1010px;
+  position            : absolute;
+  margin              : 0;
+  left                : 333px;
+}
+.a11 .second-block .view59 .pattern .view79 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 352px;
+  height              : 4px;
+  width               : 965px;
+  position            : absolute;
+  margin              : 0;
+  left                : 378px;
+}
+.a11 .second-block .view59 .pattern .view80 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 341px;
+  height              : 4px;
+  width               : 991px;
+  position            : absolute;
+  margin              : 0;
+  left                : 352px;
+}
+.a11 .second-block .view59 .pattern .view81 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 330px;
+  height              : 4px;
+  width               : 1030px;
+  position            : absolute;
+  margin              : 0;
+  left                : 313px;
+}
+.a11 .second-block .view59 .pattern .view82 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 319px;
+  height              : 4px;
+  width               : 1011px;
+  position            : absolute;
+  margin              : 0;
+  left                : 332px;
+}
+.a11 .second-block .view59 .pattern .view83 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 308px;
+  height              : 4px;
+  width               : 1056px;
+  position            : absolute;
+  margin              : 0;
+  left                : 287px;
+}
+.a11 .second-block .view59 .pattern .view84 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 297px;
+  height              : 4px;
+  width               : 1030px;
+  position            : absolute;
+  margin              : 0;
+  left                : 313px;
+}
+.a11 .second-block .view59 .pattern .view85 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 286px;
+  height              : 4px;
+  width               : 1000px;
+  position            : absolute;
+  margin              : 0;
+  left                : 343px;
+}
+.a11 .second-block .view59 .pattern .view86 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 275px;
+  height              : 4px;
+  width               : 1061px;
+  position            : absolute;
+  margin              : 0;
+  left                : 282px;
+}
+.a11 .second-block .view59 .pattern .view87 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 264px;
+  height              : 4px;
+  width               : 1130px;
+  position            : absolute;
+  margin              : 0;
+  left                : 213px;
+}
+.a11 .second-block .view59 .pattern .view88 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 253px;
+  height              : 4px;
+  width               : 1080px;
+  position            : absolute;
+  margin              : 0;
+  left                : 263px;
+}
+.a11 .second-block .view59 .pattern .view89 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 242px;
+  height              : 4px;
+  width               : 1177px;
+  position            : absolute;
+  margin              : 0;
+  left                : 166px;
+}
+.a11 .second-block .view59 .pattern .view90 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 231px;
+  height              : 4px;
+  width               : 1243px;
+  position            : absolute;
+  margin              : 0;
+  left                : 100px;
+}
+.a11 .second-block .view59 .pattern .view91 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 220px;
+  height              : 4px;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 171px;
+}
+.a11 .second-block .view59 .pattern .view92 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 209px;
+  height              : 4px;
+  width               : 1085px;
+  position            : absolute;
+  margin              : 0;
+  left                : 258px;
+}
+.a11 .second-block .view59 .pattern .view93 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 198px;
+  height              : 4px;
+  width               : 1147px;
+  position            : absolute;
+  margin              : 0;
+  left                : 196px;
+}
+.a11 .second-block .view59 .pattern .view94 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 187px;
+  height              : 4px;
+  width               : 1177px;
+  position            : absolute;
+  margin              : 0;
+  left                : 166px;
+}
+.a11 .second-block .view59 .pattern .view95 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 176px;
+  height              : 4px;
+  width               : 1067px;
+  position            : absolute;
+  margin              : 0;
+  left                : 276px;
+}
+.a11 .second-block .view59 .pattern .view96 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 165px;
+  height              : 4px;
+  width               : 1160px;
+  position            : absolute;
+  margin              : 0;
+  left                : 183px;
+}
+.a11 .second-block .view59 .pattern .view97 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 154px;
+  height              : 4px;
+  width               : 1239px;
+  position            : absolute;
+  margin              : 0;
+  left                : 104px;
+}
+.a11 .second-block .view59 .pattern .view98 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 143px;
+  height              : 4px;
+  width               : 1209px;
+  position            : absolute;
+  margin              : 0;
+  left                : 134px;
+}
+.a11 .second-block .view59 .pattern .view99 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 132px;
+  height              : 4px;
+  width               : 1155px;
+  position            : absolute;
+  margin              : 0;
+  left                : 188px;
+}
+.a11 .second-block .view59 .pattern .view100 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 121px;
+  height              : 4px;
+  width               : 1050px;
+  position            : absolute;
+  margin              : 0;
+  left                : 293px;
+}
+.a11 .second-block .view59 .pattern .view101 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 110px;
+  height              : 4px;
+  width               : 1110px;
+  position            : absolute;
+  margin              : 0;
+  left                : 233px;
+}
+.a11 .second-block .view59 .pattern .view102 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 99px;
+  height              : 4px;
+  width               : 1163px;
+  position            : absolute;
+  margin              : 0;
+  left                : 180px;
+}
+.a11 .second-block .view59 .pattern .view103 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 88px;
+  height              : 4px;
+  width               : 1043px;
+  position            : absolute;
+  margin              : 0;
+  left                : 300px;
+}
+.a11 .second-block .view59 .pattern .view104 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 77px;
+  height              : 4px;
+  width               : 1183px;
+  position            : absolute;
+  margin              : 0;
+  left                : 160px;
+}
+.a11 .second-block .view59 .pattern .view105 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 66px;
+  height              : 4px;
+  width               : 1090px;
+  position            : absolute;
+  margin              : 0;
+  left                : 253px;
+}
+.a11 .second-block .view59 .pattern .view106 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 55px;
+  height              : 4px;
+  width               : 1343px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .second-block .view59 .pattern .view107 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 44px;
+  height              : 4px;
+  width               : 1194px;
+  position            : absolute;
+  margin              : 0;
+  left                : 149px;
+}
+.a11 .second-block .view59 .pattern .view108 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 33px;
+  height              : 4px;
+  width               : 1243px;
+  position            : absolute;
+  margin              : 0;
+  left                : 100px;
+}
+.a11 .second-block .view59 .pattern .view109 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 22px;
+  height              : 4px;
+  width               : 1133px;
+  position            : absolute;
+  margin              : 0;
+  left                : 210px;
+}
+.a11 .second-block .view59 .pattern .view110 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 11px;
+  height              : 4px;
+  width               : 1213px;
+  position            : absolute;
+  margin              : 0;
+  left                : 130px;
+}
+.a11 .second-block .view59 .pattern .view111 {
+  background          : rgba(234, 233, 232, 1.0);
+  top                 : 0px;
+  height              : 4px;
+  width               : 1313px;
+  position            : absolute;
+  margin              : 0;
+  left                : 30px;
+}
+.a11 .second-block .image1 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 8px;
+  height              : 566px;
+  width               : 706px;
+  position            : absolute;
+  margin              : 0;
+  left                : 374px;
+}
+.a11 .second-block .group6 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 75px;
+  height              : 96px;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .second-block .group6 .musicians-network {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 187, 0, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .second-block .group6 .label7 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 187, 0, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .second-block .decentralized-networ {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 172px;
+  height              : auto;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 3px;
+  font-family         : "LucidaGrande", Helvetica, Arial, serif;
+  font-size           : 24.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 36.0px;
+}
+.a11 .second-block .view112 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 288px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .second-block .view112 .rectangle7 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .second-block .view112 .join-musicoin {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 10px;
+  height              : auto;
+  width               : 167px;
+  position            : absolute;
+  margin              : 0;
+  left                : 7px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 20.0px;
+}
+.a11 .social-meadia {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 750px;
+  height              : 141px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .social-meadia .rectangle3 {
+  background          : rgba(245, 244, 242, 1.0);
+  top                 : 0px;
+  height              : 141px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .social-meadia .stack-view1 {
+  /* Flexbox */
+  display: flex;
+  justify-content     : flex-start;
+  flex-direction      : row;
+  align-items         : center;
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 49px;
+  height              : 44px;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 470px;
+}
+.a11 .social-meadia .stack-view1 .logomedium {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 40px;
+  margin              : 0;
+  width               : 40px;
+}
+.a11 .social-meadia .stack-view1 .logomedium .image11 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 100%;
+  width               : 100%;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .social-meadia .stack-view1 .bitcoin {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 38px;
+  margin              : 0 0 0 200px;
+  width               : 29px;
+  -ms-transform       : rotate(-14deg); /* IE 9 */
+  -webkit-transform   : rotate(-14deg); /* Chrome, Safari, Opera */
+  transform           : rotate(-14deg);
+}
+.a11 .social-meadia .stack-view1 .logoreddit {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 34px;
+  margin              : 0 0 0 200px;
+  width               : 40px;
+}
+.a11 .social-meadia .stack-view1 .logoreddit .image2 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 100%;
+  width               : 100%;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .social-meadia .stack-view1 .logogithub {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 40px;
+  margin              : 0 0 0 200px;
+  width               : 40px;
+}
+.a11 .social-meadia .stack-view1 .logogithub .image3 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 100%;
+  width               : 100%;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .social-meadia .stack-view1 .logosoundcloud {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : 19px;
+  margin              : 0 0 0 200px;
+  width               : 40px;
+}
+.a11 .social-meadia .stack-view1 .logosoundcloud .image4 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 47.37%;
+  height              : 47.37%;
+  width               : 5.00%;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .social-meadia .stack-view1 .logosoundcloud .image5 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 31.58%;
+  height              : 68.42%;
+  width               : 5.00%;
+  position            : absolute;
+  margin              : 0;
+  left                : 15.00%;
+}
+.a11 .social-meadia .stack-view1 .logosoundcloud .image6 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 42.11%;
+  height              : 57.89%;
+  width               : 5.00%;
+  position            : absolute;
+  margin              : 0;
+  left                : 7.50%;
+}
+.a11 .social-meadia .stack-view1 .logosoundcloud .image7 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 21.05%;
+  height              : 78.95%;
+  width               : 7.50%;
+  position            : absolute;
+  margin              : 0;
+  left                : 22.50%;
+}
+.a11 .social-meadia .stack-view1 .logosoundcloud .image8 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 10.53%;
+  height              : 89.47%;
+  width               : 7.50%;
+  position            : absolute;
+  margin              : 0;
+  left                : 40.00%;
+}
+.a11 .social-meadia .stack-view1 .logosoundcloud .image9 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15.79%;
+  height              : 78.95%;
+  width               : 5.00%;
+  position            : absolute;
+  margin              : 0;
+  left                : 32.50%;
+}
+.a11 .social-meadia .stack-view1 .logosoundcloud .image10 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 100%;
+  width               : 47.50%;
+  position            : absolute;
+  margin              : 0;
+  left                : 50.00%;
+}
+.a11 .label8 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 146px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .musicians-will-pay-f {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 242px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 24.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 36.0px;
+}
+.a11 .what-is-musicoin {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 5589px;
+  height              : 652px;
+  width               : 1054px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+}
+.a11 .what-is-musicoin .what-is {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 927px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .what-is-musicoin .label9 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 272px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .what-is-musicoin .group3 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 612px;
+  height              : 40px;
+  width               : 395px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .what-is-musicoin .group3 .view113 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .what-is-musicoin .group3 .view113 .view114 {
+  background          : rgba(23, 23, 23, 1.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 20px;
+  border-style        : solid;
+  border-width        : 2;
+  border-color        : rgba(23, 23, 23, 1.0);
+}
+.a11 .what-is-musicoin .group3 .view113 .white-paper {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 12px;
+  height              : auto;
+  width               : 167px;
+  position            : absolute;
+  margin              : 0;
+  left                : 7px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .what-is-musicoin .group3 .view115 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 215px;
+}
+.a11 .what-is-musicoin .group3 .view115 .view116 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 20px;
+  border-style        : solid;
+  border-width        : 2;
+  border-color        : rgba(23, 23, 23, 1.0);
+}
+.a11 .what-is-musicoin .group3 .view115 .r-oadmap {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 12px;
+  height              : auto;
+  width               : 167px;
+  position            : absolute;
+  margin              : 0;
+  left                : 7px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 12.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : center;
+  line-height         : 16.0px;
+}
+.a11 .what-is-musicoin .group4 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 176px;
+  height              : 366px;
+  width               : 1054px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .what-is-musicoin .group4 .view117 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 366px;
+  width               : 268px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .what-is-musicoin .group4 .view117 .rectangle17 {
+  background          : rgba(215, 215, 215, 1.0);
+  top                 : 0px;
+  height              : 360px;
+  width               : 1px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .what-is-musicoin .group4 .view117 .label10 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 7px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 20px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(251, 191, 2, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .what-is-musicoin .group4 .view117 .stack-view2 {
+  /* Flexbox */
+  display: flex;
+  justify-content     : flex-start;
+  flex-direction      : column;
+  align-items         : flex-start;
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 86px;
+  height              : auto;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 20px;
+}
+.a11 .what-is-musicoin .group4 .view117 .stack-view2 .transparent-licenses {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .view117 .stack-view2 .content-rights-prote {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .view117 .stack-view2 .high-industry-standa {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .view117 .stack-view2 .interactive-engageme {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .view117 .stack-view2 .fair-remuneratio {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .for-listeners {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 302px;
+  width               : 314px;
+  position            : absolute;
+  margin              : 0;
+  left                : 740px;
+}
+.a11 .what-is-musicoin .group4 .for-listeners .view118 {
+  background          : rgba(215, 215, 215, 1.0);
+  top                 : 0px;
+  height              : 300px;
+  width               : 1px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .what-is-musicoin .group4 .for-listeners .for-lisnters {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 7px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 21px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(251, 191, 2, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .what-is-musicoin .group4 .for-listeners .stacked-group2 {
+  /* Flexbox */
+  display: flex;
+  justify-content     : flex-start;
+  flex-direction      : column;
+  align-items         : flex-start;
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 86px;
+  height              : auto;
+  width               : 293px;
+  position            : absolute;
+  margin              : 0;
+  left                : 21px;
+}
+.a11 .what-is-musicoin .group4 .for-listeners .stacked-group2 .free-listenings {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .for-listeners .stacked-group2 .direct-interactions {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .for-listeners .stacked-group2 .a-paradigm-shift-in {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .for-listeners .stacked-group2 .enjoy-global-music {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .for-investrs {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 310px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 370px;
+}
+.a11 .what-is-musicoin .group4 .for-investrs .view119 {
+  background          : rgba(215, 215, 215, 1.0);
+  top                 : 0px;
+  height              : 310px;
+  width               : 1px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .what-is-musicoin .group4 .for-investrs .for-investors {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 7px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 21px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(251, 191, 2, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .what-is-musicoin .group4 .for-investrs .stacked-group3 {
+  /* Flexbox */
+  display: flex;
+  justify-content     : flex-start;
+  flex-direction      : column;
+  align-items         : flex-start;
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 86px;
+  height              : auto;
+  width               : 227px;
+  position            : absolute;
+  margin              : 0;
+  left                : 21px;
+}
+.a11 .what-is-musicoin .group4 .for-investrs .stacked-group3 .blockchain-technolog {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .for-investrs .stacked-group3 .etherium-based-token {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .for-investrs .stacked-group3 .gpu-mining {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .what-is-musicoin .group4 .for-investrs .stacked-group3 .involving-to-communi {
+  background          : rgba(255, 255, 255, 0.0);
+  position            : relative;
+  height              : auto;
+  margin              : 40px 0 0 0;
+  width               : auto;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .view120 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 6389px;
+  height              : 591px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .join {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 927px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .view120 .label11 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 581px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .view120 .view121 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 322px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+}
+.a11 .view120 .view121 .image12 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .view121 .get-started {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 10px;
+  height              : auto;
+  width               : 167px;
+  position            : absolute;
+  margin              : 0;
+  left                : 7px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 20.0px;
+}
+.a11 .view120 .few-would-argue-that {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 116px;
+  height              : auto;
+  width               : 618px;
+  position            : absolute;
+  margin              : 0;
+  left                : 429px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : left;
+  line-height         : 40.0px;
+}
+.a11 .view120 .f-ooter {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 471px;
+  height              : 120px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .f-ooter .rectangle10 {
+  background          : rgba(23, 23, 23, 1.0);
+  top                 : 0px;
+  height              : 120px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .f-ooter .view122 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 38px;
+  height              : 45px;
+  width               : 155px;
+  position            : absolute;
+  margin              : 0;
+  left                : 415px;
+}
+.a11 .view120 .f-ooter .view122 .view123 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 45px;
+  width               : 45px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .f-ooter .view122 .view123 .view124 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 45px;
+  width               : 46px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .f-ooter .view122 .view123 .image13 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 5px;
+  height              : 35px;
+  width               : 34px;
+  position            : absolute;
+  margin              : 0;
+  left                : 6px;
+}
+.a11 .view120 .f-ooter .view122 .view123 .view125 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 45px;
+  width               : 45px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .f-ooter .view122 .view123 .view125 .image14 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 45px;
+  width               : 46px;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .f-ooter .view122 .image15 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : 16px;
+  width               : 24px;
+  position            : absolute;
+  margin              : 0;
+  left                : 46px;
+}
+.a11 .view120 .f-ooter .view122 .image16 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : 16px;
+  width               : 14px;
+  position            : absolute;
+  margin              : 0;
+  left                : 70px;
+}
+.a11 .view120 .f-ooter .view122 .image17 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : 16px;
+  width               : 14px;
+  position            : absolute;
+  margin              : 0;
+  left                : 85px;
+}
+.a11 .view120 .f-ooter .view122 .image18 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 9px;
+  height              : 22px;
+  width               : 7px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .view120 .f-ooter .view122 .image19 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : 16px;
+  width               : 14px;
+  position            : absolute;
+  margin              : 0;
+  left                : 106px;
+}
+.a11 .view120 .f-ooter .view122 .image20 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : 16px;
+  width               : 15px;
+  position            : absolute;
+  margin              : 0;
+  left                : 118px;
+}
+.a11 .view120 .f-ooter .view122 .view126 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 9px;
+  height              : 22px;
+  width               : 21px;
+  position            : absolute;
+  margin              : 0;
+  left                : 134px;
+}
+.a11 .view120 .f-ooter .view122 .view126 .image21 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 22px;
+  width               : 7px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .view120 .f-ooter .view122 .view126 .image22 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 6px;
+  height              : 16px;
+  width               : 15px;
+  position            : absolute;
+  margin              : 0;
+  left                : 6px;
+}
+.a11 .view120 .f-ooter .a2017-musicoin-org {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 50px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 1362px;
+  opacity             : 0.5;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 20.0px;
+}
+.a11 .view120 .f-ooter .logofbsimple {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 48px;
+  height              : 24px;
+  width               : 13px;
+  position            : absolute;
+  margin              : 0;
+  left                : 737px;
+}
+.a11 .view120 .f-ooter .logotwitter {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 50px;
+  height              : 20px;
+  width               : 24px;
+  position            : absolute;
+  margin              : 0;
+  left                : 799px;
+}
+.a11 .view120 .f-ooter .logoslack {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 48px;
+  height              : 24px;
+  width               : 24px;
+  position            : absolute;
+  margin              : 0;
+  left                : 874px;
+}
+.a11 .view120 .f-ooter .logo-bitcoin {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 46px;
+  height              : 28px;
+  width               : 24px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1020px;
+}
+.a11 .view120 .f-ooter .image23 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 48px;
+  height              : 24px;
+  width               : 24px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1095px;
+}
+.a11 .view120 .f-ooter .image24 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 48px;
+  height              : 24px;
+  width               : 24px;
+  position            : absolute;
+  margin              : 0;
+  left                : 948px;
+}
+.a11 .discover-music {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1468px;
+  height              : 2021px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .discover-music .rectangle2 {
+  background          : rgba(23, 23, 23, 1.0);
+  top                 : 0px;
+  height              : 2021px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .discover-music .group5 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 80px;
+  height              : 132px;
+  width               : 1239px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+}
+.a11 .discover-music .group5 .label12 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 927px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .discover-music .group5 .top10-paid-artists {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 96px;
+  height              : auto;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 24.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 36.0px;
+}
+.a11 .discover-music .group5 .music {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 927px;
+  position            : absolute;
+  margin              : 0;
+  left                : 312px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 187, 0, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .discover-music .rectangle18 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 881px;
+  height              : 605px;
+  width               : 605px;
+  position            : absolute;
+  margin              : 0;
+  left                : 380px;
+}
+.a11 .discover-music .rectangle5 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 252px;
+  height              : 680px;
+  width               : 1160px;
+  position            : absolute;
+  margin              : 0;
+  left                : 380px;
+}
+.a11 .discover-music .view127 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 568px;
+  height              : 48px;
+  width               : 48px;
+  position            : absolute;
+  margin              : 0;
+  left                : 936px;
+}
+.a11 .discover-music .view127 .image25 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 48px;
+  width               : 48px;
+  position            : relative;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .discover-music .plays {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 706px;
+  height              : 166px;
+  width               : 210px;
+  position            : absolute;
+  margin              : 0;
+  left                : 460px;
+}
+.a11 .discover-music .plays .a245kk {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .discover-music .plays .label13 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 112px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .discover-music .view128 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1330px;
+  height              : 86px;
+  width               : 105px;
+  position            : absolute;
+  margin              : 0;
+  left                : 450px;
+}
+.a11 .discover-music .view128 .label14 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .discover-music .view128 .label15 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 54px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 32.0px;
+}
+.a11 .discover-music .view129 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1330px;
+  height              : 86px;
+  width               : 108px;
+  position            : absolute;
+  margin              : 0;
+  left                : 615px;
+}
+.a11 .discover-music .view129 .a1023k {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .discover-music .view129 .t-ipped {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 54px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 32.0px;
+}
+.a11 .discover-music .view130 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1330px;
+  height              : 86px;
+  width               : 128px;
+  position            : absolute;
+  margin              : 0;
+  left                : 783px;
+}
+.a11 .discover-music .view130 .a11355k {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .discover-music .view130 .p-ayed {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 54px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 32.0px;
+}
+.a11 .discover-music .view131 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 706px;
+  height              : 166px;
+  width               : 215px;
+  position            : absolute;
+  margin              : 0;
+  left                : 783px;
+}
+.a11 .discover-music .view131 .label16 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .discover-music .view131 .label17 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 112px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .discover-music .view132 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 706px;
+  height              : 166px;
+  width               : 255px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1079px;
+}
+.a11 .discover-music .view132 .label18 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .discover-music .view132 .label19 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 112px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .discover-music .a1 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 322px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 450px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .discover-music .a2 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 951px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 450px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .discover-music .artist-and-song {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 322px;
+  height              : 80px;
+  width               : 300px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1170px;
+}
+.a11 .discover-music .artist-and-song .bob-dylan {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 44px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 172px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 24.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 36.0px;
+}
+.a11 .discover-music .artist-and-song .the-times-they-are {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view133 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 951px;
+  height              : 80px;
+  width               : 136px;
+  position            : absolute;
+  margin              : 0;
+  left                : 779px;
+}
+.a11 .discover-music .view133 .the-who {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 44px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 26px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 24.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 36.0px;
+}
+.a11 .discover-music .view133 .baba-oriley {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .rectangle4 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 881px;
+  height              : 328px;
+  width               : 328px;
+  position            : absolute;
+  margin              : 0;
+  left                : 935px;
+}
+.a11 .discover-music .image26 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1158px;
+  height              : 328px;
+  width               : 328px;
+  position            : absolute;
+  margin              : 0;
+  left                : 935px;
+}
+.a11 .discover-music .image27 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 881px;
+  height              : 328px;
+  width               : 328px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1212px;
+}
+.a11 .discover-music .image28 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1158px;
+  height              : 328px;
+  width               : 328px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1212px;
+}
+.a11 .discover-music .image29 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1436px;
+  height              : 328px;
+  width               : 328px;
+  position            : absolute;
+  margin              : 0;
+  left                : 380px;
+}
+.a11 .discover-music .image30 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1436px;
+  height              : 328px;
+  width               : 328px;
+  position            : absolute;
+  margin              : 0;
+  left                : 657px;
+}
+.a11 .discover-music .image31 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1436px;
+  height              : 328px;
+  width               : 328px;
+  position            : absolute;
+  margin              : 0;
+  left                : 935px;
+}
+.a11 .discover-music .image32 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1436px;
+  height              : 328px;
+  width               : 328px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1212px;
+}
+.a11 .discover-music .elements-tile-small {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 921px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 975px;
+}
+.a11 .discover-music .elements-tile-small .view134 {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.0;
+}
+.a11 .discover-music .elements-tile-small .view135 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 60px;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+}
+.a11 .discover-music .elements-tile-small .view135 .a7843k {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .elements-tile-small .view135 .label20 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .elements-tile-small .view136 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .discover-music .elements-tile-small .view136 .a132k {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .elements-tile-small .view136 .label21 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .elements-tile-small .view137 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 173px;
+}
+.a11 .discover-music .elements-tile-small .view137 .a968k {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .elements-tile-small .view137 .label22 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .elements-tile-small .view138 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 17px;
+  height              : 44px;
+  width               : 106px;
+  position            : absolute;
+  margin              : 0;
+  left                : 132px;
+}
+.a11 .discover-music .elements-tile-small .view138 .dazzy {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 50px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .elements-tile-small .view138 .long-way-river {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : -2px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .elements-tile-small .a3 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view139 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1198px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 975px;
+}
+.a11 .discover-music .view139 .view140 {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.0;
+}
+.a11 .discover-music .view139 .view141 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 60px;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+}
+.a11 .discover-music .view139 .view141 .label23 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view139 .view141 .label24 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view139 .view142 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .discover-music .view139 .view142 .label25 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view139 .view142 .label26 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view139 .view143 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 173px;
+}
+.a11 .discover-music .view139 .view143 .label27 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view139 .view143 .label28 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view139 .view144 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 17px;
+  height              : 44px;
+  width               : 106px;
+  position            : absolute;
+  margin              : 0;
+  left                : 132px;
+}
+.a11 .discover-music .view139 .view144 .label29 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 50px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view139 .view144 .label30 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : -2px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view139 .label31 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view145 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1198px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1252px;
+}
+.a11 .discover-music .view145 .view146 {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.0;
+}
+.a11 .discover-music .view145 .view147 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 60px;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+}
+.a11 .discover-music .view145 .view147 .label32 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view145 .view147 .label33 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view145 .view148 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .discover-music .view145 .view148 .label34 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view145 .view148 .label35 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view145 .view149 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 173px;
+}
+.a11 .discover-music .view145 .view149 .label36 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view145 .view149 .label37 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view145 .view150 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 17px;
+  height              : 44px;
+  width               : 106px;
+  position            : absolute;
+  margin              : 0;
+  left                : 132px;
+}
+.a11 .discover-music .view145 .view150 .label38 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 50px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view145 .view150 .label39 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : -2px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view145 .label40 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view151 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1476px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+}
+.a11 .discover-music .view151 .view152 {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.0;
+}
+.a11 .discover-music .view151 .view153 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 60px;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+}
+.a11 .discover-music .view151 .view153 .label41 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view151 .view153 .label42 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view151 .view154 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .discover-music .view151 .view154 .label43 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view151 .view154 .label44 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view151 .view155 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 173px;
+}
+.a11 .discover-music .view151 .view155 .label45 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view151 .view155 .label46 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view151 .view156 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 17px;
+  height              : 44px;
+  width               : 106px;
+  position            : absolute;
+  margin              : 0;
+  left                : 132px;
+}
+.a11 .discover-music .view151 .view156 .label47 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 50px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view151 .view156 .label48 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : -2px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view151 .label49 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view157 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1476px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 697px;
+}
+.a11 .discover-music .view157 .view158 {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.0;
+}
+.a11 .discover-music .view157 .view159 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 60px;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+}
+.a11 .discover-music .view157 .view159 .label50 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view157 .view159 .label51 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view157 .view160 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .discover-music .view157 .view160 .label52 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view157 .view160 .label53 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view157 .view161 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 173px;
+}
+.a11 .discover-music .view157 .view161 .label54 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view157 .view161 .label55 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view157 .view162 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 17px;
+  height              : 44px;
+  width               : 106px;
+  position            : absolute;
+  margin              : 0;
+  left                : 132px;
+}
+.a11 .discover-music .view157 .view162 .label56 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 50px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view157 .view162 .label57 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : -2px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view157 .label58 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view163 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1476px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 975px;
+}
+.a11 .discover-music .view163 .view164 {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.0;
+}
+.a11 .discover-music .view163 .view165 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 60px;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+}
+.a11 .discover-music .view163 .view165 .label59 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view163 .view165 .label60 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view163 .view166 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .discover-music .view163 .view166 .label61 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view163 .view166 .label62 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view163 .view167 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 173px;
+}
+.a11 .discover-music .view163 .view167 .label63 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view163 .view167 .label64 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view163 .view168 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 17px;
+  height              : 44px;
+  width               : 106px;
+  position            : absolute;
+  margin              : 0;
+  left                : 132px;
+}
+.a11 .discover-music .view163 .view168 .label65 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 50px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view163 .view168 .label66 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : -2px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view163 .label67 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view169 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1476px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1252px;
+}
+.a11 .discover-music .view169 .view170 {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.0;
+}
+.a11 .discover-music .view169 .view171 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 60px;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+}
+.a11 .discover-music .view169 .view171 .label68 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view169 .view171 .label69 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view169 .view172 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .discover-music .view169 .view172 .label70 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view169 .view172 .label71 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view169 .view173 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 173px;
+}
+.a11 .discover-music .view169 .view173 .label72 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view169 .view173 .label73 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view169 .view174 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 17px;
+  height              : 44px;
+  width               : 106px;
+  position            : absolute;
+  margin              : 0;
+  left                : 132px;
+}
+.a11 .discover-music .view169 .view174 .label74 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 50px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view169 .view174 .label75 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : -2px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view169 .label76 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view175 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 921px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 1252px;
+}
+.a11 .discover-music .view175 .view176 {
+  background          : rgba(0, 0, 0, 1.0);
+  top                 : 0px;
+  height              : 248px;
+  width               : 248px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  opacity             : 0.0;
+}
+.a11 .discover-music .view175 .view177 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 60px;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+}
+.a11 .discover-music .view175 .view177 .label77 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view175 .view177 .label78 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view175 .view178 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 99px;
+}
+.a11 .discover-music .view175 .view178 .label79 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view175 .view178 .label80 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view175 .view179 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 179px;
+  height              : 54px;
+  width               : 49px;
+  position            : absolute;
+  margin              : 0;
+  left                : 173px;
+}
+.a11 .discover-music .view175 .view179 .label81 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 20.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : justify;
+  line-height         : 45.0px;
+}
+.a11 .discover-music .view175 .view179 .label82 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 34px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view175 .view180 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 17px;
+  height              : 44px;
+  width               : 106px;
+  position            : absolute;
+  margin              : 0;
+  left                : 132px;
+}
+.a11 .discover-music .view175 .view180 .label83 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 20px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 50px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view175 .view180 .label84 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : -2px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : right;
+  line-height         : 20.0px;
+}
+.a11 .discover-music .view175 .label85 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 15px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 15px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 24.0px;
+}
+.a11 .discover-music .view181 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1868px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+}
+.a11 .discover-music .view181 .view182 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 0px;
+  height              : 40px;
+  width               : 180px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 20px;
+}
+.a11 .discover-music .view181 .view-more {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 10px;
+  height              : auto;
+  width               : 167px;
+  position            : absolute;
+  margin              : 0;
+  left                : 7px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 14.0px;
+  color               : rgba(23, 23, 23, 1.0);
+  text-align          : center;
+  line-height         : 20.0px;
+}
+.a11 .platfrom-features {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 3489px;
+  height              : 2034px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .platfrom-features .path {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 2019px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .platfrom-features .view183 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 81px;
+  height              : 132px;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+}
+.a11 .platfrom-features .view183 .platform-features {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : 927px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 72.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 98.0px;
+}
+.a11 .platfrom-features .view183 .musicoin-is-the-most {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 96px;
+  height              : auto;
+  width               : 1172px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 24.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 36.0px;
+}
+.a11 .platfrom-features .unleash {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 1177px;
+  height              : 857px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .platfrom-features .unleash .rectangle8 {
+  background          : rgba(23, 23, 23, 1.0);
+  top                 : 467px;
+  height              : 375px;
+  width               : 1920px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .platfrom-features .unleash .group9 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 772px;
+  height              : 10px;
+  width               : 46px;
+  position            : absolute;
+  margin              : 0;
+  left                : 937px;
+}
+.a11 .platfrom-features .unleash .group9 .oval2 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 0px;
+  height              : 10px;
+  width               : 10px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 5px;
+}
+.a11 .platfrom-features .unleash .group9 .view184 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 1px;
+  height              : 8px;
+  width               : 8px;
+  position            : absolute;
+  margin              : 0;
+  left                : 20px;
+  border-radius       : 4px;
+  opacity             : 0.7;
+}
+.a11 .platfrom-features .unleash .group9 .view185 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 1px;
+  height              : 8px;
+  width               : 8px;
+  position            : absolute;
+  margin              : 0;
+  left                : 38px;
+  border-radius       : 4px;
+  opacity             : 0.7;
+}
+.a11 .platfrom-features .unleash .rectangle11 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 410px;
+  height              : 447px;
+  width               : 1278px;
+  position            : absolute;
+  margin              : 0;
+  left                : 321px;
+}
+.a11 .platfrom-features .unleash .view186 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 211px;
+  height              : 506px;
+  width               : 1080px;
+  position            : absolute;
+  margin              : 0;
+  left                : 420px;
+  border-radius       : 8px;
+  overflow            : hidden;
+}
+.a11 .platfrom-features .unleash .view186 .rectangle9 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 0px;
+  height              : 506px;
+  width               : 1080px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 8px;
+}
+.a11 .platfrom-features .unleash .view186 .dashboard-normal {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 507px;
+  width               : 1080px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .platfrom-features .unleash .unleash-your-music-p {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 748px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 54.0px;
+}
+.a11 .platfrom-features .unleash .with-myspace-becomin {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 84px;
+  height              : auto;
+  width               : 624px;
+  position            : absolute;
+  margin              : 0;
+  left                : 648px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : center;
+  line-height         : 30.0px;
+}
+.a11 .platfrom-features .all-in-one-place {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 269px;
+  height              : 412px;
+  width               : 1037px;
+  position            : absolute;
+  margin              : 0;
+  left                : 381px;
+}
+.a11 .platfrom-features .all-in-one-place .label86 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 24px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 779px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .platfrom-features .all-in-one-place .label87 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 95px;
+  height              : auto;
+  width               : 298px;
+  position            : absolute;
+  margin              : 0;
+  left                : 779px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 30.0px;
+}
+.a11 .platfrom-features .all-in-one-place .view187 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 412px;
+  width               : 789px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 8px;
+  overflow            : hidden;
+}
+.a11 .platfrom-features .all-in-one-place .view187 .image33 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 412px;
+  width               : 789px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .platfrom-features .all-in-one-place .view187 .image34 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 24px;
+  height              : 333px;
+  width               : 709px;
+  position            : absolute;
+  margin              : 0;
+  left                : 40px;
+}
+.a11 .platfrom-features .all-in-one-place .view188 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 376px;
+  height              : 10px;
+  width               : 46px;
+  position            : absolute;
+  margin              : 0;
+  left                : 372px;
+}
+.a11 .platfrom-features .all-in-one-place .view188 .view189 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 0px;
+  height              : 10px;
+  width               : 10px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 5px;
+}
+.a11 .platfrom-features .all-in-one-place .view188 .view190 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 1px;
+  height              : 8px;
+  width               : 8px;
+  position            : absolute;
+  margin              : 0;
+  left                : 20px;
+  border-radius       : 4px;
+  opacity             : 0.7;
+}
+.a11 .platfrom-features .all-in-one-place .view188 .view191 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 1px;
+  height              : 8px;
+  width               : 8px;
+  position            : absolute;
+  margin              : 0;
+  left                : 38px;
+  border-radius       : 4px;
+  opacity             : 0.7;
+}
+.a11 .platfrom-features .communicate {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 711px;
+  height              : 412px;
+  width               : 1070px;
+  position            : absolute;
+  margin              : 0;
+  left                : 470px;
+}
+.a11 .platfrom-features .communicate .label88 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 24px;
+  height              : auto;
+  width               : auto;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Book", Helvetica, Arial, serif;
+  font-size           : 36.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 54.0px;
+}
+.a11 .platfrom-features .communicate .label89 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 108px;
+  height              : auto;
+  width               : 298px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  font-family         : "Avenir-Heavy", Helvetica, Arial, serif;
+  font-size           : 16.0px;
+  color               : rgba(255, 255, 255, 1.0);
+  text-align          : left;
+  line-height         : 30.0px;
+}
+.a11 .platfrom-features .communicate .view192 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 412px;
+  width               : 789px;
+  position            : absolute;
+  margin              : 0;
+  left                : 281px;
+  border-radius       : 8px;
+  overflow            : hidden;
+}
+.a11 .platfrom-features .communicate .view192 .image35 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 0px;
+  height              : 412px;
+  width               : 789px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+}
+.a11 .platfrom-features .communicate .view192 .image36 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 24px;
+  height              : 333px;
+  width               : 709px;
+  position            : absolute;
+  margin              : 0;
+  left                : 40px;
+}
+.a11 .platfrom-features .communicate .view193 {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : 376px;
+  height              : 10px;
+  width               : 46px;
+  position            : absolute;
+  margin              : 0;
+  left                : 653px;
+}
+.a11 .platfrom-features .communicate .view193 .view194 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 0px;
+  height              : 10px;
+  width               : 10px;
+  position            : absolute;
+  margin              : 0;
+  left                : 0px;
+  border-radius       : 5px;
+}
+.a11 .platfrom-features .communicate .view193 .view195 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 1px;
+  height              : 8px;
+  width               : 8px;
+  position            : absolute;
+  margin              : 0;
+  left                : 20px;
+  border-radius       : 4px;
+  opacity             : 0.7;
+}
+.a11 .platfrom-features .communicate .view193 .view196 {
+  background          : rgba(255, 255, 255, 1.0);
+  top                 : 1px;
+  height              : 8px;
+  width               : 8px;
+  position            : absolute;
+  margin              : 0;
+  left                : 38px;
+  border-radius       : 4px;
+  opacity             : 0.7;
+}
+.a11 .line {
+  background          : rgba(255, 255, 255, 0.0);
+  top                 : -10px;
+  height              : 1px;
+  width               : 3px;
+  position            : absolute;
+  margin              : 0;
+  left                : 23px;
+}
+/* .anima-animate-appear prefix for appear animations */
+.anima-animate-appear {
+  opacity             : 0;
+  display             : block;
+  -webkit-animation   : anima-reveal 0.3s ease-in-out 1 normal forwards;
+  -moz-animation      : anima-reveal 0.3s ease-in 1 normal forwards;
+  -o-animation        : anima-reveal 0.3s ease-in-out 1 normal forwards;
+  animation           : anima-reveal 0.3s ease-in-out 1 normal forwards;
+}
+.anima-animate-disappear {
+  opacity             : 1;
+  display             : block;
+  -webkit-animation   : anima-reveal 0.3s ease-in-out 1 reverse forwards;
+  -moz-animation      : anima-reveal 0.3s ease-in 1 normal forwards;
+  -o-animation        : anima-reveal 0.3s ease-in-out 1 reverse forwards;
+  animation           : anima-reveal 0.3s ease-in-out 1 reverse forwards;
+}
+.anima-animate-nodelay {
+  -webkit-animation-delay: 0;
+  -moz-animation-delay: 0;
+  -o-animation-delay  : 0;
+  animation-delay     : 0;
+}
+@-webkit-keyframes anima-reveal {
+  0%
+   
+  {
+      opacity: 0;
+    }
+  
+    
+  100%
+   
+  {
+      opacity: 1;
+    }
+}
+@-moz-keyframes anima-reveal {
+  0%
+   
+  {
+      opacity: 0;
+    }
+  
+    
+  100%
+   
+  {
+      opacity: 1;
+    }
+}
+@-o-keyframes anima-reveal {
+  0%
+   
+  {
+      opacity: 0;
+    }
+  
+    
+  100%
+   
+  {
+      opacity: 1;
+    }
+}
+@keyframes anima-reveal {
+  0%
+   
+  {
+      opacity: 0;
+    }
+  
+    
+  100%
+   
+  {
+      opacity: 1;
+    }
+}
