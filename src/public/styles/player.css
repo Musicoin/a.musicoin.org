@@ -215,9 +215,8 @@
 }
 
 #shuffle.button-highlight {
-  color: #fff;
+  color: #FFCD00;
   text-shadow: 0px 0px 10px #fcc017;
-  background: #FFCD00;
 }
 
 .queue-size {
@@ -260,5 +259,5 @@
 
 #shuffle {
   padding: 5px;
-  color: #FFCD00;
+  color: #777;
 }
