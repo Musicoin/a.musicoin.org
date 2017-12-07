@@ -214,9 +214,10 @@
   transition: none;
 }
 
-.button-highlight {
-  color: #e4aa17;
-  text-shadow: 0 0 3px #fcc017;
+#shuffle.button-highlight {
+  color: #fff;
+  text-shadow: 0px 0px 10px #fcc017;
+  background: #FFCD00;
 }
 
 .queue-size {
@@ -241,19 +242,23 @@
 
 #track-title {
   font-weight: bold;
-    padding: 0 0 0 5px;
-    font-size: 16px;
+  padding: 0 0 0 5px;
+  font-size: 16px;
 }
 
 #track-description {
-      padding: 5px 0 5px 5px;
-    font-size: 14px;
+  padding: 5px 0 5px 5px;
+  font-size: 14px;
 }
 
-#track-image {
-  
-}
+#track-image {}
 
 #track-image-element {
-      width: 100%;
+  width: 100%;
+}
+
+
+#shuffle {
+  padding: 5px;
+  color: #FFCD00;
 }

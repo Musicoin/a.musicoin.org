@@ -213,9 +213,10 @@
         transition: none;
     }
 
-    .button-highlight {
-        color: #e4aa17;
-        text-shadow: 0 0 3px #fcc017;
+    #shuffle.button-highlight {
+        color: #fff;
+        text-shadow: 0px 0px 10px #fcc017;
+        background: #FFCD00;
     }
 
     .queue-size {
@@ -232,6 +233,11 @@
     .play-queue-open {
         background-color: white;
         color: #333;
+    }
+
+    #shuffle {
+      padding: 5px; 
+      color: #FFCD00;
     }
 
 </style>
@@ -280,8 +286,7 @@
                aria-hidden="true"></i>
         </div>
         <div class="clickable text-large mr10">
-            <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle"
-               style="padding: 5px; color: #FFCD00"
+            <i id=shuffle class="fa fa-2x fa-sign-language btn-plain btn-sm toggle-shuffle" 
                aria-hidden="true"></i>
         </div>
 
