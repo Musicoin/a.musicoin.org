@@ -340,6 +340,16 @@
 
                 <table class="mb5" style="width: 100%">
                   <tr>
+                    <td>
+                      <button class="vote-button fa fa-thumbs-up <%= license.votes.viewerVote === 'UP_VOTE' ? 'voted' : '' %>">
+                        <span class="vote-count">(<%=license.votes.up%>)</span>
+                      </button>
+                      <button class="vote-button fa fa-thumbs-down <%= license.votes.viewerVote === 'DOWN_VOTE' ? 'voted' : '' %>">
+                        <span class="vote-count">(<%=license.votes.down%>)</span>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
                     <td align="center" class="pr5">
                       <div class="dynamic-data" data-behavior="track-earnings" de-refresh-period="10" de-releaseId="<%=releaseId%>" de-url="/json-api/track/earnings/">
                         <div class="text-large">
@@ -626,6 +636,7 @@
       </script>
       <%- include partials/player-hook.ejs %>
         <%- include partials/connect-with-us.ejs %>
+      <script async src="/js/vote.js" charset="utf-8"></script>
 </body>
 
 </html>

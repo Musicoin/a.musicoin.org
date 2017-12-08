@@ -1,0 +1,21 @@
+.vote-button {
+	border: 0;
+    background: none;
+    color: #ffd800;
+    font-weight: bold;
+    display: none;
+}
+
+.vote-button.fa-thumbs-down {
+    color: #ffd800;
+}
+
+.vote-count {
+	font-family: 'Raleway', sans-serif;
+    color: #6d6d6d;
+    padding: 5px;
+}
+
+.vote-button.voted {
+	color: #bb9f00;
+}

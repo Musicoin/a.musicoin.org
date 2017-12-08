@@ -1444,12 +1444,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const l = jsonAPI.getLicense(address);
     const r = Release.findOne({ contractAddress: address, state: 'published' });
     const x = exchangeRateProvider.getMusicoinExchangeRate();
+    const votesPromise = jsonAPI.getVotesByTrack({user: req.isAuthenticated() ? req.user._id : null, songAddress: address});
 
-    Promise.join(l, ms, r, x, (license, messages, release, exchangeRate) => {
+    Promise.join(l, ms, r, x, votesPromise, (license, messages, release, exchangeRate, votes) => {
       if (!license || !release) {
         console.log(`Failed to load track page for license: ${address}, err: Not found`);
         return res.render('not-found.ejs');
       }
+
+      license.votes = votes;
 
       const ras = addressResolver.resolveAddresses("", license.contributors);
       const a = jsonAPI.getArtist(license.artistProfileAddress, false, false);
