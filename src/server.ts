@@ -101,10 +101,11 @@ ConfigUtils.loadConfig()
     }
     else {
       // returns an instance of node-letsencrypt with additional helper methods
+      let certServer = app.get('env') === 'staging' ? 'staging' : 'https://acme-v01.api.letsencrypt.org/directory';
       const lex = require('letsencrypt-express').create({
         // set to https://acme-v01.api.letsencrypt.org/directory in production
         // server: 'staging',
-        server: 'https://acme-v01.api.letsencrypt.org/directory',
+        server: certServer,
         email: 'musicoin@berry.ai',
         agreeTos: true,
         approveDomains: config.certificate.approveDomains
