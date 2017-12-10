@@ -142,8 +142,9 @@ export class DashboardRouter {
         {$match: {duration: "all"}},
         {$group: {_id: "all", plays: {$sum: "$playCount"}}})
         .then(results => {
+          let count = results.length ? results[0].plays : 0;
           doRender(req, res, 'admin/count.ejs', {
-            count: results[0].plays,
+            count: count,
             type: "Total Plays"
           });
         });
@@ -159,8 +160,9 @@ export class DashboardRouter {
         {$group: {_id: "all", tips: {$sum: "$tipCount"}}});
 
       return Promise.join(releaseTips, userTips, (releaseResults, userResults) => {
+          let count = (releaseResults.length ? releaseResults[0].tips : 0) + (userResults.length ? userResults[0].tips : 0);
           doRender(req, res, 'admin/count.ejs', {
-            count: releaseResults[0].tips + userResults[0].tips,
+            count: count,
             type: "Total Tips"
           });
         });
