@@ -5,7 +5,9 @@ import * as SongVote from 'app/models/song-vote';
 import * as serviceEventEmitter from 'app/rest-api/eventing';
 import { SONG_VOTE_ADDED, SONG_VOTE_REMOVED } from 'app/rest-api/eventing/events';
 
-const logger = pino.child({ module: 'SongVoteService' });
+
+const SongVote = require('../../models/song-vote');
+const logger = pino().child({ module: 'SongVoteService' });
 
 export default class SongVoteService {
 
