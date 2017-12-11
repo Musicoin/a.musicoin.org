@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 
-const SongVote = module.exports = mongoose.model('SongVote', mongoose.Schema({
+const SongVoteSchema = mongoose.Schema({
   type: {
     type: String,
     enum: ['UP_VOTE', 'DOWN_VOTE']
@@ -16,6 +16,8 @@ const SongVote = module.exports = mongoose.model('SongVote', mongoose.Schema({
     type: Date,
     default: Date.now
   }
-}));
+});
 
-SongVote.index({ user: 1, songAddress: 1 });
+SongVoteSchema.index({ user: 1, songAddress: 1 });
+
+const SongVote = module.exports = mongoose.model('SongVote', SongVoteSchema);
