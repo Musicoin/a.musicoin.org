@@ -4,6 +4,7 @@ const bluebird_1 = require("bluebird");
 const moment = require("moment");
 const FormUtils = require("../form-utils");
 const crypto = require("crypto");
+const services_1 = require("./services");
 const User = require('../../app/models/user');
 const UserStats = require('../../app/models/user-stats');
 const Follow = require('../../app/models/follow');
@@ -1529,6 +1530,15 @@ class MusicoinOrgJsonAPI {
                 return this._convertDbRecordToLicenseLite(release);
             return null;
         });
+    }
+    getVotesByTrack(options) {
+        return services_1.song.getVoteStats(options);
+    }
+    addVote(options) {
+        return services_1.songVote.add(options);
+    }
+    removeVote(options) {
+        return services_1.songVote.remove(options);
     }
     _convertDbRecordToLicenseLite(record) {
         const draftProfile = record.artist && record.artist.draftProfile ? record.artist.draftProfile : null;

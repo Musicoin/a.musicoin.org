@@ -36,6 +36,7 @@ module.exports = mongoose.model('Release', mongoose.Schema({
     contractAddress: String,
     errorMessage: String,
     markedAsAbuse: Boolean,
-    pendingUpdateTxs: Object
+    pendingUpdateTxs: Object,
+    votes: Object
 }));
 //# sourceMappingURL=release.js.map

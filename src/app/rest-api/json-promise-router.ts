@@ -34,4 +34,14 @@ export class JsonPromiseRouter {
       this.promiseHandler(promiseProvider(req, res, next), res, next);
     }.bind(this))
   }
+
+  delete(...args: any[]) : void {
+    const routeArgs = [...args].slice(0, args.length-1);
+    const promiseProvider = args[args.length-1];
+    this.router.delete(...routeArgs, function(req, res, next) {
+      console.log(`Calling route: ${routeArgs[0]} in ${this.name} with params: ${JSON.stringify(req.params)}`);
+      this.promiseHandler(promiseProvider(req, res, next), res, next);
+    }.bind(this))
+  }
+  
 }

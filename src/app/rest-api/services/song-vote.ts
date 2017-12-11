@@ -1,9 +1,8 @@
 import * as pino from 'pino';
 import * as mongoose from 'mongoose';
 
-import * as SongVote from 'app/models/song-vote';
-import * as serviceEventEmitter from 'app/rest-api/eventing';
-import { SONG_VOTE_ADDED, SONG_VOTE_REMOVED } from 'app/rest-api/eventing/events';
+import serviceEventEmitter from '../../rest-api/eventing';
+import { SONG_VOTE_ADDED, SONG_VOTE_REMOVED } from '../../rest-api/eventing/events';
 
 
 const SongVote = require('../../models/song-vote');
@@ -104,7 +103,7 @@ export default class SongVoteService {
 
   }
 
-  private update(options: { user: string, song: string, type: string }) {
+  private update(options: { user: string, songAddress: string, type: string }) {
 
     logger.info('#update', options);
 

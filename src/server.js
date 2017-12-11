@@ -10,6 +10,7 @@ const session = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const mongodbErrorHandler = require("mongoose-mongodb-errors");
 const passport = require("passport");
 const passportConfigurer = require("./config/passport");
 const helmet = require("helmet");
@@ -31,7 +32,8 @@ ConfigUtils.loadConfig()
     app.engine('html', require('ejs').renderFile);
     // connect to database
     mongoose.Promise = require('bluebird');
-    mongoose.connect(config.database.url);
+    mongoose.connect(config.database.url, { config: { autoIndex: false } });
+    mongoose.plugin(mongodbErrorHandler);
     passportConfigurer.configure(passport, mediaProvider, config.auth);
     app.use(cors(config.cors));
     const get_ip = require('ipware')().get_ip;

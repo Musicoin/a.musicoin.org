@@ -1,10 +1,9 @@
 import * as pino from 'pino';
 import * as mongoose from 'mongoose';
 
-import * as Release from 'app/models/release';
-import { songVote as songVoteService } from 'app/rest-api/services';
-import * as serviceEventEmitter from 'app/rest-api/eventing';
-import { SONG_VOTE_ADDED, SONG_VOTE_REMOVED } from 'app/rest-api/eventing/events';
+import { songVote as songVoteService } from '../../rest-api/services';
+import serviceEventEmitter from '../../rest-api/eventing';
+import { SONG_VOTE_ADDED, SONG_VOTE_REMOVED } from '../../rest-api/eventing/events';
 
 
 const Release = require('../../models/release');
@@ -24,7 +23,10 @@ export default class SongService {
     logger.info('#incrementVoteCount', options);
 
     let updates = {
-      $inc: {}
+      $inc: {
+        up: 0,
+        down: 0
+      }
     };
 
     if (options.type === 'UP_VOTE') {
@@ -51,7 +53,10 @@ export default class SongService {
     logger.info('#decrementVoteCount', options);
 
     let updates = {
-      $inc: {}
+      $inc: {
+        up: 0,
+        down: 0
+      }
     };
 
     if (options.type === 'UP_VOTE') {
@@ -85,7 +90,7 @@ export default class SongService {
 
     });
 
-    let userVotePromise = options.user ? songVoteService.getVoteByUser({ user: options.viewer, songAddress: options.songAddress }) : Promise.resolve(null);
+    let userVotePromise = options.viewer ? songVoteService.getVoteByUser({ user: options.viewer, songAddress: options.songAddress }) : Promise.resolve(null);
 
     return Promise.all([votesPromise, userVotePromise]).then((results) => {
 
