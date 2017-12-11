@@ -262,6 +262,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render(__dirname + '/../overview/index.html', {});
   });
 
+  app.get('/bounty', (req, res) => {
+    res.render(__dirname + '/../overview/index.html', {});
+  });
+
   app.get('/accept/:code', (req, res) => {
     console.log(`Processing /accept/${req.params.code}`)
     if (req.get('host') == 'alpha.musicoin.org') {
