@@ -15,15 +15,15 @@ class SongService {
         logger.info('#incrementVoteCount', options);
         let updates = {
             $inc: {
-                up: 0,
-                down: 0
+                'votes.up': 0,
+                'votes.down': 0
             }
         };
         if (options.type === 'UP_VOTE') {
-            updates.$inc.up = 1;
+            updates.$inc['votes.up'] = 1;
         }
         else {
-            updates.$inc.down = 1;
+            updates.$inc['votes.down'] = 1;
         }
         return Release.update({
             contractAddress: options.songAddress
@@ -40,15 +40,15 @@ class SongService {
         logger.info('#decrementVoteCount', options);
         let updates = {
             $inc: {
-                up: 0,
-                down: 0
+                'votes.up': 0,
+                'votes.down': 0
             }
         };
         if (options.type === 'UP_VOTE') {
-            updates.$inc.up = -1;
+            updates.$inc['votes.up'] = -1;
         }
         else {
-            updates.$inc.down = -1;
+            updates.$inc['votes.down'] = -1;
         }
         return Release.update({
             contractAddress: options.songAddress
@@ -74,7 +74,7 @@ class SongService {
             if (userVote) {
                 voteStats.viewerVote = userVote.type;
             }
-            logger.info('#getVoteStats done', options, results);
+            logger.info('#getVoteStats done', options, voteStats);
             return voteStats;
         });
     }
