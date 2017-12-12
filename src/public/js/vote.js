@@ -26,10 +26,7 @@
     
     var self = this;
 
-    $.post('/json-api/tracks/' + options.songAddress + '/votes', {
-      data : JSON.stringify(options),
-      contentType : 'application/json'
-    }, function() {
+    $.post('/json-api/tracks/' + options.songAddress + '/votes', options, function() {
       self.updateVotes(options);
     }).fail(function(error) {
       new Message(error.message, 'error', 0);
