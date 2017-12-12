@@ -28,6 +28,8 @@ export default class SongVoteService {
       type: options.type
     }).then((vote) => {
 
+      logger.info('#add done', options, vote);
+
       serviceEventEmitter.emit(SONG_VOTE_ADDED, options);
 
       return vote;
@@ -63,6 +65,8 @@ export default class SongVoteService {
       songAddress: options.songAddress
     }).then((vote) => {
 
+      logger.info('#remove done', options, vote);
+
       serviceEventEmitter.emit(SONG_VOTE_REMOVED, vote);
 
       return vote;
@@ -93,7 +97,13 @@ export default class SongVoteService {
         user: mongoose.Types.ObjectId(options.user.toString()),
         songAddress: options.songAddress
       }).select('type', 'user').exec()
-      .then(null, (error) => {
+      .then((result) => {
+
+        logger.info('#getVoteByUser done', options, result);
+
+        return result;
+
+      }, (error) => {
 
         logger.error('#getVoteByUser', options, error);
 

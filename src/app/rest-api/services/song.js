@@ -28,7 +28,10 @@ class SongService {
         return Release.update({
             contractAddress: options.songAddress
         }, updates)
-            .then(null, (error) => {
+            .then((result) => {
+            logger.info('#incrementVoteCount done', options, result);
+            return result;
+        }, (error) => {
             logger.error('#incrementVoteCount', options, error);
             return Promise.reject('Server Error. Please try again.');
         });
@@ -50,13 +53,16 @@ class SongService {
         return Release.update({
             contractAddress: options.songAddress
         }, updates)
-            .then(null, (error) => {
+            .then((result) => {
+            logger.info('#decrementVoteCount done', options, result);
+            return result;
+        }, (error) => {
             logger.error('#decrementVoteCount', options, error);
             return Promise.reject('Server Error. Please try again.');
         });
     }
     getVoteStats(options) {
-        logger.info('#getVotes', options);
+        logger.info('#getVoteStats', options);
         let votesPromise = Release.findOne({ contractAddress: options.songAddress }).select('votes').then(null, (error) => {
             logger.error('#getVoteStats', options, error);
             return Promise.reject('Server Error. Please try again.');
@@ -68,6 +74,7 @@ class SongService {
             if (userVote) {
                 voteStats.viewerVote = userVote.type;
             }
+            logger.info('#getVoteStats done', options, results);
             return voteStats;
         });
     }

@@ -20,6 +20,7 @@ class SongVoteService {
             songAddress: options.songAddress,
             type: options.type
         }).then((vote) => {
+            logger.info('#add done', options, vote);
             eventing_1.default.emit(events_1.SONG_VOTE_ADDED, options);
             return vote;
         }, (error) => {
@@ -42,6 +43,7 @@ class SongVoteService {
             user: mongoose.Types.ObjectId(options.user.toString()),
             songAddress: options.songAddress
         }).then((vote) => {
+            logger.info('#remove done', options, vote);
             eventing_1.default.emit(events_1.SONG_VOTE_REMOVED, vote);
             return vote;
         }, (error) => {
@@ -61,7 +63,10 @@ class SongVoteService {
             user: mongoose.Types.ObjectId(options.user.toString()),
             songAddress: options.songAddress
         }).select('type', 'user').exec()
-            .then(null, (error) => {
+            .then((result) => {
+            logger.info('#getVoteByUser done', options, result);
+            return result;
+        }, (error) => {
             logger.error('#getVoteByUser', options, error);
             return Promise.reject({ message: 'Server Error. Please try again.' });
         });

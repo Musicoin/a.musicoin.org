@@ -38,7 +38,13 @@ export default class SongService {
     return Release.update({
         contractAddress: options.songAddress
       }, updates)
-      .then(null, (error) => {
+      .then((result) => {
+
+        logger.info('#incrementVoteCount done', options, result);
+
+        return result;
+
+      }, (error) => {
 
         logger.error('#incrementVoteCount', options, error);
 
@@ -68,7 +74,13 @@ export default class SongService {
     return Release.update({
         contractAddress: options.songAddress
       }, updates)
-      .then(null, (error) => {
+      .then((result) => {
+
+        logger.info('#decrementVoteCount done', options, result);
+
+        return result;
+
+      }, (error) => {
 
         logger.error('#decrementVoteCount', options, error);
 
@@ -80,7 +92,7 @@ export default class SongService {
 
   getVoteStats(options: { songAddress: string, viewer: string }) {
 
-    logger.info('#getVotes', options);
+    logger.info('#getVoteStats', options);
 
     let votesPromise = Release.findOne({ contractAddress: options.songAddress }).select('votes').then(null, (error) => {
 
@@ -100,6 +112,8 @@ export default class SongService {
       if (userVote) {
         voteStats.viewerVote = userVote.type;
       }
+
+      logger.info('#getVoteStats done', options, results);
 
       return voteStats;
 
