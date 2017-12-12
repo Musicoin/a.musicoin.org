@@ -36,7 +36,7 @@ ConfigUtils.loadConfig()
 
     // connect to database
     mongoose.Promise = require('bluebird');
-    mongoose.connect(config.database.url, {config: {autoIndex: false}});
+    mongoose.connect(config.database.url, {config: {autoIndex: app.get('env') === 'development'}});
     mongoose.plugin(mongodbErrorHandler);
 
     passportConfigurer.configure(passport as any, mediaProvider, config.auth);

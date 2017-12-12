@@ -18,6 +18,6 @@ const SongVoteSchema = mongoose.Schema({
   }
 });
 
-SongVoteSchema.index({ user: 1, songAddress: 1 });
+SongVoteSchema.index({ user: 1, songAddress: 1 }, { unique: true });
 
 const SongVote = module.exports = mongoose.model('SongVote', SongVoteSchema);
