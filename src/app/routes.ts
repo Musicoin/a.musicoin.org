@@ -360,7 +360,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const plays = release.directPlayCount || 0;
         const tips = release.directTipCount || 0;
         const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
-        doRender(req, res, 'embedded-player-frame.ejs', {
+        return doRender(req, res, 'embedded-player-frame.ejs', {
           address: address,
           data: {
             artist: response.artist,
@@ -424,7 +424,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const h = jsonAPI.getHero();
     const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
     Promise.join(rs, fa, b, h, tpw, ttw, function(releases, artists, balance, hero, topPlayed, topTipped) {
-      doRender(req, res, "index-new.ejs", {
+      return doRender(req, res, "index-new.ejs", {
         musicoinClientBalance: balance,
         hero: hero,
         releases: releases,
@@ -451,7 +451,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     Promise.join(m, h, tpw, ttw, r, function(messages, hero, topPlayed, topTipped, recentlyPlayed) {
       if (messages.length > 0) {
         console.log("mini: " + req.user.preferences.minimizeHeroInFeed);
-        doRender(req, res, "feed.ejs", {
+        return doRender(req, res, "feed.ejs", {
           showFeedPlayAll: true,
           messages: messages,
           messageTypes: messageTypes,
@@ -480,7 +480,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const rs = jsonAPI.getNewReleasesByGenre(150, maxGroupSize, search, genre, sort).catchReturn([]);
     const as = jsonAPI.getNewArtists(maxGroupSize, search, genre).catchReturn([]);
     Promise.join(rs, as, function(releases, artists) {
-      doRender(req, res, "browse.ejs", {
+      return doRender(req, res, "browse.ejs", {
         searchTerm: search,
         genreFilter: genre,
         releases: releases,
@@ -638,7 +638,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const showTrack = req.query.showtrack ? req.query.showtrack == "true" : false;
     handleMessagePost(req).then(() => jsonAPI.getThreadMessages(req.query.thread, limit))
       .then(messages => {
-        doRender(req, res, "thread.ejs", {
+        return doRender(req, res, "thread.ejs", {
           messages: messages,
           threadId: req.query.thread,
           threadUrl: `${config.serverEndpoint}/thread-page/?thread=${req.query.thread}`,
@@ -648,7 +648,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
       .catch(err => {
         console.log("Failed to load thread messages: " + err);
-        doRender(req, res, "thread.ejs", { messages: [] });
+        return doRender(req, res, "thread.ejs", { messages: [] });
       })
   });
 
@@ -658,7 +658,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     handleMessagePost(req).then(() => jsonAPI.getThreadMessages(req.query.thread, limit))
       .then(messages => {
-        doRender(req, res, "thread-view.ejs", {
+        return doRender(req, res, "thread-view.ejs", {
           messages: messages,
           threadId: req.query.thread,
           threadUrl: `${config.serverEndpoint}/thread-page/?thread=${req.query.thread}`,
@@ -668,7 +668,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
       .catch(err => {
         console.log("Failed to load thread messages: " + err);
-        doRender(req, res, "thread-view.ejs", { messages: [] });
+        return doRender(req, res, "thread-view.ejs", { messages: [] });
       })
   });
 
@@ -679,11 +679,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const threadId = FormUtils.defaultString(req.body.thread, "");
     handleMessagePost(req).then(() => jsonAPI.getThreadMessages(threadId, limit))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack });
+        return doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack });
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
-        doRender(req, res, "partials/track-messages.ejs", { messages: [] });
+        return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
       })
   });
 
@@ -694,11 +694,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
     handleMessagePost(req).then(() => jsonAPI.getLicenseMessages(req.body.address, limit))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack });
+        return doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack });
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
-        doRender(req, res, "partials/track-messages.ejs", { messages: [] });
+        return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
       })
   });
 
@@ -709,11 +709,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const profileAddress = FormUtils.defaultString(req.body.user, "");
     handleMessagePost(req).then(() => jsonAPI.getUserMessages(profileAddress, limit))
       .then(messages => {
-        doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack, noContentMessage: noContentMessage });
+        return doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack, noContentMessage: noContentMessage });
       })
       .catch(err => {
         console.log("Failed to load track messages: " + err);
-        doRender(req, res, "partials/track-messages.ejs", { messages: [] });
+        return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
       })
   });
 
@@ -769,7 +769,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         // .catch (function(e) {
         //  console.log(e);
         // });
-        doRender(req, res, 'history.ejs', {
+        return doRender(req, res, 'history.ejs', {
           address: req.params.address,
           name: name ? name : "Transaction History",
           history: history,
@@ -796,7 +796,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       req.session.destinationUrl = req.query.redirect;
     }
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing.ejs', {
+    return doRender(req, res, 'landing.ejs', {
       message: message,
       code: req.session.inviteCode
     });
@@ -813,7 +813,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       req.session.destinationUrl = req.query.redirect;
     }
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing_musicians.ejs', {
+    return doRender(req, res, 'landing_musicians.ejs', {
       message: message,
       code: req.session.inviteCode
     });
@@ -1260,7 +1260,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return requests;
       })
       .then(requests => {
-        doRender(req, res, 'admin-invite-requests.ejs', {
+        return doRender(req, res, 'admin-invite-requests.ejs', {
           search: req.query.search,
           requests: requests,
           navigation: {
@@ -1296,7 +1296,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return errors;
       })
       .then(errors => {
-        doRender(req, res, 'admin-errors.ejs', {
+        return doRender(req, res, 'admin-errors.ejs', {
           search: req.query.search,
           errors: errors,
           navigation: {
@@ -1317,7 +1317,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     jsonAPI.getAllUsers(req.query.search, null, null, null, start, length)
       .then(results => {
         const users = results.users;
-        doRender(req, res, 'admin-users.ejs', {
+        return doRender(req, res, 'admin-users.ejs', {
           search: req.query.search,
           users: users,
           navigation: {
@@ -1341,7 +1341,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const downloadUrl = '/admin/contacts/download?search=' + (req.query.search ? req.query.search : '');
     jsonAPI.getAddressBook(req.query.search, start, length)
       .then(users => {
-        doRender(req, res, 'admin-contacts.ejs', {
+        return doRender(req, res, 'admin-contacts.ejs', {
           search: req.query.search,
           users: users,
           navigation: {
@@ -1380,7 +1380,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     jsonAPI.getAllReleases(req.query.search, start, length)
       .then(result => {
         const releases = result.releases;
-        doRender(req, res, 'admin-releases.ejs', {
+        return doRender(req, res, 'admin-releases.ejs', {
           search: req.query.search,
           releases: releases,
           navigation: {
@@ -1429,7 +1429,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         formattedTotalUSD: "$" + _formatNumber((totalPlays + totalTips) * exchangeRate.usd, 2)
       };
       output.exchangeRate = exchangeRate;
-      doRender(req, res, "artist.ejs", output);
+      return doRender(req, res, "artist.ejs", output);
     })
   });
 
@@ -1463,7 +1463,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const plays = release.directPlayCount || 0;
         const tips = release.directTipCount || 0;
         const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
-        doRender(req, res, "track.ejs", {
+        return doRender(req, res, "track.ejs", {
           artist: response.artist,
           license: license,
           contributors: resolvedAddresses,
@@ -1507,7 +1507,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             hasReleased: i.hasReleased
           };
         });
-        doRender(req, res, 'invite-history.ejs', {
+        return doRender(req, res, 'invite-history.ejs', {
           invites: output,
           navigation: {
             description: `Showing ${start + 1} to ${start + output.length}`,
@@ -1575,7 +1575,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       output.artist.formattedUSD = exchangeRate.success
         ? "$" + _formatNumber(output.artist.balance * exchangeRate.usd, 2)
         : "";
-      doRender(req, res, "profile.ejs", output);
+      return doRender(req, res, "profile.ejs", output);
     })
   });
 
@@ -1832,8 +1832,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     console.log("Getting license preview");
     convertFormToLicense(req.user.draftProfile.artistName, req.user.profileAddress, req.body)
       .then(function(license) {
-        doRender(req, res, 'license.ejs', { showRelease: true, license: license });
-      })
+        return doRender(req, res, 'license.ejs', { showRelease: true, license: license });
+      });
   });
 
   app.post('/license/view/', (req, res) => {
@@ -1845,7 +1845,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           addressResolver.resolveAddresses(address, license.contributors),
           function(contributors) {
             license.contributors = contributors;
-            doRender(req, res, 'license.ejs', { showRelease: false, license: license, hideButtonBar: hideButtonBar });
+            return doRender(req, res, 'license.ejs', { showRelease: false, license: license, hideButtonBar: hideButtonBar });
           });
       })
   });
@@ -2132,7 +2132,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                   }
                   return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
                     .then(() => {
-                      doRender(req, res, "landing.ejs", { message: "An email has been sent to " + req.body.email });
+                      return doRender(req, res, "landing.ejs", { message: "An email has been sent to " + req.body.email });
                     })
                 })
                 .catch(err => {
@@ -2159,7 +2159,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const expiry = new Date(user.local.resetExpiryTime).getTime();
         if (Date.now() > expiry) return doRender(req, res, "landing.ejs", { message: failMessage });
 
-        doRender(req, res, "password-reset.ejs", { code: code });
+        return doRender(req, res, "password-reset.ejs", { code: code });
       })
   });
 
