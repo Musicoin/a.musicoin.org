@@ -2,6 +2,10 @@
 <link rel="stylesheet" type="text/css" href="/styles/dialog.css">
 <link rel="stylesheet" type="text/css" href="/styles/share-track.css">
 <button class="share-button btn btn-default btn-xs" id="open-share-dialog">Share</button>
+
+<%
+    var shortDescription = description.length > 69 ? description.substring(0, 69) + '...' : description;
+ %>
 <div id="share-track-options-dialog" class="musicoin-dialog">
   <div class="dialog-wrapper">
     <!-- <div class="dialog-header"></div> -->
@@ -26,27 +30,27 @@
               <h5 id="share-options-header">Share on</h5>
               <ul id="share-options">
                 <li class="share-option">
-                  <a class="btn btn-social-icon btn-twitter" href="https://twitter.com/share?url=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%twitter" target="_blank">
+                  <a class="btn btn-social-icon btn-twitter" href="https://twitter.com/share?url=https://musicoin.org/nav/track/<%=license.address%>&text=<%=shortDescription%>&utm_source=musicoin&utm_campaign=share&utm_medium=twitter" target="_blank">
                   <span class="fa fa-twitter"></span>
                 </a>
                 </li>
                 <li class="share-option">
-                  <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dfacebook" target="_blank">
+                  <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://musicoin.org/nav/track/<%=license.address%>&text=<%=shortDescription%>&utm_source=musicoin&utm_campaign=share&utm_medium=facebook" target="_blank">
                   <span class="fa fa-facebook"></span>
                 </a>
                 </li>
                 <li class="share-option">
-                  <a class="btn btn-social-icon btn-tumblr" href="https://www.tumblr.com/widgets/share/tool?canonicalUrl=https%3A//musicoin.org/nav/track/<%=license.address%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dtumblr&posttype=audio&tags=musicoin%2Cmusic%2C<%=license.artistName%>%2C<%=license.title%>%2C%20bugle%20%20%2Cjohn%20oliver%2Candy%20zaltzman&caption=<%=description%>" target="_blank">
+                  <a class="btn btn-social-icon btn-tumblr" href="https://www.tumblr.com/widgets/share/tool?canonicalUrl=https://musicoin.org/nav/track/<%=license.address%>&utm_source=musicoin&utm_campaign=share&utm_medium=tumblr&posttype=audio&tags=musicoin%2Cmusic%2C<%=license.artistName%>%2C<%=license.title%>%2C%20bugle%20%20%2Cjohn%20oliver%2Candy%20zaltzman&caption=<%=shortDescription%>" target="_blank">
                   <span class="fa fa-tumblr"></span>
                 </a>
                 </li>
                 <li class="share-option">
-                  <a class="btn btn-social-icon btn-google" href="https://plus.google.com/share?url=https%3A//musicoin.org/nav/track/<%=license.address%>&text=<%=description%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dgoogleplus" target="_blank">
+                  <a class="btn btn-social-icon btn-google" href="https://plus.google.com/share?url=https://musicoin.org/nav/track/<%=license.address%>&text=<%=shortDescription%>&utm_source=musicoin&utm_campaign=share&utm_medium=googleplus" target="_blank">
                   <span class="fa fa-google"></span>
                 </a>
                 </li>
                 <li class="share-option">
-                  <a class="btn btn-social-icon btn-pinterest" href="http://pinterest.com/pin/create/button/?url=https%3A//musicoin.org/nav/track/<%=license.address%>%3Futm_source%3Dmusicoin%26utm_campaign%3Dshare%26utm_medium%3Dpinterest&media=https://musicoin.org<%=license.image%>&description=<%=description%>&is_video=true" target="_blank">
+                  <a class="btn btn-social-icon btn-pinterest" href="http://pinterest.com/pin/create/button/?url=https://musicoin.org/nav/track/<%=license.address%>&utm_source=musicoin&utm_campaign=share&utm_medium=pinterest&media=https://musicoin.org<%=license.image%>&description=<%=shortDescription%>&is_video=true" target="_blank">
                   <span class="fa fa-pinterest"></span>
                 </a>
                 </li>
