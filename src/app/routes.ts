@@ -328,7 +328,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         }
         res.render('index-frames.ejs', {
           license: license,
-          mainFrameLocation: req.originalUrl.substr(4) + '?frame=true'
+          mainFrameLocation: req.originalUrl.substr(4)
         });
       });
   });
@@ -396,7 +396,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         try {
           res.render('index-frames.ejs', {
             artist: result.artist,
-            mainFrameLocation: req.originalUrl.substr(4) + '?frame=true'
+            mainFrameLocation: req.originalUrl.substr(4)
           });
         } catch(Error) {
           res.render('not-found.ejs')
@@ -1402,10 +1402,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // PUBLIC ARTIST PROFILE SECTION =====================
   // =====================================
   app.get('/artist/:address', isLoggedInOrIsPublic, function(req, res) {
-
-    if(!req.query.frame) {
-      return res.redirect(`/nav${req.originalUrl}`);
-    }
     
     // find tracks for artist
     const m = jsonAPI.getUserMessages(req.params.address, 30);
@@ -1439,10 +1435,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/track/:address', isLoggedInOrIsPublic, function(req, res) {
-
-    if(!req.query.frame) {
-      return res.redirect(`/nav${req.originalUrl}`);
-    }
 
     console.log("Loading track page for track address: " + req.params.address);
     const address = FormUtils.defaultString(req.params.address, null);
