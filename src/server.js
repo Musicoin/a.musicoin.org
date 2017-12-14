@@ -10,6 +10,7 @@ const session = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const mongodbErrorHandler = require("mongoose-mongodb-errors");
 const passport = require("passport");
 const passportConfigurer = require("./config/passport");
 const helmet = require("helmet");
@@ -31,7 +32,8 @@ ConfigUtils.loadConfig()
     app.engine('html', require('ejs').renderFile);
     // connect to database
     mongoose.Promise = require('bluebird');
-    mongoose.connect(config.database.url);
+    mongoose.connect(config.database.url, { config: { autoIndex: false } });
+    mongoose.plugin(mongodbErrorHandler);
     passportConfigurer.configure(passport, mediaProvider, config.auth);
     app.use(cors(config.cors));
     const get_ip = require('ipware')().get_ip;
@@ -88,10 +90,11 @@ ConfigUtils.loadConfig()
     }
     else {
         // returns an instance of node-letsencrypt with additional helper methods
+        let certServer = app.get('env') === 'staging' ? 'staging' : 'https://acme-v01.api.letsencrypt.org/directory';
         const lex = require('letsencrypt-express').create({
             // set to https://acme-v01.api.letsencrypt.org/directory in production
             // server: 'staging',
-            server: 'https://acme-v01.api.letsencrypt.org/directory',
+            server: certServer,
             email: 'musicoin@berry.ai',
             agreeTos: true,
             approveDomains: config.certificate.approveDomains

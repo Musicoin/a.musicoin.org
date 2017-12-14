@@ -177,7 +177,7 @@ function getStructuredConfig(keyValueConfig) {
       approveDomains: keyValueConfig.domains.split(',').map(s => s.trim()).filter(s => s)
     },
     cors: {
-      origin: ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com']
+      origin: ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org']
     }
   };
 }

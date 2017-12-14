@@ -1,1 +1,0 @@
-{"version":3,"file":"email-confirmation.js","sourceRoot":"","sources":["email-confirmation.ts"],"names":[],"mappings":";;AAAA,qCAAqC;AAErC,MAAM,CAAC,OAAO,GAAG,QAAQ,CAAC,KAAK,CAAC,mBAAmB,EAAE,QAAQ,CAAC,MAAM,CAAC;IACnE,KAAK,EAAE,MAAM;IACb,IAAI,EAAE,MAAM;IACZ,IAAI,EAAE;QACJ,IAAI,EAAE,IAAI;QACV,OAAO,EAAE,IAAI,CAAC,GAAG;KAClB;CACF,CAAC,CAAC,CAAC"}

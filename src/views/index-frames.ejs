@@ -76,8 +76,10 @@
         "pageTitle":mainFrame.contentWindow.title
       },
         "",
-        "/nav" + mainLocation.pathname + mainLocation.search);
+        "/nav" + mainLocation.pathname + musicoin.utils.filterQueryParams(mainLocation.search, ['frame']));
     }
+
+    
 
     function showMessage(msg, type, timeout) {
       new Message(msg, type, timeout);

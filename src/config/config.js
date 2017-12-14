@@ -42,7 +42,7 @@ function getStructuredConfig(keyValueConfig) {
         },
         ui: {
             admin: {
-                markAsAbuse: `This track was reported as abuse and is temporarily locked.  Please contact copyright@berry.ai with any relevant documentation to resolve.`,
+                markAsAbuse: `This track was reported as abuse and is temporarily locked.  Please contact copyright@musicoin.org.ai with any relevant documentation to resolve.`,
                 unmarkAsAbuse: `The abuse flag on this track has been removed.`
             },
             thread: {
@@ -119,7 +119,7 @@ function getStructuredConfig(keyValueConfig) {
         rewards: {
             verifiedSender: {
                 forSendingInvite: 0,
-                forAcceptingInvite: 50,
+                forAcceptingInvite: 250,
                 forInviteeJoining: 50,
                 forInviteeReleasing: 0,
             },
@@ -172,7 +172,7 @@ function getStructuredConfig(keyValueConfig) {
             approveDomains: keyValueConfig.domains.split(',').map(s => s.trim()).filter(s => s)
         },
         cors: {
-            origin: ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com']
+            origin: ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org']
         }
     };
 }

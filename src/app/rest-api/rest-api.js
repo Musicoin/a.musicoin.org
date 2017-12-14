@@ -76,6 +76,9 @@ class MusicoinRestAPI {
         jsonRouter.get('/tracks/random', (req) => jsonAPI.getSampleOfVerifiedTracks(this._getLimit(req), req.query.genre));
         jsonRouter.get('/tracks/random/new', (req) => jsonAPI.doGetRandomReleases(Object.assign({}, req.query, { limit: this._getLimit(req) })));
         jsonRouter.get('/tracks/details', (req) => jsonAPI.getTrackDetailsByIds(req.query.addresses));
+        jsonRouter.get('/tracks/:address/votes', (req) => jsonAPI.getVotesByTrack({ songAddress: req.params.address, user: req.isAuthenticated() ? req.user._id.toString() : null }));
+        jsonRouter.post('/tracks/:address/votes', (req) => jsonAPI.addVote(Object.assign({}, req.params, req.body, { user: req.isAuthenticated() ? req.user._id.toString() : null })));
+        jsonRouter.delete('/tracks/:address/votes', (req) => jsonAPI.removeVote(Object.assign({}, req.params, { user: req.isAuthenticated() ? req.user._id.toString() : null })));
         jsonRouter.post('/track/earnings/', req => jsonAPI.getTrackEarnings(req.body.releaseid));
         jsonRouter.get('/tracks/search', (req) => {
             return jsonAPI.getNewReleasesByGenre(this._getLimit(req), defaultMaxGroupSize, req.query.search);

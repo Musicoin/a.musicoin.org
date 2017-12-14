@@ -86,6 +86,10 @@ export class MusicoinRestAPI {
     jsonRouter.get('/tracks/random/new', (req) => jsonAPI.doGetRandomReleases({...req.query, limit: this._getLimit(req)}));
     jsonRouter.get('/tracks/details', (req) => jsonAPI.getTrackDetailsByIds(req.query.addresses));
 
+    jsonRouter.get('/tracks/:address/votes', (req) => jsonAPI.getVotesByTrack({songAddress: req.params.address, user: req.isAuthenticated() ? req.user._id.toString() : null}));
+    jsonRouter.post('/tracks/:address/votes', (req) => jsonAPI.addVote({...req.params, ...req.body, user: req.isAuthenticated() ? req.user._id.toString() : null}));
+    jsonRouter.delete('/tracks/:address/votes', (req) => jsonAPI.removeVote({...req.params, user: req.isAuthenticated() ? req.user._id.toString() : null}));
+
     jsonRouter.post('/track/earnings/', req => jsonAPI.getTrackEarnings(req.body.releaseid));
 
     jsonRouter.get('/tracks/search', (req) => {

@@ -9,6 +9,11 @@
         week: "last week",
         month: "last month"
     }
+
+    if(!releases.length) {
+        return;
+    }
+
     var iconBackground = releases[0].image;
 
     for (var i=0; i < releases.length; i++) {

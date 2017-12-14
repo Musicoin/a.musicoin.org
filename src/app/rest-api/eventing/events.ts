@@ -1,0 +1,2 @@
+export const SONG_VOTE_ADDED = 'SONG_VOTE_ADDED';
+export const SONG_VOTE_REMOVED = 'SONG_VOTE_REMOVED';

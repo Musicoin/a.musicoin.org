@@ -7,6 +7,8 @@ import * as FormUtils from "../form-utils";
 import * as crypto from 'crypto';
 import {MailSender} from "../mail-sender";
 import unitOfTime = moment.unitOfTime;
+import {song as songService, songVote as songVoteService} from './services';
+
 const User = require('../../app/models/user');
 const UserStats = require('../../app/models/user-stats');
 const Follow = require('../../app/models/follow');
@@ -1680,6 +1682,18 @@ export class MusicoinOrgJsonAPI {
         if (release) return this._convertDbRecordToLicenseLite(release);
         return null;
       })
+  }
+
+  getVotesByTrack(options): Promise<any> {
+    return songService.getVoteStats(options);
+  }
+
+  addVote(options): Promise<any> {
+    return songVoteService.add(options);
+  }
+
+  removeVote(options): Promise<any> {
+    return songVoteService.remove(options);
   }
 
   _convertDbRecordToLicenseLite(record) {
