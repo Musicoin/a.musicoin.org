@@ -29,6 +29,7 @@ const TrackMessage = require('../app/models/track-message');
 const EmailConfirmation = require('../app/models/email-confirmation');
 const User = require('../app/models/user');
 const ErrorReport = require('../app/models/error-report');
+var Address = require('ipaddr.js');
 const loginRedirect = "/loginRedirect";
 const defaultPage = "/nav/feed";
 const notLoggedInRedirect = "/welcome";
@@ -40,7 +41,7 @@ const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
 const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"];
 const objectToXMLConverter = data2xml();
-
+const whiteLocalIpList = ['127.0.0.1','localhost','10.0.2.2'];
 const MESSAGE_TYPES = {
   admin: "admin",
   comment: "comment",
@@ -328,7 +329,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         }
         res.render('index-frames.ejs', {
           license: license,
-          mainFrameLocation: req.originalUrl.substr(4) + '?frame=true'
+          mainFrameLocation: req.originalUrl.substr(4)
         });
       });
   });
@@ -396,15 +397,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         try {
           res.render('index-frames.ejs', {
             artist: result.artist,
-            mainFrameLocation: req.originalUrl.substr(4) + '?frame=true'
+            mainFrameLocation: req.originalUrl.substr(4)
           });
         } catch(Error) {
           res.render('not-found.ejs')
         }
       }
-    ).catch(error => {
-      console.log('ERROR!!', error.message);
-    });
+      ).catch(error => {
+        console.log('ERROR!!', error.message);
+      });
   });
 
   // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
@@ -984,10 +985,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // process the login form
   // process the login form
   app.post('/admin/su', isLoggedIn, adminOnly, passport.authenticate('local-su', {
-    successRedirect: '/profile', // redirect to the secure profile section
     failureRedirect: '/admin/su', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
-  }));
+  }),function (req,res) {
+    //admin loggined succesfully
+    if (req.user){
+      if(req.user.profileAddress && req.user.profileAddress !== ''){
+        req.session.userAccessKey = req.user.profileAddress; //set session value as user.profileAddress;
+      }else if (req.user.id && req.user.id !==''){
+        req.session.userAccessKey = req.user.id;  //set session value as user.id
+      }
+    }
+    res.redirect('/profile'); // redirect to the secure profile section
+  });
 
   app.get('/admin/licenses/dump', isLoggedIn, adminOnly, function(req, res) {
     // render the page and pass in any flash data if it exists
@@ -1333,6 +1343,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/peerverif/a7565fbd8b81b42031fd893db7645856f9d6f377a188e95423702e804c7b64b1', (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start - length);
+    const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
+    jsonAPI.getAllUsers(req.query.search, null, null, null, start, length)
+      .then(results => {
+        const users = results.users;
+        return doRender(req, res, 'peer-verification.ejs', {
+          search: req.query.search,
+          users: users,
+          navigation: {
+            show10: `${url}&length=10`,
+            show25: `${url}&length=25`,
+            show50: `${url}&length=50`,
+            description: `Showing ${start + 1} to ${start + users.length}`,
+            start: previous > 0 ? `${url}&length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+            next: users.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+          }
+        });
+      });
+  });
+
   app.get('/admin/contacts', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
@@ -1403,10 +1437,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   app.get('/artist/:address', isLoggedInOrIsPublic, function(req, res) {
 
-    if(!req.query.frame) {
-      return res.redirect(`/nav${req.originalUrl}`);
-    }
-    
     // find tracks for artist
     const m = jsonAPI.getUserMessages(req.params.address, 30);
     const a = jsonAPI.getArtist(req.params.address, true, false);
@@ -1439,10 +1469,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/track/:address', isLoggedInOrIsPublic, function(req, res) {
-
-    if(!req.query.frame) {
-      return res.redirect(`/nav${req.originalUrl}`);
-    }
 
     console.log("Loading track page for track address: " + req.params.address);
     const address = FormUtils.defaultString(req.params.address, null);
@@ -1750,6 +1776,41 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         })
     }
   });
+  app.post('/api/getUserInfoById',function (req,res) {
+    //checking request's ip adress. if request source not local network, we don't servise api.
+    if(ipMatch(req.ip,whiteLocalIpList)){
+        //request's ipaddress local. we can send user information.
+        FindUserByIdOrProfileAddress(req,function (_result) {
+          res.send(JSON.stringify(_result));
+        });
+    }else {
+      //request's ipaddress not local we send error message.
+      var result= {
+        result: false,
+        message: 'unauthorized request',
+        ip: req.ip ||'your-ip'
+      }
+      res.send(JSON.stringify(result));
+    }
+  });
+  app.get('/api/getUserInfoById/:userAccessKey',function (req,res) {
+    //checking request's ip adress. if request source not local network, we don't servise api.
+
+    if(ipMatch(req.ip,whiteLocalIpList)){
+        //request's ipaddress local. we can send user information.
+        FindUserByIdOrProfileAddress(req,function (_result) {
+          res.send(JSON.stringify(_result));
+        });
+    }else {
+      //request's ipaddress not local we send error message.
+      var result= {
+        result: false,
+        message: 'unauthorized request',
+        ip: req.ip || 'your-ip'
+      }
+      res.send(JSON.stringify(result));
+    }
+  });
 
   app.post('/profile/save', isLoggedIn, function(req, res) {
     const form = new Formidable.IncomingForm();
@@ -1958,15 +2019,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // the callback after google has authenticated the user
   app.get('/auth/google/callback',
     passport.authenticate('google', {
-      successRedirect: loginRedirect,
       failureRedirect: '/welcome'
-    }));
+    }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
   app.get('/connect/google/callback',
     passport.authorize('google', {
-      successRedirect: loginRedirect,
       failureRedirect: '/'
-    }));
+    }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
 
   app.get('/signup/facebook', setSignUpFlag(true), passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
@@ -1976,16 +2035,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // handle the callback after twitter has authenticated the user
   app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
-      successRedirect: loginRedirect,
       failureRedirect: '/welcome'
-    }));
+    }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
   // handle the callback after twitter has authenticated the user
   app.get('/connect/facebook/callback',
     passport.authenticate('facebook', {
-      successRedirect: loginRedirect,
       failureRedirect: '/welcome'
-    }));
+    }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
   app.get('/signup/twitter', setSignUpFlag(true), passport.authenticate('twitter', { scope: 'email' }));
   app.get('/auth/twitter', setSignUpFlag(false), passport.authenticate('twitter', { scope: 'email' }));
@@ -1994,15 +2051,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // handle the callback after twitter has authenticated the user
   app.get('/auth/twitter/callback',
     passport.authenticate('twitter', {
-      successRedirect: loginRedirect,
       failureRedirect: '/welcome'
-    }));
+    }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
   app.get('/connect/twitter/callback',
     passport.authenticate('twitter', {
-      successRedirect: loginRedirect,
       failureRedirect: '/welcome'
-    }));
+    }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
 
   // =====================================
@@ -2089,28 +2144,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.post('/connect/email', setSignUpFlag(false), validateLoginEmail('/connect/email'), passport.authenticate('local', {
-    successRedirect: loginRedirect, // redirect to the secure profile section
     failureRedirect: '/connect/email', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
-  }));
+  }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
   app.post('/login', setSignUpFlag(false), validateLoginEmail('/login'), passport.authenticate('local', {
-    successRedirect: loginRedirect, // redirect to the secure profile section
     failureRedirect: '/login', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
-  }));
+  }), SetSessionAfterLoginSuccessfullyAndRedirect);
 
   app.post('/signin/newroutethat', setSignUpFlag(false), validateLoginEmail('/welcome'), passport.authenticate('local', {
-    successRedirect: loginRedirect, // redirect to the secure profile section
     failureRedirect: '/welcome', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
-  }));
+  }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
   app.post('/signup', setSignUpFlag(true), validateNewAccount('/welcome'), passport.authenticate('local', {
-    successRedirect: loginRedirect, // redirect to the secure profile section
     failureRedirect: '/welcome', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
-  }));
+  }),SetSessionAfterLoginSuccessfullyAndRedirect);
 
   app.get('/login/forgot', redirectIfLoggedIn(loginRedirect), (req, res) => {
     doRender(req, res, "password-forgot.ejs", {});
@@ -2897,3 +2948,221 @@ function preProcessUser(mediaProvider, jsonAPI) {
     next();
   }
 }
+
+function SetSessionAfterLoginSuccessfullyAndRedirect(req, res) {
+  //user loggined succesfully, then redirect to loginRedirect URL
+  if (req.user){
+    if(req.user.profileAddress && req.user.profileAddress !== ''){
+      req.session.userAccessKey = req.user.profileAddress; //set session value as user.profileAddress;
+    }else if (req.user.id && req.user.id !==''){
+      req.session.userAccessKey = req.user.id;  //set session value as user.id
+    }
+  }
+  res.redirect(loginRedirect); // redirect to the secure profile section
+};
+
+function FindUserByIdOrProfileAddress(req,callback){
+    var resultMessage = {};
+    var userAccessKey = '';
+      //this request is local meaning request called by forum.musicoin.org,
+      if (req.body && req.body.userAccessKey)
+        userAccessKey = req.body.userAccessKey;
+      else if(req.params && req.params.userAccessKey ) {
+        userAccessKey = req.params.userAccessKey;
+      }
+      if(userAccessKey && userAccessKey.length >0){
+        if(userAccessKey.startsWith("0x")){
+          //this is profileAddress
+          SearchByProfileAddress(userAccessKey,function(_result){
+            resultMessage = _result;
+            callback(resultMessage);
+          });
+
+        }else {
+          //this is not updated profile or user who does not have wallet address
+          SearchById(userAccessKey,function(_result){
+              resultMessage = _result;
+              callback(resultMessage);
+          });
+        }
+      }else {
+        resultMessage = {
+          result:false,
+          message: 'No body parameters'
+        }
+        callback(resultMessage);
+      }
+}
+function BindUserDetailToObject(user,target,callback) {
+  if(user.local && user.local.id && user.local.id !==''){
+    //user registered by local auth.
+    target.authType='local';
+    target.user.local={
+      id: user.local.id || '',
+      email: user.local.email || '',
+      username: user.local.username || '',
+      password: user.local.password || ''
+    }
+  }else if(user.facebook && user.facebook.id && user.facebook.id !==''){
+    //user registered by facebook auth.
+    target.authType='facebook';
+    target.user.facebook={
+      id: user.facebook.id || '',
+      token: user.facebook.token || '',
+      email: user.facebook.email || '',
+      username: user.facebook.username || '',
+      name: user.facebook.name || '',
+      url: user.facebook.url || ''
+    }
+  }else if (user.twitter && user.twitter.id && user.twitter.id !==''){
+    //user registered by twitter auth.
+    target.authType='twitter';
+    target.user.twitter={
+      id: user.twitter.id || '',
+      token: user.twitter.token || '',
+      displayName: user.twitter.displayName || '',
+      username: user.twitter.username || '',
+      url: user.twitter.url || ''
+    }
+  }else if (user.google && user.google.id && user.google.id !==''){
+    //user registered by google auth.
+    target.authType='google';
+    target.user.google={
+      id: user.google.id || '',
+      token: user.google.token || '',
+      name: user.google.name || '',
+      url: user.google.url || '',
+      isAdmin: (user.google.email && user.google.email.endsWith("@musicoin.org"))  //checks admin control
+    }
+  }
+  else if (user.soundcloud && user.soundcloud.id && user.soundcloud !==''){
+    //user soundcloud by google auth.
+    target.authType='soundcloud';
+    target.user.soundcloud={
+      id: user.soundcloud.id || '',
+      token: user.soundcloud.token || '',
+      name: user.soundcloud.name || '',
+      username: user.soundcloud.username || ''
+    }
+  }
+  callback(target);
+}
+
+function SearchById(userAccessKey,callback){
+  var resultMessage = {};
+  User.findOne({ $or: [
+    { local: {id:userAccessKey} },
+    { facebook: {id:userAccessKey} },
+    { twitter: {id:userAccessKey} },
+    { google: {id:userAccessKey} },
+    { soundcloud: {id:userAccessKey} }
+  ] },function (err,user){
+    //database error
+
+    if(err){
+      resultMessage = {
+        result:false,
+        message: 'mongo db error'
+      }
+      callback(resultMessage);
+    }else {
+      if(user){
+        //user found
+        resultMessage = {
+          result:true,
+          user: {
+            profileAddress: user.profileAddress || '',
+            local:{},
+            facebook:{},
+            twitter:{},
+            google:{},
+            soundcloud:{}
+          },
+          authType:'local' //this value default
+        }
+        // this will bind user info to resultMessage(object) and call callback function
+        BindUserDetailToObject(user,resultMessage,callback);
+
+      }else {
+        //user not found
+        resultMessage = {
+          result:false,
+          message: 'user not found'
+        }
+        callback(resultMessage);
+      }
+    }
+  });
+}
+
+function SearchByProfileAddress(userAccessKey,callback) {
+  var resultMessage = {};
+  User.findOne({ "profileAddress": userAccessKey },function (err,user) {
+   //database error
+   if(err){
+    resultMessage = {
+      result:false,
+      message: 'mongo db error'
+    }
+    callback(resultMessage);
+  }else {
+    if(user){
+    //user found
+    resultMessage = {
+      result:true,
+      user: {
+        profileAddress: user.profileAddress || '',
+        local:{},
+        facebook:{},
+        twitter:{},
+        google:{},
+        soundcloud:{}
+      },
+      authType:'local' //this value default
+    }
+    // this will bind user info to resultMessage(object) and call callback function
+    BindUserDetailToObject(user,resultMessage,callback);
+
+  }else {
+      //user not found
+      resultMessage = {
+        result:false,
+        message: 'user not found'
+      }
+      callback(resultMessage);
+    }
+  }
+});
+}
+
+var isNumeric = function(n) { return !isNaN(parseFloat(n)) && isFinite(n); };
+
+var ipMatch = function(clientIp, list) {
+	if (clientIp && Address.isValid(clientIp)) {
+		// `Address.process` return the IP instance in IPv4 or IPv6 form.
+		// It will return IPv4 instance if it's a IPv4 mapped IPv6 address
+		clientIp = Address.process(clientIp);
+
+		return list.some(function(e) {
+			// IPv6 address has 128 bits and IPv4 has 32 bits.
+			// Setting the routing prefix to all bits in a CIDR address means only the specified address is allowed.
+			e = e || '';
+			e = e.indexOf('/') === -1 ? e + '/128' : e;
+
+			var range = e.split('/');
+			if (range.length === 2 && Address.isValid(range[0]) && isNumeric(range[1])) {
+				var ip = Address.process(range[0]);
+				var bit = parseInt(range[1], 10);
+
+				// `IP.kind()` return `'ipv4'` or `'ipv6'`. Only same type can be `match`.
+				if (clientIp.kind() === ip.kind()) {
+					return clientIp.match(ip, bit);
+				}
+			}
+
+			return false;
+		});
+	}
+
+	return false;
+};

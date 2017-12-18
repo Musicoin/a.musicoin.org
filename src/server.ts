@@ -64,13 +64,17 @@ ConfigUtils.loadConfig()
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, 'public')));
+
     app.use(session({
       secret: config.sessionSecret,
       store: new MongoStore({ mongooseConnection: mongoose.connection }),
-      cookie: { maxAge: ONE_YEAR }, // TESTING to see if this solves the iOS playback issue
-      resave: true,
-      saveUninitialized: true
+      cookie: {
+        path: '/',
+        domain: 'musicoin.org',
+        maxAge: 1000 * 60 * 24 // 24 hours
+      },
     }));
+
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(flash());
@@ -106,7 +110,7 @@ ConfigUtils.loadConfig()
         // set to https://acme-v01.api.letsencrypt.org/directory in production
         // server: 'staging',
         server: certServer,
-        email: 'musicoin@berry.ai',
+        email: 'musicoin@musicoin.org',
         agreeTos: true,
         approveDomains: config.certificate.approveDomains
       });
@@ -144,7 +148,7 @@ ConfigUtils.loadConfig()
         opts.domains = certs.altnames;
       }
       else {
-        opts.email = 'musicoin@berry.ai';
+        opts.email = 'musicoin@musicoin.org';
         opts.agreeTos = true;
       }
 
