@@ -32,7 +32,7 @@ ConfigUtils.loadConfig()
     app.engine('html', require('ejs').renderFile);
     // connect to database
     mongoose.Promise = require('bluebird');
-    mongoose.connect(config.database.url, { config: { autoIndex: false } });
+    mongoose.connect(config.database.url, { config: { autoIndex: app.get('env') === 'development' } });
     mongoose.plugin(mongodbErrorHandler);
     passportConfigurer.configure(passport, mediaProvider, config.auth);
     app.use(cors(config.cors));
@@ -60,9 +60,11 @@ ConfigUtils.loadConfig()
     app.use(session({
         secret: config.sessionSecret,
         store: new MongoStore({ mongooseConnection: mongoose.connection }),
-        cookie: { maxAge: ONE_YEAR },
-        resave: true,
-        saveUninitialized: true
+        cookie: {
+            path: '/',
+            domain: 'musicoin.org',
+            maxAge: 1000 * 60 * 24 // 24 hours
+        },
     }));
     app.use(passport.initialize());
     app.use(passport.session());
@@ -95,7 +97,7 @@ ConfigUtils.loadConfig()
             // set to https://acme-v01.api.letsencrypt.org/directory in production
             // server: 'staging',
             server: certServer,
-            email: 'musicoin@berry.ai',
+            email: 'musicoin@musicoin.org',
             agreeTos: true,
             approveDomains: config.certificate.approveDomains
         });
@@ -127,7 +129,7 @@ ConfigUtils.loadConfig()
             opts.domains = certs.altnames;
         }
         else {
-            opts.email = 'musicoin@berry.ai';
+            opts.email = 'musicoin@musicoin.org';
             opts.agreeTos = true;
         }
         cb(null, { options: opts, certs: certs });

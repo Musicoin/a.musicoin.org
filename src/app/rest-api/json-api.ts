@@ -7,7 +7,7 @@ import * as FormUtils from "../form-utils";
 import * as crypto from 'crypto';
 import {MailSender} from "../mail-sender";
 import unitOfTime = moment.unitOfTime;
-import {song as songService, songVote as songVoteService} from './services';
+import {song as songService, songVote as songVoteService} from '../rest-api/services';
 
 const User = require('../../app/models/user');
 const UserStats = require('../../app/models/user-stats');
@@ -788,7 +788,7 @@ export class MusicoinOrgJsonAPI {
     if(artist) {
       filter = {...filter, artistAddress: artist};
     }
-    
+
     let query = Release.find(filter).populate('artist');
 
     return query.exec()
@@ -1837,4 +1837,3 @@ export class MusicoinOrgJsonAPI {
     return parts.join(".");
   }
 }
-
