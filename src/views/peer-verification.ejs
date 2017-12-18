@@ -49,36 +49,11 @@
         <div>
             <%= navigation.description %>
         </div>
-        <div>
-            Show
-            <a class="history-nav-link" href="<%= navigation.show10 %>">10</a>
-            <a class="history-nav-link" href="<%= navigation.show25 %>">25</a>
-            <a class="history-nav-link" href="<%= navigation.show50 %>">50</a>
-        </div>
-        <div>
-            <% if (navigation.start) { %>
-            <a class="history-nav-link" href="<%= navigation.start %>">First</a>
-            <% } %>
-            <% if (navigation.back) { %>
-            <a class="history-nav-link" href="<%= navigation.back %>">Back</a>
-            <% } %>
-            <% if (navigation.next) { %>
-            <a class="history-nav-link" href="<%= navigation.next %>">Next</a>
-            <% } else { %>
-            <span class="history-nav-link-disabled">next</span>
-            <% } %>
-        </div>
     </div>
-    <div class="btn btn-success btn-sm mr5" onclick="sendWeeklyReports()">Send Weekly Reports</div>
     <table class="table table-responsive white-well">
         <tr>
-            <th class="text-center"></th>
-            <th class="text-center">Profile</th>
-            <th class="text-center">Invited</th>
-            <th class="text-center">Invite<br>Clicked</th>
-            <th class="text-center">Linked</th>
-            <th class="text-center">Music<br>Released</th>
-            <th class="text-center">Invites<br>Left</th>
+            <th class="text-center">Name</th>
+            <th class="text-center">Verification Emails</th>
         </tr>
 
         <% for (var ivt = 0; ivt < users.length; ivt++) {
