@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+    <title>Users | Musicoin</title>
+    <%- include partials/page-head.ejs %>
+    <style>
+        body {
+            word-wrap: break-word;
+        }
+
+        .history {
+            padding: 3px;
+            min-width: 20px;
+        }
+
+        .history-nav {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-nav-link {
+            margin-left: 10px;
+            font-size: 14pt;
+        }
+
+        .history-nav-link-disabled {
+            margin-left: 10px;
+            font-size: 14pt;
+            color: #aaa
+        }
+
+        tr.claimed {
+            background-color: rgba(0, 200, 0, 0.1);
+        }
+
+        tr.profile {
+            background-color: rgba(0, 200, 0, 0.2);
+        }
+
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<%- include partials/header.ejs %>
+<div class="m10 white-well pad10">
+    <div class="history-nav ">
+        <div>
+            <%= navigation.description %>
+        </div>
+        <div>
+            Show
+            <a class="history-nav-link" href="<%= navigation.show10 %>">10</a>
+            <a class="history-nav-link" href="<%= navigation.show25 %>">25</a>
+            <a class="history-nav-link" href="<%= navigation.show50 %>">50</a>
+        </div>
+        <div>
+            <% if (navigation.start) { %>
+            <a class="history-nav-link" href="<%= navigation.start %>">First</a>
+            <% } %>
+            <% if (navigation.back) { %>
+            <a class="history-nav-link" href="<%= navigation.back %>">Back</a>
+            <% } %>
+            <% if (navigation.next) { %>
+            <a class="history-nav-link" href="<%= navigation.next %>">Next</a>
+            <% } else { %>
+            <span class="history-nav-link-disabled">next</span>
+            <% } %>
+        </div>
+    </div>
+    <div class="btn btn-success btn-sm mr5" onclick="sendWeeklyReports()">Send Weekly Reports</div>
+    <table class="table table-responsive white-well">
+        <tr>
+            <th class="text-center"></th>
+            <th class="text-center">Profile</th>
+            <th class="text-center">Invited</th>
+            <th class="text-center">Invite<br>Clicked</th>
+            <th class="text-center">Linked</th>
+            <th class="text-center">Music<br>Released</th>
+            <th class="text-center">Invites<br>Left</th>
+        </tr>
+
+        <% for (var ivt = 0; ivt < users.length; ivt++) {
+            var user = users[ivt];
+            var checked = 'yes';
+            var unchecked = '-';
+            var invite = user.invite ? user.invite : {};
+            var invitedBy = invite.invitedBy || {};
+            var state = invite.claimed
+                    ? (user.profileAddress && user.draftProfile.artistName) ? "profile" : "claimed"
+                    : "";
+            var name = user.draftProfile && user.draftProfile.artistName ? user.draftProfile.artistName : "this user";
+        %>
+        <tr class="<%= state %>">
+            <td class="text-center middle">
+                <% if(user.profileAddress && user.draftProfile.artistName) { %>
+                <a target="_blank" href="/artist/<%= user.profileAddress %>"><%= user.draftProfile.artistName %></a>
+                <% } else if (user.draftProfile && user.draftProfile.artistName) { %>
+                <%= user.draftProfile.artistName %>
+                <% } else { %>
+                <%= unchecked %>
+                <% } %>
+
+                <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") { %>
+                (v<%= user.draftProfile.version %>)
+                <% } %>
+                <br>
+                <%=user.timeSinceJoining%>
+            </td>
+            <td class="text-left middle">
+                <%= invite.invitedAs %><br>
+                <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
+                by <a target="_blank"
+                   href="/artist/<%= invitedBy.profileAddress %>"><%= invitedBy.draftProfile.artistName %></a>
+                <% } %>
+                <BR>
+                <%= invite.inviteCode %>
+            </td>
+            <td class="text-center middle">
+                <table cellpadding="2">
+                    <% if (!!user.google.token) { %>
+                    <%
+                        const googleUrl = user.google.url ? user.google.url : "https://plus.google.com/" + user.google.id;
+                    %>
+                    <tr>
+                        <td><span class="btn fa fa-google-plus"></span></td>
+                        <td class="text-left">
+                            <a target=_blank href="<%= googleUrl %>">
+                            <%- user.google.name %>, <%- user.google.email %>
+                            </a>
+                        </td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.twitter.token) { %>
+                    <tr>
+                        <td><span class="btn fa fa-twitter"></span></td>
+                        <td class="text-left">
+                            <%
+                             const twitterUrl = user.twitter.url ? user.twitter.url : "https://twitter.com/" + user.twitter.username;
+                            %>
+                            <a target=_blank href="<%= twitterUrl %>"> <%- user.twitter.username %>, <%- user.twitter.displayName %> </a>
+                        </td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.facebook.token) { %>
+                    <%
+                        const facebookUrl = user.facebook.url ? user.facebook.url : "https://www.facebook.com/app_scoped_user_id/" + user.facebook.id;
+                    %>
+                    <tr>
+                        <td class=""><span class="btn fa fa-facebook"></span></td>
+                        <td class="text-left">
+                            <a target=_blank href="<%= facebookUrl %>">
+                            <%- user.facebook.name %>, <%- user.facebook.email %>
+                            </a>
+                        </td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.local.id) { %>
+                    <tr>
+                        <td><span class="btn fa fa-envelope-o"></span></td>
+                        <td class="text-left"><%- user.local.email %></td>
+                    </tr>
+                    <% } %>
+                </table>
+            </td>
+            <td class="text-center middle"><%- user.mostRecentReleaseDate ? checked : unchecked %></td>
+        </tr>
+        <% } %>
+    </table>
+</div>
+<%- include partials/connect-with-us.ejs %>
+</body>
+</html>

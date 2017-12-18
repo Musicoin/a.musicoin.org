@@ -1343,6 +1343,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/peerverif/a7565fbd8b81b42031fd893db7645856f9d6f377a188e95423702e804c7b64b1', (req, res) => {
+    const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
+    const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+    const previous = Math.max(0, start - length);
+    const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
+    jsonAPI.getAllUsers(req.query.search, null, null, null, start, length)
+      .then(results => {
+        const users = results.users;
+        return doRender(req, res, 'peer-verification.ejs', {
+          search: req.query.search,
+          users: users,
+          navigation: {
+            show10: `${url}&length=10`,
+            show25: `${url}&length=25`,
+            show50: `${url}&length=50`,
+            description: `Showing ${start + 1} to ${start + users.length}`,
+            start: previous > 0 ? `${url}&length=${length}` : null,
+            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+            next: users.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+          }
+        });
+      });
+  });
+
   app.get('/admin/contacts', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
@@ -1445,7 +1469,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/track/:address', isLoggedInOrIsPublic, function(req, res) {
-    
+
     console.log("Loading track page for track address: " + req.params.address);
     const address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
@@ -2970,7 +2994,7 @@ function FindUserByIdOrProfileAddress(req,callback){
       }
 }
 function BindUserDetailToObject(user,target,callback) {
-  if(user.local && user.local.id && user.local.id !==''){  
+  if(user.local && user.local.id && user.local.id !==''){
     //user registered by local auth.
     target.authType='local';
     target.user.local={
@@ -3096,7 +3120,7 @@ function SearchByProfileAddress(userAccessKey,callback) {
       },
       authType:'local' //this value default
     }
-    // this will bind user info to resultMessage(object) and call callback function    
+    // this will bind user info to resultMessage(object) and call callback function
     BindUserDetailToObject(user,resultMessage,callback);
 
   }else {
