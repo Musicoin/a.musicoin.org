@@ -67,7 +67,7 @@
                     : "";
             var name = user.draftProfile && user.draftProfile.artistName ? user.draftProfile.artistName : "this user";
         %>
-        <% if (users[ivt].verified != true) { %>
+        <% if ((users[ivt].verified != true) && (users[ivt].mostRecentReleaseDate != null)) { %>
         <tr class="<%= state %>">
             <td class="text-center middle">
                 <% if(user.profileAddress && user.draftProfile.artistName) { %>
