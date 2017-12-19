@@ -17,11 +17,11 @@
 
     },
 
-    queryParamsToObject: function queryParamsToObject(qs) {
+    queryParamsToObject: function queryParamsToObject() {
 
-      var queryString = (qs || window.location.search).substring(1);
+      var url = window.location.href;
 
-      return queryString.split('&').reduce(function f(previous, current) {
+      return url.split('?').pop().split('&').reduce(function f(previous, current) {
         var temp = current.split('=');
         previous[temp[0]] = temp[1];
         return previous;
@@ -30,27 +30,13 @@
     },
 
     getFrameDocument: function getFrameDocument(frameId) {
-    	
+
       var frame = document.getElementById(frameId);
       if(!frame) {
       	return null;
       }
       var frameDocument = frame.contentDocument || frame.contentWindow.document;
       return frameDocument;
-
-    },
-
-    filterQueryParams: function filterQueryParams(qs, filterArray) {
-      
-      var queryObject = musicoin.utils.queryParamsToObject(qs);
-      var arrayLen = filterArray.length;
-
-      for(var i = 0; i < arrayLen; i++) {
-        delete queryObject[filterArray[i]];
-      }
-
-
-      return musicoin.utils.objectToQueryParams(queryObject);
 
     }
 
