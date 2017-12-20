@@ -10,7 +10,6 @@ import * as bodyParser from 'body-parser';
 import * as logging  from './app/logging';
 import * as routes from "./app/routes";
 import * as session from 'express-session';
-const MongoStore = require('connect-mongo')(session);
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 import * as passportConfigurer from './config/passport';
@@ -18,6 +17,7 @@ import * as helmet from 'helmet';
 import * as expectCt from 'expect-ct'
 import {MusicoinAPI} from './app/musicoin-api';
 
+const RedisStore = require('connect-redis')(session);
 const app = express();
 const flash = require('connect-flash');
 import favicon = require('serve-favicon');
@@ -66,7 +66,7 @@ ConfigUtils.loadConfig()
 
     app.use(session({
       secret: config.sessionSecret,
-      store: new MongoStore({ mongooseConnection: db.connection }),
+      store: new RedisStore({ url: config.redis.url }),
       cookie: {
         path: '/',
         domain: 'musicoin.org',

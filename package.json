@@ -10,6 +10,7 @@
     "chai-http": "*",
     "connect-flash": "*",
     "connect-mongo": "*",
+    "connect-redis": "^3.3.2",
     "cookie-parser": "*",
     "cors": "^2.8.4",
     "data2xml": "^1.2.5",
