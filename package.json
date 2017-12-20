@@ -27,6 +27,7 @@
     "mongoose": "*",
     "mongoose-mongodb-errors": "0.0.2",
     "morgan": "*",
+    "newrelic": "^2.4.2",
     "owasp-password-strength-test": "*",
     "passport": "*",
     "passport-facebook": "*",

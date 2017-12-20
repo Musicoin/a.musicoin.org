@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV === 'production') {
+  require('newrelic');
+}
+
 import * as express from 'express';
 import * as cors from 'cors';
 import * as gettext from 'express-gettext';
