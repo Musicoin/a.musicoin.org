@@ -41,7 +41,7 @@ function getStructuredConfig(keyValueConfig) {
       pendingReleaseIntervalMs: 30*1000
     },
     redis: {
-      url : keyValueConfig.redisEndpoint,
+      url : `${keyValueConfig.redisEndpoint}?db=musicoin-session`,
     },
     ipfs: {
       ipfsHost: keyValueConfig.ipfsReadEndpoint,
