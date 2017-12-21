@@ -38,13 +38,6 @@
 <body>
   <%- include partials/header.ejs %>
     <div id="user-container">
-      <div class="text-center flex-row" style="justify-content: space-between">
-        <div style="width: 200px" class="flex-column">
-          <a class="de-parameter-setter clickable" de-parameters="invitedby=,verified=false,artist=true,search=,start=0">
-                Show Unverified artists
-            </a>
-        </div>
-      </div>
       <table class="table table-responsive white-well">
         <tr>
           <th class="text-center">Profile</th>
@@ -66,7 +59,7 @@
             var name = user.draftProfile && user.draftProfile.artistName ? user.draftProfile.artistName : "this user";
             var escapedName = name.replace(/'/g, "\\'");
         %>
-          <% if (user.mostRecentReleaseDate) { %>
+        <% if ((user.verified != true) && (user.mostRecentReleaseDate != null)) { %>
             <tr class="<%= state %>">
               <td class="text-center middle">
                 <% if(user.profileAddress && user.draftProfile.artistName) { %>
