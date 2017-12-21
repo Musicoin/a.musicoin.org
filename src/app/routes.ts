@@ -1344,7 +1344,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/peerverif/a7565fbd8b81b42031fd893db7645856f9d6f377a188e95423702e804c7b64b1', (req, res) => {
-    const length = 100;
+    const length = 5000;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
@@ -1353,16 +1353,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const users = results.users;
         return doRender(req, res, 'peer-verification.ejs', {
           search: req.query.search,
-          users: users,
-          navigation: {
-            show10: `${url}&length=10`,
-            show25: `${url}&length=25`,
-            show50: `${url}&length=50`,
-            description: `Showing ${start + 1} to ${start + users.length}`,
-            start: previous > 0 ? `${url}&length=${length}` : null,
-            back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
-            next: users.length >= length ? `${url}&length=${length}&start=${start + length}` : null
-          }
+          users: users
         });
       });
   });
