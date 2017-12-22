@@ -789,7 +789,7 @@ export class MusicoinOrgJsonAPI {
     if(artist) {
       queryOptions = {...filter, artistAddress: artist};
     }
-    
+
     let query = Release.find(queryOptions).populate('artist');
 
     return query.exec()
@@ -1728,8 +1728,10 @@ export class MusicoinOrgJsonAPI {
     return this.mcHelper.getLicense(record.contractAddress)
       .bind(this)
       .then(function(license) {
+        console.log(record);
+        console.log(license);
         if (!license.artistName)
-          license.artistName = record.artistName;
+          license.artistName = record.artistName || 'Musicoin';
 
         license.genres = record.genres;
         license.languages = record.languages;
