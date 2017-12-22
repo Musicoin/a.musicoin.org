@@ -1728,6 +1728,8 @@ export class MusicoinOrgJsonAPI {
     return this.mcHelper.getLicense(record.contractAddress)
       .bind(this)
       .then(function(license) {
+        console.log(record);
+        console.log(license);
         if (!license.artistName)
           license.artistName = record.artistName || 'Musicoin';
 
