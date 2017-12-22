@@ -12,8 +12,6 @@ import * as routes from "./app/routes";
 import * as session from 'express-session';
 const MongoStore = require('connect-mongo')(session);
 import * as cookieParser from 'cookie-parser';
-import * as mongoose from 'mongoose';
-import * as mongodbErrorHandler from 'mongoose-mongodb-errors';
 import * as passport from 'passport';
 import * as passportConfigurer from './config/passport';
 import * as helmet from 'helmet';
@@ -28,6 +26,8 @@ const MediaProvider = require('./media/media-provider');
 
 ConfigUtils.loadConfig()
   .then(config => {
+
+    const db = require('./db')(app, config);
     const musicoinApi = new MusicoinAPI(config.musicoinApi);
     const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
     const isDevEnvironment = app.get('env') === 'development';
@@ -37,11 +37,6 @@ ConfigUtils.loadConfig()
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'ejs');
     app.engine('html', require('ejs').renderFile);
-
-    // connect to database
-    mongoose.Promise = require('bluebird');
-    mongoose.connect(config.database.url, {config: {autoIndex: app.get('env') === 'development'}});
-    mongoose.plugin(mongodbErrorHandler);
 
     passportConfigurer.configure(passport as any, mediaProvider, config.auth);
 
@@ -71,7 +66,7 @@ ConfigUtils.loadConfig()
 
     app.use(session({
       secret: config.sessionSecret,
-      store: new MongoStore({ mongooseConnection: mongoose.connection }),
+      store: new MongoStore({ mongooseConnection: db.connection }),
       cookie: {
         path: '/',
         domain: 'musicoin.org',
