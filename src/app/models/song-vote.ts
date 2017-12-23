@@ -15,6 +15,10 @@ const SongVoteSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  votesCount: {
+    type: Number,
+    default: 1
   }
 });
 

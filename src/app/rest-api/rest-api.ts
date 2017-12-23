@@ -70,6 +70,8 @@ export class MusicoinRestAPI {
     });
 
     jsonRouter.get('/profile/:address', (req) => jsonAPI.getArtist(req.params.address, true, true));
+    jsonRouter.post('/profile/voting-power/add', (req) => jsonAPI.userService.incrementVotingPower(req.body));
+    jsonRouter.post('/profile/voting-power/remove', (req) => jsonAPI.userService.decrementVotingPower(req.body));
 
     jsonRouter.get('/artist/:address', (req) => jsonAPI.getArtist(req.params.address, true, false));
     jsonRouter.get('/artists/featured', (req) => jsonAPI.getFeaturedArtists(this._getLimit(req)));

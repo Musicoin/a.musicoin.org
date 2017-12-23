@@ -1,142 +1,131 @@
-import * as pino from 'pino';
-import * as mongoose from 'mongoose';
-
+import ServiceBase from './service-base';
+import MusicoinError from '../../../error';
+import { toObjectId } from '../../../db';
 import serviceEventEmitter from '../../rest-api/eventing';
 import { SONG_VOTE_ADDED, SONG_VOTE_REMOVED } from '../../rest-api/eventing/events';
+import { getLogger, getMethodEndLogger } from '../../../logger';
 
 
 const SongVote = require('../../models/song-vote');
-const logger = pino().child({ module: 'SongVoteService' });
+const User = require('../../models/user');
+const logger = getLogger('SongVoteService');
 
-export default class SongVoteService {
+export default class SongVoteService implements ServiceBase {
+
+  constructor() {
+
+  }
 
   add(options: { user: string, songAddress: string, type: string }) {
 
-    logger.info('#add', options);
+    let methodEndLogger = getMethodEndLogger(logger, '#add', options);
 
     if (typeof options.user !== 'string' || !options.user.trim()) {
-      return Promise.reject({ message: 'Invalid user id' });
+      return methodEndLogger(new MusicoinError('Invalid user id'));
     }
 
     if (typeof options.songAddress !== 'string' || !options.songAddress.trim()) {
-      return Promise.reject({ message: 'Invalid track address' });
+      return methodEndLogger(new MusicoinError('Invalid track address'));
     }
 
-    return SongVote.create({
-      user: mongoose.Types.ObjectId(options.user.toString()),
-      songAddress: options.songAddress,
-      type: options.type
-    }).then((vote) => {
+    return User.findOne({ _id: toObjectId(options.user.toString()) }, { voteMultiplier: 1 })
+      .then((user) => {
 
-      logger.info('#add done', options, vote);
+        if (!user) {
+          return Promise.reject(new MusicoinError('User not found'));
+        }
 
-      serviceEventEmitter.emit(SONG_VOTE_ADDED, options);
+        return SongVote.create({
+          user: user._id,
+          songAddress: options.songAddress,
+          type: options.type,
+          votesCount: user.voteMultiplier
+        });
 
-      return vote;
+      })
+      .then((vote) => {
 
-    }, (error) => {
+        serviceEventEmitter.emit(SONG_VOTE_ADDED, vote);
 
-      logger.error('#add', options, error);
+        return methodEndLogger(vote);
 
-      if (error.message.indexOf('E11000 duplicate key error index') !== -1) {
-        return this.update(options);
-      }
+      }, (error) => {
 
-      return Promise.reject({ message: 'Server Error. Please try again.' });
+        if (error.message.indexOf('E11000 duplicate key error index') !== -1) {
+          return this.update(options).then(methodEndLogger, methodEndLogger);
+        }
 
-    });
+        return methodEndLogger(error, new MusicoinError('Server Error. Please try again.'));
+
+      });
 
   }
 
   remove(options: { user: string, songAddress: string }) {
 
-    logger.info('#remove', options);
+    let methodEndLogger = getMethodEndLogger(logger, '#remove', options);
 
     if (typeof options.user !== 'string' || !options.user.trim()) {
-      return Promise.reject({ message: 'Invalid user id' });
+      return methodEndLogger(new MusicoinError('Invalid user id'));
     }
 
     if (typeof options.songAddress !== 'string' || !options.songAddress.trim()) {
-      return Promise.reject({ message: 'Invalid track address' });
+      return methodEndLogger(new MusicoinError('Invalid track address'));
     }
 
     return SongVote.findOneAndRemove({
-      user: mongoose.Types.ObjectId(options.user.toString()),
+      user: toObjectId(options.user.toString()),
       songAddress: options.songAddress
     }).then((vote) => {
 
-      logger.info('#remove done', options, vote);
-
       serviceEventEmitter.emit(SONG_VOTE_REMOVED, vote);
 
-      return vote;
+      return methodEndLogger(vote);
 
-    }, (error) => {
-
-      logger.error('#remove', options, error);
-
-      return Promise.reject({ message: 'Server Error. Please try again.' });
-
-    });
+    }, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
 
   }
 
   getVoteByUser(options: { user: string, songAddress: string }) {
 
-    logger.info('#getVoteByUser', options);
+    let methodEndLogger = getMethodEndLogger(logger, '#getVoteByUser', options);
 
     if (options.user && (typeof options.user !== 'string' || !options.user.trim())) {
-      return Promise.reject({ message: 'Invalid user id' });
+      return methodEndLogger(new MusicoinError('Invalid user id'));
     }
 
     if (typeof options.songAddress !== 'string' || !options.songAddress.trim()) {
-      return Promise.reject({ message: 'Invalid track address' });
+      return methodEndLogger(new MusicoinError('Invalid track address'));
     }
 
     SongVote.findOne({
-        user: mongoose.Types.ObjectId(options.user.toString()),
+        user: toObjectId(options.user.toString()),
         songAddress: options.songAddress
       }).select('type', 'user').exec()
-      .then((result) => {
-
-        logger.info('#getVoteByUser done', options, result);
-
-        return result;
-
-      }, (error) => {
-
-        logger.error('#getVoteByUser', options, error);
-
-        return Promise.reject({ message: 'Server Error. Please try again.' });
-
-      });
+      .then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
 
   }
 
   private update(options: { user: string, songAddress: string, type: string }) {
 
-    logger.info('#update', options);
+    let methodEndLogger = getMethodEndLogger(logger, '#update', options);
 
     return SongVote.findOneAndUpdate({
-        user: mongoose.Types.ObjectId(options.user.toString()),
+        user: toObjectId(options.user.toString()),
         songAddress: options.songAddress
       }, { type: options.type })
-      .then((vote) => {
+      .then((result) => {
+
+        let vote = result._doc;
 
         if (vote.type !== options.type) {
           serviceEventEmitter.emit(SONG_VOTE_REMOVED, vote);
-          serviceEventEmitter.emit(SONG_VOTE_ADDED, options);
+          serviceEventEmitter.emit(SONG_VOTE_ADDED, { ...vote, type: options.type });
         }
 
-        return options;
+        return methodEndLogger(options);
 
-      }, (error) => {
-
-        logger.error('#update', options, error);
-
-        return Promise.reject({ message: 'Server Error. Please try again.' });
-
-      });
+      }, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
 
   }
 

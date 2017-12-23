@@ -7,7 +7,7 @@ import * as FormUtils from "../form-utils";
 import * as crypto from 'crypto';
 import {MailSender} from "../mail-sender";
 import unitOfTime = moment.unitOfTime;
-import {song as songService, songVote as songVoteService} from '../rest-api/services';
+import {song as songService, songVote as songVoteService, user as userService} from '../rest-api/services';
 
 const User = require('../../app/models/user');
 const UserStats = require('../../app/models/user-stats');
@@ -76,12 +76,16 @@ export interface Hero {
 }
 
 export class MusicoinOrgJsonAPI {
+  
+  userService: any;
+
   constructor(private musicoinAPI: MusicoinAPI,
               private mcHelper: MusicoinHelper,
               private mediaProvider,
               private mailSender: MailSender,
               private exchangeRateProvider: ExchangeRateProvider,
               private config: any) {
+    this.userService = userService;
   }
 
   getArtist(address: string, includeReleases: boolean, includePending: boolean): Promise<ArtistProfile> {
