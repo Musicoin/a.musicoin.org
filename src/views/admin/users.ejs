@@ -53,6 +53,7 @@
             <th class="text-center"></th>
             <th class="text-center">Profile</th>
             <th class="text-center">Balance</th>
+            <th class="text-center">Voting power</th>
             <th class="text-center">Invited By</th>
             <th class="text-center">Invite<br>Clicked</th>
             <th class="text-center">Linked</th>
@@ -83,6 +84,9 @@
 
                         <li class="divider"></li>
                         <li><a href="javascript:void(0)" onclick="addInvites('<%= user._id %>', 10)">+10 Invites</a></li>
+
+                        <li class="divider"></li>
+                        <li><a href="javascript:void(0)" onclick="addVotingPower('<%= user._id %>', 10)">+10x voting power</a></li>
 
                         <li class="divider"></li>
                         <% if (user.invite.noReward) { %>
@@ -121,6 +125,9 @@
             </td>
             <td class="text-center middle">
                 <%=user.balance%>
+            </td>
+            <td class="text-center middle">
+                <%=user.voteMultiplier%>x
             </td>
             <td class="text-left middle">
                 <%= invite.invitedAs %><br>
@@ -213,6 +220,28 @@
         new Message("Failed: " + data.reason, 'error', 5000)
       }
     })
+  }
+
+  function addVotingPower(id, count) {
+    $.ajax({
+      type: 'POST',
+      url: '/json-api/profile/voting-power/add',
+      data: JSON.stringify({
+        user: id,
+        count: +count
+      }),
+      dataType: 'application/json',
+      contentType : 'application/json'
+    })
+    .always(function( data ) {
+      if (data.status === 200) {
+        new Message("Voting power increased!", "success", 3000);
+        refreshUserContainer();
+      }
+      else {
+        new Message("Failed: " + data.reason, 'error', 5000)
+      }
+    });
   }
 
   function blacklist(id, blacklist) {

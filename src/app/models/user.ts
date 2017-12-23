@@ -145,6 +145,10 @@ const userSchema = mongoose.Schema({
       ref: 'Release'
     },
     encryptedKey: String
+  },
+  voteMultiplier: {
+    type: Number,
+    default: 1
   }
 });
 

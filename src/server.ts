@@ -27,7 +27,7 @@ const MediaProvider = require('./media/media-provider');
 ConfigUtils.loadConfig()
   .then(config => {
 
-    const db = require('./db')(app, config);
+    const db = require('./db').initialize(app, config);
     const musicoinApi = new MusicoinAPI(config.musicoinApi);
     const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
     const isDevEnvironment = app.get('env') === 'development';

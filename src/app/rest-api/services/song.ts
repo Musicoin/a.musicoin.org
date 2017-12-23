@@ -1,15 +1,15 @@
-import * as pino from 'pino';
-import * as mongoose from 'mongoose';
-
-import { songVote as songVoteService } from '../../rest-api/services';
+import ServiceBase from './service-base';
+import MusicoinError from '../../../error';
+import { toObjectId } from '../../../db';
 import serviceEventEmitter from '../../rest-api/eventing';
 import { SONG_VOTE_ADDED, SONG_VOTE_REMOVED } from '../../rest-api/eventing/events';
+import { getLogger, getMethodEndLogger } from '../../../logger';
+import { songVote as songVoteService } from '../../rest-api/services';
 
-
+const logger = getLogger('SongService');
 const Release = require('../../models/release');
-const logger = pino().child({ module: 'SongService' });
 
-export default class SongService {
+export default class SongService implements ServiceBase {
 
   constructor() {
 
@@ -20,7 +20,7 @@ export default class SongService {
 
   incrementVoteCount(options) {
 
-    logger.info('#incrementVoteCount', options);
+    let methodEndLog = getMethodEndLogger(logger, '#incrementVoteCount', options);
 
     let updates = {
       $inc: {
@@ -30,33 +30,21 @@ export default class SongService {
     };
 
     if (options.type === 'UP_VOTE') {
-      updates.$inc['votes.up'] = 1;
+      updates.$inc['votes.up'] = options.votesCount;
     } else {
-      updates.$inc['votes.down'] = 1;
+      updates.$inc['votes.down'] = options.votesCount;
     }
 
     return Release.update({
         contractAddress: options.songAddress
       }, updates)
-      .then((result) => {
-
-        logger.info('#incrementVoteCount done', options, result);
-
-        return result;
-
-      }, (error) => {
-
-        logger.error('#incrementVoteCount', options, error);
-
-        return Promise.reject('Server Error. Please try again.');
-
-      });
+      .then(methodEndLog, (error) => methodEndLog(error, new MusicoinError('Server Error. Please try again.')));
 
   }
 
   decrementVoteCount(options) {
 
-    logger.info('#decrementVoteCount', options);
+    let methodEndLog = getMethodEndLogger(logger, '#decrementVoteCount', options);
 
     let updates = {
       $inc: {
@@ -66,42 +54,23 @@ export default class SongService {
     };
 
     if (options.type === 'UP_VOTE') {
-      updates.$inc['votes.up'] = -1;
+      updates.$inc['votes.up'] = -options.votesCount;
     } else {
-      updates.$inc['votes.down'] = -1;
+      updates.$inc['votes.down'] = -options.votesCount;
     }
 
     return Release.update({
         contractAddress: options.songAddress
       }, updates)
-      .then((result) => {
-
-        logger.info('#decrementVoteCount done', options, result);
-
-        return result;
-
-      }, (error) => {
-
-        logger.error('#decrementVoteCount', options, error);
-
-        return Promise.reject('Server Error. Please try again.');
-
-      });
+      .then(methodEndLog, (error) => methodEndLog(error, new MusicoinError('Server Error. Please try again.')));
 
   }
 
   getVoteStats(options: { songAddress: string, viewer: string }) {
 
-    logger.info('#getVoteStats', options);
+    let methodEndLog = getMethodEndLogger(logger, '#getVoteStats', options);
 
-    let votesPromise = Release.findOne({ contractAddress: options.songAddress }).select('votes').then(null, (error) => {
-
-      logger.error('#getVoteStats', options, error);
-
-      return Promise.reject('Server Error. Please try again.');
-
-    });
-
+    let votesPromise = Release.findOne({ contractAddress: options.songAddress }).select('votes');
     let userVotePromise = options.viewer ? songVoteService.getVoteByUser({ user: options.viewer, songAddress: options.songAddress }) : Promise.resolve(null);
 
     return Promise.all([votesPromise, userVotePromise]).then((results) => {
@@ -113,11 +82,9 @@ export default class SongService {
         voteStats.viewerVote = userVote.type;
       }
 
-      logger.info('#getVoteStats done', options, voteStats);
+      return methodEndLog(voteStats);
 
-      return voteStats;
-
-    });
+    }, (error) => methodEndLog(error, new MusicoinError('Server Error. Please try again.')));
 
   }
 

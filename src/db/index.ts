@@ -2,9 +2,10 @@ import * as mongoose from 'mongoose';
 import * as mongodbErrorHandler from 'mongoose-mongodb-errors';
 import * as pino from 'pino';
 
+const defaultObjectId = mongoose.Types.ObjectId(); // used as return value for invalid id strings.
 const logger = pino().child({ module: 'Database' });
 
-module.exports = function initialize(app, config) {
+export function initialize(app, config) {
 
   mongoose.Promise = require('bluebird');
   mongoose.connect(config.database.url, {
@@ -37,4 +38,13 @@ module.exports = function initialize(app, config) {
   });
 
   return mongoose;
+};
+
+export function toObjectId(idString) {
+
+  if(typeof idString !== 'string' || idString.length !== 24) {
+    return defaultObjectId;
+  }
+
+  return mongoose.Types.ObjectId(idString);
 };
