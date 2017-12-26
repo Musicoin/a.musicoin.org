@@ -60,4 +60,23 @@ export default class UserService implements ServiceBase {
 
   }
 
+  getUser(options: {_id: string}) {
+
+    let methodEndLogger = getMethodEndLogger(logger, '#getUserById', options);
+
+    if (!options || typeof options !== 'object') {
+      return methodEndLogger(new MusicoinError('Invalid input parameters'));
+    }
+
+    if (typeof options._id !== 'string' || !options._id.trim()) {
+      return methodEndLogger(new MusicoinError('Invalid user id'));
+    }
+
+    let query = { _id: toObjectId(options._id)};
+
+    return User.findOne(query)
+      .then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+
+  }
+
 }

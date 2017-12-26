@@ -70,6 +70,7 @@ export class MusicoinRestAPI {
     });
 
     jsonRouter.get('/profile/:address', (req) => jsonAPI.getArtist(req.params.address, true, true));
+    jsonRouter.get('/profile/current', (req) => jsonAPI.userService.getUser(req.user));
     jsonRouter.post('/profile/voting-power/add', (req) => jsonAPI.userService.incrementVotingPower(req.body));
     jsonRouter.post('/profile/voting-power/remove', (req) => jsonAPI.userService.decrementVotingPower(req.body));
 
