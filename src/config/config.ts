@@ -40,6 +40,9 @@ function getStructuredConfig(keyValueConfig) {
       url : `${keyValueConfig.mongoEndpoint}/musicoin-org`,
       pendingReleaseIntervalMs: 30*1000
     },
+    redis: {
+      url : `${keyValueConfig.redisEndpoint}?db=0`,
+    },
     ipfs: {
       ipfsHost: keyValueConfig.ipfsReadEndpoint,
       ipfsAddUrl: `${keyValueConfig.ipfsAddEndpoint}/api/v0/add`,
@@ -260,7 +263,9 @@ function getDefaultKeyValueConfig() {
 
         domains: env.CERTIFICATE_DOMAINS || "musicoin.org,orbiter.musicoin.org",
 
-        termsOfUseVersion: env.TERMS_OF_USE_VERSION || "1.0"
+        termsOfUseVersion: env.TERMS_OF_USE_VERSION || "1.0",
+
+        redisEndpoint: env.REDIS_ENDPOINT || "redis://localhost:6379"
       };
     });
 }
