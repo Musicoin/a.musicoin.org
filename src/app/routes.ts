@@ -1358,6 +1358,35 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
+  app.get('/playback-history/a6565fbd8b81b42031fd893db7645856f9d6f377a188e95423702e804c7b64b1', isLoggedIn, adminOnly, function(req, res) {
+    const length = 1000;
+    const start = 0;
+    var options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
+
+    jsonAPI.getPlaybackHistory(req.body.user, req.body.anonuser, req.body.release, start, length)
+      .then(output => {
+        output.records.forEach(r => {
+          r.playbackDateDisplay = jsonAPI._timeSince(r.playbackDate) || "just now";
+          const user = r.user ? r.user : r.anonymousUser;
+          r.nextPlaybackDateDisplay = user && user.freePlaysRemaining > 0 && user.nextFreePlayback
+            ? user.nextFreePlayback.toLocaleDateString('en-US', options) + " (" + user.freePlaysRemaining + ")"
+            : "N/A";
+        });
+        return output;
+      })
+      .then(output => {
+        doRender(req, res, 'playback-main.ejs', {
+          search: req.body.search,
+          playbacks: output.records,
+          navigation: {
+            description: `Showing ${start + 1} to ${start + output.records.length}`,
+            start: start,
+            length: length,
+          }
+        });
+      });
+  });
+
   app.get('/admin/contacts', (req, res) => {
     const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;

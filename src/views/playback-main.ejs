@@ -1,0 +1,63 @@
+<html>
+<h3 class="text-center">Playback History</h3>
+<%- include element-nav.ejs %>
+<table class="table table-responsive table-condensed table-striped">
+    <tr>
+        <th class="text-center">Time</th>
+        <th class="text-center">User</th>
+        <th class="text-center">Track</th>
+        <th class="text-center">Plays&nbsp;/&nbsp;Tips</th>
+    </tr>
+
+    <% for (var p = 0; p < playbacks.length; p++) {
+        var playback = playbacks[p];
+    %>
+    <tr id="<%= playback._id %>">
+        <td class="text-center middle">
+            <%= playback.playbackDateDisplay %><br>
+        </td>
+
+        <% if (playback.user != null) { %>
+        <td class="text-center middle">
+            <%= playback.user.draftProfile.artistName %><br>
+            <a class="de-parameter-setter clickable <%= playback.user.accountLocked ? "text-danger" : "" %>"
+               de-parameters="user=<%=playback.user._id%>,start=0"
+               title="filter by user">
+                filter
+            </a>
+            &nbsp;
+            <a target="track-window" href="/artist/<%= playback.user.profileAddress %>">view</a>
+        </td>
+        <% } else if (playback.anonymousUser != null) { %>
+        <td class="text-center middle">
+            <%= playback.anonymousUser.ip %><br>
+            <%= playback.anonymousUser.session %><br>
+            <a class="de-parameter-setter clickable <%= playback.anonymousUser.accountLocked ? "text-danger" : "" %>"
+               de-parameters="anonuser=<%=playback.anonymousUser._id%>,start=0"
+               title="filter by user">
+                filter
+            </a>
+        </td>
+        <% } else { %>
+        <td class="text-center middle"></td>
+        <% } %>
+
+        <td class="text-center middle">
+            <%= playback.release.title %>
+            <br>
+            <a class="de-parameter-setter clickable  <%= playback.release.markedAsAbuse ? "text-danger" : "" %>"
+               de-parameters="release=<%=playback.release._id%>,start=0"
+               title="filter by track">
+                filter
+            </a>
+            &nbsp;
+            <a target="release-window" href="/track/<%= playback.release.contractAddress %>">view</a>
+        </td>
+        <td class="text-center middle">
+            <%= playback.release.directPlayCount %> /
+            <%= playback.release.directTipCount || 0 %>
+        </td>
+    </tr>
+    <% } %>
+</table>
+</html>
