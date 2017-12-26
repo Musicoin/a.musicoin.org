@@ -75,7 +75,58 @@ export default class UserService implements ServiceBase {
     let query = { _id: options._id};
 
     return User.findOne(query)
-      .then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+      .then((user) => methodEndLogger(this.formatUserObject(user)), (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+
+  }
+
+  formatUserObject(user) {
+
+    if(!user) {
+      return null;
+    }
+
+    // This method will be used in all APIs.
+    // Filter out all sensitive data.
+    // Private information of an user, only goes out with for the same user credentials.
+
+    let result = {
+      _id: null,
+      isMusician: null,
+      isListener: null,
+      followers: null,
+      tips: null,
+      fullname: null,
+      username: null,
+      picture: null,
+      freePlaysRemaining: null
+    };
+
+    result._id = user.id;
+    result.isMusician = user.isMusician !== 'listener';
+    result.isListener = user.isMusician === 'listener';
+    result.followers = user.followerCount;
+    result.tips = user.directTipCount;
+    result.freePlaysRemaining = user.freePlaysRemaining;
+
+    if(user.google) {
+      result.fullname = user.google.name;
+      result.username = user.google.email;
+      result.picture = user.google.picture ? user.google.picture : null;
+    }
+    // post this line, update fullname, username & picture only if not preset already
+    if(user.twitter) {
+      result.fullname = result.fullname || user.twitter.displayName;
+      result.username = result.username || user.twitter.username;
+      result.picture = result.picture || user.twitter.picture;
+    }
+
+    if(user.facebook) {
+      result.fullname = result.fullname || user.facebook.name;
+      result.username = result.username || user.facebook.email;
+      result.picture = result.picture || `https://graph.facebook.com/${user.facebook.id}/picture?type=large`;
+    }
+
+    return result;
 
   }
 
