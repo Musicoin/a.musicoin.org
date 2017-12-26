@@ -6,7 +6,7 @@ export class JsonPromiseRouter {
   constructor(public router: any, public name: string) {
     this.promiseHandler = function handleJsonPromise(p, res, next) {
       let errorHandler = (error) => {
-        res.status(500).json(errorToJSON(error));
+        res.status(500).json(error.toString());
       };
       p.then((output) => {
           if (!output) {
