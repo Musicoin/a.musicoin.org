@@ -6,21 +6,18 @@ import * as express from 'express';
 import * as cors from 'cors';
 import * as gettext from 'express-gettext';
 import * as path from 'path';
-import * as ExpressPinoLogger from 'express-pino-logger';
 import * as bodyParser from 'body-parser';
 import * as logging  from './app/logging';
 import * as routes from "./app/routes";
 import * as session from 'express-session';
+const MongoStore = require('connect-mongo')(session);
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 import * as passportConfigurer from './config/passport';
 import * as helmet from 'helmet';
 import * as expectCt from 'expect-ct'
 import {MusicoinAPI} from './app/musicoin-api';
-import { getLogger, getMethodEndLogger } from './logger';
 
-const logger = getLogger('Server');
-const RedisStore = require('connect-redis')(session);
 const app = express();
 const flash = require('connect-flash');
 import favicon = require('serve-favicon');
@@ -43,7 +40,6 @@ ConfigUtils.loadConfig()
 
     passportConfigurer.configure(passport as any, mediaProvider, config.auth);
 
-    app.use(new ExpressPinoLogger({logger: logger}));
     app.use(cors(config.cors));
     const get_ip = require('ipware')().get_ip;
     app.use(function(req, res, next) {
@@ -70,7 +66,7 @@ ConfigUtils.loadConfig()
 
     app.use(session({
       secret: config.sessionSecret,
-      store: new RedisStore({ url: config.redis.url }),
+      store: new MongoStore({ mongooseConnection: db.connection }),
       cookie: {
         path: '/',
         domain: 'musicoin.org',
