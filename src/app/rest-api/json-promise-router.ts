@@ -1,4 +1,5 @@
 import {Promise} from 'bluebird';
+import * as errorToJSON from 'error-to-json';
 export class JsonPromiseRouter {
   promiseHandler: any;
   constructor(public router: any, public name: string){
@@ -10,6 +11,8 @@ export class JsonPromiseRouter {
           return;
         }
         res.json(output);
+      }, function errorHandler(error) {
+        res.status(500).json(errorToJSON(error));
       })
         .catch(function (err) {
           res.status(500);
