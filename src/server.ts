@@ -69,6 +69,7 @@ ConfigUtils.loadConfig()
     app.use(express.static(path.join(__dirname, 'public')));
 
     app.use(session({
+      name: 'musicoin-session',
       secret: config.sessionSecret,
       store: new RedisStore({ url: config.redis.url }),
       cookie: {
