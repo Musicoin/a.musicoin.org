@@ -21,6 +21,8 @@ import * as data2xml from 'data2xml';
 import {ReleaseManagerRouter} from "./release-manager-routes";
 import {DashboardRouter} from "./admin-dashboard-routes";
 import {RequestCache} from "./cached-request";
+import * as urlValidator from 'valid-url';
+import * as pathValidator from 'is-valid-path';
 const sendSeekable = require('send-seekable');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
@@ -2016,6 +2018,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
   app.get('/logout', function(req, res) {
     req.logout();
+    if(req.query.returnTo && ( urlValidator.isWebUri(req.query.returnTo) || pathValidator(req.query.returnTo))) {
+      return res.redirect(req.query.returnTo);
+    }
     res.redirect('/');
   });
 
