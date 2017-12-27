@@ -69,7 +69,7 @@ ConfigUtils.loadConfig()
       store: new MongoStore({ mongooseConnection: db.connection }),
       cookie: {
         path: '/',
-        domain: 'musicoin.org',
+        domain: '.musicoin.org',
         maxAge: 1000 * 60 * 24 * 30 // 30 days
       },
     }));
