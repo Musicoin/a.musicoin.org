@@ -4,6 +4,8 @@
 <head>
   <title>Musicoin</title>
   <%- include partials/page-head.ejs %>
+  <%- include('partials/track-card-metadata.ejs') %>
+  <%- include('partials/artist-card-metadata.ejs') %>
 
   <link rel="stylesheet" href="/dependencies/bootstrap-social.css">
 
@@ -16,6 +18,32 @@
     <meta name="distribution" content="global">
 
     <style>
+
+      #mainSection {
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+      }
+
+      #outer {
+          min-height: 100%;
+          display: flex;
+          flex-direction: column;
+          background-color: #eee;
+      }
+
+      #playerFrame {
+          height: 64px;
+          position: fixed;
+          bottom:0;
+          left:0;
+          width: 100%;
+      }
+
+      #playerFill {
+          min-height: 64px;
+      }
+
       body {
         word-wrap: break-word;
         background-size: cover;
@@ -238,7 +266,12 @@
     <link rel="stylesheet" href="/styles/vote.css">
 </head>
 
-<body>
+<body onload="setupPopWatch()">
+  <iframe id=playerFrame src="/player" frameborder="0" class="show-on-play"></iframe>
+  <div id="outer">
+      <div id=mainSection>
+
+
   <%- include partials/header.ejs %>
 
     <%
@@ -527,6 +560,10 @@
         </div>
       </div>
 
+    </div>
+    <div id=playerFill class="show-on-play"></div>
+</div>
+
       <script>
         var trackId = "<%=license.address%>"
         var releaseId = "<%=releaseId%>"
@@ -638,6 +675,21 @@
       <%- include partials/player-hook.ejs %>
         <%- include partials/connect-with-us.ejs %>
       <script async src="/js/vote.js" charset="utf-8"></script>
+      <script>
+          function setupPopWatch() {
+            var mainFrame = document.getElementById("mainFrame");
+            window.onpopstate = function(e){
+              if (window.location.pathname.startsWith("/nav")) {
+                mainFrame.src =  window.location.pathname.substr(4);
+              }
+            };
+          }
+
+          function showMessage(msg, type, timeout) {
+            new Message(msg, type, timeout);
+          }
+
+      </script>
 </body>
 
 </html>
