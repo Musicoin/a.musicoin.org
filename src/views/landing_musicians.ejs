@@ -83,13 +83,13 @@
                   <div class="col-md-4 col-md-push-4">
                       <div class="row">
                           <div class="col-md-12">
-                              <a href="/signup/twitter" class="twitter">Log in with Twitter</a>
+                              <a href="/auth/twitter" class="twitter">Log in with Twitter</a>
                           </div>
                           <div class="col-md-12">
-                              <a href="/signup/facebook" class="facebook">Log in with Facebook</a>
+                              <a href="/auth/facebook" class="facebook">Log in with Facebook</a>
                           </div>
                           <div class="col-md-12">
-                              <a href="/signup/google" class="google">Log in with Google</a>
+                              <a href="/auth/google" class="google">Log in with Google</a>
                           </div>
                       </div>
                   </div>
@@ -122,7 +122,7 @@
                           <div id="signInCaptcha" class="mt20"></div>
 
                           <div class="cta">
-                              <button type="submit" class="btn btn-primary" id="signInButton" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">Sign-In Now</button>
+                              <button type="submit" class="btn btn-primary" id="signInButton" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">Log-In Now</button>
                           </div>
 
                       </form>
@@ -168,11 +168,6 @@
     }
     var onloadCallback = function() {
       console.log("CAPTCHA");
-      grecaptcha.render(document.getElementById('signUpCaptcha'), {
-        'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU',
-        'theme': 'light'
-      });
-
       grecaptcha.render(document.getElementById('signInCaptcha'), {
         'theme': 'light',
         'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
