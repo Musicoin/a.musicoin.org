@@ -2088,6 +2088,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       console.log("User is already logged in, redirecting away from login page");
       return res.redirect(loginRedirect);
     }
+    if(req.query.returnTo) {
+      req.session.destinationUrl = req.query.returnTo;
+    }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
     doRender(req, res, 'landing.ejs', {
