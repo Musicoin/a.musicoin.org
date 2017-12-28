@@ -164,7 +164,7 @@
                         <label>Email</label>
                         <input type="email" class="form-control" name="userEmail" value="<%= user.genericProfile.primaryEmail %>"
                                placeholder="Email address">
-                        <% if (!user.genericProfile.primaryEmail && user.genericProfile.emailVerified) { %>
+                        <% if (user.genericProfile.primaryEmail && !user.genericProfile.emailVerified) { %>
                         <div class="send-email-verify-link-holder">
                             <span id="email-verify-link-sent">Verfication email sent to your address!</span>
                             <a href="#" id="send-email-verify-link">Send verify email</a>
