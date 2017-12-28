@@ -1,72 +1,94 @@
 import * as Redis from 'ioredis';
+import * as async from 'ioredis';
 
 let client;
 let prefix;
 
 export function initialize(config ? ) {
 
-	prefix = config.hostname;
+  prefix = config.hostname;
   client = new Redis(config.redis.url);
 
 }
 
 class RedisWrapper {
 
-	setex(key: string, timeout: number, data: object) {
+  setex(key: string, timeout: number, data: object) {
 
-		return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
-			client.setex(`${prefix}:${key}`, timeout, JSON.stringify(data), (error) => {
+      client.setex(`${prefix}:${key}`, timeout, JSON.stringify(data), (error) => {
 
-				if(error) {
-					return reject(error);
-				}
+        if (error) {
+          return reject(error);
+        }
 
-				resolve({success: true});
+        resolve({ success: true });
 
-			});
+      });
 
-		});
+    });
 
-	}
+  }
 
-	get(key: string) {
+  get(key: string) {
 
-		return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
-			client.get(`${prefix}:${key}`, (error, data) => {
+      client.get(`${prefix}:${key}`, (error, data) => {
 
-				if(error) {
-					return reject(error);
-				}
+        if (error) {
+          return reject(error);
+        }
 
-				resolve(this.toObject(data));
+        resolve(this.toObject(data));
 
-			});
+      });
 
-		});
+    });
 
-	}
+  }
 
-	private toObject(value) {
+  del(keys: string[]) {
 
-		if(typeof value === 'undefined') {
-			return null;
-		}
+    return new Promise((resolve, reject) => {
 
-		if(typeof value === 'string' && !value.trim() ) {
-			return null;
-		}
+      async.each(keys, (key, eachCallback) => {
+        
+        client.del(`${prefix}:${key}`, eachCallback);
 
-		try {
-			return JSON.parse(value);
-		}
-		catch(ex) {
-			// we know what the error is.
-			return null;
-		}
+      }, (error) => {
 
-	}
+        if (error) {
+          return reject(error);
+        }
+
+        resolve({ success: true });
+
+      });
+
+    });
+
+  }
+
+  private toObject(value) {
+
+    if (typeof value === 'undefined') {
+      return null;
+    }
+
+    if (typeof value === 'string' && !value.trim()) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(value);
+    } catch (ex) {
+      // we know what the error is.
+      return null;
+    }
+
+  }
 
 }
 

@@ -182,13 +182,13 @@ export default class UserService implements ServiceBase {
       return methodEndLogger(new MusicoinError('Invalid code'));
     }
 
-    return redisWrapper.get(options.code)
+    return redisWrapper.get(`EMAIL_VERIFICATION_CODE:${options.code}`)
       .then((data: { _id: string, primaryEmail: string }) => {
         let query = { _id: toObjectId(data._id), primaryEmail: data.primaryEmail };
         let updates = { $set: { emailVerified: true } };
-        let result = { success: true };
-        return User.update(query, updates).then(() => result)
-      }).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+        return User.update(query, updates);
+      })
+      .then(() => redisWrapper.del(`EMAIL_VERIFICATION_CODE:${options.code}`)).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
 
   }
 
