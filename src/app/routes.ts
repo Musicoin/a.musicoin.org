@@ -1486,7 +1486,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         formattedTotalUSD: "$" + _formatNumber((totalPlays + totalTips) * exchangeRate.usd, 2)
       };
       output.exchangeRate = exchangeRate;
-      return doRender(req, res, "artist.ejs", output);
+      res.render("artist.ejs", output);
     })
   });
 
