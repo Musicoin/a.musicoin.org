@@ -8,6 +8,11 @@ const FacebookStrategy = require('passport-facebook').Strategy
 
 // load up the user model
 const User = require('../app/models/user');
+
+import {getLogger, getMethodEndLogger} from '../logger';
+import {user as userService} from '../app/rest-api/services';
+
+const logger = getLogger('Passport');
 const InviteRequest = require('../app/models/invite-request');
 const defaultProfile = {
   artistName: "",
@@ -49,8 +54,9 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     User.findById(id, function (err, user) {
       if (err) return done(err, null);
       if (user) {
-        user.profile = Object.assign({}, defaultProfile, user.draftProfile);
+        user.profile = userService.formatUserObject(user);
       }
+      logger.debug({method: 'deserializeUser', user: user});
       done(null, user);
     });
   });
