@@ -342,12 +342,12 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
           if (!other) {
             user[authProvider] = localProfile;
 
-            if (typeof localProfile.email === 'string' && !localProfile.email.trim()) {
+            if (typeof localProfile.email === 'string' && localProfile.email.trim()) {
               // if email is in social profile, then it is verified for us.
               user.primaryEmail = localProfile.email;
               user.emailVerified = true;
             }
-            logger.info(`Saving user`, user);
+            logger.info(`Saving user`, user, localProfile);
             return user.save(function(err) {
               if (err)
                 return done(err);
@@ -433,12 +433,12 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
             user.invite.claimed = true;
             user[authProvider] = localProfile;
 
-            if (typeof localProfile.email === 'string' && !localProfile.email.trim()) {
+            if (typeof localProfile.email === 'string' && localProfile.email.trim()) {
               // if email is in social profile, then it is verified for us.
               user.primaryEmail = localProfile.email;
               user.emailVerified = true;
             }
-            logger.info(`Saving user`, user);
+            logger.info(`Saving user`, user, localProfile);
             return user.save(function(err) {
               if (err)
                 return done(err);
