@@ -62,7 +62,7 @@ export default class UserService implements ServiceBase {
 
   getUser(options: {_id: object}) {
 
-    let methodEndLogger = getMethodEndLogger(logger, '#getUserById', options);
+    let methodEndLogger = getMethodEndLogger(logger, '#getUser', options);
 
     if (!options || typeof options !== 'object') {
       return methodEndLogger(new MusicoinError('Invalid input parameters'));
@@ -126,7 +126,35 @@ export default class UserService implements ServiceBase {
       result.picture = result.picture || `https://graph.facebook.com/${user.facebook.id}/picture?type=large`;
     }
 
-    return result;
+    return Object.assign({}, result, user.draftProfile);
+
+  }
+
+  sendEmailAddressVerificationEmail(options: {_id: object}) {
+
+    let methodEndLogger = getMethodEndLogger(logger, '#sendEmailAddressVerificationEmail', options);
+
+    if (!options || typeof options !== 'object') {
+      return methodEndLogger(new MusicoinError('Invalid input parameters'));
+    }
+
+    if (!options._id) {
+      return methodEndLogger(new MusicoinError('Invalid user id'));
+    }
+
+    let query = { _id: options._id};
+
+    return User.findOne(query, {primaryEmail: 1, emailVerified: 1})
+      .then((user) => {
+
+        if(!user) {
+          return Promise.reject(new MusicoinError('User not found!'));
+        }
+
+        // if()
+
+      });
+
 
   }
 
