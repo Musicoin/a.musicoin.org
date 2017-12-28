@@ -2,7 +2,7 @@ import ServiceBase from './service-base';
 import MusicoinError from '../../../error';
 import { toObjectId } from '../../../db';
 import { getLogger, getMethodEndLogger } from '../../../logger';
-import { getClient as getRedisClient } from '../../../redis';
+import { wrapper as redisWrapper } from '../../../redis';
 import serviceEventEmitter from '../../rest-api/eventing';
 import { SEND_EMAIL } from '../../rest-api/eventing/events';
 
@@ -163,19 +163,7 @@ export default class UserService implements ServiceBase {
 
         serviceEventEmitter.emit(SEND_EMAIL, payload);
 
-        return new Promise((resolve, reject) => {
-
-          getRedisClient().setex(`EMAIL_VERIFICATION_CODE:${payload.data.code}`, user, config.emailVerificationLinkTimeout, (error) => {
-            
-            if(error) {
-              return reject(error);
-            }
-            
-            resolve({success: true});
-
-          });
-
-        });
+        return redisWrapper.setex(`EMAIL_VERIFICATION_CODE:${payload.data.code}`, user, config.emailVerificationLinkTimeout);
 
       }).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
 
@@ -194,26 +182,8 @@ export default class UserService implements ServiceBase {
       return methodEndLogger(new MusicoinError('Invalid code'));
     }
 
-    let promise = new Promise((resolve, reject) => {
-
-      getRedisClient().get(options.code, (error, data) => {
-
-        if (error) {
-          return reject(error);
-        }
-
-        if (!data) {
-          return reject(new MusicoinError('Already expired'));
-        }
-
-        return resolve(data);
-
-      });
-
-    });
-
-    return promise
-      .then((data: {_id: string}) => {
+    return redisWrapper.get(options.code)
+      .then((data: { _id: string }) => {
         let query = { _id: toObjectId(data._id) };
         let updates = { $set: { emailVerified: true } };
         let result = { success: true };
