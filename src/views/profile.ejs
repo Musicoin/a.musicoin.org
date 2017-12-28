@@ -161,6 +161,17 @@
                                placeholder="this can be a username or band name">
                     </div>
                     <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" name="userEmail" value="<%= user.profile.primaryEmail %>"
+                               placeholder="Email address">
+                        <% if (!user.profile.primaryEmail && user.profile.emailVerified) { %>
+                        <div class="send-email-verify-link-holder">
+                            <span id="email-verify-link-sent">Verfication email sent to your address!</span>
+                            <a href="#" id="send-email-verify-link">Send verify email</a>
+                        </div>
+                        <% } %>
+                    </div>
+                    <div class="form-group">
                         <label>Description</label>
                         <textarea class="form-control" name="description"
                                   placeholder="let people know who you are"><%= user.profile.description %></textarea>
