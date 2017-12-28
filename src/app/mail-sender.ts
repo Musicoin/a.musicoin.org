@@ -32,7 +32,7 @@ export class MailSender {
 
     let methodEndLogger = getMethodEndLogger(logger, 'handleSendEmailEvent', payload);
 
-    return this.sendTemplate(`${appDir}/view/${payload.template}`, payload.recipient, payload.subject, payload.data).then(methodEndLogger, methodEndLogger);
+    return this.sendTemplate(`${appDir}/views/${payload.template}`, payload.recipient, payload.subject, payload.data).then(methodEndLogger, methodEndLogger);
 
   }
 
