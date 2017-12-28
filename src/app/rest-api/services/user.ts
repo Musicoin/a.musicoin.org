@@ -90,29 +90,22 @@ export default class UserService implements ServiceBase {
     // Private information of an user, only goes out with for the same user credentials.
 
     let result = {
-      _id: null,
-      isMusician: null,
-      isListener: null,
-      followers: null,
-      tips: null,
+      _id: user.id,
+      isMusician: user.isMusician !== 'listener',
+      isListener: user.isMusician === 'listener',
+      followers: user.followerCount,
+      tips: user.directTipCount,
       fullname: null,
-      username: null,
+      username: user.primaryEmail,
       picture: null,
-      freePlaysRemaining: null,
-      primaryEmail: null,
-      emailVerified: false
+      freePlaysRemaining: user.freePlaysRemaining,
+      primaryEmail: user.primaryEmail,
+      emailVerified: user.emailVerified
     };
-
-    result._id = user.id;
-    result.isMusician = user.isMusician !== 'listener';
-    result.isListener = user.isMusician === 'listener';
-    result.followers = user.followerCount;
-    result.tips = user.directTipCount;
-    result.freePlaysRemaining = user.freePlaysRemaining;
 
     if(user.google) {
       result.fullname = user.google.name;
-      result.username = user.google.email;
+      result.username = result.username || user.google.email;
       result.picture = user.google.picture ? user.google.picture : null;
     }
     // post this line, update fullname, username & picture only if not preset already
