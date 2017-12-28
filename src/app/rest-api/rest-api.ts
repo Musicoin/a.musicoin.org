@@ -81,7 +81,7 @@ export class MusicoinRestAPI {
         });
     });
 
-    jsonRouter.get('/user/send-email-address-verification-email', (req) => jsonAPI.userService.sendEmailAddressVerificationEmail(req.user));
+    jsonRouter.post('/user/send-email-address-verification-email', (req) => jsonAPI.userService.sendEmailAddressVerificationEmail(req.user));
 
     jsonRouter.get('/profile/me', (req) => jsonAPI.userService.getUser(req.user));
     jsonRouter.get('/profile/:address', (req) => jsonAPI.getArtist(req.params.address, true, true));
