@@ -12,11 +12,11 @@ export function initialize(config ? ) {
 
 class RedisWrapper {
 
-	setex(key: string, data: object, timeout: number) {
+	setex(key: string, timeout: number, data: object) {
 
 		return new Promise((resolve, reject) => {
 
-			client.setex(`${prefix}:${key}`, JSON.stringify(data), timeout, (error) => {
+			client.setex(`${prefix}:${key}`, timeout, JSON.stringify(data), (error) => {
 
 				if(error) {
 					return reject(error);

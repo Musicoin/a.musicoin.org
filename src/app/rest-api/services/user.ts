@@ -163,7 +163,7 @@ export default class UserService implements ServiceBase {
 
         serviceEventEmitter.emit(SEND_EMAIL, payload);
 
-        return redisWrapper.setex(`EMAIL_VERIFICATION_CODE:${payload.data.code}`, user, config.emailVerificationLinkTimeout);
+        return redisWrapper.setex(`EMAIL_VERIFICATION_CODE:${payload.data.code}`, config.emailVerificationLinkTimeout, user);
 
       }).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
 
