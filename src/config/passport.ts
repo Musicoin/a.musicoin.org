@@ -341,6 +341,13 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         .then(other => {
           if (!other) {
             user[authProvider] = localProfile;
+            
+            if (typeof localProfile.email === 'string' && !localProfile.email.trim()) {
+              // if email is in social profile, then it is verified for us.
+              user.primaryEmail = localProfile.email;
+              user.emailVerified = true;
+            }
+
             return user.save(function(err) {
               if (err)
                 return done(err);
