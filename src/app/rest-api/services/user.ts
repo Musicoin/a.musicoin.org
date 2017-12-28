@@ -221,7 +221,9 @@ export default class UserService implements ServiceBase {
       if (user) {
         return result;
       }
-      return User.update({ _id: options._id }, { $set: { primaryEmail: options.primaryEmail, emailVerified: false } }).then(() => result)
+      return User.update({ _id: options._id }, { $set: { primaryEmail: options.primaryEmail, emailVerified: false } })
+      .then(() => this.sendEmailAddressVerificationEmail({_id: options._id}))
+      .then(() => result);
     }).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
 
   }
