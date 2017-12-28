@@ -183,8 +183,8 @@ export default class UserService implements ServiceBase {
     }
 
     return redisWrapper.get(options.code)
-      .then((data: { _id: string }) => {
-        let query = { _id: toObjectId(data._id) };
+      .then((data: { _id: string, primaryEmail: string }) => {
+        let query = { _id: toObjectId(data._id), primaryEmail: data.primaryEmail };
         let updates = { $set: { emailVerified: true } };
         let result = { success: true };
         return User.update(query, updates).then(() => result)

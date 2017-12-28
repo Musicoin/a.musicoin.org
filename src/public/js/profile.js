@@ -8,7 +8,7 @@ $(function onDocumentReady() {
 			if(data.alreadyVerified) {
 				return window.location.reload();
 			}
-			else if(data.sent) {
+			else if(data.success) {
 				$('#send-email-verify-link').hide();
 				$('#email-verify-link-sent').show();
 			}
