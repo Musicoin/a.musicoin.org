@@ -57,7 +57,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         user.profile = Object.assign({}, defaultProfile, user.draftProfile);
         user.genericProfile = userService.formatUserObject(user);
       }
-      logger.debug({ method: 'deserializeUser', user: user });
+      logger.info({ method: 'deserializeUser', user: user });
       done(null, user);
     });
   });
