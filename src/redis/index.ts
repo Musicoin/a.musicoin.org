@@ -1,5 +1,5 @@
 import * as Redis from 'ioredis';
-import * as async from 'ioredis';
+import * as async from 'async';
 
 let client;
 let prefix;
