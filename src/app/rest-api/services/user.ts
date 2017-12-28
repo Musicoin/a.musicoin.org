@@ -98,7 +98,9 @@ export default class UserService implements ServiceBase {
       fullname: null,
       username: null,
       picture: null,
-      freePlaysRemaining: null
+      freePlaysRemaining: null,
+      primaryEmail: null,
+      emailVerified: false
     };
 
     result._id = user.id;
@@ -126,7 +128,7 @@ export default class UserService implements ServiceBase {
       result.picture = result.picture || `https://graph.facebook.com/${user.facebook.id}/picture?type=large`;
     }
 
-    return Object.assign({}, result, user.draftProfile);
+    return result;
 
   }
 
@@ -150,8 +152,6 @@ export default class UserService implements ServiceBase {
         if(!user) {
           return Promise.reject(new MusicoinError('User not found!'));
         }
-
-        // if()
 
       });
 
