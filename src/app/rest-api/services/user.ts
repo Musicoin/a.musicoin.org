@@ -188,7 +188,7 @@ export default class UserService implements ServiceBase {
         let updates = { $set: { emailVerified: true } };
         return User.update(query, updates);
       })
-      .then(() => redisWrapper.del(`EMAIL_VERIFICATION_CODE:${options.code}`)).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+      .then(() => redisWrapper.del([`EMAIL_VERIFICATION_CODE:${options.code}`])).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
 
   }
 
