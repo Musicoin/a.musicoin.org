@@ -75,7 +75,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     function(req, email, password, done) { // callback with email and password from our form
 
       if (!req.isAuthenticated()) {
-        console.log(`Anonymous attempt to use admin tools: ip=${req.ip}, session=${req.session.id}`);
+        logger.info(`Anonymous attempt to use admin tools: ip=${req.ip}, session=${req.session.id}`);
         return done(null, false, req.flash('loginMessage', 'You must be logged in to perform this action'));
       }
 
@@ -84,7 +84,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         const name = req.user.draftProfile && req.user.draftProfile.artistName ?
           `${req.user.draftProfile.artistName} (${req.user.profileAddress})` :
           req.user.profileAddress;
-        console.log(`Unauthorized attempt to use admin tools: ip=${req.ip}, session=${req.session.id}, user._id=${req.user._id}, user=${name}`);
+        logger.info(`Unauthorized attempt to use admin tools: ip=${req.ip}, session=${req.session.id}, user._id=${req.user._id}, user=${name}`);
         return done(null, false, req.flash('loginMessage', 'You must be an administrator to perform this action'));
       }
 
@@ -298,7 +298,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
             return _newUser;
           })
           .catch(err => {
-            console.log("Failed to create new user from reusable invite code: " + err);
+            logger.info("Failed to create new user from reusable invite code: " + err);
             return null;
           })
       })
@@ -316,7 +316,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     };
     return newUser.save()
       .catch(err => {
-        console.log("Failed to create new user from reusable invite code: " + err);
+        logger.info("Failed to create new user from reusable invite code: " + err);
         return null;
       })
   }
@@ -327,7 +327,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     done,
     validation ? ) {
 
-    console.log(`Handling login request: ip=${req.ip}, session=${req.session.id}, auth=${authProvider}, id=${localProfile.id}`);
+    logger.info(`Handling login request: ip=${req.ip}, session=${req.session.id}, auth=${authProvider}, id=${localProfile.id}`);
     // if the user is already logged in, see if the account can be linked
     if (req.user) {
       const user = req.user;
@@ -341,13 +341,13 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         .then(other => {
           if (!other) {
             user[authProvider] = localProfile;
-            
+
             if (typeof localProfile.email === 'string' && !localProfile.email.trim()) {
               // if email is in social profile, then it is verified for us.
               user.primaryEmail = localProfile.email;
               user.emailVerified = true;
             }
-
+            logger.info(`Saving user`, user);
             return user.save(function(err) {
               if (err)
                 return done(err);
@@ -355,12 +355,12 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
               return done(null, user);
             });
           } else {
-            console.log("cannot link account that is already linked to another account! user.id: " + req.user._id + ", other.id: " + other._id);
+            logger.info("cannot link account that is already linked to another account! user.id: " + req.user._id + ", other.id: " + other._id);
             return done(null, false, req.flash('loginMessage', 'This address is already linked to another account'));
           }
         })
         .catch(function(err) {
-          console.log(`Failed while trying to link an account ${authProvider}: ${err}`);
+          logger.info(`Failed while trying to link an account ${authProvider}: ${err}`);
           done(err);
         });
     } else {
@@ -438,7 +438,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
               user.primaryEmail = localProfile.email;
               user.emailVerified = true;
             }
-
+            logger.info(`Saving user`, user);
             return user.save(function(err) {
               if (err)
                 return done(err);
@@ -454,13 +454,13 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         })
         .catch(function(err) {
           if (err instanceof LoginFailed) {
-            console.log(`Login attempt failed due to invalid password ${authProvider}: ${err}`);
+            logger.info(`Login attempt failed due to invalid password ${authProvider}: ${err}`);
             return done(null, false, req.flash('loginMessage', 'User account not found or your password was incorrect.  Click "Sign up" if you need to create a new account.'));
           } else if (err instanceof AccountDisabled) {
-            console.log(`Login attempt failed because the account is locked ${authProvider}: ${err}`);
+            logger.info(`Login attempt failed because the account is locked ${authProvider}: ${err}`);
             return done(null, false, req.flash('loginMessage', 'This account has been disabled.'));
           } else {
-            console.log(`Failed while trying to login with ${authProvider}: ${err}`);
+            logger.info(`Failed while trying to login with ${authProvider}: ${err}`);
             done(err);
           }
         });
