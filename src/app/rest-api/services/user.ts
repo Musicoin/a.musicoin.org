@@ -103,19 +103,19 @@ export default class UserService implements ServiceBase {
       emailVerified: user.emailVerified
     };
 
-    if(user.google) {
+    if(user.google && Object.keys(user.google).length > 0) {
       result.fullname = user.google.name;
       result.username = result.username || user.google.email;
       result.picture = user.google.picture ? user.google.picture : null;
     }
     // post this line, update fullname, username & picture only if not preset already
-    if(user.twitter) {
+    if(user.twitter && Object.keys(user.twitter).length > 0) {
       result.fullname = result.fullname || user.twitter.displayName;
       result.username = result.username || user.twitter.username;
       result.picture = result.picture || user.twitter.picture;
     }
 
-    if(user.facebook) {
+    if(user.facebook && Object.keys(user.facebook).length > 0) {
       result.fullname = result.fullname || user.facebook.name;
       result.username = result.username || user.facebook.email;
       result.picture = result.picture || `https://graph.facebook.com/${user.facebook.id}/picture?type=large`;
