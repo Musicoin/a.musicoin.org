@@ -23,6 +23,9 @@ import {DashboardRouter} from "./admin-dashboard-routes";
 import {RequestCache} from "./cached-request";
 import * as urlValidator from 'valid-url';
 import * as pathValidator from 'is-valid-path';
+import {getLogger, getMethodEndLogger} from '../logger';
+
+const logger = getLogger('Routes');
 const sendSeekable = require('send-seekable');
 const Playback = require('../app/models/playback');
 const Release = require('../app/models/release');
@@ -1837,14 +1840,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.post('/profile/save', isLoggedIn, function(req, res) {
     const form = new Formidable.IncomingForm();
     form.parse(req, (err, fields: any, files: any) => {
-      console.log(`Fields: ${JSON.stringify(fields)}`);
-      console.log(`Files: ${JSON.stringify(files)}`);
 
       // if somehow the user when to the new user page, but already has a profile,
       // just skip this step
       const isNewUserPage = fields["isNewUserPage"] == "true";
       if (req.user.profileAddress && isNewUserPage) {
-        console.log("Not saving from new user page, since the user already has a profile");
         return res.redirect("/profile");
       }
 
@@ -1873,7 +1873,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const genres = fields.genres || "";
       const regions = fields.regions || "";
 
-      Promise.join(uploadImage, uploadHeroImage, (imageUrl, heroImageUrl) => {
+      const tryUpdateEmailAddress = jsonAPI.userService.tryUpdateEmailAddress({_id: req.user._id, primaryEmail: fields.primaryEmail});
+
+      Promise.join(uploadImage, uploadHeroImage, tryUpdateEmailAddress, (imageUrl, heroImageUrl) => {
         req.user.draftProfile = {
           artistName: fields.artistName,
           description: fields.description,
@@ -1884,7 +1886,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           regions: regions.split(",").map(s => s.trim()).filter(s => s),
           version: version + 1
         };
-        console.log(`Saving updated profile to database...`);
         return req.user.save();
       })
         .then(() => {
@@ -1893,18 +1894,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           return Promise.join(d, s, (descriptionUrl, socialUrl) => {
             return musicoinApi.publishProfile(req.user.profileAddress, fields.artistName, descriptionUrl, profile.ipfsImageUrl, socialUrl)
               .then((tx) => {
-                console.log(`Transaction submitted! Profile tx : ${tx}`);
                 req.user.pendingTx = tx;
                 req.user.updatePending = true;
                 req.user.hideProfile = !!fields.hideProfile;
-                console.log(`Saving profile tx info to the database...`);
                 req.user.save(function(err) {
                   if (err) {
-                    console.log(`Saving profile to database failed! ${err}`);
                     res.send(500);
                   }
                   else {
-                    console.log(`Saving profile to database ok!`);
                     if (isNewUserPage) {
                       return res.redirect(loginRedirect);
                     }
@@ -1915,7 +1912,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           })
         })
         .catch((err) => {
-          console.log("Failed to update user profile: " + err);
+          logger.error({path: req.originalUrl, method: 'POST', error: err.toString()});
           res.redirect("/profile?profileUpdateError=true");
         })
     });
@@ -2250,6 +2247,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
         return doRender(req, res, "password-reset.ejs", { code: code });
       })
+  });
+
+  app.get('/verify-email/:code', (req, res) => {
+    // if the code is expired, take them back to the login
+    const code = req.params.code;
+    
+    jsonAPI.userService.verifyEmail(req.params).then(() => res.redirect('/'), (error) => {
+      res.render('mail/email-verification-link-expired.ejs', {});
+    }).catch((exception) => {
+      logger.error({path: req.originalUrl, error: exception.toString()});
+      res.render('error.ejs', {});
+    });
+
   });
 
   app.post('/login/reset', (req, res) => {

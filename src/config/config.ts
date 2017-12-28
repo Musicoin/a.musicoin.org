@@ -1,8 +1,16 @@
 const request = require('request');
 
+let appConfig = null;
+
 const loadConfig = function(argsv) {
+
+  if(appConfig) {
+    return Promise.resolve(appConfig);
+  }
+
   return getDefaultKeyValueConfig()
     .then(config => {
+
       const cmdLineOverrides = convertArgsToKeyValuePairs(argsv);
 
       // Override defaults
@@ -10,12 +18,20 @@ const loadConfig = function(argsv) {
 
       // Allow computed values to be overridden directly from the command line
       Object.assign(config, cmdLineOverrides);
-      return getStructuredConfig(config);
+
+      appConfig = getStructuredConfig(config);
+
+      return appConfig;
     })
 };
 
+function getConfig() {
+  return appConfig;
+}
+
 function getStructuredConfig(keyValueConfig) {
   return {
+    hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'staging.musicoin.org',
     port: keyValueConfig.port,
     publicPagesEnabled: keyValueConfig.publicPagesEnabled,
     sessionSecret: keyValueConfig.sessionSecret,
@@ -181,7 +197,8 @@ function getStructuredConfig(keyValueConfig) {
     },
     cors: {
       origin: ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org']
-    }
+    },
+    emailVerificationLinkTimeout: 60 * 60 * 24 * 3 // in seconds, for redis
   };
 }
 
@@ -271,3 +288,4 @@ function getDefaultKeyValueConfig() {
 }
 
 module.exports.loadConfig = loadConfig;
+module.exports.getConfig = getConfig;

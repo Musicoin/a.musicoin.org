@@ -41,6 +41,8 @@
     "passport-twitter": "*",
     "pino": "^4.10.2",
     "qr-image": "*",
+    "redis": "^2.8.0",
+    "redis-jsonify": "^1.0.1",
     "request": "*",
     "send-seekable": "*",
     "sendgrid": "*",

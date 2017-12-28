@@ -18,6 +18,7 @@ import * as helmet from 'helmet';
 import * as expectCt from 'expect-ct'
 import {MusicoinAPI} from './app/musicoin-api';
 import { getLogger, getMethodEndLogger } from './logger';
+import * as redis from './redis';
 
 const logger = getLogger('Server');
 const RedisStore = require('connect-redis')(session);
@@ -31,6 +32,8 @@ ConfigUtils.loadConfig()
   .then(config => {
 
     const db = require('./db').initialize(app, config);
+    redis.initialize(config);
+
     const musicoinApi = new MusicoinAPI(config.musicoinApi);
     const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
     const isDevEnvironment = app.get('env') === 'development';
