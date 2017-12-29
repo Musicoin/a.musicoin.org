@@ -1484,6 +1484,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         formattedTotalUSD: "$" + _formatNumber((totalPlays + totalTips) * exchangeRate.usd, 2)
       };
       output.exchangeRate = exchangeRate;
+      output.isAuthenticated = req.isAuthenticated();
+      output.user = req.user || {};
       res.render("artist.ejs", output);
     })
   });
@@ -1520,6 +1522,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const tips = release.directTipCount || 0;
         const usd = exchangeRate.success ? "$" + _formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
         res.render("track.ejs", {
+          isAuthenticated: req.isAuthenticated(),
           artist: response.artist,
           license: license,
           contributors: resolvedAddresses,
