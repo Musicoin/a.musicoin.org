@@ -2562,8 +2562,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       user.accountLocked == false;
     }
 
-    if (!user || user.accountLocked) {
-      logger.info({method: '#getPlaybackEligibility', user: req.user, anonuser: req.anonymousUser, authenticated: req.isAuthenticated()});
+    if (user.accountLocked) {
       console.log("Blocking playback for locked user.");
       return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request (code: 2)" });
     }
