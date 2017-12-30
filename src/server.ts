@@ -78,7 +78,7 @@ ConfigUtils.loadConfig()
       cookie: {
         path: '/',
         domain: '.musicoin.org',
-        maxAge: ONE_YEAR
+        maxAge: 1000 * 60 * 24 * 30 // 30 days
       },
     }));
 
