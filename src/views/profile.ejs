@@ -129,11 +129,6 @@
         .wallet-action-bar {
             justify-content: space-between;
         }
-
-        #email-verify-link-sent {
-            display: none;
-        }
-
     </style>
 </head>
 <body>
@@ -164,17 +159,6 @@
                         <label>Name</label>
                         <input type="text" class="form-control" name="artistName" value="<%= user.profile.artistName %>"
                                placeholder="this can be a username or band name">
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="form-control" name="primaryEmail" value="<%= user.genericProfile.primaryEmail %>"
-                               placeholder="Email address">
-                        <% if (user.genericProfile.primaryEmail && !user.genericProfile.emailVerified) { %>
-                        <div class="send-email-verify-link-holder">
-                            <span id="email-verify-link-sent">Verfication email sent to your address! Please check your inbox!</span>
-                            <a href="#" id="send-email-verify-link">Send verify email</a>
-                        </div>
-                        <% } %>
                     </div>
                     <div class="form-group">
                         <label>Description</label>
@@ -563,8 +547,6 @@
 <%- include partials/player-hook.ejs %>
 <%- include partials/connect-with-us.ejs %>
 </body>
-<script type="text/javascript" src="/js/musicoin.js"></script>
-<script type="text/javascript" src="/js/profile.js"></script>
 <script>
   (function ($) {
     // prevent dynamically created input elements from submitting the form
