@@ -10,7 +10,6 @@
     "chai-http": "*",
     "connect-flash": "*",
     "connect-mongo": "*",
-    "connect-redis": "^3.3.2",
     "cookie-parser": "*",
     "cors": "^2.8.4",
     "data2xml": "^1.2.5",
@@ -18,14 +17,11 @@
     "error-to-json": "^1.1.0",
     "express": "*",
     "express-gettext": "*",
-    "express-pino-logger": "^3.0.1",
     "express-session": "*",
     "feed": "*",
     "formidable": "*",
     "helmet": "*",
-    "ioredis": "^3.2.2",
     "ipware": "*",
-    "is-valid-path": "^0.1.1",
     "letsencrypt-express": "*",
     "logrotator": "*",
     "moment": "*",
@@ -50,8 +46,7 @@
     "tmp": "*",
     "tsc": "*",
     "typescript": "*",
-    "uuid": "*",
-    "valid-url": "^1.0.9"
+    "uuid": "*"
   },
   "devDependencies": {
     "@types/express": "*",

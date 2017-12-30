@@ -6,7 +6,7 @@ const ErrorClass = Error;
 const logger = pino();
 
 export function getLogger(module) {
-  return logger.child({ module: module, logLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug' });
+  return logger.child({ module: module });
 };
 
 export function getMethodEndLogger(logger, method, input) {
