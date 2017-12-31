@@ -1899,6 +1899,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 req.user.hideProfile = !!fields.hideProfile;
                 req.user.save(function(err) {
                   if (err) {
+                    logger.error({message: 'Error while saving user pending transaction', user: req.user, error: err.toString()});
                     res.send(500);
                   }
                   else {
@@ -1912,7 +1913,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           })
         })
         .catch((err) => {
-          logger.error({path: req.originalUrl, method: 'POST', error: err.toString()});
+          logger.error({path: req.originalUrl, method: 'POST', error: err.toString(), message: 'Failed to update user profile'});
           res.redirect("/profile?profileUpdateError=true");
         })
     });
