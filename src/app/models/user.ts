@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt   = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt-nodejs');
 
 // define the schema for our user model
 const userSchema = mongoose.Schema({
@@ -149,6 +149,18 @@ const userSchema = mongoose.Schema({
   voteMultiplier: {
     type: Number,
     default: 1
+  },
+  primaryEmail: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    // unique: true,
+    // required: 'Email address is required',
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false
   }
 });
 
