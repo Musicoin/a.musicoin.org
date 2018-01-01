@@ -51,13 +51,12 @@
     "tsc": "*",
     "typescript": "*",
     "uuid": "*",
-    "valid-url": "^1.0.9",
-    "validator": "^9.2.0"
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "@types/express": "*",
     "@types/formidable": "*",
-    "@types/node": "*",
+    "@types/node": "^8.5.2",
     "@types/passport": "*",
     "chai": "*",
     "chai-http": "*",
