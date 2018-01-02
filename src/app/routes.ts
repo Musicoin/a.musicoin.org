@@ -1349,7 +1349,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/peerverif/a7565fbd8b81b42031fd893db7645856f9d6f377a188e95423702e804c7b64b1', (req, res) => {
-    const length = 5000;
+    const length = 2000;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
@@ -2253,7 +2253,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/verify-email/:code', (req, res) => {
     // if the code is expired, take them back to the login
     const code = req.params.code;
-    
+
     jsonAPI.userService.verifyEmail(req.params).then(() => res.redirect('/'), (error) => {
       res.render('mail/email-verification-link-expired.ejs', {});
     }).catch((exception) => {
