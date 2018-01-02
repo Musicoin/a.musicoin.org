@@ -1349,7 +1349,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/peerverif/a7565fbd8b81b42031fd893db7645856f9d6f377a188e95423702e804c7b64b1', (req, res) => {
-    const length = 2000;
+    const length = 1000;
     const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
     const previous = Math.max(0, start - length);
     const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
