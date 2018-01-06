@@ -107,7 +107,8 @@ export default class UserService implements ServiceBase {
       picture: null,
       freePlaysRemaining: user.freePlaysRemaining,
       primaryEmail: user.primaryEmail,
-      emailVerified: user.emailVerified
+      emailVerified: user.emailVerified,
+      profileAddress: user.profileAddress
     };
 
     if (user.google && Object.keys(user.google).length > 0) {
