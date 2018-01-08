@@ -1,11 +1,5 @@
-var opbeat;
 if(process.env.NODE_ENV === 'production') {
-  // require('newrelic');
-  opbeat = require('opbeat').start({
-    appId: '38a2acb379',
-    organizationId: '45a67828c501493e8a0417c9fa2a2374',
-    secretToken: '6efc9709a4e253cc0551af613627540190828ae2'
-  });
+  require('newrelic');
 }
 
 import * as express from 'express';
@@ -91,8 +85,6 @@ ConfigUtils.loadConfig()
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(flash());
-    
-    app.use(opbeat.middleware.express());
 
     routes.configure(app, passport, musicoinApi, mediaProvider, config);
     app.use(express.static(path.join(__dirname, 'overview')));
