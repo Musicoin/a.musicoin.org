@@ -46,7 +46,7 @@ ConfigUtils.loadConfig()
 
     passportConfigurer.configure(passport as any, mediaProvider, config.auth);
 
-    app.use(new ExpressPinoLogger({logger: logger}));
+    // app.use(new ExpressPinoLogger({logger: logger}));
     app.use(cors(config.cors));
     const get_ip = require('ipware')().get_ip;
     app.use(function(req, res, next) {
