@@ -30,7 +30,7 @@
                 <div class="text-center text-large lead">For a limited time, <br>Musicoin.org is paying for <u>each and every play</u></div>
                 <div class="dynamic-element free-play-count"
                      id="de-musicoin-balance"
-                     de-refresh-period="10"
+                     de-refresh-period="5"
                      de-refresh-offset="0"
                      de-url="/elements/musicoin-balance">
                     <%- include partials/musicoin-balance.ejs %>
@@ -46,8 +46,8 @@
                      data-behavior="chat-message-area"
                      style="min-height: 180px"
                      id="de-track-messages"
-                     de-refresh-period="10"
-                     de-refresh-offset="10"
+                     de-refresh-period="5"
+                     de-refresh-offset="5"
                      de-showtrack="true"
                      de-limit=5
                      de-url="/elements/track-messages">
@@ -67,7 +67,7 @@
                 </div>
                 <div class="dynamic-element"
                      id="de-featured-artists"
-                     de-refresh-period="60"
+                     de-refresh-period="30"
                      de-refresh-offset="0"
                      de-url="/elements/featured-artists">
                     <%- include('partials/featured-artist-list.ejs', {artists: featuredArtists}) %>
@@ -87,8 +87,8 @@
                 <div class="dynamic-element"
                      style="min-height: 180px"
                      id="de-new-releases"
-                     de-refresh-period="60"
-                     de-refresh-offset="10"
+                     de-refresh-period="30"
+                     de-refresh-offset="5"
                      de-url="/elements/new-releases">
                     <%- include partials/track-list.ejs %>
                 </div>
@@ -104,8 +104,8 @@
                 </div>
                 <div class="dynamic-element"
                      id="de-recently-played"
-                     de-refresh-period="60"
-                     de-refresh-offset="20"
+                     de-refresh-period="30"
+                     de-refresh-offset="10"
                      de-url="/elements/recently-played">
                     <%- include('partials/track-list.ejs', {releases: recent}) %>
                 </div>
@@ -122,8 +122,8 @@
                 <div class="dynamic-element"
                      style="min-height: 180px"
                      id="de-top-played"
-                     de-refresh-period="60"
-                     de-refresh-offset="30"
+                     de-refresh-period="30"
+                     de-refresh-offset="15"
                      de-url="/elements/top-played">
                     <%- include('partials/track-list.ejs', {releases: topPlayed}) %>
                 </div>
@@ -141,8 +141,8 @@
                 </div>
                 <div class="dynamic-element"
                      id="de-new-artists"
-                     de-refresh-period="60"
-                     de-refresh-offset="40"
+                     de-refresh-period="30"
+                     de-refresh-offset="20"
                      de-iconSize="small"
                      de-url="/elements/new-artists">
                     <%- include('partials/featured-artist-list.ejs', {artists: artists, iconSize: "small"}) %>
