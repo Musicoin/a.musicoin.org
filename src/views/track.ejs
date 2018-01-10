@@ -383,7 +383,7 @@
                   </tr>
                   <tr>
                     <td align="center" class="pr5">
-                      <div class="dynamic-data" data-behavior="track-earnings" de-refresh-period="5" de-releaseId="<%=releaseId%>" de-url="/json-api/track/earnings/">
+                      <div class="dynamic-data" data-behavior="track-earnings" de-refresh-period="20" de-releaseId="<%=releaseId%>" de-url="/json-api/track/earnings/">
                         <div class="text-large">
                           <span class="text-large" data-behavior="track-earnings"><%=formatNumber(parseInt(license.directPlayCount) + parseInt(license.directTipCount))%></span><span class="text-medium-small">MC</span>
                           <BR>
@@ -547,7 +547,7 @@
             <div class="alert alert-danger abuse-alert" style="<%= license.markedAsAbuse ? " " : "display:none " %>  ">
               <%= abuseMessage %>
             </div>
-            <div class="dynamic-element" data-behavior="chat-message-area" style="min-height: 180px" id="de-track-messages" de-refresh-period="5" de-refresh-offset="5" de-address="<%=license.address%>" de-showtrack="false" de-url="/elements/track-messages">
+            <div class="dynamic-element" data-behavior="chat-message-area" style="min-height: 180px" id="de-track-messages" de-refresh-period="20" de-refresh-offset="20" de-address="<%=license.address%>" de-showtrack="false" de-url="/elements/track-messages">
               <%- include('partials/track-messages.ejs', {messages: messages, showTrack: false}) %>
             </div>
             <div class="text-center pad5">
