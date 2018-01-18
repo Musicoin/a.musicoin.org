@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
+const isEmail = require('validator').isEmail;
 
 // define the schema for our user model
 const userSchema = mongoose.Schema({
@@ -154,15 +155,14 @@ const userSchema = mongoose.Schema({
     type: String,
     trim: true,
     lowercase: true,
-    // unique: true,
-    // required: 'Email address is required',
-    match: [/^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/, 'Please fill a valid email address']
+    validate: [isEmail, 'Please fill a valid email address']
   },
   emailVerified: {
     type: Boolean,
     default: false
   }
 });
+
 
 // methods ======================
 // generating a hash
