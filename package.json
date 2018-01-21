@@ -51,7 +51,8 @@
     "tsc": "*",
     "typescript": "*",
     "uuid": "*",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "validator": "^9.2.0"
   },
   "devDependencies": {
     "@types/express": "*",
