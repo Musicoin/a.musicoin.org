@@ -4,7 +4,11 @@
 <button class="share-button btn btn-default btn-xs" id="open-share-dialog">Share</button>
 
 <%
+  if (description) {
     var shortDescription = description.length > 69 ? description.substring(0, 69) + '...' : description;
+  } else {
+    var shortDescription = 'Listen to this amazing song';
+  }
  %>
 <div id="share-track-options-dialog" class="musicoin-dialog">
   <div class="dialog-wrapper">
