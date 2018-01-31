@@ -75,7 +75,10 @@
                         <li><a href="javascript:void(0)" onclick="addInvites('<%= user._id %>', 10)">+10 Invites</a></li>
 
                         <li class="divider"></li>
-                        <li><a href="javascript:void(0)" onclick="addVotingPower('<%= user._id %>', 10)">+10x voting power</a></li>
+                        <li><a href="javascript:void(0)" onclick="addVotingPower('<%= user._id %>', 10)">+10 voting power</a></li>
+
+                        <li class="divider"></li>
+                        <li><a href="javascript:void(0)" onclick="addVotingPower('<%= user._id %>', -10)">-10 voting power</a></li>
 
                         <li class="divider"></li>
                         <% if (user.invite.noReward) { %>
