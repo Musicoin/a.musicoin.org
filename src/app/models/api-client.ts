@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 
-module.exports = mongoose.model('APIClient', mongoose.Schema({
+module.exports = mongoose.model('APIUserAccount', mongoose.Schema({
   name: String,
   clientId: {
     type: String,
