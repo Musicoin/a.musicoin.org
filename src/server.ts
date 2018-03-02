@@ -122,14 +122,8 @@ ConfigUtils.loadConfig()
         approveDomains: config.certificate.approveDomains
       });
 
-      require('http').createServer(lex.middleware(require('redirect-https')())).listen(80, function() {
+      require('http').createServer(lex.middleware(require('redirect-https')())).listen(3000, function() {
         console.log("Listening for ACME http-01 challenges on", this.address());
-      });
-
-      require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(443, function() {
-        console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
-        console.log('Environment ' + app.get('env'));
-        console.log("loaded config: " + JSON.stringify(config, null, 2));
       });
     }
 
