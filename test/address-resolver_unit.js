@@ -105,8 +105,8 @@ describe('Address Resolver', function() {
       user.exec = getExecMethod(false);
       contract.exec = getExecMethod(contract);
 
-      findOneStub.onFirstCall().returns(user);
-      findOneStub.onSecondCall().returns(contract);
+      findOneStub.onCall(0).returns(user);
+      findOneStub.onCall(1).returns(contract);
 
       addressResolver.resolveAddress(addressData.self, recipients[0]).then((recipient) => {
         assert.equal(recipient.alternateAddress, contract.title, 'alternateAddress should match contract.title')
@@ -123,7 +123,7 @@ describe('Address Resolver', function() {
       let email = {};
       email.exec = getExecMethod(false);
 
-      findOneStub.onFirstCall().returns(email);
+      findOneStub.onCall(0).returns(email);
 
       addressResolver.resolveAddress(addressData.self, recipients[0]).then((recipient) => {
         assert.equal(recipient.type, '', 'type should not be set');
@@ -138,7 +138,7 @@ describe('Address Resolver', function() {
       let record = { profileAddress: recipients[1].address};
       record.exec = getExecMethod(record);
 
-      findOneStub.onFirstCall().returns(record);
+      findOneStub.onCall(0).returns(record);
 
       addressResolver.resolveAddress(addressData.self, recipients[0]).then((recipient) => {
         assert.equal(recipient.alternateAddress, 'test@test.org', 'alternateAddress should match email');
@@ -184,8 +184,8 @@ describe('Address Resolver', function() {
       user.exec = getExecMethod(false);
       contract.exec = getExecMethod(contract);
 
-      findOneStub.onFirstCall().returns(user);
-      findOneStub.onSecondCall().returns(contract);
+      findOneStub.onCall(0).returns(user);
+      findOneStub.onCall(1).returns(contract);
 
       addressResolver.lookupAddress(addressData.self, recipients[0]).then((recipient) => {
         assert.equal(recipient, contract.title, 'alternateAddress should match contract.title')
