@@ -6,8 +6,8 @@ const addressResolver = new AddressResolver();
 const mongoose = require('mongoose');
 
 var addressData = {
-	self: '0x65bf8086765b6e9d472c7c56e91a45efea1071ec',
-	missing: '65bf8086765b6e9d472c7c56e91a45efea1071ec'
+  self: '0x65bf8086765b6e9d472c7c56e91a45efea1071ec',
+  missing: '65bf8086765b6e9d472c7c56e91a45efea1071ec'
 }
 
 var recipients = getRecipients();
@@ -49,27 +49,25 @@ describe('Address Resolver', function() {
     findOneStub = sinon.stub(mongoose.Model, 'findOne');
   });
 
-	describe('resolveAddresses', function() {
+  describe('resolveAddresses', function() {
+    it('should set alternateAddress and type for each recipient when address starts with 0x and selfAddress matches', (done) => {
+      let alternateAddress = 'my wallet';
+      let type = 'artist';
 
-		it('should set alternateAddress and type for each recipient when address starts with 0x and selfAddress matches', (done) => {
-			let alternateAddress = 'my wallet';
-			let type = 'artist';
+      recipients[0]['address'] = addressData.self;
+      recipients[1]['address'] = addressData.self;
+      recipients[2]['address'] = addressData.self;
 
-			recipients[0]['address'] = addressData.self;
-			recipients[1]['address'] = addressData.self;
-			recipients[2]['address'] = addressData.self;
-
-			addressResolver.resolveAddresses(addressData.self, recipients).then((recipients) => {
-				assert.lengthOf(recipients, 3, 'recipients should have length of 3');
-				recipients.forEach((recipient) => {
-					assert.equal(recipient.alternateAddress, alternateAddress, 'alternateAddress should match ' + alternateAddress);
-					assert.equal(recipient.type, type, 'type should match ' + type);
-				});
-				done();
-			});
-		});
-
-	});
+      addressResolver.resolveAddresses(addressData.self, recipients).then((recipients) => {
+        assert.lengthOf(recipients, 3, 'recipients should have length of 3');
+        recipients.forEach((recipient) => {
+          assert.equal(recipient.alternateAddress, alternateAddress, 'alternateAddress should match ' + alternateAddress);
+          assert.equal(recipient.type, type, 'type should match ' + type);
+        });
+        done();
+      });
+    });
+  });
 
   describe('resolveAddress', function() {
     it('should set artist user type and artistName', (done) => {
