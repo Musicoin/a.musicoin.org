@@ -148,7 +148,7 @@ describe('Address Resolver', function() {
     });
 
     it('should set address to invalid if address given does not match 0x or @', (done) => {
-      recipients[0].address = '65bf8086765b6e9d472c7c56e91a45efea1071eb';
+      recipients[0].address = addressData.missing;
       let addressMsg = `Invalid address "${recipients[0].address}"`;
 
       addressResolver.resolveAddress(addressData.self, recipients[0]).then((recipient) => {
