@@ -56,7 +56,7 @@ export class RequestCache {
   }
 
   private static makeRequest(options, cacheFile: string, callback) {
-    request(options, function (error, response, result) {
+    request.get(options, function (error, response, result) {
       const entry = {
         data: result,
         expiry: Date.now() + options.ttl
@@ -74,8 +74,8 @@ export class RequestCache {
             }
           });
         }
+        callback(error, response, result);
       });
-      callback(error, response, result);
     })
   }
 
@@ -91,7 +91,7 @@ export class RequestCache {
   };
 
   _getJson(url: string, cacheTTL?: number, properties?: any): Promise<any> {
-    const requestImpl = cacheTTL ? RequestCache.localImpl : request;
+    const requestImpl = cacheTTL ? RequestCache.localImpl : request.get;
     return new Promise(function(resolve, reject) {
       requestImpl({
         url: url,
