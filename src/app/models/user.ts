@@ -16,6 +16,7 @@ const userSchema = mongoose.Schema({
     email: String,
     username: String,
     password: String,
+    phone: String,
     resetCode: String,
     resetExpiryTime: Date
   },

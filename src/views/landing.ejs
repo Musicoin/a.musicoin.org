@@ -118,14 +118,22 @@
                           </span>
 
                           <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="text" id="email" name="email" required/>
+                              <input class="input__field input__field--hoshi" type="text" id="email" name="email" required />
                               <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
                                   <span class="input__label-content input__label-content--hoshi">E-mail</span>
                               </label>
                           </span>
+                          
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="text" id="confirmation" name="confirmation" required />
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="confirmation">
+                                  <span class="input__label-content input__label-content--hoshi">Confirmation Code</span>
+                              </label>
+                          </span>
+                        <span id="confirm" class="crazy1">Get a code</span>
 
                           <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="password" id="password" name="password" required/>
+                              <input class="input__field input__field--hoshi" type="password" id="password" name="password" required />
                               <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
                                   <span class="input__label-content input__label-content--hoshi">Password</span>
                               </label>
@@ -133,87 +141,35 @@
                           <span class="input input--hoshi input__label-content" style="display: inline-block" id ="passworddetail">Password must contain a minimum of <br> 10 characters,<br>1 Special character & 1 letter from both cases</span>
 
                           <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="password" id="password1" name="password2" required/>
+                              <input class="input__field input__field--hoshi" type="password" id="password1" name="password2" required />
                               <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password1">
                                   <span class="input__label-content input__label-content--hoshi">Repeat Password</span>
                               </label>
                           </span>
 
                           <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="text" id="screenname" name="confirmation" required />
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
-                                  <span class="input__label-content input__label-content--hoshi">Confirmation Code</span>
+                              <input class="input__field input__field--hoshi" type="text" id="phone" name="phone" />
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="phone">
+                                  <span class="input__label-content input__label-content--hoshi">Phone</span>
                               </label>
                           </span>
+                          <span class="input input--hoshi input__label-content" style="display: inline-block" id ="phonedetail">Phone should include country code, for example: <strong>18889087930</strong> or <strong>+18889087930</strong><br>You don't need to fill in Phone or Phone Verification Code in case you already solved captcha</span>
+                      
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="text" id="confirmationphone" name="confirmationphone" />
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="confirmationphone">
+                                  <span class="input__label-content input__label-content--hoshi">Phone Verification Code</span>
+                              </label>
+                          </span>
+                          <span id="confirm-phone" class="crazy1">Get phone verification code</span>
 
-                          <span id="confirm" class="crazy1">Get a code</span>
-
-                          <div id="signUpCaptcha" class="mt20" style=""></div>
-
+                          <div id="signUpCaptcha" class="mt20" style="padding-top: 8%;padding-left: 18%;"></div>
+                          <span class="input input--hoshi input__label-content" style="display: inline-block; font-weight: 900" id ="captchadetail">You can fill in Phone and Phone Verification Code in case can't or don't want to solve captcha</span>
                           <div class="cta">
                               <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Sign Up</button>
                           </div>
                         </div>
-                        <a id="signin-button" style="position: relative; left: 180px" href="#">Already have an account?</a>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <div id="wrapper" class="signin-wrapper hidden">
-      <div id="header">
-        <img src="/images/Logo.svg" height="90px" alt="Musicoin Logo" />
-      </div>
-      <div id="social-signup">
-          <div class="container">
-              <div class="row">
-                  <div class="col-md-4 col-md-push-4">
-                      <div class="row">
-                          <div class="col-md-12">
-                              <a href="/auth/twitter" class="twitter">Log in using Twitter</a>
-                          </div>
-                          <div class="col-md-12">
-                              <a href="/auth/facebook" class="facebook">Log in using Facebook</a>
-                          </div>
-                          <div class="col-md-12">
-                              <a href="/auth/google" class="google">Log in using Google</a>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <div id="email-signup">
-          <div class="container">
-              <div class="row">
-                <strong class="line-thru">or</strong>
-                <h2 class="hdr-l">Log in with your email address</h2>
-
-                  <div class="col-md-6 col-md-push-3">
-                      <form name="loginForm" class="signin" action="/signin/newroutethat" target=_top method="post">
-
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="text" id="email" name="email" required/>
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
-                                  <span class="input__label-content input__label-content--hoshi">E-mail</span>
-                              </label>
-                          </span>
-
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="password" id="password" name="password" required/>
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
-                                  <span class="input__label-content input__label-content--hoshi">Password</span>
-                              </label>
-                          </span>
-                          <a class="crazy" href="/login/forgot">Forgot Password</a>
-                          <div id="signInCaptcha" class="mt20"></div>
-
-                          <div class="cta">
-                              <button type="submit" class="btn btn-primary" id="signInButton" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">Sign-In Now</button>
-                          </div>
-
+                        <a id="signin-button" style="position: relative; left: 35%" href="#">Already have an account?</a>
                       </form>
                   </div>
               </div>
@@ -243,6 +199,19 @@
               } else {
                 new Message("Failed to send Request Code: " + data.reason, 'error', 5000);
               }
+            })
+        }
+      });
+      $("#confirm-phone").on('click', function() {
+        var phone = document.forms["signupForm"]["phone"].value;
+        if (!phone || phone.trim().length == 0) {
+          new Message("Enter your phone, then you can request phone verification", 'warning', 5000);
+        } else if (!phone || phone.trim().length > 15) {
+          new Message("Incorrect number provided", 'warning', 5000);
+        } else {
+          new Message("Verification Code was sent to " + phone, 'success', 5000);
+          $.post('/login/confirm-phone', {
+              phone: phone
             })
         }
       });
@@ -287,6 +256,18 @@
     $('#password').on('focusout', function(){
       $('#passworddetail').css('visibility', 'hidden');
       $('#passworddetail').css('display', 'none');
+    });
+
+    $('#phonedetail').css('display', 'none');
+    $('#phone').on('focus', function(){
+      $('#phonedetail').css('visibility', 'visible');
+      $('#phonedetail').css('display', 'block');
+
+    });
+
+    $('#phone').on('focusout', function(){
+      $('#phonedetail').css('visibility', 'hidden');
+      $('#phonedetail').css('display', 'none');
     });
 
   </script>

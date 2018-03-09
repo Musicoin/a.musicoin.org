@@ -28,6 +28,7 @@
     "is-valid-path": "^0.1.1",
     "letsencrypt-express": "*",
     "logrotator": "*",
+    "messagebird": "^2.1.4",
     "moment": "*",
     "mongoose": "*",
     "mongoose-mongodb-errors": "0.0.2",

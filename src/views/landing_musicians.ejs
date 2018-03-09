@@ -119,7 +119,22 @@
                               </label>
                           </span>
                           <a class="crazy" href="/login/forgot">Forgot Password</a>
-                          <div id="signInCaptcha" class="mt20"></div>
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="text" id="phone" name="phone" />
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="phone">
+                                  <span class="input__label-content input__label-content--hoshi">Phone</span>
+                              </label>
+                          </span>
+                          <span class="input input--hoshi input__label-content" style="display: inline-block" id ="phonedetail">Phone should include country code, for example: <strong>18889087930</strong> or <strong>+18889087930</strong><br>You don't need to fill in Phone or Phone Verification Code in case you already solved captcha</span>
+                          <span class="input input--hoshi">
+                              <input class="input__field input__field--hoshi" type="text" id="confirmationphone" name="confirmationphone" />
+                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="confirmationphone">
+                                  <span class="input__label-content input__label-content--hoshi">Phone Verification Code</span>
+                              </label>
+                          </span>
+                          <span id="confirm-phone" class="crazy1">Get phone verification code</span>
+                          <div id="signInCaptcha" class="mt20" style="padding-left:25%;padding-bottom: 2%;"></div>
+                          <span class="input input--hoshi input__label-content" style="display: inline-block; font-weight: 900" id ="captchadetail">You can fill in Phone and Phone Verification Code in case can't or don't want to solve captcha</span>
 
                           <div class="cta">
                               <button type="submit" class="btn btn-primary" id="signInButton" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">Log-In Now</button>
@@ -140,32 +155,20 @@
     new Message("<%=message%>", 'warning', 5000);
     <% } %>
     $(document).ready(function() {
-      $("#confirm").on('click', function() {
-        var email = document.forms["signupForm"]["email"].value;
-        if (!email || email.trim().length == 0) {
-          new Message("Enter your email address, then you can request a code", 'warning', 5000);
+      $("#confirm-phone").on('click', function() {
+        var phone = document.getElementById('phone').value;
+        if (!phone || phone.trim().length == 0) {
+          new Message("Enter your phone, then you can request phone verification", 'warning', 5000);
+        } else if (!phone || phone.trim().length > 15) {
+          new Message("Incorrect number provided", 'warning', 5000);
         } else {
-          $.post('/login/confirm', {
-              email: email
-            },
-            function(data) {
-              if (data.success) {
-                new Message("A Request Code was sent to " + data.email, 'success', 5000);
-              } else {
-                new Message("Failed to send Request Code: " + data.reason, 'error', 5000);
-              }
+          new Message("Verification Code was sent to " + phone, 'success', 5000);
+          $.post('/login/confirm-phone', {
+              phone: phone
             })
         }
       });
     });
-
-    function validateSignupFields() {
-      if (document.forms["signupForm"]["password2"].value != pwd) {
-        new Message("Passwords do not match!", 'error', 5000);
-      } else {
-        grecaptcha.execute();
-      }
-    }
     var onloadCallback = function() {
       console.log("CAPTCHA");
       grecaptcha.render(document.getElementById('signInCaptcha'), {
@@ -173,6 +176,19 @@
         'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
       });
     }
+
+    $('#phonedetail').css('display', 'none');
+    $('#phone').on('focus', function(){
+      $('#phonedetail').css('visibility', 'visible');
+      $('#phonedetail').css('display', 'block');
+
+    });
+
+    $('#phone').on('focusout', function(){
+      $('#phonedetail').css('visibility', 'hidden');
+      $('#phonedetail').css('display', 'none');
+    });
+
   </script>
 
   <script>

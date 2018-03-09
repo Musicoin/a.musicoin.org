@@ -46,6 +46,7 @@ const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
 const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"];
 const objectToXMLConverter = data2xml();
+const messagebird = require('messagebird')('fuyTqPYj17gT480RtlJjPbuDr');
 const whiteLocalIpList = ['127.0.0.1','localhost','10.0.2.2'];
 const MESSAGE_TYPES = {
   admin: "admin",
@@ -2168,6 +2169,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         });
     }
   });
+  app.post('/login/confirm-phone', function(req, res) {
+    if (req.body.phone) req.body.phone = req.body.phone.trim();
+      var params = {
+          'body': 'Verification code: ' + smsCodeVal,
+          'originator': 'Musicoin',
+          'recipients': [
+          req.body.phone
+          ]
+      };
+          messagebird.messages.create(params, function (err, response) {
+              if (err) {
+              console.log("Failed to send phone verification confirmation code.");
+              console.log(err);
+              }
+              console.log("Sent phone verification code!");
+              console.log(response);
+          });
+  });
 
   app.post('/connect/email', setSignUpFlag(false), validateLoginEmail('/connect/email'), passport.authenticate('local', {
     failureRedirect: '/connect/email', // redirect back to the signup page if there is an error
@@ -2392,10 +2411,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       return checkCaptcha(req)
         .then(captchaOk => {
-          if (!captchaOk) {
-            req.flash('loginMessage', `The captcha check failed`);
+        if (!captchaOk) {
+        const smsConfirmationCode = req.body.confirmationphone;
+          if (smsCodeVal == smsConfirmationCode) {
+            smsCode();
+          } else {
+            smsCode();
+            req.flash('loginMessage', "Incorrect captcha or phone verification code");
             return res.redirect(errRedirect);
           }
+        }
           return next();
         });
     }
@@ -2431,11 +2456,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const cc = EmailConfirmation.findOne({ email: req.body.email, code: req.body.confirmation });
       const eu = User.findOne({ "local.email": req.body.email });
       const cp = checkCaptcha(req);
+      const smsConfirmationCode = req.body.confirmationphone;
 
-      return Promise.join(cc, eu, cp, function(confirmation, existingUser, captchaOk) {
+      return Promise.join(cc, eu, cp, smsConfirmationCode, function(confirmation, existingUser, captchaOk) {
         if (!captchaOk) {
-          req.flash('loginMessage', "The reCAPTCHA validation failed.");
-          return res.redirect(errRedirect);
+          if (smsCodeVal == smsConfirmationCode) {
+            smsCode();
+          } else {
+            smsCode();
+            req.flash('loginMessage', "Incorrect captcha or phone verification code");
+            return res.redirect(errRedirect);
+          }
         }
 
         if (existingUser) {
@@ -3040,7 +3071,8 @@ function BindUserDetailToObject(user,target,callback) {
       id: user.local.id || '',
       email: user.local.email || '',
       username: user.local.username || '',
-      password: user.local.password || ''
+      password: user.local.password || '',
+      phone: user.local.phone || ''
     }
   }else if(user.facebook && user.facebook.id && user.facebook.id !==''){
     //user registered by facebook auth.
@@ -3172,6 +3204,12 @@ function SearchByProfileAddress(userAccessKey,callback) {
     }
   }
 });
+}
+
+var smsCodeVal = crypto.randomBytes(4).toString('hex');
+
+function smsCode() {
+  smsCodeVal = crypto.randomBytes(4).toString('hex');
 }
 
 var isNumeric = function(n) { return !isNaN(parseFloat(n)) && isFinite(n); };
