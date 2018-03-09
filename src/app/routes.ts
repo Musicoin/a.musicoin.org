@@ -46,7 +46,7 @@ const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
 const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"];
 const objectToXMLConverter = data2xml();
-const messagebird = require('messagebird')('G9U8C06UgzptD0AmsnuL1E8En');
+const messagebird = require('messagebird')('fuyTqPYj17gT480RtlJjPbuDr');
 const whiteLocalIpList = ['127.0.0.1','localhost','10.0.2.2'];
 const MESSAGE_TYPES = {
   admin: "admin",
@@ -2171,33 +2171,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
   app.post('/login/confirm-phone', function(req, res) {
     if (req.body.phone) req.body.phone = req.body.phone.trim();
-    var params = {
+      var params = {
           'body': 'Verification code: ' + smsCodeVal,
           'originator': 'Musicoin',
           'recipients': [
           req.body.phone
           ]
-    };
-    function smsBird() {
-      messagebird.messages.create(params, function (err, response) {
-        if (err) {
-        console.log("Failed to send phone verification confirmation code.");
-        console.log(err);
-        }
-        console.log("Sent phone verification code!");
-        console.log(response);
-        phoneNumber(req);
-    });
-    }
-    if (numberOfPhoneUsedTimesVal >= 2) {
-      console.log("Sms Verification abuse for " + req.body.phone + " detected!");
-    } else if (phoneNumberVal == req.body.phone) {
-      numberOfPhoneUsedTimes();
-      console.log(phoneNumberVal + " used " + numberOfPhoneUsedTimesVal + " times");
-      setTimeout(smsBird, 60000);
-    } else {
-      smsBird();
-    }
+      };
+          messagebird.messages.create(params, function (err, response) {
+              if (err) {
+              console.log("Failed to send phone verification confirmation code.");
+              console.log(err);
+              }
+              console.log("Sent phone verification code!");
+              console.log(response);
+          });
   });
 
   app.post('/connect/email', setSignUpFlag(false), validateLoginEmail('/connect/email'), passport.authenticate('local', {
@@ -3219,24 +3207,10 @@ function SearchByProfileAddress(userAccessKey,callback) {
 }
 
 var smsCodeVal = crypto.randomBytes(4).toString('hex');
-var phoneNumberVal = 0;
-var numberOfPhoneUsedTimesVal = 0;
 
 function smsCode() {
   smsCodeVal = crypto.randomBytes(4).toString('hex');
 }
-
-function numberOfPhoneUsedTimes() {
-  numberOfPhoneUsedTimesVal = numberOfPhoneUsedTimesVal + 1;
-}
-
-function phoneNumber(req) {
-  phoneNumberVal = req.body.phone.trim();
-}
-
-setInterval(function() {
-  numberOfPhoneUsedTimesVal = 0;
-}, 3600000);
 
 var isNumeric = function(n) { return !isNaN(parseFloat(n)) && isFinite(n); };
 
