@@ -2160,7 +2160,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             })
         })
         .catch((err) => {
-          console.log(`Failed to send email confirmation code: ${err}`);
+          console.log(`Failed to send email confirmation code ${code}: ${err}`);
           res.json({
             success: false,
             email: req.body.email,

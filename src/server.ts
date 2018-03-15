@@ -94,13 +94,13 @@ ConfigUtils.loadConfig()
       res.render('not-found');
     });
 
-    if (isDevEnvironment) {
       app.listen(config.port, function() {
         console.log('Listening on port ' + config.port);
         console.log('Environment ' + app.get('env'));
         console.log("loaded config: " + JSON.stringify(config, null, 2));
       });
 
+    if (isDevEnvironment) {
       app.use(function(err, req, res, next) {
         console.log(err);
         res.status(err.status || 500);
@@ -109,24 +109,7 @@ ConfigUtils.loadConfig()
           error: err
         });
       });
-    }
-    else {
-      // returns an instance of node-letsencrypt with additional helper methods
-      let certServer = app.get('env') === 'staging' ? 'staging' : 'https://acme-v01.api.letsencrypt.org/directory';
-      const lex = require('letsencrypt-express').create({
-        // set to https://acme-v01.api.letsencrypt.org/directory in production
-        // server: 'staging',
-        server: certServer,
-        email: 'musicoin@musicoin.org',
-        agreeTos: true,
-        approveDomains: config.certificate.approveDomains
-      });
-
-      require('http').createServer(lex.middleware(require('redirect-https')())).listen(3000, function() {
-        console.log("Listening for ACME http-01 challenges on", this.address());
-      });
-    }
-
+    } else {
     // production error handler
     // no stacktraces leaked to user
     app.use(function(err, req, res, next) {
@@ -137,6 +120,7 @@ ConfigUtils.loadConfig()
         error: {}
       });
     });
+   }
 
     function approveDomains(opts, certs, cb) {
       // This is where you check your database and associated

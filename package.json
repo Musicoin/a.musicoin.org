@@ -20,6 +20,7 @@
     "express-gettext": "*",
     "express-pino-logger": "^3.0.1",
     "express-session": "*",
+    "fastest-validator": "^0.6.5",
     "feed": "*",
     "formidable": "*",
     "helmet": "*",
@@ -53,8 +54,7 @@
     "tsc": "*",
     "typescript": "*",
     "uuid": "*",
-    "valid-url": "^1.0.9",
-    "validator": "^9.2.0"
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "@types/express": "*",
