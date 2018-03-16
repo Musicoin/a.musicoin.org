@@ -46,7 +46,7 @@ const MAX_MESSAGES = 50;
 let publicPagesEnabled = false;
 const bootSession = ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"];
 const objectToXMLConverter = data2xml();
-const messagebird = require('messagebird')('fuyTqPYj17gT480RtlJjPbuDr');
+const messagebird = require('messagebird')('G9U8C06UgzptD0AmsnuL1E8En');
 const whiteLocalIpList = ['127.0.0.1','localhost','10.0.2.2'];
 const MESSAGE_TYPES = {
   admin: "admin",
