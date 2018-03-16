@@ -430,11 +430,12 @@
                     <%- include terms.ejs %>
                 </div>
                 <% } %>
-
+                <% if (user.verified) { %> 
+                <% } else { %>
                 <div name="Verification" class="wizard-card" <%= selectedTab=="Verification" ? "selected" : ""%>>
                     <%- include social-add.ejs %>
                 </div>
-
+                <% } %>
                 <div name="Audio" class="wizard-card">
                     <%- include audio-info.ejs %>
                 </div>
