@@ -1,28 +1,30 @@
-import * as express from 'express';
-import {Promise} from 'bluebird';
-import * as Formidable from 'formidable';
-import * as MetadataLists from '../config/metadata-lists';
-const router = express.Router();
-import {AddressResolver} from "./address-resolver";
-import {MusicoinOrgJsonAPI} from "./rest-api/json-api";
-import * as FormUtils from "./form-utils";
-import {MusicoinAPI} from "./musicoin-api";
-const Release = require('../app/models/release');
-const User = require('../app/models/user');
+import { Promise } from 'bluebird';
 import * as crypto from 'crypto';
+import * as express from 'express';
+import * as Formidable from 'formidable';
+
+import * as MetadataLists from '../metadata/metadata-lists';
+import { MusicoinOrgJsonAPI } from '../rest-api/json-api';
+import * as FormUtils from '../utils/form-utils';
+import { AddressResolver } from './address-resolver';
+import { MusicoinAPI } from './musicoin-api';
+
+const router = express.Router();
+const Release = require('../models/release');
+const User = require('../models/user');
 const defaultTrackImage = "ipfs://QmRsPLxCAgDZLfujibUF8EwYY9uZVU9vRq73rpAotiAsdf";
 const defaultProfileIPFSImage = "ipfs://QmR8mmsMn9TUdJiA6Ja3SYcQ4ckBdky1v5KGRimC7LkhGF";
 const defaultProfileIPFSImageOld = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 
 export class ReleaseManagerRouter {
   constructor(musicoinApi: MusicoinAPI,
-              jsonAPI: MusicoinOrgJsonAPI,
-              addressResolver: AddressResolver,
-              maxImageWidth: number,
-              mediaProvider: any, // TODO
-              config: any,
-              doRender: any) {
-    router.get('/', function(req, res) {
+    jsonAPI: MusicoinOrgJsonAPI,
+    addressResolver: AddressResolver,
+    maxImageWidth: number,
+    mediaProvider: any, // TODO
+    config: any,
+    doRender: any) {
+    router.get('/', function (req, res) {
       doRender(req, res, 'release-manager/release-manager.ejs', {
         showTermsOfUse: true,
         metadata: {
@@ -34,17 +36,17 @@ export class ReleaseManagerRouter {
       });
     });
 
-    router.get('/pending', function(req, res) {
+    router.get('/pending', function (req, res) {
       jsonAPI.getReleaseByTx(req.query.tx)
         .then(release => {
-          doRender(req, res, 'release-manager/pending-release-page.ejs', {release: release});
+          doRender(req, res, 'release-manager/pending-release-page.ejs', { release: release });
         })
     });
 
     router.post('/pending-release-element', (req, res) => {
       jsonAPI.getReleaseByTx(req.body.tx)
         .then(release => {
-          doRender(req, res, 'release-manager/pending-release-element.ejs', {release: release});
+          doRender(req, res, 'release-manager/pending-release-element.ejs', { release: release });
         })
     });
 
@@ -52,7 +54,7 @@ export class ReleaseManagerRouter {
       console.log("Getting license preview");
       convertSimpleFormToLicense(req.user.draftProfile.artistName, req.user.profileAddress, req.body)
         .then(function (license) {
-          doRender(req, res, 'release-manager/license.ejs', {showRelease: true, license: license});
+          doRender(req, res, 'release-manager/license.ejs', { showRelease: true, license: license });
         })
     });
 
@@ -85,7 +87,7 @@ export class ReleaseManagerRouter {
       return (user.twitter && user.twitter.id) || (user.facebook && user.facebook.id);
     }
 
-    router.post('/edit', function(req, res) {
+    router.post('/edit', function (req, res) {
       jsonAPI.getLicense(FormUtils.requiredString(req.body.contractAddress))
         .then(license => {
           if (!license) throw new Error(`Could not find license to update: ${req.body.contractAddress}`);
@@ -109,7 +111,7 @@ export class ReleaseManagerRouter {
     });
 
 
-    router.post('/update', function(req: any, res) {
+    router.post('/update', function (req: any, res) {
       if (req.user && req.user.blocked) {
         return res.redirect("/profile?releaseError=true");
       }
@@ -126,7 +128,7 @@ export class ReleaseManagerRouter {
               throw new Error(`User does not have rights to edit this track: ${fields.contractAddress}, actualArtist=${license.artistProfileAddress}, requestor=${req.user.profileAddress}`);
 
             const track = buildTrackFromForm(req, fields, files);
-            if (!fields.title) return res.json({success: false, reason: "You must provide a title"});
+            if (!fields.title) return res.json({ success: false, reason: "You must provide a title" });
 
             const selfAddress = req.user.profileAddress;
             const i = track.image && track.image.size > 0
@@ -148,13 +150,13 @@ export class ReleaseManagerRouter {
                 metadataUrl,
                 contributors).then(txs => {
                   console.log("Updating track: " + JSON.stringify(txs));
-                  return Release.findOne({contractAddress: fields.contractAddress})
+                  return Release.findOne({ contractAddress: fields.contractAddress })
                     .then(releaseRecord => {
                       releaseRecord.title = track.title;
                       releaseRecord.description = track.description;
                       releaseRecord.genres = track.genreArray;
                       releaseRecord.regions = track.regionArray;
-                      releaseRecord.languages= track.languageArray;
+                      releaseRecord.languages = track.languageArray;
                       releaseRecord.moods = track.moodArray;
                       releaseRecord.imageUrl = track.imageUrl;
                       releaseRecord.pendingUpdateTxs = txs;
@@ -164,18 +166,18 @@ export class ReleaseManagerRouter {
             })
               .then(function (releaseRecord) {
                 console.log(`Updated track in database!`);
-                return res.json({success: true, pendingUpdateTxs: releaseRecord.pendingUpdateTxs});
+                return res.json({ success: true, pendingUpdateTxs: releaseRecord.pendingUpdateTxs });
               })
               .catch(function (err) {
                 console.log(`Saving releases to database failed! ${err}`);
-                return res.json({success: false, reason: "An internal error occurred.  Please try again later."});
+                return res.json({ success: false, reason: "An internal error occurred.  Please try again later." });
               });
           })
       });
     });
 
     router.get('/resolve/:address', function (req: any, res) {
-      addressResolver.resolveAddress("", {address: req.params.address})
+      addressResolver.resolveAddress("", { address: req.params.address })
         .then(resolved => {
           res.json(resolved);
         })
@@ -191,11 +193,11 @@ export class ReleaseManagerRouter {
         console.log(`Fields: ${JSON.stringify(fields)}`);
         console.log(`Files: ${JSON.stringify(files)}`);
 
-        if (!isVerified(req.user) && !hasSocialLinks(req.user)) return res.json({success: false, reason: "You must link a twitter or facebook account to release music"});
-        if (!fields.title) return res.json({success: false, reason: "You must provide a title"});
-        if (!files.audio || files.audio.size == 0) return res.json({success: false, reason: "You must provide an audio file"});
-        if (fields.rights != "confirmed") return res.json({success: false, reason: "You must confirm that you have rights to release this work."});
-        if (config.termsOfUseVersion != req.user.termsOfUseVersion && fields.terms != "confirmed") return res.json({success: false, reason: "You must agree to the Musicoin website's Terms of Use before you can release music."});
+        if (!isVerified(req.user) && !hasSocialLinks(req.user)) return res.json({ success: false, reason: "You must link a twitter or facebook account to release music" });
+        if (!fields.title) return res.json({ success: false, reason: "You must provide a title" });
+        if (!files.audio || files.audio.size == 0) return res.json({ success: false, reason: "You must provide an audio file" });
+        if (fields.rights != "confirmed") return res.json({ success: false, reason: "You must confirm that you have rights to release this work." });
+        if (config.termsOfUseVersion != req.user.termsOfUseVersion && fields.terms != "confirmed") return res.json({ success: false, reason: "You must agree to the Musicoin website's Terms of Use before you can release music." });
 
         const track = buildTrackFromForm(req, fields, files);
 
@@ -252,7 +254,7 @@ export class ReleaseManagerRouter {
           })
           .then(function (releaseRecord) {
             // async, fire and forget.  Just log an error if the update doesn't work.
-            User.findOne({profileAddress: selfAddress}).exec()
+            User.findOne({ profileAddress: selfAddress }).exec()
               .then(function (artist) {
                 artist.mostRecentReleaseDate = new Date();
                 artist.termsOfUseVersion = config.termsOfUseVersion;
@@ -266,11 +268,11 @@ export class ReleaseManagerRouter {
           })
           .then(function (releaseRecord) {
             console.log(`Saved releases txs to database!`);
-            return res.json({success: true, tx: releaseRecord.tx});
+            return res.json({ success: true, tx: releaseRecord.tx });
           })
           .catch(function (err) {
             console.log(`Saving releases to database failed! ${err}`);
-            return res.json({success: false, reason: "An internal error occurred.  Please try again later."});
+            return res.json({ success: false, reason: "An internal error occurred.  Please try again later." });
           });
       });
     });

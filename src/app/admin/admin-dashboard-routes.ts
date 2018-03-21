@@ -1,35 +1,35 @@
-import * as express from 'express';
-import {Promise} from 'bluebird';
-const router = express.Router();
-import {AddressResolver} from "./address-resolver";
-import {MusicoinOrgJsonAPI} from "./rest-api/json-api";
-import {MusicoinAPI} from "./musicoin-api";
+import { Promise } from 'bluebird';
 import * as crypto from 'crypto';
+import * as express from 'express';
 
-const Release = require('../app/models/release');
-const User = require('../app/models/user');
-const ReleaseStats = require('../app/models/release-stats');
-const APIClient = require('../app/models/api-client');
-const UserStats = require('../app/models/user-stats');
-const DAY = 1000*60*60*24;
+import { AddressResolver } from '../internal/address-resolver';
+import { MusicoinAPI } from '../internal/musicoin-api';
+import { MusicoinOrgJsonAPI } from '../rest-api/json-api';
+
+const router = express.Router();
+const Release = require('../models/release');
+const User = require('../models/user');
+const APIClient = require('../models/api-client');
+const UserStats = require('../models/user-stats');
+const DAY = 1000 * 60 * 60 * 24;
 
 
 export class DashboardRouter {
   constructor(musicoinApi: MusicoinAPI,
-              jsonAPI: MusicoinOrgJsonAPI,
-              addressResolver: AddressResolver,
-              maxImageWidth: number,
-              mediaProvider: any, // TODO
-              config: any,
-              doRender: any) {
-    router.get('/', function(req, res) {
+    jsonAPI: MusicoinOrgJsonAPI,
+    addressResolver: AddressResolver,
+    maxImageWidth: number,
+    mediaProvider: any, // TODO
+    config: any,
+    doRender: any) {
+    router.get('/', function (req, res) {
       doRender(req, res, 'admin/dashboard.ejs', {});
     });
 
-    router.post('/elements/playback-history', function(req, res) {
+    router.post('/elements/playback-history', function (req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 20;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
-      var options = {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'};
+      var options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
       jsonAPI.getPlaybackHistory(req.body.user, req.body.anonuser, req.body.release, start, length)
         .then(output => {
@@ -55,11 +55,11 @@ export class DashboardRouter {
         });
     });
 
-    router.post('/releases/link', function(req, res) {
-      return Release.find({artist: {$exists: false}}).limit(100).exec()
+    router.post('/releases/link', function (req, res) {
+      return Release.find({ artist: { $exists: false } }).limit(100).exec()
         .then(releases => {
           return Promise.all(releases.map(r => {
-            return User.findOne({profileAddress: r.artistAddress}).exec()
+            return User.findOne({ profileAddress: r.artistAddress }).exec()
               .then(artist => {
                 if (!artist) {
                   console.log(`Could not find an artist for release: ${r._id}, ${r.title}`);
@@ -88,59 +88,59 @@ export class DashboardRouter {
         })
     });
 
-    router.post('/elements/release-count', function(req, res) {
-      const a = Release.count({contractAddress: { $exists: true, $ne: null }, state: "published"}).exec();
-      const d = Release.count({contractAddress: { $exists: true, $ne: null }, state: "published", releaseDate:  {$gte: Date.now() - DAY}}).exec();
+    router.post('/elements/release-count', function (req, res) {
+      const a = Release.count({ contractAddress: { $exists: true, $ne: null }, state: "published" }).exec();
+      const d = Release.count({ contractAddress: { $exists: true, $ne: null }, state: "published", releaseDate: { $gte: Date.now() - DAY } }).exec();
       return Promise.join(a, d, (all, day) => {
-          doRender(req, res, 'admin/count.ejs', {
-            count: all,
-            type: "Total Releases",
-            subcount: day,
-            subtype: "in the last day"
-          });
-        })
+        doRender(req, res, 'admin/count.ejs', {
+          count: all,
+          type: "Total Releases",
+          subcount: day,
+          subtype: "in the last day"
+        });
+      })
     });
 
-    router.post('/elements/artist-count', function(req, res) {
+    router.post('/elements/artist-count', function (req, res) {
 
       let a = User.count({
-        profileAddress: {$exists: true, $ne: null},
-        mostRecentReleaseDate: {$exists: true, $ne: null}
+        profileAddress: { $exists: true, $ne: null },
+        mostRecentReleaseDate: { $exists: true, $ne: null }
       });
 
       let v = User.count({
-        profileAddress: {$exists: true, $ne: null},
-        mostRecentReleaseDate: {$exists: true, $ne: null},
+        profileAddress: { $exists: true, $ne: null },
+        mostRecentReleaseDate: { $exists: true, $ne: null },
         verified: true
       });
 
       return Promise.join(a, v, (artistCount, verifiedCount) => {
-          doRender(req, res, 'admin/count.ejs', {
-            count: artistCount,
-            type: "Total Artists",
-            subcount: verifiedCount,
-            subtype: "verified"
-          });
-        })
+        doRender(req, res, 'admin/count.ejs', {
+          count: artistCount,
+          type: "Total Artists",
+          subcount: verifiedCount,
+          subtype: "verified"
+        });
+      })
     });
 
-    router.post('/elements/user-count', function(req, res) {
-      const a = User.count({profileAddress: { $exists: true, $ne: null }}).exec();
-      const d = User.count({profileAddress: { $exists: true, $ne: null}, joinDate: {$gte: Date.now() - DAY}}).exec();
+    router.post('/elements/user-count', function (req, res) {
+      const a = User.count({ profileAddress: { $exists: true, $ne: null } }).exec();
+      const d = User.count({ profileAddress: { $exists: true, $ne: null }, joinDate: { $gte: Date.now() - DAY } }).exec();
       return Promise.join(a, d, (all, day) => {
-          doRender(req, res, 'admin/count.ejs', {
-            count: all,
-            type: "Total Users",
-            subcount: day,
-            subtype: "in the last day"
-          })
+        doRender(req, res, 'admin/count.ejs', {
+          count: all,
+          type: "Total Users",
+          subcount: day,
+          subtype: "in the last day"
         })
+      })
     });
 
-    router.post('/elements/play-count', function(req, res) {
-      return ReleaseStats.aggregate(
-        {$match: {duration: "all"}},
-        {$group: {_id: "all", plays: {$sum: "$playCount"}}})
+    router.post('/elements/play-count', function (req, res) {
+      return UserStats.aggregate(
+        { $match: { duration: "all" } },
+        { $group: { _id: "all", plays: { $sum: "$playCount" } } })
         .then(results => {
           let count = results.length ? results[0].plays : 0;
           doRender(req, res, 'admin/count.ejs', {
@@ -150,25 +150,25 @@ export class DashboardRouter {
         });
     });
 
-    router.post('/elements/tip-count', function(req, res) {
-      const releaseTips = ReleaseStats.aggregate(
-        {$match: {duration: "all"}},
-        {$group: {_id: "all", tips: {$sum: "$tipCount"}}});
+    router.post('/elements/tip-count', function (req, res) {
+      const releaseTips = UserStats.aggregate(
+        { $match: { duration: "all" } },
+        { $group: { _id: "all", tips: { $sum: "$tipCount" } } });
 
       const userTips = UserStats.aggregate(
-        {$match: {duration: "all"}},
-        {$group: {_id: "all", tips: {$sum: "$tipCount"}}});
+        { $match: { duration: "all" } },
+        { $group: { _id: "all", tips: { $sum: "$tipCount" } } });
 
       return Promise.join(releaseTips, userTips, (releaseResults, userResults) => {
-          let count = (releaseResults.length ? releaseResults[0].tips : 0) + (userResults.length ? userResults[0].tips : 0);
-          doRender(req, res, 'admin/count.ejs', {
-            count: count,
-            type: "Total Tips"
-          });
+        let count = (releaseResults.length ? releaseResults[0].tips : 0) + (userResults.length ? userResults[0].tips : 0);
+        doRender(req, res, 'admin/count.ejs', {
+          count: count,
+          type: "Total Tips"
         });
+      });
     });
 
-    router.post('/elements/users', function(req, res) {
+    router.post('/elements/users', function (req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       const invitedByIds = req.body.invitedby ? req.body.invitedby.split("|") : [];
@@ -180,29 +180,29 @@ export class DashboardRouter {
           const balanceMap = {};
           const ivb = req.body.invitedby && invitedByIds.length == 1 ? User.findById(invitedByIds[0]).exec() : Promise.resolve(null);
           Promise.join(musicoinApi.getAccountBalances(addresses), ivb, (balances, invitedBy) => {
-              balances.forEach((balance, idx) => {
-                balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
-              });
-
-              users.forEach(u => {
-                u.balance = balanceMap[u.profileAddress];
-              });
-              doRender(req, res, 'admin/users.ejs', {
-                search: req.body.search,
-                users: users,
-                invitedBy: invitedBy && invitedBy.draftProfile ? invitedBy.draftProfile.artistName : "",
-                totalUsers: results.count,
-                navigation: {
-                  description: `Showing ${start + 1} to ${start + users.length} of ${results.count}`,
-                  start: start,
-                  length: users.length
-                }
-              });
+            balances.forEach((balance, idx) => {
+              balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
             });
+
+            users.forEach(u => {
+              u.balance = balanceMap[u.profileAddress];
+            });
+            doRender(req, res, 'admin/users.ejs', {
+              search: req.body.search,
+              users: users,
+              invitedBy: invitedBy && invitedBy.draftProfile ? invitedBy.draftProfile.artistName : "",
+              totalUsers: results.count,
+              navigation: {
+                description: `Showing ${start + 1} to ${start + users.length} of ${results.count}`,
+                start: start,
+                length: users.length
+              }
+            });
+          });
         });
     });
 
-    router.post('/elements/releases', function(req, res) {
+    router.post('/elements/releases', function (req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       jsonAPI.getAllReleases(req.body.search, start, length)
@@ -240,7 +240,7 @@ export class DashboardRouter {
         });
     });
 
-    router.post('/elements/account-balances', function(req, res) {
+    router.post('/elements/account-balances', function (req, res) {
       // render the page and pass in any flash data if it exists
       const b = musicoinApi.getMusicoinAccountBalance();
       const o = musicoinApi.getAccountBalances(config.trackingAccounts.map(ta => ta.address));
@@ -268,7 +268,7 @@ export class DashboardRouter {
       })
     });
 
-    router.post('/elements/api-clients', function(req, res) {
+    router.post('/elements/api-clients', function (req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       jsonAPI.getAllAPIClients(start, length)
@@ -293,11 +293,11 @@ export class DashboardRouter {
           return client.remove();
         })
         .then(() => {
-          res.json({success: true})
+          res.json({ success: true })
         })
         .catch(err => {
           console.log("Failed to delete API client: " + err);
-          res.json({success: false, err: err.message});
+          res.json({ success: false, err: err.message });
         })
     });
 
@@ -310,29 +310,29 @@ export class DashboardRouter {
         methods: ["GET"]
       })
         .then((record) => {
-          res.json({success: true});
+          res.json({ success: true });
         })
         .catch(err => {
           console.log(`could not create new API user: ${err}`);
-          res.json({success: false, err: err.message});
+          res.json({ success: false, err: err.message });
         });
     });
 
     router.post('/api-clients/lock', (req, res) => {
-      if (!req.body.id) return res.json({success: false, reason: "No id"});
-      if (typeof req.body.lock == "undefined") return res.json({success: false, reason: "specify true/false for 'lock' parameter"});
+      if (!req.body.id) return res.json({ success: false, reason: "No id" });
+      if (typeof req.body.lock == "undefined") return res.json({ success: false, reason: "specify true/false for 'lock' parameter" });
       APIClient.findById(req.body.id).exec()
         .then(user => {
           user.accountLocked = req.body.lock == "true";
           return user.save();
         })
         .then(() => {
-          res.json({success: true})
+          res.json({ success: true })
         })
     });
 
     router.post('/api-clients/save', (req, res) => {
-      if (!req.body.id) return res.json({success: false, reason: "No id"});
+      if (!req.body.id) return res.json({ success: false, reason: "No id" });
       APIClient.findById(req.body.id).exec()
         .then(user => {
           user.domains = req.body.domains.split(",").map(s => s.trim()).filter(s => s);
@@ -340,7 +340,7 @@ export class DashboardRouter {
           return user.save();
         })
         .then(() => {
-          res.json({success: true})
+          res.json({ success: true })
         })
     });
 
@@ -348,16 +348,16 @@ export class DashboardRouter {
       const seconds = Math.floor((Date.now() - date) / 1000);
 
       const intervals = [
-        {value: 60, unit: "min"},
-        {value: 60, unit: "hour"},
-        {value: 24, unit: "day"},
-        {value: 30, unit: "month"},
-        {value: 12, unit: "year"},
+        { value: 60, unit: "min" },
+        { value: 60, unit: "hour" },
+        { value: 24, unit: "day" },
+        { value: 30, unit: "month" },
+        { value: 12, unit: "year" },
       ]
 
       let unit = "second";
       let value = seconds;
-      for (let i=0; i < intervals.length; i++) {
+      for (let i = 0; i < intervals.length; i++) {
         const interval = intervals[i];
         if (value > interval.value) {
           unit = interval.unit;

@@ -1,6 +1,6 @@
 import {Promise} from 'bluebird';
 import {MusicoinAPI} from "./musicoin-api";
-import * as UrlUtils from "./url-utils";
+import * as UrlUtils from "../utils/url-utils";
 
 export class MusicoinHelper {
   constructor(public musicoinApi: MusicoinAPI, public mediaProvider: any, public playbackLinkTTLMillis: number) {

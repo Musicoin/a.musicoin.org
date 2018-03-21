@@ -282,7 +282,19 @@ function getDefaultKeyValueConfig() {
 
         termsOfUseVersion: env.TERMS_OF_USE_VERSION || "1.0",
 
-        redisEndpoint: env.REDIS_ENDPOINT || "redis://localhost:6379"
+        redisEndpoint: env.REDIS_ENDPOINT || "redis://localhost:6379",
+
+        defaultProfileIPFSImage: env.IPSFS_IMAGE || "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C",
+
+        messagebirdID: env.MESSAGEBIRD_ID || "fuyTqPYj17gT480RtlJjPbuDr",
+
+        bootSession: env.BOOTSESSION || ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"],
+
+        whiteLocalIpList: env.LOCAL_IP || ['127.0.0.1','localhost','10.0.2.2'],
+
+        baseUrl: env.BASE_URL || 'https://musicoin.org'
+
+        
       };
     });
 }

@@ -1,7 +1,7 @@
 import {Promise} from 'bluebird';
 import ReadableStream = NodeJS.ReadableStream;
-const User = require('../app/models/user');
-const Release = require('../app/models/release');
+const User = require('../models/user');
+const Release = require('../models/release');
 
 export class AddressResolver {
   constructor() {

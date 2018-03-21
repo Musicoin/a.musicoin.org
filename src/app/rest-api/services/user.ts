@@ -1,7 +1,6 @@
 import ServiceBase from './service-base';
 import MusicoinError from '../../../error';
 import { toObjectId } from '../../../db';
-import { getLogger, getMethodEndLogger } from '../../../logger';
 import { wrapper as redisWrapper } from '../../../redis';
 import serviceEventEmitter from '../../rest-api/eventing';
 import { SEND_EMAIL } from '../../rest-api/eventing/events';
@@ -9,7 +8,6 @@ import { SEND_EMAIL } from '../../rest-api/eventing/events';
 const ConfigUtils = require('../../../config/config');
 const uuidV4 = require('uuid/v4');
 
-const logger = getLogger('UserService');
 const User = require('../../models/user');
 let redisClient = null;
 
@@ -21,68 +19,64 @@ export default class UserService implements ServiceBase {
 
   incrementVotingPower(options: { user: string, count: number }) {
 
-    let methodEndLogger = getMethodEndLogger(logger, '#incrementVotingPower', options);
 
     if (!options || typeof options !== 'object') {
-      return methodEndLogger(new MusicoinError('Invalid input parameters'));
+      console.log('Invalid input parameters');
     }
 
     if (typeof options.user !== 'string' || !options.user.trim()) {
-      return methodEndLogger(new MusicoinError('Invalid user id'));
+      console.log('Invalid user id');
     }
 
     if (typeof options.count !== 'number' || !options.count) {
-      return methodEndLogger(new MusicoinError('Invalid vote multiplier'));
+      console.log('Invalid vote multiplier');
     }
 
     let query = { _id: toObjectId(options.user) };
     let updates = { $inc: { voteMultiplier: options.count } };
 
     return User.update(query, updates)
-      .then(() => methodEndLogger({ success: true }), (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+      .then(() => console.log('Server Error. Please try again.'));
 
   }
 
   decrementVotingPower(options: { user: string, count: number }) {
 
-    let methodEndLogger = getMethodEndLogger(logger, '#decrementVotingPower', options);
-
     if (!options || typeof options !== 'object') {
-      return methodEndLogger(new MusicoinError('Invalid input parameters'));
+      console.log('Invalid input parameters');
     }
 
     if (typeof options.user !== 'string' || !options.user.trim()) {
-      return methodEndLogger(new MusicoinError('Invalid user id'));
+      console.log('Invalid user id');
     }
 
     if (typeof options.count !== 'number' || !options.count) {
-      return methodEndLogger(new MusicoinError('Invalid vote multiplier'));
+      console.log('Invalid vote multiplier');
     }
 
     let query = { _id: toObjectId(options.user), voteMultiplier: { $gte: options.count } };
     let updates = { $inc: { voteMultiplier: -options.count } };
 
     return User.update(query, updates)
-      .then(() => methodEndLogger({ success: true }), (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+      .then(() => console.log('Server Error. Please try again.'));
 
   }
 
   getUser(options: { _id: object }) {
 
-    let methodEndLogger = getMethodEndLogger(logger, '#getUser', options);
 
     if (!options || typeof options !== 'object') {
-      return methodEndLogger(new MusicoinError('Invalid input parameters'));
+      console.log('Invalid input parameters');
     }
 
     if (!options._id) {
-      return methodEndLogger(new MusicoinError('Invalid user id'));
+      console.log('Invalid user id');
     }
 
     let query = { _id: options._id };
 
     return User.findOne(query)
-      .then((user) => methodEndLogger(this.formatUserObject(user)), (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+      .then((user) => console.log('Server Error. Please try again.'));
 
   }
 
@@ -135,14 +129,12 @@ export default class UserService implements ServiceBase {
 
   sendEmailAddressVerificationEmail(options: { _id: object }) {
 
-    let methodEndLogger = getMethodEndLogger(logger, '#sendEmailAddressVerificationEmail', options);
-
     if (!options || typeof options !== 'object') {
-      return methodEndLogger(new MusicoinError('Invalid input parameters'));
+      console.log('Invalid input parameters');
     }
 
     if (!options._id) {
-      return methodEndLogger(new MusicoinError('Invalid user id'));
+      console.log('Invalid user id');
     }
 
     let query = { _id: options._id, emailVerified: false };
@@ -166,21 +158,19 @@ export default class UserService implements ServiceBase {
 
         return redisWrapper.setex(`EMAIL_VERIFICATION_CODE:${payload.data.code}`, config.emailVerificationLinkTimeout, user);
 
-      }).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+      }).then(console.log('Server Error. Please try again.'));
 
 
   }
 
   verifyEmail(options: { code: string }) {
 
-    let methodEndLogger = getMethodEndLogger(logger, '#verifyEmail', options);
-
     if (!options || typeof options !== 'object') {
-      return methodEndLogger(new MusicoinError('Invalid input parameters'));
+      console.log('Invalid input parameters');
     }
 
     if (!options.code) {
-      return methodEndLogger(new MusicoinError('Invalid code'));
+      console.log('Invalid code');
     }
 
     return redisWrapper.get(`EMAIL_VERIFICATION_CODE:${options.code}`)
@@ -189,20 +179,19 @@ export default class UserService implements ServiceBase {
         let updates = { $set: { emailVerified: true } };
         return User.update(query, updates);
       })
-      .then(() => redisWrapper.del([`EMAIL_VERIFICATION_CODE:${options.code}`])).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+      .then(() => redisWrapper.del([`EMAIL_VERIFICATION_CODE:${options.code}`]));
 
   }
 
   tryUpdateEmailAddress(options: { _id: object, primaryEmail: string }) {
 
-    let methodEndLogger = getMethodEndLogger(logger, '#tryUpdateEmailAddress', options);
 
     if (!options || typeof options !== 'object') {
-      return methodEndLogger(new MusicoinError('Invalid input parameters'));
+      console.log('Invalid input parameters');
     }
 
     if (!options._id) {
-      return methodEndLogger(new MusicoinError('Invalid user id'));
+      console.log('Invalid user id');
     }
 
     let result = {
@@ -210,7 +199,7 @@ export default class UserService implements ServiceBase {
     };
 
     if (typeof options.primaryEmail !== 'string' || !options.primaryEmail.trim()) {
-      return methodEndLogger(result);
+      console.log(result);
     }
 
     let query = {
@@ -225,7 +214,7 @@ export default class UserService implements ServiceBase {
       return User.update({ _id: options._id }, { $set: { primaryEmail: options.primaryEmail, emailVerified: false } })
       .then(() => this.sendEmailAddressVerificationEmail({_id: options._id}))
       .then(() => result);
-    }).then(methodEndLogger, (error) => methodEndLogger(error, new MusicoinError('Server Error. Please try again.')));
+    }).then(console.log('Server Error. Please try again.'));
 
   }
 

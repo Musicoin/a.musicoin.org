@@ -1,30 +1,23 @@
-if(process.env.NODE_ENV === 'production') {
-  require('newrelic');
-}
-
-import * as express from 'express';
-import * as cors from 'cors';
-import * as gettext from 'express-gettext';
-import * as path from 'path';
-import * as ExpressPinoLogger from 'express-pino-logger';
 import * as bodyParser from 'body-parser';
-import * as logging  from './app/logging';
-import * as routes from "./app/routes";
-import * as session from 'express-session';
 import * as cookieParser from 'cookie-parser';
-import * as passport from 'passport';
-import * as passportConfigurer from './config/passport';
+import * as cors from 'cors';
+import * as express from 'express';
+import * as gettext from 'express-gettext';
+import * as session from 'express-session';
 import * as helmet from 'helmet';
-import * as expectCt from 'expect-ct'
-import {MusicoinAPI} from './app/musicoin-api';
-import { getLogger, getMethodEndLogger } from './logger';
+import * as passport from 'passport';
+import * as path from 'path';
+import favicon = require('serve-favicon');
+
+import { MusicoinAPI } from './app/internal/musicoin-api';
+import * as logging from './app/logging';
+import * as routes from './app/routes';
+import * as passportConfigurer from './config/passport';
 import * as redis from './redis';
 
-const logger = getLogger('Server');
 const RedisStore = require('connect-redis')(session);
 const app = express();
 const flash = require('connect-flash');
-import favicon = require('serve-favicon');
 const ConfigUtils = require('./config/config');
 const MediaProvider = require('./media/media-provider');
 
@@ -49,21 +42,11 @@ ConfigUtils.loadConfig()
     // app.use(new ExpressPinoLogger({logger: logger}));
     app.use(cors(config.cors));
     const get_ip = require('ipware')().get_ip;
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
       get_ip(req);
       next();
     });
 
-    app.use(function(req, res, next) {
-      // if (!isDevEnvironment) {
-      //   res.setHeader('Content-Security-Policy-Report-Only', "default-src https: style-src 'unsafe-inline'");
-      //   res.setHeader('Strict-Transport-Security', "max-age=31536000");
-      // }
-      // res.header('X-Frame-Options', "Deny");
-      // res.header('X-XSS-Protection', "1; mode=block;");
-      // res.header('X-Content-Type-Options', "nosniff");
-      next();
-    });
     app.use(favicon(__dirname + '/public/favicon.ico'));
     logging.configure(app, config.loggingConfig);
     app.use(cookieParser());
@@ -87,21 +70,20 @@ ConfigUtils.loadConfig()
     app.use(flash());
 
     routes.configure(app, passport, musicoinApi, mediaProvider, config);
-    app.use(express.static(path.join(__dirname, 'overview')));
 
     // let angular catch them
-    app.use(function(req, res) {
+    app.use(function (req, res) {
       res.render('not-found');
     });
 
-      app.listen(config.port, function() {
-        console.log('Listening on port ' + config.port);
-        console.log('Environment ' + app.get('env'));
-        console.log("loaded config: " + JSON.stringify(config, null, 2));
-      });
+    app.listen(config.port, function () {
+      console.log('Listening on port ' + config.port);
+      console.log('Environment ' + app.get('env'));
+      console.log("loaded config: " + JSON.stringify(config, null, 2));
+    });
 
     if (isDevEnvironment) {
-      app.use(function(err, req, res, next) {
+      app.use(function (err, req, res, next) {
         console.log(err);
         res.status(err.status || 500);
         res.render('error', {
@@ -110,34 +92,16 @@ ConfigUtils.loadConfig()
         });
       });
     } else {
-    // production error handler
-    // no stacktraces leaked to user
-    app.use(function(err, req, res, next) {
-      console.log("ERROR: " + err);
-      res.status(err.status || 500);
-      res.render('error', {
-        message: err.message,
-        error: {}
+      // production error handler
+      // no stacktraces leaked to user
+      app.use(function (err, req, res, next) {
+        console.log("ERROR: " + err);
+        res.status(err.status || 500);
+        res.render('error', {
+          message: err.message,
+          error: {}
+        });
       });
-    });
-   }
-
-    function approveDomains(opts, certs, cb) {
-      // This is where you check your database and associated
-      // email addresses with domains and agreements and such
-
-
-      // The domains being approved for the first time are listed in opts.domains
-      // Certs being renewed are listed in certs.altnames
-      if (certs) {
-        opts.domains = certs.altnames;
-      }
-      else {
-        opts.email = 'musicoin@musicoin.org';
-        opts.agreeTos = true;
-      }
-
-      cb(null, { options: opts, certs: certs });
     }
   });
 
@@ -150,7 +114,7 @@ app.use(gettext(app, {
   useAcceptedLanguageHeader: true,
   alias: '_'
 }));
-app.use(function(req, res: any, next) {
+app.use(function (req, res: any, next) {
   if (req.query && req.query.locale) {
     res.setLocale(req.query.locale);
   }

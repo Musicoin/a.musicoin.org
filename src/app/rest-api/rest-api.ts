@@ -1,8 +1,7 @@
 import * as express from 'express';
 import { JsonPromiseRouter } from './json-promise-router';
 import { MusicoinOrgJsonAPI } from "./json-api";
-import * as FormUtils from "../form-utils";
-import { getLogger, getMethodEndLogger } from '../../logger';
+import * as FormUtils from "../utils/form-utils";
 const APIClient = require('../../app/models/api-client');
 const url = require('url');
 const router = express.Router();
@@ -10,7 +9,6 @@ const jsonRouter = new JsonPromiseRouter(router, "rest-api");
 const maxRecords = 100; // TODO: make configurable
 const defaultRecords = 20; // TODO: make configurable
 const defaultMaxGroupSize = 8;
-const logger = getLogger('MusicoinRestAPI');
 
 class UnauthorizedError extends Error {
   constructor(message) {
@@ -39,7 +37,7 @@ export class MusicoinRestAPI {
         userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
       }
       catch(exception) {
-        logger.error(exception.toString());
+        console.log(exception.toString());
         clientId = '';
       }
 
@@ -53,15 +51,15 @@ export class MusicoinRestAPI {
             return next();
           }
           if (client.accountLocked) {
-            logger.info(`Failed CORS 2: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            console.log(`Failed CORS 2: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             throw new UnauthorizedError("Unauthorized: Locked");
           }
           if (client.domains.indexOf("*") < 0 && client.domains.indexOf(origin) < 0) {
-            logger.info(`Failed CORS 3: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            console.log(`Failed CORS 3: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             throw new UnauthorizedError(`Unauthorized (invalid origin: ${origin})`);
           }
           if (req.method != "OPTIONS" && client.methods.indexOf(req.method) < 0) {
-            logger.info(`Failed CORS 4: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            console.log(`Failed CORS 4: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             throw new UnauthorizedError(`Unauthorized (invalid method: ${req.method})`);
           }
 
@@ -70,10 +68,10 @@ export class MusicoinRestAPI {
           res.header('Access-Control-Allow-Headers', 'Content-Type, clientid');
 
           if ('OPTIONS' == req.method) {
-            logger.info(`Responding to CORS OPTIONS request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            console.log(`Responding to CORS OPTIONS request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             return res.send(200);
           } else {
-            logger.info(`Responding to CORS request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
+            console.log(`Responding to CORS request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}`);
             next();
           }
         }).catch(err => {
@@ -123,7 +121,7 @@ export class MusicoinRestAPI {
     router.use(function(err, req, res, next) {
       if (err.name === 'UnauthorizedError') {
         const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
-        logger.info(`Unauthorized API request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}, err: ${err}`);
+        console.log(`Unauthorized API request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}, err: ${err}`);
         res.status(401).send(err.message);
       }
     });

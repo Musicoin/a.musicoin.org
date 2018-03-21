@@ -21,5 +21,18 @@ module.exports = mongoose.model('UserStats', mongoose.Schema({
   followCount: {
     type: Number,
     default: 0
+  },
+  release: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Release',
+    index: true
+  },
+  playCount: {
+    type: Number,
+    default: 0
+  },
+  commentCount: {
+    type: Number,
+    default: 0
   }
 }));

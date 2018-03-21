@@ -1,11 +1,12 @@
 import * as Timers from 'timers';
-import {MusicoinAPI} from "./musicoin-api";
-const Release = require('../app/models/release');
-const PendingPlayback = require('../app/models/pending-playback');
-const User = require('../app/models/user');
+
+import { MusicoinAPI } from './musicoin-api';
+
+const Release = require('../models/release');
+const User = require('../models/user');
 
 export class PendingTxDaemon {
-  constructor(private newProfileCallback, private releaseCallback) {}
+  constructor(private newProfileCallback, private releaseCallback) { }
 
   start(musicoinApi: MusicoinAPI, intervalMs: number) {
     console.log(`Starting pending release daemon with interval ${intervalMs}ms`);
@@ -15,17 +16,11 @@ export class PendingTxDaemon {
     console.log(`Starting pending profile daemon with interval ${intervalMs}ms`);
     Timers.setTimeout(() => {
       Timers.setInterval(() => this.checkForPendingProfilesUpdates(musicoinApi), intervalMs);
-    }, intervalMs/3);
-
-    // same interval, but offset from the release check
-    console.log(`Starting pending PPP daemon with interval ${intervalMs}ms`);
-    Timers.setTimeout(() => {
-      Timers.setInterval(() => this.checkForPendingPPPPayments(musicoinApi), intervalMs);
-    }, 2*intervalMs/3);
+    }, intervalMs / 3);
   }
 
   checkForPendingProfilesUpdates(musicoinApi: MusicoinAPI) {
-    User.find({updatePending: true}, function(err, results) {
+    User.find({ updatePending: true }, function (err, results) {
       if (err) console.log(`Failed to check for pending releases: ${err}`);
       else {
         if (results.length == 0) return;
@@ -69,7 +64,7 @@ export class PendingTxDaemon {
         }
 
         console.log("Saving updates profile record...")
-        p.save(function(err) {
+        p.save(function (err) {
           if (err) {
             console.log(`Failed to save profile record: ${err}`);
           }
@@ -78,24 +73,13 @@ export class PendingTxDaemon {
           }
         })
       })
-      .catch(function(err) {
+      .catch(function (err) {
         console.log(err);
       })
   }
 
-  checkForPendingPPPPayments(musicoinApi: MusicoinAPI) {
-    return PendingPlayback.find({}).exec()
-      .then(results => {
-        console.log(`Found ${results.length} pending playbacks`);
-        return Promise.all(results.map(r => this.updatePendingPlaybackStatus(musicoinApi, r)));
-      })
-      .catch(err => {
-        console.log(`Failed to check for pending playbacks: ${err}`);
-      })
-  }
-
   checkForPendingReleases(musicoinApi: MusicoinAPI) {
-    Release.find({state: 'pending'}, function(err, results) {
+    Release.find({ state: 'pending' }, function (err, results) {
       if (err) console.log(`Failed to check for pending releases: ${err}`);
       else {
         if (results.length == 0) return;
@@ -164,7 +148,7 @@ export class PendingTxDaemon {
         }
 
         console.log("Saving updates release record...")
-        r.save(function(err) {
+        r.save(function (err) {
           if (err) {
             console.log(`Failed to save release record: ${err}`);
           }
@@ -172,13 +156,13 @@ export class PendingTxDaemon {
             console.log("Pending release updated successfully!");
           }
         })
-        .then(() => {
-          if (r.contractAddress && r.state == 'published' && this.releaseCallback) {
-            this.releaseCallback(r);
-          }
-        })
+          .then(() => {
+            if (r.contractAddress && r.state == 'published' && this.releaseCallback) {
+              this.releaseCallback(r);
+            }
+          })
       })
-      .catch(function(err) {
+      .catch(function (err) {
         console.log(err);
       })
   }
