@@ -182,9 +182,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.end();
   });
 
-  app.use(express.static('static'));
-  app.use(express.static('overview'));
   app.use('/', require('./front-parts/front-routes').router);
+  
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider, jsonAPI), checkInviteCode);
   app.use('/release-manager', isLoggedIn, releaseManager.getRouter());

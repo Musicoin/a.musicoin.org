@@ -32,6 +32,7 @@ ConfigUtils.loadConfig()
     const isDevEnvironment = app.get('env') === 'development';
     const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
+
     app.set('port', config.port);
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'ejs');
@@ -53,6 +54,7 @@ ConfigUtils.loadConfig()
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express.static(path.join(__dirname, 'overview')));
 
     app.use(session({
       name: app.get('env') === 'development' ? 'staging-musicoin-session' : 'musicoin-session',
