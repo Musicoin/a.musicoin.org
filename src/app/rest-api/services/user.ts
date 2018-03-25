@@ -1,9 +1,8 @@
-import ServiceBase from './service-base';
-import MusicoinError from '../../../error';
 import { toObjectId } from '../../../db';
 import { wrapper as redisWrapper } from '../../../redis';
 import serviceEventEmitter from '../../rest-api/eventing';
 import { SEND_EMAIL } from '../../rest-api/eventing/events';
+import ServiceBase from './service-base';
 
 const ConfigUtils = require('../../../config/config');
 const uuidV4 = require('uuid/v4');
@@ -212,8 +211,8 @@ export default class UserService implements ServiceBase {
         return result;
       }
       return User.update({ _id: options._id }, { $set: { primaryEmail: options.primaryEmail, emailVerified: false } })
-      .then(() => this.sendEmailAddressVerificationEmail({_id: options._id}))
-      .then(() => result);
+        .then(() => this.sendEmailAddressVerificationEmail({ _id: options._id }))
+        .then(() => result);
     }).then(console.log('Server Error. Please try again.'));
 
   }

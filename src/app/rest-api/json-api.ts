@@ -16,7 +16,6 @@ const Follow = require('../models/follow');
 const Release = require('../models/release');
 const UserPlayback = require('../models/user-playback');
 const TrackMessage = require('../models/track-message');
-const PendingPlayback = require('../models/pending-playback');
 const Hero = require('../models/hero');
 const APIClient = require('../models/api-client');
 // const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
@@ -72,15 +71,15 @@ export interface Hero {
 }
 
 export class MusicoinOrgJsonAPI {
-  
+
   userService: any;
 
   constructor(private musicoinAPI: MusicoinAPI,
-              private mcHelper: MusicoinHelper,
-              private mediaProvider,
-              private mailSender: MailSender,
-              private exchangeRateProvider: ExchangeRateProvider,
-              private config: any) {
+    private mcHelper: MusicoinHelper,
+    private mediaProvider,
+    private mailSender: MailSender,
+    private exchangeRateProvider: ExchangeRateProvider,
+    private config: any) {
     this.userService = userService;
   }
 
@@ -458,15 +457,15 @@ export class MusicoinOrgJsonAPI {
           .filter(sr => !sr.release.markedAsAbuse)
           .slice(0, limit)
           .map(sr => {
-          return this._convertDbRecordToLicense(sr.release)
-            .then(output => {
-              output.stats = {
-                plays: sr.playCount,
-                period: period
-              };
-              return output;
-            });
-        })
+            return this._convertDbRecordToLicense(sr.release)
+              .then(output => {
+                output.stats = {
+                  plays: sr.playCount,
+                  period: period
+                };
+                return output;
+              });
+          })
       })
       .then(promises => Promise.all(promises));
   }
@@ -485,15 +484,15 @@ export class MusicoinOrgJsonAPI {
           .filter(sr => !sr.release.markedAsAbuse)
           .slice(0, limit)
           .map(sr => {
-          return this._convertDbRecordToLicense(sr.release)
-            .then(output => {
-              output.stats = {
-                tips: sr.tipCount,
-                period: period
-              };
-              return output;
-            });
-        })
+            return this._convertDbRecordToLicense(sr.release)
+              .then(output => {
+                output.stats = {
+                  tips: sr.tipCount,
+                  period: period
+                };
+                return output;
+              });
+          })
       })
       .then(promises => Promise.all(promises));
   }
@@ -656,9 +655,9 @@ export class MusicoinOrgJsonAPI {
     return query.sort({ joinDate: 'desc' }).limit(limit).exec()
       .then(records => records.map(r => {
         return {
-            id: r.profileAddress,
-            label: `${r.draftProfile.artistName} (${r.profileAddress})`,
-            value: r.profileAddress
+          id: r.profileAddress,
+          label: `${r.draftProfile.artistName} (${r.profileAddress})`,
+          value: r.profileAddress
         }
       }));
   }
@@ -1136,66 +1135,66 @@ export class MusicoinOrgJsonAPI {
           : Promise.resolve(null);
 
       return actualArtist
-          .then(a => {
-            let sendNotification = true;
-            if (!a) {
-              if (messageType != "donate") {
-                console.log(`Not sending notification because not artist was found and this is not a donation`);
-                sendNotification = false;
-              }
-            }
-            else if (!a.preferences || !a.preferences.notifyOnComment) {
-              console.log(`Not sending notification because ${a.draftProfile.artistName} does not have notifications enabled`);
+        .then(a => {
+          let sendNotification = true;
+          if (!a) {
+            if (messageType != "donate") {
+              console.log(`Not sending notification because not artist was found and this is not a donation`);
               sendNotification = false;
             }
-            // don't notify me about my own messages
-            else if (senderAddress == artistAddress) {
-              console.log(`Not sending notification because the sender and receiver are the same: ${senderAddress}`);
-              sendNotification = false;
+          }
+          else if (!a.preferences || !a.preferences.notifyOnComment) {
+            console.log(`Not sending notification because ${a.draftProfile.artistName} does not have notifications enabled`);
+            sendNotification = false;
+          }
+          // don't notify me about my own messages
+          else if (senderAddress == artistAddress) {
+            console.log(`Not sending notification because the sender and receiver are the same: ${senderAddress}`);
+            sendNotification = false;
+          }
+
+          const threadId = _threadId
+            ? _threadId
+            : replyToMessage && replyToMessage.threadId
+              ? replyToMessage.threadId
+              : uuidV4();
+
+          if (sendNotification) {
+            const recipient = a ? this._getUserEmail(a)
+              : messageType == "donate" ? "musicoin@berry.ai" : null;
+
+            if (recipient) {
+              console.log(`Sending message notification to: ${recipient}`);
+              const urlPath = `/nav/thread-page?thread=${threadId}`;
+              const notification = {
+                trackName: release ? release.title : null,
+                actionUrl: this.config.serverEndpoint + urlPath,
+                message: message,
+                senderName: sender.draftProfile.artistName
+              };
+              this.mailSender.sendMessageNotification(recipient, notification)
+                .then(() => console.log("Message notification sent to " + recipient))
+                .catch(err => `Failed to send message to ${recipient}, error: ${err}`);
             }
-
-            const threadId = _threadId
-              ? _threadId
-              : replyToMessage && replyToMessage.threadId
-                ? replyToMessage.threadId
-                : uuidV4();
-
-            if (sendNotification) {
-              const recipient = a ? this._getUserEmail(a)
-                : messageType == "donate" ? "musicoin@berry.ai" : null;
-
-              if (recipient) {
-                console.log(`Sending message notification to: ${recipient}`);
-                const urlPath = `/nav/thread-page?thread=${threadId}`;
-                const notification = {
-                  trackName: release ? release.title : null,
-                  actionUrl: this.config.serverEndpoint + urlPath,
-                  message: message,
-                  senderName: sender.draftProfile.artistName
-                };
-                this.mailSender.sendMessageNotification(recipient, notification)
-                  .then(() => console.log("Message notification sent to " + recipient))
-                  .catch(err => `Failed to send message to ${recipient}, error: ${err}`);
-              }
-              else {
-                console.log(`Could not send message to artist ${artistAddress} because no email address is associated with the account`);
-              }
+            else {
+              console.log(`Could not send message to artist ${artistAddress} because no email address is associated with the account`);
             }
+          }
 
-            return TrackMessage.create({
-              artistAddress: artistAddress,
-              contractAddress: contractAddress,
-              senderAddress: sender.profileAddress,
-              release: release ? release._id : null,
-              artist: a ? a._id : null,
-              sender: sender._id,
-              message: message,
-              replyToMessage: replyToId,
-              replyToSender: replyToMessage ? replyToMessage.sender : null,
-              threadId: threadId,
-              messageType: messageType
-            })
-          });
+          return TrackMessage.create({
+            artistAddress: artistAddress,
+            contractAddress: contractAddress,
+            senderAddress: sender.profileAddress,
+            release: release ? release._id : null,
+            artist: a ? a._id : null,
+            sender: sender._id,
+            message: message,
+            replyToMessage: replyToId,
+            replyToSender: replyToMessage ? replyToMessage.sender : null,
+            threadId: threadId,
+            messageType: messageType
+          })
+        });
     })
   }
 
@@ -1203,26 +1202,26 @@ export class MusicoinOrgJsonAPI {
     const f = Follow.find({ follower: userId }).exec();
     const u = User.findOne({ _id: userId }).exec();
     return Promise.join(u, f, (user, followingRecords) => {
-        if (user) {
-          const following = followingRecords.map(fr => fr.following);
+      if (user) {
+        const following = followingRecords.map(fr => fr.following);
         const filter = minDate ? { timestamp: { $gte: minDate } } : {};
-          let query = TrackMessage.find(filter)
-            .or([
+        let query = TrackMessage.find(filter)
+          .or([
             { sender: { $in: following } }, // comments by users/artists I follow
             { sender: userId }, // messages I sent
             { $and: [{ artist: userId }, { messageType: { $in: ["tip", "follow"] } }] }, // anyone followed/tipped me
             { replyToSender: userId } // messages in reply to my messages
-            ])
-            .limit(limit);
+          ])
+          .limit(limit);
 
-          if (messageTypes && messageTypes.length > 0) {
+        if (messageTypes && messageTypes.length > 0) {
           query = query.where({ messageType: { $in: messageTypes } })
-          }
-
-          return this._executeTrackMessagesQuery(query)
         }
-        return [];
-      })
+
+        return this._executeTrackMessagesQuery(query)
+      }
+      return [];
+    })
   }
 
   getThreadMessages(threadId: string, limit: number): Promise<any[]> {
@@ -1268,24 +1267,24 @@ export class MusicoinOrgJsonAPI {
             : null;
 
           const sender = m.sender ? {
-              name: m.sender.draftProfile.artistName,
-              image: this.mediaProvider.resolveIpfsUrl(m.sender.draftProfile.ipfsImageUrl),
-              profileAddress: m.sender.profileAddress,
-              isArtist: !!m.sender.mostRecentReleaseDate
-            } : {};
+            name: m.sender.draftProfile.artistName,
+            image: this.mediaProvider.resolveIpfsUrl(m.sender.draftProfile.ipfsImageUrl),
+            profileAddress: m.sender.profileAddress,
+            isArtist: !!m.sender.mostRecentReleaseDate
+          } : {};
 
           const artist = m.artist ? {
-              name: m.artist.draftProfile.artistName,
-              image: this.mediaProvider.resolveIpfsUrl(m.artist.draftProfile.ipfsImageUrl),
-              profileAddress: m.artist.profileAddress
-            } : {};
+            name: m.artist.draftProfile.artistName,
+            image: this.mediaProvider.resolveIpfsUrl(m.artist.draftProfile.ipfsImageUrl),
+            profileAddress: m.artist.profileAddress
+          } : {};
 
           const isRepost = m.repostMessage && m.repostOriginalSender;
           const repost = isRepost ? {
-              name: m.repostOriginalSender.draftProfile.artistName,
-              profileAddress: m.repostOriginalSender.profileAddress,
-              body: m.repostMessage.message
-            } : { body: null };
+            name: m.repostOriginalSender.draftProfile.artistName,
+            profileAddress: m.repostOriginalSender.profileAddress,
+            body: m.repostMessage.message
+          } : { body: null };
 
           return {
             id: m._id,
@@ -1302,19 +1301,6 @@ export class MusicoinOrgJsonAPI {
           }
         })
       })
-  }
-
-  addPendingPPPTransaction(userId: string, releaseId: string, coinsPerPlay: number, tx: string): Promise<any> {
-    return PendingPlayback.create({
-      release: releaseId,
-      user: userId,
-      coins: coinsPerPlay,
-      tx: tx
-    })
-  }
-
-  getPendingPPPPayments(userId): Promise<any> {
-    return PendingPlayback.find({user: userId}).exec();
   }
 
   addToMessageTipCount(messageId: string, coins: number): Promise<any> {
@@ -1393,7 +1379,7 @@ export class MusicoinOrgJsonAPI {
           .catch(err => {
             console.log(`Failed to update reporting stats for user: ${err}`);
             return user;
-        })
+          })
           .then(() => user);
       })
   }
@@ -1443,8 +1429,8 @@ export class MusicoinOrgJsonAPI {
         report.duration = duration;
 
         const tracksHaveEvents = report.stats.releases
-            .filter(r => r.playCount > 0 || r.tipCount > 0 || r.commentCount > 0)
-            .length > 0;
+          .filter(r => r.playCount > 0 || r.tipCount > 0 || r.commentCount > 0)
+          .length > 0;
 
         const userHasEvents = report.user.followCount > 0 || report.user.tipCount > 0 || report.user.commentCount;
         if (report.stats.releases.length > 0 && (tracksHaveEvents || userHasEvents)) {
@@ -1470,13 +1456,13 @@ export class MusicoinOrgJsonAPI {
       const ustats = UserStats.findOne(uStatsCondition)
         .then(userStats => {
           return userStats ? userStats : {
-              followCount: 0,
-              tipCount: 0,
-              commentCount: 0,
-              startDate: uStatsCondition.startDate,
-              user: uStatsCondition.user,
-              duration: uStatsCondition.duration
-            }
+            followCount: 0,
+            tipCount: 0,
+            commentCount: 0,
+            startDate: uStatsCondition.startDate,
+            user: uStatsCondition.user,
+            duration: uStatsCondition.duration
+          }
         });
       const rstats = releases.map(release => {
         const rStatsCondition = MusicoinOrgJsonAPI._getReleaseStatsCondition(release._id, date, duration);
@@ -1487,13 +1473,13 @@ export class MusicoinOrgJsonAPI {
             }
             stats.track = release;
             return stats ? stats : {
-                playCount: 0,
-                tipCount: 0,
-                commentCount: 0,
-                duration: rStatsCondition.duration,
-                startDate: rStatsCondition.startDate,
-                release: release._id
-              }
+              playCount: 0,
+              tipCount: 0,
+              commentCount: 0,
+              duration: rStatsCondition.duration,
+              startDate: rStatsCondition.startDate,
+              release: release._id
+            }
           })
       });
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -1531,7 +1517,7 @@ export class MusicoinOrgJsonAPI {
         ]
       };
     }
-    }
+  }
 
 
 
@@ -1540,22 +1526,22 @@ export class MusicoinOrgJsonAPI {
     const u = User.findById(id).exec();
     return Promise.join(u, x, (user, exchangeRate) => {
       if (!user) return { success: false };
-        return this.getUserStatsReport(user.profileAddress, Date.now(), "all")
-          .then(statsReport => {
-            let totalTips = statsReport.stats.user.tipCount;
-            let totalPlays = 0;
-            statsReport.stats.releases.forEach(rs => {
-              totalPlays += rs.playCount;
-              totalTips += rs.tipCount;
-            });
-            return {
-              tips: totalTips,
-              plays: totalPlays,
-              followers: user.followerCount,
+      return this.getUserStatsReport(user.profileAddress, Date.now(), "all")
+        .then(statsReport => {
+          let totalTips = statsReport.stats.user.tipCount;
+          let totalPlays = 0;
+          statsReport.stats.releases.forEach(rs => {
+            totalPlays += rs.playCount;
+            totalTips += rs.tipCount;
+          });
+          return {
+            tips: totalTips,
+            plays: totalPlays,
+            followers: user.followerCount,
             formattedTotalUSD: "$" + this._formatNumber((totalPlays + totalTips) * exchangeRate.usd, 2)
-            }
-          })
-      })
+          }
+        })
+    })
   }
 
   getTrackEarnings(id: string): Promise<any> {
@@ -1563,15 +1549,15 @@ export class MusicoinOrgJsonAPI {
     const r = Release.findById(id).exec();
     return Promise.join(r, x, (release, exchangeRate) => {
       if (!release) return { success: false };
-        const plays = release.directPlayCount || 0;
-        const tips = release.directTipCount || 0;
-        return {
-          success: true,
-          plays: plays,
-          tips: tips,
+      const plays = release.directPlayCount || 0;
+      const tips = release.directTipCount || 0;
+      return {
+        success: true,
+        plays: plays,
+        tips: tips,
         formattedTotalUSD: "$" + this._formatNumber((plays + tips) * exchangeRate.usd, 2)
-        }
-      })
+      }
+    })
   }
 
   getReleaseByTx(tx) {

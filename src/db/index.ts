@@ -1,9 +1,7 @@
 import * as mongoose from 'mongoose';
 import * as mongodbErrorHandler from 'mongoose-mongodb-errors';
-import * as pino from 'pino';
 
 const defaultObjectId = mongoose.Types.ObjectId(); // used as return value for invalid id strings.
-const logger = pino().child({ module: 'Database' });
 
 export function initialize(app, config) {
 
@@ -18,23 +16,23 @@ export function initialize(app, config) {
   mongoose.plugin(mongodbErrorHandler);
 
   mongoose.connection.on('connected', () => {
-    logger.info('Connection Established');
+    console.log('Connection Established');
   });
 
   mongoose.connection.on('reconnected', () => {
-    logger.info('Connection Reestablished');
+    console.log('Connection Reestablished');
   });
 
   mongoose.connection.on('disconnected', () => {
-    logger.error('Connection Disconnected');
+    console.log('Connection Disconnected');
   });
 
   mongoose.connection.on('close', () => {
-    logger.error('Connection Closed');
+    console.log('Connection Closed');
   });
 
   mongoose.connection.on('error', (error) => {
-    logger.error('Connection error', error);
+    console.log('Connection error', error);
   });
 
   return mongoose;
@@ -42,7 +40,7 @@ export function initialize(app, config) {
 
 export function toObjectId(idString) {
 
-  if(typeof idString !== 'string' || idString.length !== 24) {
+  if (typeof idString !== 'string' || idString.length !== 24) {
     return defaultObjectId;
   }
 

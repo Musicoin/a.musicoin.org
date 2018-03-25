@@ -1,4 +1,5 @@
-import {Promise} from 'bluebird';
+import { Promise } from 'bluebird';
+
 import ReadableStream = NodeJS.ReadableStream;
 const User = require('../models/user');
 const Release = require('../models/release');
@@ -14,8 +15,8 @@ export class AddressResolver {
   lookupAddress(selfAddress, address) {
     if (address == selfAddress)
       return Promise.resolve("my wallet");
-    const u = User.findOne({"profileAddress": address}).exec();
-    const c = Release.findOne({"contractAddress": address}).exec();
+    const u = User.findOne({ "profileAddress": address }).exec();
+    const c = Release.findOne({ "contractAddress": address }).exec();
     return Promise.join(u, c, function (user, contract) {
       if (user && user.draftProfile && user.draftProfile.artistName) {
         return user.draftProfile.artistName;
@@ -34,8 +35,8 @@ export class AddressResolver {
         recipient.type = "artist";
         return Promise.resolve(recipient);
       }
-      const u = User.findOne({"profileAddress": recipient.address}).exec();
-      const c = Release.findOne({"contractAddress": recipient.address}).exec();
+      const u = User.findOne({ "profileAddress": recipient.address }).exec();
+      const c = Release.findOne({ "contractAddress": recipient.address }).exec();
       return Promise.join(u, c, function (user, contract) {
         if (user) {
           if (user.draftProfile && user.draftProfile.artistName)
@@ -57,7 +58,7 @@ export class AddressResolver {
       });
     }
     else if (recipient.address.indexOf("@") != -1) {
-      return User.findOne({"google.email": recipient.address.toLowerCase().trim()}).exec()
+      return User.findOne({ "google.email": recipient.address.toLowerCase().trim() }).exec()
         .then(function (record) {
           if (!record || !record.profileAddress) {
             recipient.address = `Could not find address for "${recipient.address}"`;

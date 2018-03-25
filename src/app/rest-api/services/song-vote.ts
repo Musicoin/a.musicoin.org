@@ -1,8 +1,8 @@
-import ServiceBase from './service-base';
-import MusicoinError from '../../../error';
 import { toObjectId } from '../../../db';
+import MusicoinError from '../../../error';
 import serviceEventEmitter from '../../rest-api/eventing';
 import { SONG_VOTE_ADDED, SONG_VOTE_REMOVED } from '../../rest-api/eventing/events';
+import ServiceBase from './service-base';
 
 
 const SongVote = require('../../models/song-vote');

@@ -1,7 +1,8 @@
-import {Promise} from 'bluebird';
+import { Promise } from 'bluebird';
 import * as fs from 'fs';
-import * as request from 'request';
 import * as os from 'os';
+import * as request from 'request';
+
 import ReadableStream = NodeJS.ReadableStream;
 const cacheDir = os.tmpdir() + "/request-cache";
 
@@ -25,9 +26,9 @@ export class RequestCache {
   private static localImpl(options, callback) {
     const key = RequestCache.hashKey(JSON.stringify(options));
     const cacheFile = cacheDir + "/" + key;
-    fs.exists(cacheFile, function(exists) {
+    fs.exists(cacheFile, function (exists) {
       if (exists) {
-        fs.readFile(cacheFile, 'utf8', function(err, data) {
+        fs.readFile(cacheFile, 'utf8', function (err, data) {
           if (data) {
             try {
               const json = JSON.parse(data);
@@ -83,22 +84,22 @@ export class RequestCache {
     let hash = 0, i, chr, len;
     if (key.length == 0) return hash;
     for (i = 0, len = key.length; i < len; i++) {
-      chr   = key.charCodeAt(i);
-      hash  = ((hash << 5) - hash) + chr;
+      chr = key.charCodeAt(i);
+      hash = ((hash << 5) - hash) + chr;
       hash |= 0;
     }
     return hash;
   };
 
   _getJson(url: string, cacheTTL?: number, properties?: any): Promise<any> {
-    const requestImpl = cacheTTL ? RequestCache.localImpl : request.get;
-    return new Promise(function(resolve, reject) {
+    const requestImpl = cacheTTL ? RequestCache.localImpl : request;
+    return new Promise(function (resolve, reject) {
       requestImpl({
         url: url,
         qs: properties,
         json: true,
         ttl: cacheTTL ? cacheTTL : null,
-      }, function(error, response, result) {
+      }, function (error, response, result) {
         if (error) {
           console.log(`Request failed with ${error}, url: ${url}, properties: ${JSON.stringify(properties)}`);
           return reject(error);

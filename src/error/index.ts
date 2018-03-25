@@ -6,7 +6,7 @@ export default class MusicoinError extends Error {
 	}
 
 	toString() {
-		return JSON.stringify({message: this.message});
+		return JSON.stringify({ message: this.message });
 	}
 
 }

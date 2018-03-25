@@ -1,6 +1,7 @@
-import {Promise} from 'bluebird';
-import {MusicoinAPI} from "./musicoin-api";
-import * as UrlUtils from "../utils/url-utils";
+import { Promise } from 'bluebird';
+
+import * as UrlUtils from '../utils/url-utils';
+import { MusicoinAPI } from './musicoin-api';
 
 export class MusicoinHelper {
   constructor(public musicoinApi: MusicoinAPI, public mediaProvider: any, public playbackLinkTTLMillis: number) {
@@ -11,7 +12,7 @@ export class MusicoinHelper {
       .then((profile) => {
         const s = this.mediaProvider.readJsonFromIpfs(profile.socialUrl).catchReturn({});
         const d = this.mediaProvider.readTextFromIpfs(profile.descriptionUrl).catchReturn("");
-        return Promise.join(s, d, function(social, description){
+        return Promise.join(s, d, function (social, description) {
           profile.image = profile.imageUrl ? this.mediaProvider.resolveIpfsUrl(profile.imageUrl) : "";
           profile.social = social;
           profile.description = description;
@@ -24,13 +25,13 @@ export class MusicoinHelper {
   getLicense(address: string) {
     return this.musicoinApi.getLicenseDetails(address)
       .then(license => {
-        try{
+        try {
           license.image = this.mediaProvider.resolveIpfsUrl(license.imageUrl);
         } catch (e) {
           console.log(e);
           return license;
         }
-        try{
+        try {
           license.audioUrl = "/ppp/" + UrlUtils.createExpiringLink(license.address, this.playbackLinkTTLMillis);
         } catch (e) {
           console.log(e);

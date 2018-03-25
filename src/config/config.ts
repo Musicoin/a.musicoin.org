@@ -2,9 +2,9 @@ const request = require('request');
 
 let appConfig = null;
 
-const loadConfig = function(argsv) {
+const loadConfig = function (argsv) {
 
-  if(appConfig) {
+  if (appConfig) {
     return Promise.resolve(appConfig);
   }
 
@@ -47,17 +47,17 @@ function getStructuredConfig(keyValueConfig) {
         count: 3
       }
     },
-    ipSessionChangeTimeout: 1000*60*10,
-    playbackLinkTTLMillis: 1000*60,
-    freePlayDelay: 1000*60, //let's increase the free play delay to a few more seconds so that people don't switch as often
+    ipSessionChangeTimeout: 1000 * 60 * 10,
+    playbackLinkTTLMillis: 1000 * 60,
+    freePlayDelay: 1000 * 60, //let's increase the free play delay to a few more seconds so that people don't switch as often
     musicoinAdminProfile: keyValueConfig.musicoinAdminProfile,
     termsOfUseVersion: keyValueConfig.termsOfUseVersion,
     database: {
-      url : `${keyValueConfig.mongoEndpoint}/musicoin-org`,
-      pendingReleaseIntervalMs: 30*1000
+      url: `${keyValueConfig.mongoEndpoint}/musicoin-org`,
+      pendingReleaseIntervalMs: 30 * 1000
     },
     redis: {
-      url : `${keyValueConfig.redisEndpoint}?db=0`,
+      url: `${keyValueConfig.redisEndpoint}?db=0`,
     },
     ipfs: {
       ipfsHost: keyValueConfig.ipfsReadEndpoint,
@@ -136,7 +136,7 @@ function getStructuredConfig(keyValueConfig) {
     exchangeRateService: {
       endpoint: "https://api.coinmarketcap.com/v1/ticker/musicoin/",
       link: "https://coinmarketcap.com/currencies/musicoin/",
-      cacheTTL: 1000*60*5,
+      cacheTTL: 1000 * 60 * 5,
       disclaimer: "For informational purposes only, based on current price reported by coinmarketcap.com. Does not represent a promise by Musicoin to buy/sell at this price."
     },
     rewards: {
@@ -154,39 +154,39 @@ function getStructuredConfig(keyValueConfig) {
       }
     },
     trackingAccounts: [
-      {name: "Miner-1 (Dev Fund)", address: "0x13559ecbdbf8c32d6a86c5a277fd1efbc8409b5b"},
-      {name: "Miner-2", address: "0x55a00bc3b44e84728091d0a8c80400a08bcb6a43"},
-      {name: "Miner-3", address: "0x25025d5299df92bea6256f35758275c606156253"},
-      {name: "Miner-4 (im)", address: "0xf9ef1d523a204ea9e8f695dbd83513cd27791502"},
-      {name: "Miner-5 (dp)", address: "0x473ac76523d7ae51b77b2f25542eb5c4c63950c9"},
-      {name: "Miner-6 (bb)", address: "0x7ef7dc5f996b21588fa6cb726a29a8296b28bf08"},
-      {name: "Hot wallet (PPP)", address: "0xfef55843244453abc7e183d13139a528bdfbcbed"},
-      {name: "Publisher", address: "0x6e1d33f195e7fadcc6da8ca9e36d6d4d717cf504"},
-      {name: "Test Publisher and Hot Wallet", address: "0xf527a9a52b77f6c04471914ad57c31a8ae104d71"},
+      { name: "Miner-1 (Dev Fund)", address: "0x13559ecbdbf8c32d6a86c5a277fd1efbc8409b5b" },
+      { name: "Miner-2", address: "0x55a00bc3b44e84728091d0a8c80400a08bcb6a43" },
+      { name: "Miner-3", address: "0x25025d5299df92bea6256f35758275c606156253" },
+      { name: "Miner-4 (im)", address: "0xf9ef1d523a204ea9e8f695dbd83513cd27791502" },
+      { name: "Miner-5 (dp)", address: "0x473ac76523d7ae51b77b2f25542eb5c4c63950c9" },
+      { name: "Miner-6 (bb)", address: "0x7ef7dc5f996b21588fa6cb726a29a8296b28bf08" },
+      { name: "Hot wallet (PPP)", address: "0xfef55843244453abc7e183d13139a528bdfbcbed" },
+      { name: "Publisher", address: "0x6e1d33f195e7fadcc6da8ca9e36d6d4d717cf504" },
+      { name: "Test Publisher and Hot Wallet", address: "0xf527a9a52b77f6c04471914ad57c31a8ae104d71" },
 
     ],
     auth: {
-      'googleAuth' : {
-        'clientID'      : keyValueConfig.googleClientId,
-        'clientSecret'  : keyValueConfig.googleClientSecret,
-        'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/google/callback`
+      'googleAuth': {
+        'clientID': keyValueConfig.googleClientId,
+        'clientSecret': keyValueConfig.googleClientSecret,
+        'callbackURL': `${keyValueConfig.authCallbackEndpoint}/auth/google/callback`
       },
-      'twitterAuth' : {
-        'consumerKey'   : keyValueConfig.twitterClientId,
+      'twitterAuth': {
+        'consumerKey': keyValueConfig.twitterClientId,
         'consumerSecret': keyValueConfig.twitterClientSecret,
-        'callbackURL'   : `${keyValueConfig.authCallbackEndpoint}/auth/twitter/callback`
+        'callbackURL': `${keyValueConfig.authCallbackEndpoint}/auth/twitter/callback`
       },
-      'soundcloudAuth' : {
-        'clientID'   : keyValueConfig.soundcloudClientId,
+      'soundcloudAuth': {
+        'clientID': keyValueConfig.soundcloudClientId,
         'clientSecret': keyValueConfig.soundcloudClientSecret,
-        'callbackURL' : keyValueConfig.soundcloudCallbackEndpoint
+        'callbackURL': keyValueConfig.soundcloudCallbackEndpoint
       },
-      'facebookAuth'  : {
-        'clientID'    : keyValueConfig.facebookClientId,
+      'facebookAuth': {
+        'clientID': keyValueConfig.facebookClientId,
         'clientSecret': keyValueConfig.facebookClientSecret,
-        'callbackURL' : `${keyValueConfig.authCallbackEndpoint}/auth/facebook/callback`
+        'callbackURL': `${keyValueConfig.authCallbackEndpoint}/auth/facebook/callback`
       },
-      passwordResetLinkTimeout: 1000*60*60
+      passwordResetLinkTimeout: 1000 * 60 * 60
     },
     captcha: {
       secret: keyValueConfig.captchaSecret,
@@ -207,7 +207,7 @@ function convertArgsToKeyValuePairs(argsv) {
   if (argsv) {
     argsv.forEach(function (val, index, array) {
       if (val.startsWith("--")) {
-        config[val.substr(2)] = array[index+1];
+        config[val.substr(2)] = array[index + 1];
       }
     });
   }
@@ -216,14 +216,14 @@ function convertArgsToKeyValuePairs(argsv) {
 
 function getInstanceVariables() {
   // curl "http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=true" -H "Metadata-Flavor: Google" | less
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     request({
       url: "http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=true&alt=json",
       json: true,
       headers: {
         "Metadata-Flavor": "Google"
       }
-    }, function(error, response, result) {
+    }, function (error, response, result) {
       if (error) {
         reject(new Error(`Failed to load instance variables: ${error}`));
       }
@@ -290,11 +290,11 @@ function getDefaultKeyValueConfig() {
 
         bootSession: env.BOOTSESSION || ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"],
 
-        whiteLocalIpList: env.LOCAL_IP || ['127.0.0.1','localhost','10.0.2.2'],
+        whiteLocalIpList: env.LOCAL_IP || ['127.0.0.1', 'localhost', '10.0.2.2'],
 
         baseUrl: env.BASE_URL || 'https://musicoin.org'
 
-        
+
       };
     });
 }

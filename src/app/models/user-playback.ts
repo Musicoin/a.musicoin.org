@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+
 module.exports = mongoose.model('UserPlayback', mongoose.Schema({
   contractAddress: String,
   release: {

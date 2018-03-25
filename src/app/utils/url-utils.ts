@@ -1,5 +1,5 @@
-import {Promise} from 'bluebird';
 import * as crypto from 'crypto';
+
 const key = ")3(*D)*)(*3)(6S7DF";
 const algorithm = 'aes-256-ctr';
 
@@ -13,7 +13,7 @@ export function resolveExpiringLink(encrypted: string) {
   const idx = decrypted.lastIndexOf(":");
   try {
     if (idx > 0) {
-      if (Date.now() < parseInt(decrypted.substr(idx+1))) {
+      if (Date.now() < parseInt(decrypted.substr(idx + 1))) {
         return decrypted.substr(0, idx);
       }
     }
@@ -25,16 +25,16 @@ export function resolveExpiringLink(encrypted: string) {
   return null;
 }
 
-const decryptText = function(text,){
+const decryptText = function (text, ) {
   var decipher = crypto.createDecipher(algorithm, key)
-  var dec = decipher.update(text,'hex','utf8')
+  var dec = decipher.update(text, 'hex', 'utf8')
   dec += decipher.final('utf8');
   return dec;
 };
 
-const encryptText = function(text){
+const encryptText = function (text) {
   var cipher = crypto.createCipher(algorithm, key)
-  var crypted = cipher.update(text,'utf8','hex')
+  var crypted = cipher.update(text, 'utf8', 'hex')
   crypted += cipher.final('hex');
   return crypted;
 };

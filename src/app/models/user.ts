@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt-nodejs');
 let Validator = require('fastest-validator');
 let v = new Validator();
 let emailSchema = {
-    email: { type: "email" }
+  email: { type: "email" }
 };
 
 // define the schema for our user model
@@ -160,11 +160,11 @@ const userSchema = mongoose.Schema({
     type: String,
     trim: true,
     validate: {
-      validator: function(pEmail) {
-                v.validate({ email: pEmail }, emailSchema);
-            },
-            message: '{VALUE} is not a valid email. Please provide a valid email address!'
-        }
+      validator: function (pEmail) {
+        v.validate({ email: pEmail }, emailSchema);
+      },
+      message: '{VALUE} is not a valid email. Please provide a valid email address!'
+    }
   },
   emailVerified: {
     type: Boolean,
@@ -175,12 +175,12 @@ const userSchema = mongoose.Schema({
 
 // methods ======================
 // generating a hash
-userSchema.methods.generateHash = function(password) {
+userSchema.methods.generateHash = function (password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
 // checking if password is valid
-userSchema.methods.validPassword = function(password) {
+userSchema.methods.validPassword = function (password) {
   return bcrypt.compareSync(password, this.local.password);
 };
 

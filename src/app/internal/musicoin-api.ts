@@ -1,7 +1,8 @@
-import {Promise} from 'bluebird';
+import { Promise } from 'bluebird';
 import * as fs from 'fs';
-import * as request from 'request';
 import * as os from 'os';
+import * as request from 'request';
+
 import ReadableStream = NodeJS.ReadableStream;
 const cachedRequest = require('cached-request')(request);
 const cacheDir = os.tmpdir() + "/request-cache";
@@ -33,7 +34,7 @@ export class MusicoinAPI {
 
   getKey(licenseAddress: string) {
     return this.getJson(this.apiConfig.getKey + '/' + licenseAddress)
-      .then(function(response) {
+      .then(function (response) {
         if (response.err) throw response.err;
         return response;
       });
@@ -53,26 +54,26 @@ export class MusicoinAPI {
   getAccountBalance(address: string) {
     return this.getJson(`${this.apiConfig.getAccountBalance}/${address}`, 5000)
       .then((balance) => {
-          try{
-            balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-          } catch(e) {
-            console.log(e);
-            return 0;
-          }
-          try{
-            balance.formattedMusicoinsShort = this._formatShortNumber(balance.musicoins);
-          } catch (e) {
-            console.log(e);
-            return 0;
-          }
-          return balance;
+        try {
+          balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        } catch (e) {
+          console.log(e);
+          return 0;
         }
+        try {
+          balance.formattedMusicoinsShort = this._formatShortNumber(balance.musicoins);
+        } catch (e) {
+          console.log(e);
+          return 0;
+        }
+        return balance;
+      }
       )
   }
 
   getMusicoinAccountBalance() {
     return this.getJson(this.apiConfig.getClientBalance, 5000)
-      .then(function(balance) {
+      .then(function (balance) {
         balance.formattedMusicoins = parseInt(balance.musicoins).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         return balance;
       });
@@ -83,11 +84,11 @@ export class MusicoinAPI {
   }
 
   getProfile(profileAddress: string) {
-    return this.getJson(this.apiConfig.getProfile + '/' + profileAddress, 60*1000);
+    return this.getJson(this.apiConfig.getProfile + '/' + profileAddress, 60 * 1000);
   }
 
   getLicenseDetails(licenseAddress: string) {
-    return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60*1000);
+    return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60 * 1000);
   }
 
   updateTrack(
@@ -96,7 +97,7 @@ export class MusicoinAPI {
     imageUrl: string,
     metadataUrl: string,
     contributors: any[]
-    ): Promise<string> {
+  ): Promise<string> {
     console.log(`updating track ${title} @ ${contractAddress}`);
     return this.postJson(this.apiConfig.updateLicense, {
       contractAddress: contractAddress,
@@ -108,15 +109,15 @@ export class MusicoinAPI {
   }
 
   releaseTrack(profileAddress: string,
-               artistName: string,
-               title: string,
-               imageUrl: string,
-               metadataUrl: string,
-               audioUrl: string,
-               contributors: any[],
-               royalties: any[],
-               contentType: string,
-               key: string): Promise<string> {
+    artistName: string,
+    title: string,
+    imageUrl: string,
+    metadataUrl: string,
+    audioUrl: string,
+    contributors: any[],
+    royalties: any[],
+    contentType: string,
+    key: string): Promise<string> {
     console.log(`releasing track ${title}`);
     return this.postJson(this.apiConfig.releaseLicense, {
       profileAddress: profileAddress,
@@ -151,7 +152,7 @@ export class MusicoinAPI {
       profileAddress: profileAddress,
       licenseAddress: licenseAddress
     })
-      .then(function(response) {
+      .then(function (response) {
         if (response.err) throw response.err;
         return response;
       });
@@ -205,11 +206,11 @@ export class MusicoinAPI {
     // caching library has some edge cases that aren't handled properly.  Adding
     // some fill logic here, although it's not ideal.
     if (cacheTTL) {
-        return this._getJson(url, cacheTTL, properties)
-          .catch(err => {
-            console.log("Failed to execute with cachedRequest impl, falling through: " + err);
-            return this._getJson(url, null, properties);
-          })
+      return this._getJson(url, cacheTTL, properties)
+        .catch(err => {
+          console.log("Failed to execute with cachedRequest impl, falling through: " + err);
+          return this._getJson(url, null, properties);
+        })
     }
     return this._getJson(url, null, properties);
   }
@@ -217,9 +218,9 @@ export class MusicoinAPI {
   private static localImpl(options, callback) {
     const key = MusicoinAPI.hashKey(JSON.stringify(options));
     const cacheFile = cacheDir + "/" + key;
-    fs.exists(cacheFile, function(exists) {
+    fs.exists(cacheFile, function (exists) {
       if (exists) {
-        fs.readFile(cacheFile, 'utf8', function(err, data) {
+        fs.readFile(cacheFile, 'utf8', function (err, data) {
           if (data) {
             try {
               const json = JSON.parse(data);
@@ -273,8 +274,8 @@ export class MusicoinAPI {
     var hash = 0, i, chr, len;
     if (key.length == 0) return hash;
     for (i = 0, len = key.length; i < len; i++) {
-      chr   = key.charCodeAt(i);
-      hash  = ((hash << 5) - hash) + chr;
+      chr = key.charCodeAt(i);
+      hash = ((hash << 5) - hash) + chr;
       hash |= 0;
     };
     return hash;
@@ -282,7 +283,7 @@ export class MusicoinAPI {
 
   _getJson(url: string, cacheTTL?: number, properties?: any): Promise<any> {
     const requestImpl = cacheTTL ? MusicoinAPI.localImpl : request;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       requestImpl({
         url: url,
         qs: properties,
@@ -292,7 +293,7 @@ export class MusicoinAPI {
           clientID: this.apiConfig.clientID,
           clientSecret: this.apiConfig.clientSecret
         }
-      }, function(error, response, result) {
+      }, function (error, response, result) {
         if (error) {
           console.log(`Request failed with ${error}, url: ${url}, properties: ${JSON.stringify(properties)}`);
           return Promise.reject(error).catch(error => { console.log('Caught Error!', error.message); });

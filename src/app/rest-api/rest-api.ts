@@ -1,7 +1,9 @@
 import * as express from 'express';
+
+import * as FormUtils from '../utils/form-utils';
+import { MusicoinOrgJsonAPI } from './json-api';
 import { JsonPromiseRouter } from './json-promise-router';
-import { MusicoinOrgJsonAPI } from "./json-api";
-import * as FormUtils from "../utils/form-utils";
+
 const APIClient = require('../../app/models/api-client');
 const url = require('url');
 const router = express.Router();
@@ -36,7 +38,7 @@ export class MusicoinRestAPI {
         clientId = FormUtils.defaultString(rawClientId, "");
         userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
       }
-      catch(exception) {
+      catch (exception) {
         console.log(exception.toString());
         clientId = '';
       }
@@ -83,7 +85,7 @@ export class MusicoinRestAPI {
 
     jsonRouter.get('/profile/me', (req) => jsonAPI.userService.getUser(req.user));
     jsonRouter.get('/profile/:address', (req) => jsonAPI.getArtist(req.params.address, true, true));
-    
+
     jsonRouter.post('/profile/voting-power/add', (req) => jsonAPI.userService.incrementVotingPower(req.body));
     jsonRouter.post('/profile/voting-power/remove', (req) => jsonAPI.userService.decrementVotingPower(req.body));
 
@@ -118,7 +120,7 @@ export class MusicoinRestAPI {
     jsonRouter.get('/tx/history/:address', req => jsonAPI.getTransactionHistory(req.params.address, this._getLimit(req), this._getStart(req)));
     jsonRouter.get('/tx/status/:tx', req => jsonAPI.getTransactionStatus(req.params.tx));
 
-    router.use(function(err, req, res, next) {
+    router.use(function (err, req, res, next) {
       if (err.name === 'UnauthorizedError') {
         const userName = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
         console.log(`Unauthorized API request: ip: ${req.ip}, session: ${req.session}, user: ${userName}, req.originalUrl: ${req.originalUrl}, err: ${err}`);

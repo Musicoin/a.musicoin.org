@@ -11,7 +11,7 @@ import favicon = require('serve-favicon');
 
 import { MusicoinAPI } from './app/internal/musicoin-api';
 import * as logging from './app/logging';
-import * as routes from './app/routes';
+import * as routes from './app/routes/routes';
 import * as passportConfigurer from './config/passport';
 import * as redis from './redis';
 
@@ -32,15 +32,12 @@ ConfigUtils.loadConfig()
     const isDevEnvironment = app.get('env') === 'development';
     const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
-
     app.set('port', config.port);
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'ejs');
     app.engine('html', require('ejs').renderFile);
 
     passportConfigurer.configure(passport as any, mediaProvider, config.auth);
-
-    // app.use(new ExpressPinoLogger({logger: logger}));
     app.use(cors(config.cors));
     const get_ip = require('ipware')().get_ip;
     app.use(function (req, res, next) {

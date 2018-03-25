@@ -5,7 +5,7 @@ const path = require('path');
 
 // check file rotation every 5 minutes, and rotate the file if its size exceeds 10 mb.
 // keep only 3 rotated files and compress (gzip) them.
-const defaultRotationConfig = {schedule: '5m', size: '10m', compress: true, count: 3};
+const defaultRotationConfig = { schedule: '5m', size: '10m', compress: true, count: 3 };
 
 interface RotationConfig {
   schedule: string,
@@ -30,7 +30,7 @@ interface LogConfig {
  *    rotationConfig: logrotator config, eg. {schedule: '5m', size: '10m', compress: true, count: 3}
  * }
  */
-  // use the global rotator
+// use the global rotator
 export function configure(app, config: LogConfig) {
   const logDirectory = config.logDirectory;
   const logFileName = config.logFileName;
@@ -51,8 +51,8 @@ export function configure(app, config: LogConfig) {
   // ensure log directory exists
   fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
   // create a write stream (in append mode)
-  const accessLogStream = fs.createWriteStream(logFile, {flags: 'a'})
+  const accessLogStream = fs.createWriteStream(logFile, { flags: 'a' })
 
   // setup the logger
-  app.use(morgan('combined', {stream: accessLogStream}))
+  app.use(morgan('combined', { stream: accessLogStream }))
 }

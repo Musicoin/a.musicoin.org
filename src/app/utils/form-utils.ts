@@ -1,5 +1,4 @@
 const owasp = require('owasp-password-strength-test');
-import {Promise} from 'bluebird';
 const sharp = require('sharp');
 
 export function defaultString(value: any, defaultValue?: string): string {
@@ -22,7 +21,7 @@ export function resizeImage(path: string, width: number, height?: number) {
     .resize(width, height)
     .png()
     .toFile(outputPath)
-    .then(function() {
+    .then(function () {
       console.log("Resized image: " + outputPath);
       return outputPath;
     });
@@ -102,13 +101,13 @@ export function convertToRoyaltyOrContributor(recipient) {
 
 export function checkPasswordStrength(pwd): string {
   owasp.config({
-    allowPassphrases       : false,
-    maxLength              : 64,
-    minLength              : 10,
-    minOptionalTestsToPass : 4,
+    allowPassphrases: false,
+    maxLength: 64,
+    minLength: 10,
+    minOptionalTestsToPass: 4,
   });
 
-  var result =  owasp.test(pwd);
+  var result = owasp.test(pwd);
   return pwd && result.errors.length == 0 ? null : result.errors;
 }
 

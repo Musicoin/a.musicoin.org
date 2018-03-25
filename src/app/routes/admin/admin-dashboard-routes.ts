@@ -2,15 +2,15 @@ import { Promise } from 'bluebird';
 import * as crypto from 'crypto';
 import * as express from 'express';
 
-import { AddressResolver } from '../internal/address-resolver';
-import { MusicoinAPI } from '../internal/musicoin-api';
-import { MusicoinOrgJsonAPI } from '../rest-api/json-api';
+import { AddressResolver } from '../../internal/address-resolver';
+import { MusicoinAPI } from '../../internal/musicoin-api';
+import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 
 const router = express.Router();
-const Release = require('../models/release');
-const User = require('../models/user');
-const APIClient = require('../models/api-client');
-const UserStats = require('../models/user-stats');
+const Release = require('../../models/release');
+const User = require('../../models/user');
+const APIClient = require('../../models/api-client');
+const UserStats = require('../../models/user-stats');
 const DAY = 1000 * 60 * 60 * 24;
 
 

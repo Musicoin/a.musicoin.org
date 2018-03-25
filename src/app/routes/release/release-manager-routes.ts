@@ -3,15 +3,15 @@ import * as crypto from 'crypto';
 import * as express from 'express';
 import * as Formidable from 'formidable';
 
-import * as MetadataLists from '../metadata/metadata-lists';
-import { MusicoinOrgJsonAPI } from '../rest-api/json-api';
-import * as FormUtils from '../utils/form-utils';
-import { AddressResolver } from './address-resolver';
-import { MusicoinAPI } from './musicoin-api';
+import { AddressResolver } from '../../internal/address-resolver';
+import { MusicoinAPI } from '../../internal/musicoin-api';
+import * as MetadataLists from '../../metadata/metadata-lists';
+import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
+import * as FormUtils from '../../utils/form-utils';
 
 const router = express.Router();
-const Release = require('../models/release');
-const User = require('../models/user');
+const Release = require('../../models/release');
+const User = require('../../models/user');
 const defaultTrackImage = "ipfs://QmRsPLxCAgDZLfujibUF8EwYY9uZVU9vRq73rpAotiAsdf";
 const defaultProfileIPFSImage = "ipfs://QmR8mmsMn9TUdJiA6Ja3SYcQ4ckBdky1v5KGRimC7LkhGF";
 const defaultProfileIPFSImageOld = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";

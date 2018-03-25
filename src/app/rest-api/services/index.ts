@@ -1,5 +1,5 @@
-import SongVote from './song-vote';
 import Song from './song';
+import SongVote from './song-vote';
 import User from './user';
 
 export const song = new Song();

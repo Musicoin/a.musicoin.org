@@ -1,5 +1,5 @@
-import {Promise} from "bluebird";
-import {CachedRequest} from "cached-request";
+import { Promise } from 'bluebird';
+import { CachedRequest } from 'cached-request';
 
 interface ExchangeRateServiceConfig {
   endpoint: string,
@@ -15,7 +15,7 @@ export class ExchangeRateProvider {
   getMusicoinExchangeRate(): Promise<any> {
     return this.cachedRequest.getJson(this.exchangeConfig.endpoint, this.exchangeConfig.cacheTTL)
       .then(response => {
-        if (!response || response.length == 0 || !response[0].price_usd) return {success: false};
+        if (!response || response.length == 0 || !response[0].price_usd) return { success: false };
         return {
           success: true,
           usd: response[0].price_usd as number,
@@ -27,7 +27,7 @@ export class ExchangeRateProvider {
       })
       .catch(err => {
         console.log("Unable to fetch exchange rate: " + err);
-        return {success: false}
+        return { success: false }
       });
   }
 }
