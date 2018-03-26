@@ -15,7 +15,7 @@ import * as FormUtils from '../utils/form-utils';
 
 const AnonymousUser = require('../models/anonymous-user');
 
-const ConfigUtils = require('../../../config/config');
+const ConfigUtils = require('../../config/config');
 var config = ConfigUtils.loadConfig();
 const bootSession = process.env.BOOTSESSION;
 const maxImageWidth = 400;
@@ -38,120 +38,120 @@ const MESSAGE_TYPES = {
   tip: "tip",
 };
 
-export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
-
-  const serverEndpoint = config.serverEndpoint;
-  publicPagesEnabled = config.publicPagesEnabled;
-  let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider, config.playbackLinkTTLMillis);
-  const mailSender = new MailSender();
-  const cachedRequest = new RequestCache();
-  const exchangeRateProvider = new ExchangeRateProvider(config.exchangeRateService, cachedRequest);
-
-  let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider, mailSender, exchangeRateProvider, config);
-  let restAPI = new MusicoinRestAPI(jsonAPI);
-  const addressResolver = new AddressResolver();
-
-  const releaseManager = new ReleaseManagerRouter(musicoinApi,
-    jsonAPI,
-    addressResolver,
-    maxImageWidth,
-    mediaProvider,
-    config,
-    module.exports.doRender);
-
-  const newReleaseListener = r => {
-    let msgText = r.description ? "[New Release] " + r.description : "New release!";
-
-    // TODO: This should be handled in the UI, but for now just chop the message text
-    if (msgText.length > 150) msgText = msgText.substring(0, 150) + "...";
-    jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, msgText, MESSAGE_TYPES.release, null)
-      .catch(err => {
-        console.log(`Failed to post a message about a new release: ${err}`)
-      });
-  };
-
-  const newProfileListener = p => {
-    jsonAPI.sendRewardsForInvite(p)
-      .then((results) => console.log(`Rewards sent for inviting ${p._id} profile=${p.profileAddress}, txs: ${JSON.stringify(results)}`))
-      .catch(err => console.log(`Failed to send invite rewards: ${err}`));
-  };
-
-  new PendingTxDaemon(newProfileListener, newReleaseListener)
-    .start(musicoinApi, config.database.pendingReleaseIntervalMs);
-
-  app.use('/', require('./routes/front-parts/front-routes').router);
-  app.use('/', require('./routes/home-page/home').router);
-  app.use('/', require('./routes/profile/profile').router);
-  app.use('/', require('./routes/social/social').router);
-  app.use('/', require('./routes/social/social').router);
-  app.use('/', require('./routes/extended-routes/extended').router);
-  app.use('/', require('./routes/extended-routes/ipfs').router);
-  app.use('/', require('./routes/extended-routes/player').router);
-  app.use('/', require('./routes/auth/auth').router);
-  app.use('/', require('./routes/admin/admin-routes').router);
-  app.use('/', restAPI.getRouter());
-  app.use('/json-api', restAPI.getRouter());
-  app.use('/', preProcessUser(mediaProvider, jsonAPI), module.exports.checkInviteCode);
-  app.use('/release-manager', module.exports.isLoggedIn, releaseManager.getRouter());
-
-  function preProcessUser(mediaProvider, jsonAPI) {
-    return function preProcessUser(req, res, next) {
-      if (req.session && bootSession.indexOf(req.session.id) >= 0 && req.originalUrl != "/logout") {
-        console.log(`Redirecting banned session: url=${req.originalUrl}`);
-        return res.redirect("/logout");
-      }
-      const user = req.user;
-      if (user) {
-        // force locked accounts to log out immediately
-        if (!!user.accountLocked && req.originalUrl != "/logout") {
-          return res.redirect("/logout");
-        }
-        if (req.user.pendingInitialization) {
-          return jsonAPI.setupNewUser(user)
-            .then(() => {
-              return res.redirect('/loginRedirect');
-            })
-            .catch(err => {
-              console.log("Failed to setup new user: " + err);
-              return next();
-            })
-        }
-        else {
-          if (user.profile) {
-            user.profile.image = user.profile.ipfsImageUrl
-              ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
-              : user.profile.image;
-            user.profile.heroImage = user.profile.heroImageUrl
-              ? mediaProvider.resolveIpfsUrl(user.profile.heroImageUrl)
-              : user.profile.heroImage;
-          }
-          user.canInvite = module.exports.canInvite(user);
-          user.isAdmin = module.exports.isAdmin(user);
-          const fixFacebook = (user.facebook.id && !user.facebook.url);
-          const fixTwitter = (user.twitter.id && !user.twitter.url);
-          if (fixFacebook || fixTwitter) {
-            if (fixFacebook) user.facebook.url = `https://www.facebook.com/app_scoped_user_id/${user.facebook.id}/`;
-            if (fixTwitter) user.twitter.url = `https://twitter.com/${user.twitter.username}/`;
-            return user.save()
-              .then(() => {
-                console.log("fixed social urls!");
-                return next();
-              })
-              .catch((err) => {
-                console.log("failed to update social urls: " + err);
-                return next();
-              })
-          }
-        }
-      }
-      next();
-    }
-  }
-}
 
 module.exports = {
 
-  doRender: function (req, res, view, context) {
+  configure: function(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
+
+    const serverEndpoint = config.serverEndpoint;
+    publicPagesEnabled = config.publicPagesEnabled;
+    let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider, config.playbackLinkTTLMillis);
+    const mailSender = new MailSender();
+    const cachedRequest = new RequestCache();
+    const exchangeRateProvider = new ExchangeRateProvider(config.exchangeRateService, cachedRequest);
+
+    let jsonAPI = new MusicoinOrgJsonAPI(musicoinApi, mcHelper, mediaProvider, mailSender, exchangeRateProvider, config);
+    let restAPI = new MusicoinRestAPI(jsonAPI);
+    const addressResolver = new AddressResolver();
+
+    const releaseManager = new ReleaseManagerRouter(musicoinApi,
+      jsonAPI,
+      addressResolver,
+      maxImageWidth,
+      mediaProvider,
+      config,
+      module.exports.doRender);
+
+    const newReleaseListener = r => {
+      let msgText = r.description ? "[New Release] " + r.description : "New release!";
+
+      // TODO: This should be handled in the UI, but for now just chop the message text
+      if (msgText.length > 150) msgText = msgText.substring(0, 150) + "...";
+      jsonAPI.postLicenseMessages(r.contractAddress, null, r.artistAddress, msgText, MESSAGE_TYPES.release, null)
+        .catch(err => {
+          console.log(`Failed to post a message about a new release: ${err}`)
+        });
+    };
+
+    const newProfileListener = p => {
+      jsonAPI.sendRewardsForInvite(p)
+        .then((results) => console.log(`Rewards sent for inviting ${p._id} profile=${p.profileAddress}, txs: ${JSON.stringify(results)}`))
+        .catch(err => console.log(`Failed to send invite rewards: ${err}`));
+    };
+
+    new PendingTxDaemon(newProfileListener, newReleaseListener)
+      .start(musicoinApi, config.database.pendingReleaseIntervalMs);
+
+    app.use('/', require('./front-parts/front-routes').router);
+    app.use('/', require('./home-page/home').router);
+    app.use('/', require('./profile/profile').router);
+    app.use('/', require('./social/social').router);
+    app.use('/', require('./social/social').router);
+    app.use('/', require('./extended-routes/extended').router);
+    app.use('/', require('./extended-routes/ipfs').router);
+    app.use('/', require('./extended-routes/player').router);
+    app.use('/', require('./auth/auth').router);
+    app.use('/', require('./admin/admin-routes').router);
+    app.use('/', restAPI.getRouter());
+    app.use('/json-api', restAPI.getRouter());
+    app.use('/', preProcessUser(mediaProvider, jsonAPI), module.exports.checkInviteCode);
+    app.use('/release-manager', module.exports.isLoggedIn, releaseManager.getRouter());
+
+  },
+
+  preProcessUser: function(mediaProvider, jsonAPI) {
+    if (req.session && bootSession.indexOf(req.session.id) >= 0 && req.originalUrl != "/logout") {
+      console.log(`Redirecting banned session: url=${req.originalUrl}`);
+      return res.redirect("/logout");
+    }
+    const user = req.user;
+    if (user) {
+      // force locked accounts to log out immediately
+      if (!!user.accountLocked && req.originalUrl != "/logout") {
+        return res.redirect("/logout");
+      }
+      if (req.user.pendingInitialization) {
+        return jsonAPI.setupNewUser(user)
+          .then(() => {
+            return res.redirect('/loginRedirect');
+          })
+          .catch(err => {
+            console.log("Failed to setup new user: " + err);
+            return next();
+          })
+      }
+      else {
+        if (user.profile) {
+          user.profile.image = user.profile.ipfsImageUrl
+            ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
+            : user.profile.image;
+          user.profile.heroImage = user.profile.heroImageUrl
+            ? mediaProvider.resolveIpfsUrl(user.profile.heroImageUrl)
+            : user.profile.heroImage;
+        }
+        user.canInvite = module.exports.canInvite(user);
+        user.isAdmin = module.exports.isAdmin(user);
+        const fixFacebook = (user.facebook.id && !user.facebook.url);
+        const fixTwitter = (user.twitter.id && !user.twitter.url);
+        if (fixFacebook || fixTwitter) {
+          if (fixFacebook) user.facebook.url = `https://www.facebook.com/app_scoped_user_id/${user.facebook.id}/`;
+          if (fixTwitter) user.twitter.url = `https://twitter.com/${user.twitter.username}/`;
+          return user.save()
+            .then(() => {
+              console.log("fixed social urls!");
+              return next();
+            })
+            .catch((err) => {
+              console.log("failed to update social urls: " + err);
+              return next();
+            })
+        }
+      }
+    }
+    next();
+  },
+
+  doRender: function(req, res, view, context) {
     // console.log("Calling doRender in " + view);
     const b = req.user && req.user.profileAddress ? musicoinApi.getAccountBalance(req.user.profileAddress) : Promise.resolve(null);
     return b.then(balance => {
@@ -172,39 +172,39 @@ module.exports = {
     })
   },
 
-  canInvite: function (user) {
+  canInvite: function(user) {
     return user.invitesRemaining > 0 || this.isAdmin(user);
   },
 
-  setSignUpFlag: function (isSignup) {
-    return function (req, res, next) {
+  setSignUpFlag: function(isSignup) {
+    return function(req, res, next) {
       req.session.signup = isSignup;
       next();
     }
   },
 
-  smsCode: function () {
+  smsCode: function() {
     smsCodeVal = crypto.randomBytes(4).toString('hex');
   },
 
-  numberOfPhoneUsedTimes: function () {
+  numberOfPhoneUsedTimes: function() {
     numberOfPhoneUsedTimesVal = numberOfPhoneUsedTimesVal + 1;
   },
 
-  numberOfPhoneUsedTimesReturnVal: function () {
+  numberOfPhoneUsedTimesReturnVal: function() {
     return numberOfPhoneUsedTimesVal;
   },
 
-  smsCodeReturnVal: function () {
+  smsCodeReturnVal: function() {
     return smsCodeVal;
   },
 
-  phoneNumber: function (req) {
+  phoneNumber: function(req) {
     phoneNumberVal = req.body.phone.trim();
   },
 
-  validateLoginEmail: function (errRedirect) {
-    return function (req, res, next) {
+  validateLoginEmail: function(errRedirect) {
+    return function(req, res, next) {
       if (req.body.email) req.body.email = req.body.email.trim();
       if (!FormUtils.validateEmail(req.body.email)) {
         req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
@@ -256,17 +256,17 @@ module.exports = {
     }
   },
 
-  checkCaptcha: function (req) {
+  checkCaptcha: function(req) {
     const userResponse = req.body['g-recaptcha-response'];
     const url = config.captcha.url;
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       const verificationUrl = `${url}?secret=${config.captcha.secret}&response=${userResponse}&remoteip=${req.ip}`;
       console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
       const options = {
         method: 'post',
         url: verificationUrl
       };
-      request(options, function (err, res, body) {
+      request(options, function(err, res, body) {
         if (err) {
           console.log(err);
           return reject(err);
@@ -291,7 +291,7 @@ module.exports = {
       });
   },
 
-  SetSessionAfterLoginSuccessfullyAndRedirect: function (req, res) {
+  SetSessionAfterLoginSuccessfullyAndRedirect: function(req, res) {
     //user loggined succesfully, then redirect to '/loginRedirect' URL
     if (req.user) {
       if (req.user.profileAddress && req.user.profileAddress !== '') {
@@ -303,8 +303,8 @@ module.exports = {
     res.redirect('/loginRedirect'); // redirect to the secure profile section
   },
 
-  redirectIfLoggedIn: function (dest) {
-    return function (req, res, next) {
+  redirectIfLoggedIn: function(dest) {
+    return function(req, res, next) {
       if (req.isAuthenticated()) {
         return res.redirect(dest);
       }
@@ -312,25 +312,25 @@ module.exports = {
     }
   },
 
-  _formatNumber: function (value: any, decimals?: number) {
+  _formatNumber: function(value: any, decimals?: number) {
     const raw = parseFloat(value).toFixed(decimals ? decimals : 0);
     const parts = raw.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join(".");
   },
 
-  _formatAsISODateTime: function (timestamp) {
+  _formatAsISODateTime: function(timestamp) {
     const iso = new Date(timestamp * 1000).toISOString();
     return `${iso.substr(0, 10)} ${iso.substr(11, 8)} UTC`;
   },
 
-  _formatDate: function (timestamp) {
+  _formatDate: function(timestamp) {
     // TODO: Locale
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(timestamp * 1000).toLocaleDateString('en-US', options);
   },
 
-  isLoggedIn: function (req, res, next) {
+  isLoggedIn: function(req, res, next) {
 
     // if (true) return next();
     // console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionID}`);
@@ -346,17 +346,17 @@ module.exports = {
     res.redirect('/welcome');
   },
 
-  isAdmin: function (user) {
+  isAdmin: function(user) {
     return (user && user.google && user.google.email && user.google.email.endsWith("@musicoin.org"));
   },
 
-  hasProfile: function (req, res, next) {
+  hasProfile: function(req, res, next) {
     if (req.user.profileAddress)
       return next();
     res.redirect('/');
   },
 
-  SearchById: function (userAccessKey, callback) {
+  SearchById: function(userAccessKey, callback) {
     var resultMessage = {};
     User.findOne({
       $or: [
@@ -366,7 +366,7 @@ module.exports = {
         { google: { id: userAccessKey } },
         { soundcloud: { id: userAccessKey } }
       ]
-    }, function (err, user) {
+    }, function(err, user) {
       //database error
 
       if (err) {
@@ -405,7 +405,7 @@ module.exports = {
     });
   },
 
-  populateAnonymousUser: function (req, res, next) {
+  populateAnonymousUser: function(req, res, next) {
     if (!req.isAuthenticated()) {
       return this.getAnonymousUser(req)
         .then(anon => {
@@ -416,7 +416,7 @@ module.exports = {
     return next();
   },
 
-  getAnonymousUser: function (req) {
+  getAnonymousUser: function(req) {
     return AnonymousUser.findOne({ session: req.session.id })
       .then(anonymous => {
         // normal case.  Same IP, same session
@@ -457,12 +457,12 @@ module.exports = {
       })
   },
 
-  isLoggedInOrIsPublic: function (req, res, next) {
+  isLoggedInOrIsPublic: function(req, res, next) {
     if (publicPagesEnabled) return next();
     return this.isLoggedIn(req, res, next);
   },
 
-  FindUserByIdOrProfileAddress: function (req, callback) {
+  FindUserByIdOrProfileAddress: function(req, callback) {
     var resultMessage = {};
     var userAccessKey = '';
     //this request is local meaning request called by forum.musicoin.org,
@@ -474,14 +474,14 @@ module.exports = {
     if (userAccessKey && userAccessKey.length > 0) {
       if (userAccessKey.startsWith("0x")) {
         //this is profileAddress
-        this.SearchByProfileAddress(userAccessKey, function (_result) {
+        this.SearchByProfileAddress(userAccessKey, function(_result) {
           resultMessage = _result;
           callback(resultMessage);
         });
 
       } else {
         //this is not updated profile or user who does not have wallet address
-        this.SearchById(userAccessKey, function (_result) {
+        this.SearchById(userAccessKey, function(_result) {
           resultMessage = _result;
           callback(resultMessage);
         });
@@ -495,7 +495,7 @@ module.exports = {
     }
   },
 
-  BindUserDetailToObject: function (user, target, callback) {
+  BindUserDetailToObject: function(user, target, callback) {
     if (user.local && user.local.id && user.local.id !== '') {
       //user registered by local auth.
       target.authType = 'local';
@@ -551,7 +551,7 @@ module.exports = {
     callback(target);
   },
 
-  checkInviteCode: function (req, res, next) {
+  checkInviteCode: function(req, res, next) {
     const user = req.user;
     if (user && !user.reusableInviteCode) {
       user.reusableInviteCode = "MUSIC" + crypto.randomBytes(12).toString('hex');
@@ -568,9 +568,9 @@ module.exports = {
     next();
   },
 
-  SearchByProfileAddress: function (userAccessKey, callback) {
+  SearchByProfileAddress: function(userAccessKey, callback) {
     var resultMessage = {};
-    User.findOne({ "profileAddress": userAccessKey }, function (err, user) {
+    User.findOne({ "profileAddress": userAccessKey }, function(err, user) {
       //database error
       if (err) {
         resultMessage = {
@@ -608,8 +608,8 @@ module.exports = {
     });
   },
 
-  validateNewAccount: function (errRedirect) {
-    return function (req, res, next) {
+  validateNewAccount: function(errRedirect) {
+    return function(req, res, next) {
       if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
       if (!FormUtils.validateEmail(req.body.email)) {
         req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
@@ -640,7 +640,7 @@ module.exports = {
       const cp = this.checkCaptcha(req);
       const smsConfirmationCode = req.body.confirmationphone;
 
-      return Promise.join(cc, eu, cp, smsConfirmationCode, function (confirmation, existingUser, captchaOk) {
+      return Promise.join(cc, eu, cp, smsConfirmationCode, function(confirmation, existingUser, captchaOk) {
         if (!captchaOk) {
           if (smsCodeVal == smsConfirmationCode) {
             this.smsCode();

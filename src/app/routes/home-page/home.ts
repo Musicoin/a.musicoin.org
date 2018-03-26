@@ -7,6 +7,7 @@ import { MusicoinAPI } from '../../internal/musicoin-api';
 import { MusicoinHelper } from '../../internal/musicoin-helper';
 import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
+import {ConfigUtils} from '../../../config/config';
 import * as FormUtils from '../../utils/form-utils';
 
 let publicPagesEnabled = false;
@@ -21,12 +22,11 @@ const MESSAGE_TYPES = {
   tip: "tip",
 };
 
-const ConfigUtils = require('./config/config');
 var config = ConfigUtils.loadConfig();
 var functions = require('../routes');
 var express = require('express');
 var router = express.Router();
-const MediaProvider = require('./media/media-provider');
+const MediaProvider = require('../../../media/media-provider');
 const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
 const mailSender = new MailSender();
 const cachedRequest = new RequestCache();
