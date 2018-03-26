@@ -1,53 +1,47 @@
-var express = require('express');
-var router = express.Router();
-const MediaProvider = require('./media/media-provider');
-const ConfigUtils = require('./config/config');
-var config = ConfigUtils.loadConfig();
-const mediaProvider = new MediaProvider(config.ipfs.ipfsHost, config.ipfs.ipfsAddUrl);
-export function configure(passport) {
-    router.get('/signup/google', setSignUpFlag(true), passport.authenticate('google', { scope: ['profile', 'email'] }));
-    router.get('/auth/google', setSignUpFlag(false), passport.authenticate('google', { scope: ['profile', 'email'] }));
-    router.get('/connect/google', setSignUpFlag(false), passport.authorize('google', { scope: ['profile', 'email'] }));
+export function configure(app, passport, config: any) {
+    app.get('/signup/google', setSignUpFlag(true), passport.authenticate('google', { scope: ['profile', 'email'] }));
+    app.get('/auth/google', setSignUpFlag(false), passport.authenticate('google', { scope: ['profile', 'email'] }));
+    app.get('/connect/google', setSignUpFlag(false), passport.authorize('google', { scope: ['profile', 'email'] }));
 
     // the callback after google has authenticated the user
-    router.get('/auth/google/callback',
+    app.get('/auth/google/callback',
         passport.authenticate('google', {
             failureRedirect: '/welcome'
         }), SetSessionAfterLoginSuccessfullyAndRedirect);
 
-    router.get('/connect/google/callback',
+    app.get('/connect/google/callback',
         passport.authorize('google', {
             failureRedirect: '/'
         }), SetSessionAfterLoginSuccessfullyAndRedirect);
 
 
-    router.get('/signup/facebook', setSignUpFlag(true), passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
-    router.get('/auth/facebook', setSignUpFlag(false), passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
-    router.get('/connect/facebook', setSignUpFlag(false), passport.authorize('facebook', { scope: ['public_profile', 'email'] }));
+    app.get('/signup/facebook', setSignUpFlag(true), passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
+    app.get('/auth/facebook', setSignUpFlag(false), passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
+    app.get('/connect/facebook', setSignUpFlag(false), passport.authorize('facebook', { scope: ['public_profile', 'email'] }));
 
     // handle the callback after twitter has authenticated the user
-    router.get('/auth/facebook/callback',
+    app.get('/auth/facebook/callback',
         passport.authenticate('facebook', {
             failureRedirect: '/welcome'
         }), SetSessionAfterLoginSuccessfullyAndRedirect);
 
     // handle the callback after twitter has authenticated the user
-    router.get('/connect/facebook/callback',
+    app.get('/connect/facebook/callback',
         passport.authenticate('facebook', {
             failureRedirect: '/welcome'
         }), SetSessionAfterLoginSuccessfullyAndRedirect);
 
-    router.get('/signup/twitter', setSignUpFlag(true), passport.authenticate('twitter', { scope: 'email' }));
-    router.get('/auth/twitter', setSignUpFlag(false), passport.authenticate('twitter', { scope: 'email' }));
-    router.get('/connect/twitter', setSignUpFlag(false), passport.authorize('twitter', { scope: 'email' }));
+    app.get('/signup/twitter', setSignUpFlag(true), passport.authenticate('twitter', { scope: 'email' }));
+    app.get('/auth/twitter', setSignUpFlag(false), passport.authenticate('twitter', { scope: 'email' }));
+    app.get('/connect/twitter', setSignUpFlag(false), passport.authorize('twitter', { scope: 'email' }));
 
     // handle the callback after twitter has authenticated the user
-    router.get('/auth/twitter/callback',
+    app.get('/auth/twitter/callback',
         passport.authenticate('twitter', {
             failureRedirect: '/welcome'
         }), SetSessionAfterLoginSuccessfullyAndRedirect);
 
-    router.get('/connect/twitter/callback',
+    app.get('/connect/twitter/callback',
         passport.authenticate('twitter', {
             failureRedirect: '/welcome'
         }), SetSessionAfterLoginSuccessfullyAndRedirect);
@@ -55,19 +49,19 @@ export function configure(passport) {
     // =============================================================================
     // UNLINK ACCOUNTS =============================================================
     // =============================================================================
-    router.post('/unlink/google', function (req, res) {
+    app.post('/unlink/google', function (req, res) {
         unlinkProvider('google', req, res);
     });
 
-    router.post('/unlink/twitter', function (req, res) {
+    app.post('/unlink/twitter', function (req, res) {
         unlinkProvider('twitter', req, res);
     });
 
-    router.post('/unlink/facebook', function (req, res) {
+    app.post('/unlink/facebook', function (req, res) {
         unlinkProvider('facebook', req, res);
     });
 
-    router.post('/unlink/local', function (req, res) {
+    app.post('/unlink/local', function (req, res) {
         unlinkProvider('local', req, res);
     });
 
@@ -88,36 +82,35 @@ export function configure(passport) {
             }
         }
         res.redirect('/loginRedirect'); // redirect to the secure profile section
-    };
-}
-
-function unlinkProvider(provider, req, res) {
-    if (!req.isAuthenticated()) {
-        return res.json({ success: false, message: "You must be logged in to unlink an account" });
-    }
-    if (!req.user[provider] || !req.user[provider].id) {
-        return res.json({ success: false, message: `No ${provider} account is linked.` });
-    }
-    if (getLoginMethodCount(req.user) < 2) {
-        return res.json({ success: false, message: "You cannot remove your only authentication method." });
     }
 
-    req.user[provider] = {};
-    req.user.save(function (err) {
-        if (err) {
-            console.log("Failed to save user record: " + err);
-            res.json({ success: false, message: "An internal error occurred" });
+    function unlinkProvider(provider, req, res) {
+        if (!req.isAuthenticated()) {
+            return res.json({ success: false, message: "You must be logged in to unlink an account" });
         }
-        return res.json({ success: true, message: `Your ${provider} account has been unlinked from this account` });
-    });
-}
+        if (!req.user[provider] || !req.user[provider].id) {
+            return res.json({ success: false, message: `No ${provider} account is linked.` });
+        }
+        if (getLoginMethodCount(req.user) < 2) {
+            return res.json({ success: false, message: "You cannot remove your only authentication method." });
+        }
 
-function getLoginMethodCount(user) {
-    let total = 0;
-    if (user.google.id) total++;
-    if (user.facebook.id) total++;
-    if (user.twitter.id) total++;
-    if (user.local.id) total++;
-    return total;
+        req.user[provider] = {};
+        req.user.save(function (err) {
+            if (err) {
+                console.log("Failed to save user record: " + err);
+                res.json({ success: false, message: "An internal error occurred" });
+            }
+            return res.json({ success: true, message: `Your ${provider} account has been unlinked from this account` });
+        });
+    }
+
+    function getLoginMethodCount(user) {
+        let total = 0;
+        if (user.google.id) total++;
+        if (user.facebook.id) total++;
+        if (user.twitter.id) total++;
+        if (user.local.id) total++;
+        return total;
+    }
 }
-module.exports.router = router;

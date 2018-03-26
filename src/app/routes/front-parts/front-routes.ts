@@ -1,32 +1,29 @@
-var express = require('express');
-var router = express.Router();
+export function configure(app, config: any) {
+    app.get('/', (req, res) => {
+        res.render('../overview/index.html', {});
+    });
 
-router.get('/', (req, res) => {
-    res.render('../overview/index.html', {});
-});
+    app.get('/for-listeners', (req, res) => {
+        res.render('../overview/index.html', {});
+    });
 
-router.get('/for-listeners', (req, res) => {
-    res.render('../overview/index.html', {});
-});
+    app.get('/how-it-works', (req, res) => {
+        res.render('../overview/index.html', {});
+    });
 
-router.get('/how-it-works', (req, res) => {
-    res.render('../overview/index.html', {});
-});
+    app.get('/for-musicians', (req, res) => {
+        res.render('../overview/index.html', {});
+    });
 
-router.get('/for-musicians', (req, res) => {
-    res.render('../overview/index.html', {});
-});
+    app.get('/currency', (req, res) => {
+        res.render('../overview/index.html', {});
+    });
 
-router.get('/currency', (req, res) => {
-    res.render('../overview/index.html', {});
-});
+    app.get('/faq', (req, res) => {
+        res.render('../overview/index.html', {});
+    });
 
-router.get('/faq', (req, res) => {
-    res.render('../overview/index.html', {});
-});
-
-router.get('/bounty', (req, res) => {
-    res.render('../overview/index.html', {});
-});
-
-module.exports.router = router;
+    app.get('/bounty', (req, res) => {
+        res.render('../overview/index.html', {});
+    });
+}
