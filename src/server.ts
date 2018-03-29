@@ -11,16 +11,7 @@ import favicon = require('serve-favicon');
 
 import { MusicoinAPI } from './app/internal/musicoin-api';
 import * as logging from './app/logging';
-import * as admin from './app/routes/admin/admin-routes';
-import * as auth from './app/routes/auth/auth';
-import * as extended from './app/routes/extended-routes/extended';
-import * as ipfs from './app/routes/extended-routes/ipfs';
-import * as player from './app/routes/extended-routes/player';
-import * as front from './app/routes/front-parts/front-routes';
-import * as home from './app/routes/home-page/home';
-import * as profile from './app/routes/profile/profile';
 import * as routes from './app/routes/routes';
-import * as social from './app/routes/social/social';
 import * as passportConfigurer from './config/passport';
 import * as redis from './redis';
 
@@ -78,15 +69,6 @@ ConfigUtils.loadConfig()
     app.use(flash());
 
     routes.configure(app, passport, musicoinApi, mediaProvider, config);
-    front.configure(app, config);
-    home.configure(app, passport, musicoinApi, mediaProvider, config);
-    profile.configure(app, passport, musicoinApi, mediaProvider, config);
-    social.configure(app, passport, config);
-    extended.configure(app, passport, musicoinApi, mediaProvider, config);
-    ipfs.configure(app, passport, musicoinApi, mediaProvider, config);
-    player.configure(app, passport, musicoinApi, mediaProvider, config);
-    auth.configure(app, passport, musicoinApi, mediaProvider, config);
-    admin.configure(app, passport, musicoinApi, mediaProvider, config);
 
     // let angular catch them
     app.use(function (req, res) {

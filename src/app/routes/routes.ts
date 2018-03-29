@@ -1,4 +1,5 @@
 import { Promise } from 'bluebird';
+import * as crypto from 'crypto';
 
 import { ExchangeRateProvider } from '../extra/exchange-service';
 import { MailSender } from '../extra/mail-sender';
@@ -8,8 +9,23 @@ import { MusicoinHelper } from '../internal/musicoin-helper';
 import { PendingTxDaemon } from '../internal/tx-daemon';
 import { MusicoinOrgJsonAPI } from '../rest-api/json-api';
 import { MusicoinRestAPI } from '../rest-api/rest-api';
+import { DashboardRouter } from '../routes/admin/admin-dashboard-routes';
+import { AdminRoutes } from '../routes/admin/admin-routes';
+import { ExtendedRouter } from '../routes/extended-routes/extended';
+import { IpfsRouter } from '../routes/extended-routes/ipfs';
+import { PlayerRouter } from '../routes/extended-routes/player';
+import { FrontRouter } from '../routes/front-parts/front-routes';
+import { HomeRouter } from '../routes/home-page/home';
+import { ProfileRouter } from '../routes/profile/profile';
 import { ReleaseManagerRouter } from '../routes/release/release-manager-routes';
+import { SocialRouter } from '../routes/social/social';
 import { RequestCache } from '../utils/cached-request';
+import * as FormUtils from '../utils/form-utils';
+import { AuthRouter } from './auth/auth';
+
+const maxHeroImageWidth = 1300;
+const EmailConfirmation = require('../models/email-confirmation');
+const User = require('../models/user');
 
 var functions = require('./routes-functions');
 const AnonymousUser = require('../models/anonymous-user');
@@ -47,6 +63,65 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     config,
     doRender);
 
+  const socialRouter = new SocialRouter(passport);
+  const frontRouter = new FrontRouter();
+  const adminRoutes = new AdminRoutes(musicoinApi,
+    jsonAPI,
+    addressResolver,
+    exchangeRateProvider,
+    cachedRequest,
+    mediaProvider, // TODO
+    passport,
+    config,
+    doRender);
+  const playerRouter = new PlayerRouter(musicoinApi,
+    jsonAPI,
+    addressResolver,
+    exchangeRateProvider,
+    mediaProvider, // TODO
+    config,
+    doRender);
+
+  const dashboardManager = new DashboardRouter(musicoinApi,
+    jsonAPI,
+    addressResolver,
+    maxImageWidth,
+    mediaProvider,
+    config,
+    doRender);
+
+  const homeRouter = new HomeRouter(musicoinApi,
+    jsonAPI,
+    addressResolver,
+    mediaProvider,
+    config,
+    doRender);
+
+  const extendedRouter = new ExtendedRouter(musicoinApi,
+    jsonAPI,
+    addressResolver,
+    mediaProvider,
+    config,
+    doRender);
+
+  const authRouter = new AuthRouter(musicoinApi,
+    jsonAPI,
+    addressResolver,
+    exchangeRateProvider,
+    config,
+    doRender);
+
+  const ipfsRouter = new IpfsRouter(mediaProvider);
+
+  const profileRouter = new ProfileRouter(musicoinApi,
+    jsonAPI,
+    addressResolver,
+    maxImageWidth,
+    maxHeroImageWidth,
+    mediaProvider, // TODO
+    config,
+    doRender)
+
   const newReleaseListener = r => {
     let msgText = r.description ? "[New Release] " + r.description : "New release!";
 
@@ -67,9 +142,328 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   new PendingTxDaemon(newProfileListener, newReleaseListener)
     .start(musicoinApi, config.database.pendingReleaseIntervalMs);
   app.use('/', restAPI.getRouter());
+  app.use('/', socialRouter.getRouter());
+  app.use('/', adminRoutes.getRouter());
+  app.use('/', frontRouter.getRouter());
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider, jsonAPI), module.exports.checkInviteCode);
   app.use('/release-manager', module.exports.isLoggedIn, releaseManager.getRouter());
+  app.use('/admin/', dashboardManager.getRouter());
+  app.use('/', homeRouter.getRouter());
+  app.use('/', extendedRouter.getRouter());
+  app.use('/', ipfsRouter.getRouter());
+  app.use('/', playerRouter.getRouter());
+  app.use('/', authRouter.getRouter());
+  app.use('/', profileRouter.getRouter());
+
+  // =====================================
+  // ADMIN LOGIN =========================
+  // =====================================
+
+  app.get('/admin/su', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+    // render the page and pass in any flash data if it exists
+    res.render('su.ejs', { message: req.flash('loginMessage') });
+  });
+
+  app.post('/admin/su', functions.isLoggedIn, functions.adminOnly, passport.authenticate('local-su', {
+    failureRedirect: '/admin/su', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
+  }), function (req, res) {
+    //admin loggined succesfully
+    if (req.user) {
+      if (req.user.profileAddress && req.user.profileAddress !== '') {
+        req.session.userAccessKey = req.user.profileAddress; //set session value as user.profileAddress;
+      } else if (req.user.id && req.user.id !== '') {
+        req.session.userAccessKey = req.user.id;  //set session value as user.id
+      }
+    }
+    res.redirect('/profile'); // redirect to the secure profile section
+  });
+
+
+  // =====================================
+  // ADMIN LOGIN =========================
+  // =====================================
+
+  app.get('/admin/su', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+    // render the page and pass in any flash data if it exists
+    res.render('su.ejs', { message: req.flash('loginMessage') });
+  });
+
+  app.post('/admin/su', functions.isLoggedIn, functions.adminOnly, passport.authenticate('local-su', {
+    failureRedirect: '/admin/su', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
+  }), function (req, res) {
+    //admin loggined succesfully
+    if (req.user) {
+      if (req.user.profileAddress && req.user.profileAddress !== '') {
+        req.session.userAccessKey = req.user.profileAddress; //set session value as user.profileAddress;
+      } else if (req.user.id && req.user.id !== '') {
+        req.session.userAccessKey = req.user.id;  //set session value as user.id
+      }
+    }
+    res.redirect('/profile'); // redirect to the secure profile section
+  });
+
+  app.get('/admin/licenses/dump', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+    // render the page and pass in any flash data if it exists
+    jsonAPI.getAllContracts()
+      .then(function (all) {
+        return Promise.all(all.map(contract => {
+          const k = musicoinApi.getKey(contract.address)
+            .catch(err => "Unknown: " + err);
+          return k.then(function (key) {
+            contract.key = key;
+            return contract;
+          })
+        }));
+      })
+      .then(all => res.json(all));
+  });
+
+  // app.get('/landing',  (req, res) => doRender(req, res, 'landing.ejs', {}));
+  app.get('/welcome', functions.redirectIfLoggedIn('/loginRedirect'), (req, res) => {
+    if (req.user) {
+      console.log("User is already logged in, redirecting away from login page");
+      return res.redirect('/loginRedirect');
+    }
+    // render the page and pass in any flash data if it exists
+    if (req.query.redirect) {
+      console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`);
+      req.session.destinationUrl = req.query.redirect;
+    }
+    const message = req.flash('loginMessage');
+    return doRender(req, res, 'landing.ejs', {
+      message: message,
+      code: req.session.inviteCode
+    });
+  });
+
+  app.get('/welcome-musician', functions.redirectIfLoggedIn('/loginRedirect'), (req, res) => {
+
+    if (req.user) {
+      console.log("User is already logged in, redirecting away from login page");
+      return res.redirect('/loginRedirect');
+    }
+    // render the page and pass in any flash data if it exists
+    if (req.query.redirect) {
+      console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`);
+      req.session.destinationUrl = req.query.redirect;
+    }
+    const message = req.flash('loginMessage');
+    return doRender(req, res, 'landing_musicians.ejs', {
+      message: message,
+      code: req.session.inviteCode
+    });
+  });
+
+  app.get('/welcome-musician', functions.redirectIfLoggedIn('/loginRedirect'), (req, res) => {
+
+    if (req.user) {
+      console.log("User is already logged in, redirecting away from login page");
+      return res.redirect('/loginRedirect');
+    }
+    // render the page and pass in any flash data if it exists
+    if (req.query.redirect) {
+      console.log(`Session post-login redirect to ${req.query.redirect}, session=${req.session.id}`);
+      req.session.destinationUrl = req.query.redirect;
+    }
+    const message = req.flash('loginMessage');
+    return doRender(req, res, 'landing_musicians.ejs', {
+      message: message,
+      code: req.session.inviteCode
+    });
+  });
+
+  app.get('/login', function (req, res) {
+    if (req.user) {
+      console.log("User is already logged in, redirecting away from login page");
+      return res.redirect('/loginRedirect');
+    }
+    if (req.query.returnTo) {
+      req.session.destinationUrl = req.query.returnTo;
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    doRender(req, res, 'landing.ejs', {
+      message: message,
+    });
+    //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
+  });
+
+  app.get('/login-musician', function (req, res) {
+    if (req.user) {
+      console.log("User is already logged in, redirecting away from login page");
+      return res.redirect('/loginRedirect');
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    doRender(req, res, 'landing_musicians.ejs', {
+      message: message,
+    });
+    //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
+  });
+
+  app.get('/connect/email', function (req, res) {
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    doRender(req, res, 'landing.ejs', {
+      message: message,
+    });
+  });
+
+  app.post('/login/reset', (req, res) => {
+    const code = String(req.body.code);
+    if (!code)
+      return doRender(req, res, "landing.ejs", { message: "There was a problem resetting your password" });
+
+    const error = FormUtils.checkPasswordStrength(req.body.password);
+    if (error) {
+      return doRender(req, res, "password-reset.ejs", { code: code, message: error });
+    }
+
+    if (req.body.password != req.body.password2) {
+      return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match" });
+    }
+
+    if (typeof code != "string") {
+      return doRender(req, res, "landing.ejs", { message: "The password reset link has expired" });
+    }
+
+    User.findOne({ "local.resetCode": code }).exec()
+      .then(user => {
+        // code does not exist or is expired, just go to the login page
+        if (!user || !user.local || !user.local.resetExpiryTime)
+          return doRender(req, res, "landing.ejs", { message: "The password reset link has expired" });
+
+        // make sure code is not expired
+        const expiry = new Date(user.local.resetExpiryTime).getTime();
+        if (Date.now() > expiry)
+          return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match" });
+
+        const error = FormUtils.checkPasswordStrength(req.body.password);
+        if (error) {
+          return doRender(req, res, "password-reset.ejs", { code: code, message: error });
+        }
+
+        user.local.password = user.generateHash(req.body.password);
+        user.local.resetCode = null;
+        user.local.resetExpiryTime = null;
+
+        return user.save()
+          .then(() => {
+            req.flash('loginMessage', "Your password has been reset.  Please login with your new password");
+            return res.redirect("/welcome");
+          })
+      })
+  });
+
+  app.post('/login/confirm', function (req, res) {
+    if (req.body.email) req.body.email = req.body.email.trim();
+    if (!FormUtils.validateEmail(req.body.email)) {
+      res.json({
+        success: false,
+        email: req.body.email,
+        reason: "The email address does not routerear to be valid"
+      });
+    }
+    else {
+      const code = "MUSIC" + crypto.randomBytes(11).toString('hex');
+      EmailConfirmation.create({ email: req.body.email, code: code })
+        .then(() => {
+          return mailSender.sendEmailConfirmationCode(req.body.email, code)
+            .then(() => {
+              console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
+              res.json({
+                success: true,
+                email: req.body.email
+              });
+            })
+        })
+        .catch((err) => {
+          console.log(`Failed to send email confirmation code ${code}: ${err}`);
+          res.json({
+            success: false,
+            email: req.body.email,
+            reason: "An internal error occurred.  Please try again later."
+          });
+        });
+    }
+  });
+
+  app.post('/login/forgot', (req, res) => {
+    var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+    const email = req.body.email || "";
+    if (re.test(email.trim()) == false)  /// a@b.c is the smallest possible email address (5 chars)
+      return doRender(req, res, "landing.ejs", { message: "Invalid email address: " + req.body.email });
+
+    checkCaptcha(req)
+      .then(captchaOk => {
+        if (!captchaOk) {
+          req.flash('loginMessage', `The captcha check failed`);
+          return
+        } else {
+          User.findOne({ "local.email": req.body.email }).exec()
+            .then(user => {
+              if (!user) return doRender(req, res, "password-reset.ejs", { message: "User not found: " + req.body.email });
+              user.local.resetExpiryTime = Date.now() + config.auth.passwordResetLinkTimeout;
+              user.local.resetCode = "MUSIC" + crypto.randomBytes(11).toString('hex');
+              return user.save()
+                .then(user => {
+                  if (!user) {
+                    console.log("user.save() during password reset did not return a user record");
+                    return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
+                  }
+                  return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
+                    .then(() => {
+                      return doRender(req, res, "landing.ejs", { message: "An email has been sent to " + req.body.email });
+                    })
+                })
+                .catch(err => {
+                  console.log(`An error occurred when sending the pasword reset email for ${email}: ${err}`);
+                  return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
+                })
+            })
+        }
+      });
+
+  });
+
+  function checkCaptcha(req) {
+    const userResponse = req.body['g-recaptcha-response'];
+    const url = config.captcha.url;
+    return new Promise(function (resolve, reject) {
+      const verificationUrl = `${url}?secret=${config.captcha.secret}&response=${userResponse}&remoteip=${req.ip}`;
+      console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
+      const options = {
+        method: 'post',
+        url: verificationUrl
+      };
+      request(options, function (err, res, body) {
+        if (err) {
+          console.log(err);
+          return reject(err);
+        }
+        else if (res.statusCode != 200) {
+          console.log(`reCAPTCHA request failed with status code ${res.statusCode}, url: ${url}`);
+          return reject(new Error(`Request failed with status code ${res.statusCode}, url: ${url}`));
+        }
+        resolve(body);
+      });
+    }.bind(this))
+      .then(captchaResponse => {
+        return JSON.parse(captchaResponse);
+      })
+      .then(captchaResponse => {
+        console.log("reCAPTCHA response from google: " + JSON.stringify(captchaResponse));
+        return captchaResponse && captchaResponse.success;
+      })
+      .catch(err => {
+        console.log("Failed to process captcha: " + err);
+        return false;
+      });
+  }
 
   function preProcessUser(mediaProvider, jsonAPI) {
     return function preProcessUser(req, res, next) {
