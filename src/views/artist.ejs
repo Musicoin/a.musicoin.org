@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-    <%- include partials/page-head.ejs %>
-    <%- include('partials/track-card-metadata.ejs') %>
+    <%- include('partials/page-head.ejs') %>
+    <%- include('partials/track/track-card-metadata.ejs') %>
     <%- include('partials/artist-card-metadata.ejs') %>
     <title>Musicoin</title>
     <style>
@@ -98,7 +98,7 @@
     <div id="outer">
         <div id=mainSection>
 
-<%- include partials/header.ejs %>
+<%- include('partials/header.ejs') %>
 
 <%- include('partials/hero.ejs', {artist: artist, showVerifiedIcon: artist.verified}) %>
 <%
@@ -343,7 +343,7 @@ function formatNumber(value) {
   }
 
 </script>
-<%- include partials/player-hook.ejs %>
-<%- include partials/connect-with-us.ejs %>
+<%- include('partials/player-hook.ejs') %>
+<%- include('partials/connect-with-us.ejs') %>
 </body>
 </html>

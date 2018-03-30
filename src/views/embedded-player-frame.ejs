@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <%- include partials/page-head.ejs %>
+  <%- include('partials/page-head.ejs') %>
   <style>
     @font-face {
       font-family: Raleway;
@@ -15,7 +15,7 @@
 
 <body>
 	<div id="embedded-player-main" class="embedded-player">
-		<%- include partials/embedded-player.ejs %>
+		<%- include('partials/embedded-player.ejs') %>
 	</div>
   
     <script type="text/javascript" src="/js/player.js"></script>

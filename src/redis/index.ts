@@ -1,10 +1,10 @@
-import * as Redis from 'ioredis';
 import * as async from 'async';
+import * as Redis from 'ioredis';
 
 let client;
 let prefix;
 
-export function initialize(config ? ) {
+export function initialize(config?) {
 
   prefix = config.hostname;
   client = new Redis(config.redis.url);
@@ -54,7 +54,7 @@ class RedisWrapper {
     return new Promise((resolve, reject) => {
 
       async.each(keys, (key, eachCallback) => {
-        
+
         client.del(`${prefix}:${key}`, eachCallback);
 
       }, (error) => {

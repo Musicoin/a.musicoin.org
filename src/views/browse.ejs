@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <%- include partials/page-head.ejs %>
+    <%- include('partials/page-head.ejs') %>
     <title>Browse - Musicoin.org</title>
     <style>
         body {
@@ -183,7 +183,7 @@
     <div id="play-queue-modal" class="modal-behavior play-queue-modal-ui">
         <!-- Modal content -->
         <div class="modal-content-behavior play-queue-modal-content-ui">
-            <%- include ../views/partials/play-queue-active.ejs %>
+            <%- include('partials/play-queue-active.ejs') %>
         </div>
     </div>
 
