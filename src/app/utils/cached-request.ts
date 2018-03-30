@@ -57,7 +57,7 @@ export class RequestCache {
   }
 
   private static makeRequest(options, cacheFile: string, callback) {
-    request.get(options, function (error, response, result) {
+    request(options, function (error, response, result) {
       const entry = {
         data: result,
         expiry: Date.now() + options.ttl
@@ -75,8 +75,8 @@ export class RequestCache {
             }
           });
         }
-        callback(error, response, result);
       });
+      callback(error, response, result);
     })
   }
 

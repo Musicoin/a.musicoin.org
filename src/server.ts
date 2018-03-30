@@ -11,7 +11,7 @@ import favicon = require('serve-favicon');
 
 import { MusicoinAPI } from './app/internal/musicoin-api';
 import * as logging from './app/logging';
-import * as routes from './app/routes/routes';
+import * as routes from './app/routes';
 import * as passportConfigurer from './config/passport';
 import * as redis from './redis';
 
@@ -120,4 +120,5 @@ app.use(function (req, res: any, next) {
   }
   next();
 });
+
 export = app;

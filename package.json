@@ -55,8 +55,6 @@
     "@types/node": "*",
     "@types/passport": "*",
     "chai": "*",
-    "chai-as-promised": "^7.1.1",
-    "chai-fs": "^2.0.0",
     "chai-http": "*",
     "mocha": "^5.0.5",
     "recursive-readdir-sync": "*",

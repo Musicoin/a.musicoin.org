@@ -146,6 +146,17 @@ module.exports = {
         res.redirect('/welcome');
     },
 
+
+    adminOnly: function (req, res, next) {
+
+        // if user is authenticated in the session, carry on
+        if (this.isAdmin(req.user))
+            return next();
+
+        // if they aren't redirect them to the error page
+        res.redirect('/error');
+    },
+
     isAdmin: function (user) {
         return (user && user.google && user.google.email && user.google.email.endsWith("@musicoin.org"));
     },

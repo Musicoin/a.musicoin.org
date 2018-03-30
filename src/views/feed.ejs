@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <%- include partials/page-head.ejs %>
+    <%- include('partials/page-head.ejs') %>
     <title>Musicoin</title>
     <style>
         body {
@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="/styles/track-message.css">
 </head>
 <body>
-    <%- include partials/header.ejs %>
+    <%- include('partials/header.ejs') %>
     <%- include('partials/hero.ejs', { display: !minimizeHeroInFeed }) %>
     <% var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image" %>
 
@@ -156,7 +156,7 @@
         dynamic.refreshElement($("#de-track-messages"));
       }
     </script>
-    <%- include partials/player-hook.ejs %>
-    <%- include partials/connect-with-us.ejs %>
+    <%- include('partials/player-hook.ejs') %>
+    <%- include('partials/connect-with-us.ejs') %>
 </body>
 </html>
