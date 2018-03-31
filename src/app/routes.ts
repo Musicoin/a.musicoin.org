@@ -415,7 +415,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // EMAIL ==============================
   // =====================================
 
-  app.get('/login', function (req, res) {
+  app.get('/welcome', function (req, res) {
     if (req.user) {
       console.log("User is already logged in, redirecting away from login page");
       return res.redirect('/loginRedirect');
@@ -431,7 +431,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
   });
 
-  app.get('/login-musician', function (req, res) {
+  app.get('/welcome-musician', function (req, res) {
     if (req.user) {
       console.log("User is already logged in, redirecting away from login page");
       return res.redirect('/loginRedirect');
