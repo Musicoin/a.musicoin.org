@@ -11,7 +11,6 @@ import * as FormUtils from '../../utils/form-utils';
 const User = require('../../models/user');
 const Release = require('../../models/release');
 const router = express.Router();
-const bootSession = process.env.BOOTSESSION;
 const MESSAGE_TYPES = {
     admin: "admin",
     comment: "comment",
@@ -31,6 +30,8 @@ export class AdminRoutes {
         passport: any,
         config: any,
         doRender: any) {
+
+        const bootSession = config.musicoinApi.bootSession;
 
         router.post('/admin/send-weekly-report', (req, res) => {
             if (!req.body.id) return res.json({ success: false, reason: "No id" });

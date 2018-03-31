@@ -35,7 +35,6 @@ const TrackMessage = require('./models/track-message');
 const EmailConfirmation = require('./models/email-confirmation');
 const User = require('./models/user');
 const sendSeekable = require('send-seekable');
-const messagebird = require('messagebird')(process.env.MESSAGEBIRD_ID);
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
 const MAX_MESSAGE_LENGTH = 1000;
@@ -49,10 +48,6 @@ const MESSAGE_TYPES = {
   tip: "tip",
 };
 
-const defaultProfileIPFSImage = process.env.IPSFS_IMAGE;
-const bootSession = process.env.BOOTSESSION;
-const whiteLocalIpList = process.env.LOCAL_IP;
-const baseUrl = process.env.BASE_URL;
 let publicPagesEnabled = false;
 var smsCodeVal = crypto.randomBytes(4).toString('hex');
 var phoneNumberVal = 0;
@@ -61,6 +56,8 @@ var numberOfPhoneUsedTimesVal = 0;
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
   const serverEndpoint = config.serverEndpoint;
+  const bootSession = config.musicoinApi.bootSession;
+  const baseUrl = config.musicoinApi.baseUrl;
   publicPagesEnabled = config.publicPagesEnabled;
   let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider, config.playbackLinkTTLMillis);
   const mailSender = new MailSender();
@@ -800,7 +797,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       ? Promise.resolve({ key: cachedKey, cached: true })
       : payForPPPKey(req, release, license, playbackEligibility.payFromProfile);
   }
-}
 
 function preProcessUser(mediaProvider, jsonAPI) {
   return function preProcessUser(req, res, next) {
@@ -854,5 +850,6 @@ function preProcessUser(mediaProvider, jsonAPI) {
     }
     next();
   }
+}
 }
 

@@ -14,8 +14,6 @@ import * as FormUtils from '../../utils/form-utils';
 
 const router = express.Router();
 const Playback = require('../../models/user-playback');
-const whiteLocalIpList = process.env.LOCAL_IP;
-const defaultProfileIPFSImage = process.env.IPSFS_IMAGE;
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
 var functions = require('../routes-functions');
@@ -40,11 +38,12 @@ export class ProfileRouter {
         config: any,
         doRender: any) {
         const serverEndpoint = config.serverEndpoint;
+        const whiteLocalIpList = config.musicoinApi.whiteLocalIpList;
         const mailSender = new MailSender();
         const cachedRequest = new RequestCache();
         const exchangeRateProvider = new ExchangeRateProvider(config.exchangeRateService, cachedRequest);
         let mcHelper = new MusicoinHelper(musicoinApi, mediaProvider, config.playbackLinkTTLMillis);
-
+        const defaultProfileIPFSImage = config.musicoinApi.defaultProfileIPFSImage;
 
         // =====================================
         // PUBLIC ARTIST PROFILE SECTION =======

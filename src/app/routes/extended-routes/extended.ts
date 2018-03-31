@@ -14,7 +14,6 @@ import * as UrlUtils from '../../utils/url-utils';
 const router = express.Router();
 var functions = require('../routes-functions');
 const Release = require('../../models/release');
-const baseUrl = process.env.BASE_URL;
 const addressResolver = new AddressResolver();
 const User = require('../../models/user');
 const mailSender = new MailSender();
