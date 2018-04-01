@@ -13,7 +13,6 @@ var functions = require('../routes-functions');
 const addressResolver = new AddressResolver();
 let publicPagesEnabled = false;
 const Release = require('../../models/release');
-const baseUrl = process.env.BASE_URL;
 export class PlayerRouter {
     constructor(musicoinApi: MusicoinAPI,
         jsonAPI: MusicoinOrgJsonAPI,
@@ -22,6 +21,7 @@ export class PlayerRouter {
         mediaProvider: any, // TODO
         config: any,
         doRender: any) {
+        const baseUrl = config.musicoinApi.baseUrl;
         router.use('/oembed', (req, res) => res.render('oembed.ejs'));
         router.use('/services/oembed', (req, res) => {
             // https://musicoin.org/nav/track/0x28e4f842f0a441e0247bdb77f3e10b4a54da2502

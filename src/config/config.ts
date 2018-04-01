@@ -132,6 +132,11 @@ function getStructuredConfig(keyValueConfig) {
       getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,
       getAccountBalance: `${keyValueConfig.musicoinApiEndpoint}/balance`,
       clientID: keyValueConfig.musicoinApiClientId,
+      defaultProfileIPFSImage: keyValueConfig.defaultProfileIPFSImage,
+      messagebirdID: keyValueConfig.messagebirdID,
+      bootSession: keyValueConfig.bootSession,
+      whiteLocalIpList: keyValueConfig.whiteLocalIpList,
+      baseUrl: keyValueConfig.baseUrl
     },
     exchangeRateService: {
       endpoint: "https://api.coinmarketcap.com/v1/ticker/musicoin/",

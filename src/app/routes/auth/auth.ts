@@ -20,8 +20,8 @@ export class AuthRouter {
         exchangeRateProvider: ExchangeRateProvider,
         config: any,
         doRender: any) {
-        const messagebird = require('messagebird')(process.env.MESSAGEBIRD_ID);
-        const baseUrl = process.env.BASE_URL;
+        const messagebird = require('messagebird')(config.musicoinApi.messagebirdID);
+        const baseUrl = config.musicoinApi.baseUrl;
         const User = require('../../models/user');
 
         router.post('/qr-code', function (req, res) {

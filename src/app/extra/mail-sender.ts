@@ -71,7 +71,7 @@ export class MailSender {
         const to_email = new helper.Email(recipient);
         const content = new helper.Content("text/html", html);
         const mail = new helper.Mail(from_email, subject, to_email, content);
-
+        console.log("sg key load test: " + process.env.SENDGRID_API_KEY);
         const sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
         const request = sg.emptyRequest({
           method: 'POST',
