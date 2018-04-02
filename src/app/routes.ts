@@ -56,6 +56,7 @@ var numberOfPhoneUsedTimesVal = 0;
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 
   const serverEndpoint = config.serverEndpoint;
+  const captchaSecret = config.captcha.secret;
   const bootSession = config.musicoinApi.bootSession;
   const baseUrl = config.musicoinApi.baseUrl;
   publicPagesEnabled = config.publicPagesEnabled;
@@ -208,6 +209,44 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return res.redirect(url);
     }
     res.redirect('/nav/feed');
+  });
+
+  app.post('/login/confirm', function (req, res) {
+    if (req.body.email) req.body.email = req.body.email.trim();
+    if (!FormUtils.validateEmail(req.body.email)) {
+      res.json({
+        success: false,
+        email: req.body.email,
+        reason: "The email address does not appear to be valid"
+      });
+    }
+    else {
+      const code = "MUSIC" + crypto.randomBytes(11).toString('hex');
+      if (captchaSecret == "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe") {
+        var emailState = true;
+      } else {
+        var emailState = false;
+      }
+      EmailConfirmation.create({ email: req.body.email, code: code })
+        .then(() => {
+          return mailSender.sendEmailConfirmationCode(req.body.email, code)
+            .then(() => {
+              console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
+              res.json({
+                success: true,
+                email: req.body.email
+              });
+            })
+        })
+        .catch((err) => {
+          console.log(`Failed to send email confirmation code ${code}: ${err}`);
+          res.json({
+            success: emailState,
+            email: req.body.email,
+            reason: "An internal error occurred.  Please try again later."
+          });
+        });
+    }
   });
 
   function doRender(req, res, view, context) {
@@ -755,13 +794,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     const userName = user.draftProfile ? user.draftProfile.artistName : user._id;
     const licenseAddress = release.contractAddress;
     let paymentPromise;
-      paymentPromise = musicoinApi.getKey(licenseAddress)
-        .then(keyResponse => {
-          user.freePlaysRemaining; // don't deduct from free plays since UBI is in place.
-          user.nextFreePlayback = Date.now() + config.freePlayDelay;
-          console.log(`User ${userName} has played a song, eligible for the next free play in ${ttl}ms`);
-          return keyResponse;
-        });
+    paymentPromise = musicoinApi.getKey(licenseAddress)
+      .then(keyResponse => {
+        user.freePlaysRemaining; // don't deduct from free plays since UBI is in place.
+        user.nextFreePlayback = Date.now() + config.freePlayDelay;
+        console.log(`User ${userName} has played a song, eligible for the next free play in ${ttl}ms`);
+        return keyResponse;
+      });
 
     // once the payment is initiated, update the release stats
     return paymentPromise.then(keyResponse => {
@@ -798,58 +837,58 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       : payForPPPKey(req, release, license, playbackEligibility.payFromProfile);
   }
 
-function preProcessUser(mediaProvider, jsonAPI) {
-  return function preProcessUser(req, res, next) {
-    if (req.session && bootSession.indexOf(req.session.id) >= 0 && req.originalUrl != "/logout") {
-      console.log(`Redirecting banned session: url=${req.originalUrl}`);
-      return res.redirect("/logout");
-    }
-    const user = req.user;
-    if (user) {
-      // force locked accounts to log out immediately
-      if (!!user.accountLocked && req.originalUrl != "/logout") {
+  function preProcessUser(mediaProvider, jsonAPI) {
+    return function preProcessUser(req, res, next) {
+      if (req.session && bootSession.indexOf(req.session.id) >= 0 && req.originalUrl != "/logout") {
+        console.log(`Redirecting banned session: url=${req.originalUrl}`);
         return res.redirect("/logout");
       }
-      if (req.user.pendingInitialization) {
-        return jsonAPI.setupNewUser(user)
-          .then(() => {
-            return res.redirect('/loginRedirect');
-          })
-          .catch(err => {
-            console.log("Failed to setup new user: " + err);
-            return next();
-          })
-      }
-      else {
-        if (user.profile) {
-          user.profile.image = user.profile.ipfsImageUrl
-            ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
-            : user.profile.image;
-          user.profile.heroImage = user.profile.heroImageUrl
-            ? mediaProvider.resolveIpfsUrl(user.profile.heroImageUrl)
-            : user.profile.heroImage;
+      const user = req.user;
+      if (user) {
+        // force locked accounts to log out immediately
+        if (!!user.accountLocked && req.originalUrl != "/logout") {
+          return res.redirect("/logout");
         }
-        user.canInvite = functions.canInvite(user);
-        user.isAdmin = functions.isAdmin(user);
-        const fixFacebook = (user.facebook.id && !user.facebook.url);
-        const fixTwitter = (user.twitter.id && !user.twitter.url);
-        if (fixFacebook || fixTwitter) {
-          if (fixFacebook) user.facebook.url = `https://www.facebook.com/app_scoped_user_id/${user.facebook.id}/`;
-          if (fixTwitter) user.twitter.url = `https://twitter.com/${user.twitter.username}/`;
-          return user.save()
+        if (req.user.pendingInitialization) {
+          return jsonAPI.setupNewUser(user)
             .then(() => {
-              console.log("fixed social urls!");
-              return next();
+              return res.redirect('/loginRedirect');
             })
-            .catch((err) => {
-              console.log("failed to update social urls: " + err);
+            .catch(err => {
+              console.log("Failed to setup new user: " + err);
               return next();
             })
         }
+        else {
+          if (user.profile) {
+            user.profile.image = user.profile.ipfsImageUrl
+              ? mediaProvider.resolveIpfsUrl(user.profile.ipfsImageUrl)
+              : user.profile.image;
+            user.profile.heroImage = user.profile.heroImageUrl
+              ? mediaProvider.resolveIpfsUrl(user.profile.heroImageUrl)
+              : user.profile.heroImage;
+          }
+          user.canInvite = functions.canInvite(user);
+          user.isAdmin = functions.isAdmin(user);
+          const fixFacebook = (user.facebook.id && !user.facebook.url);
+          const fixTwitter = (user.twitter.id && !user.twitter.url);
+          if (fixFacebook || fixTwitter) {
+            if (fixFacebook) user.facebook.url = `https://www.facebook.com/app_scoped_user_id/${user.facebook.id}/`;
+            if (fixTwitter) user.twitter.url = `https://twitter.com/${user.twitter.username}/`;
+            return user.save()
+              .then(() => {
+                console.log("fixed social urls!");
+                return next();
+              })
+              .catch((err) => {
+                console.log("failed to update social urls: " + err);
+                return next();
+              })
+          }
+        }
       }
+      next();
     }
-    next();
   }
-}
 }
 
