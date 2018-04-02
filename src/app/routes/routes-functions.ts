@@ -1,5 +1,6 @@
 import { Promise } from 'bluebird';
 import * as crypto from 'crypto';
+import * as request from 'request';
 
 import * as FormUtils from '../utils/form-utils';
 
@@ -11,7 +12,7 @@ var numberOfPhoneUsedTimesVal = 0;
 var phoneNumberVal = 0;
 module.exports = {
     canInvite: function (user) {
-        return user.invitesRemaining > 0 || this.isAdmin(user);
+        return user.invitesRemaining > 0 || module.exports.isAdmin(user);
     },
 
     setSignUpFlag: function (isSignup) {
@@ -39,6 +40,41 @@ module.exports = {
 
     phoneNumber: function (req) {
         phoneNumberVal = req.body.phone.trim();
+    },
+
+    checkCaptcha: function (req) {
+        const userResponse = req.body['g-recaptcha-response'];
+        const url = "https://www.google.com/recaptcha/api/siteverify";
+        return new Promise(function (resolve, reject) {
+            const verificationUrl = `${url}?secret=${process.env.CAPTCHA_SECRET}&response=${userResponse}&remoteip=${req.ip}`;
+            console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
+            const options = {
+                method: 'post',
+                url: verificationUrl
+            };
+            request(options, function (err, res, body) {
+                if (err) {
+                    console.log(err);
+                    return reject(err);
+                }
+                else if (res.statusCode != 200) {
+                    console.log(`reCAPTCHA request failed with status code ${res.statusCode}, url: ${url}`);
+                    return reject(new Error(`Request failed with status code ${res.statusCode}, url: ${url}`));
+                }
+                resolve(body);
+            });
+        }.bind(this))
+            .then(captchaResponse => {
+                return JSON.parse(captchaResponse);
+            })
+            .then(captchaResponse => {
+                console.log("reCAPTCHA response from google: " + JSON.stringify(captchaResponse));
+                return captchaResponse && captchaResponse.success;
+            })
+            .catch(err => {
+                console.log("Failed to process captcha: " + err);
+                return false;
+            });
     },
 
     validateLoginEmail: function (errRedirect) {
@@ -77,14 +113,14 @@ module.exports = {
                     })
             }
 
-            return this.checkCaptcha(req)
+            return module.exports.checkCaptcha(req)
                 .then(captchaOk => {
                     if (!captchaOk) {
                         const smsConfirmationCode = req.body.confirmationphone;
                         if (smsCodeVal == smsConfirmationCode) {
-                            this.smsCode();
+                            module.exports.smsCode();
                         } else {
-                            this.smsCode();
+                            module.exports.smsCode();
                             req.flash('loginMessage', "Incorrect captcha or phone verification code");
                             return res.redirect(errRedirect);
                         }
@@ -150,7 +186,7 @@ module.exports = {
     adminOnly: function (req, res, next) {
 
         // if user is authenticated in the session, carry on
-        if (this.isAdmin(req.user))
+        if (module.exports.isAdmin(req.user))
             return next();
 
         // if they aren't redirect them to the error page
@@ -201,7 +237,7 @@ module.exports = {
                         authType: 'local' //this value default
                     }
                     // this will bind user info to resultMessage(object) and call callback function
-                    this.BindUserDetailToObject(user, resultMessage, callback);
+                    module.exports.BindUserDetailToObject(user, resultMessage, callback);
 
                 } else {
                     //user not found
@@ -216,7 +252,7 @@ module.exports = {
     },
     isLoggedInOrIsPublic: function (req, res, next) {
         if (publicPagesEnabled) return next();
-        return this.isLoggedIn(req, res, next);
+        return module.exports.isLoggedIn(req, res, next);
     },
 
     FindUserByIdOrProfileAddress: function (req, callback) {
@@ -231,14 +267,14 @@ module.exports = {
         if (userAccessKey && userAccessKey.length > 0) {
             if (userAccessKey.startsWith("0x")) {
                 //this is profileAddress
-                this.SearchByProfileAddress(userAccessKey, function (_result) {
+                module.exports.SearchByProfileAddress(userAccessKey, function (_result) {
                     resultMessage = _result;
                     callback(resultMessage);
                 });
 
             } else {
                 //this is not updated profile or user who does not have wallet address
-                this.SearchById(userAccessKey, function (_result) {
+                module.exports.SearchById(userAccessKey, function (_result) {
                     resultMessage = _result;
                     callback(resultMessage);
                 });
@@ -351,7 +387,7 @@ module.exports = {
                         authType: 'local' //this value default
                     }
                     // this will bind user info to resultMessage(object) and call callback function
-                    this.BindUserDetailToObject(user, resultMessage, callback);
+                    module.exports.BindUserDetailToObject(user, resultMessage, callback);
 
                 } else {
                     //user not found
@@ -394,15 +430,15 @@ module.exports = {
 
             const cc = EmailConfirmation.findOne({ email: req.body.email, code: req.body.confirmation });
             const eu = User.findOne({ "local.email": req.body.email });
-            const cp = this.checkCaptcha(req);
+            const cp = module.exports.checkCaptcha(req);
             const smsConfirmationCode = req.body.confirmationphone;
 
             return Promise.join(cc, eu, cp, smsConfirmationCode, function (confirmation, existingUser, captchaOk) {
                 if (!captchaOk) {
                     if (smsCodeVal == smsConfirmationCode) {
-                        this.smsCode();
+                        module.exports.smsCode();
                     } else {
-                        this.smsCode();
+                        module.exports.smsCode();
                         req.flash('loginMessage', "Incorrect captcha or phone verification code");
                         return res.redirect(errRedirect);
                     }
