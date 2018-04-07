@@ -63,18 +63,18 @@ export default class SongService implements ServiceBase {
     let votesPromise = Release.findOne({ contractAddress: options.songAddress }).select('votes');
     let userVotePromise = options.viewer ? songVoteService.getVoteByUser({ user: options.viewer, songAddress: options.songAddress }) : Promise.resolve(null);
 
-    let results = Promise.all([votesPromise, userVotePromise]);
+    let results = Promise.all([votesPromise, userVotePromise]).then((results) => {
 
-    let voteStats = results[0].votes || { up: 0, down: 0 };
-    let userVote = results[1];
+      let voteStats = results[0].votes || { up: 0, down: 0 };
+      let userVote = results[1];
 
-    if (userVote) {
-      voteStats.viewerVote = userVote.type;
-    }
+      if (userVote) {
+        voteStats.viewerVote = userVote.type;
+      }
 
-    console.log(voteStats);
+      console.log(voteStats);
 
-    (('Server Error. Please try again.'));
+    }, (error) => console.log('Server Error. Please try again.'));
 
   }
 

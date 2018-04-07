@@ -24,7 +24,7 @@
          de-thread="<%= threadId %>"
          de-nocontent="That's weird. This thread has no messages."
          de-url="/elements/thread">
-        <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "That's weird. This thread has no messages."}) %>
+        <%- include('partials/track/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "That's weird. This thread has no messages."}) %>
     </div>
     <div class="text-center subtle-text">
         You can link to this thread using the following link:<br>

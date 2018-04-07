@@ -3,7 +3,7 @@
 <head>
     <%- include('partials/page-head.ejs') %>
     <%- include('partials/track/track-card-metadata.ejs') %>
-    <%- include('partials/artist-card-metadata.ejs') %>
+    <%- include('partials/track/artist-card-metadata.ejs') %>
     <title>Musicoin</title>
     <style>
 
@@ -223,7 +223,7 @@ function formatNumber(value) {
              de-nocontentmessage="No messages"
              de-user="<%=artist.profileAddress%>"
              de-url="/elements/user-messages">
-            <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
+            <%- include('partials/track/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
         </div>
     </div>
     <% } else { %>
@@ -240,7 +240,7 @@ function formatNumber(value) {
                  de-nocontentmessage="No messages"
                  de-user="<%=artist.profileAddress%>"
                  de-url="/elements/user-messages">
-                <%- include('partials/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
+                <%- include('partials/track/track-messages.ejs', {messages: messages, showTrack: true, noContentMessage: "No messages"}) %>
             </div>
         </div>
     <% } %>

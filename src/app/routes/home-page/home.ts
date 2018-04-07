@@ -268,11 +268,11 @@ export class HomeRouter {
       const threadId = FormUtils.defaultString(req.body.thread, "");
       handleMessagePost(req).then(() => jsonAPI.getThreadMessages(threadId, limit))
         .then(messages => {
-          return doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack });
+          return doRender(req, res, "partials/track/track-messages.ejs", { messages: messages, showTrack: showTrack });
         })
         .catch(err => {
           console.log("Failed to load track messages: " + err);
-          return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
+          return doRender(req, res, "partials/track/track-messages.ejs", { messages: [] });
         })
     });
 
@@ -283,11 +283,11 @@ export class HomeRouter {
       const showTrack = req.body.showtrack ? req.body.showtrack == "true" : false;
       handleMessagePost(req).then(() => jsonAPI.getLicenseMessages(req.body.address, limit))
         .then(messages => {
-          return doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack });
+          return doRender(req, res, "partials/track/track-messages.ejs", { messages: messages, showTrack: showTrack });
         })
         .catch(err => {
           console.log("Failed to load track messages: " + err);
-          return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
+          return doRender(req, res, "partials/track/track-messages.ejs", { messages: [] });
         })
     });
 
@@ -298,18 +298,18 @@ export class HomeRouter {
       const profileAddress = FormUtils.defaultString(req.body.user, "");
       handleMessagePost(req).then(() => jsonAPI.getUserMessages(profileAddress, limit))
         .then(messages => {
-          return doRender(req, res, "partials/track-messages.ejs", { messages: messages, showTrack: showTrack, noContentMessage: noContentMessage });
+          return doRender(req, res, "partials/track/track-messages.ejs", { messages: messages, showTrack: showTrack, noContentMessage: noContentMessage });
         })
         .catch(err => {
           console.log("Failed to load track messages: " + err);
-          return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
+          return doRender(req, res, "partials/track/track-messages.ejs", { messages: [] });
         })
     });
 
     router.post('/elements/feed', function (req, res) {
       // don't redirect if they aren't logged in, this is just page section
       if (!req.isAuthenticated()) {
-        return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
+        return doRender(req, res, "partials/track/track-messages.ejs", { messages: [] });
       }
 
       const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : 20;
@@ -322,7 +322,7 @@ export class HomeRouter {
 
       handleMessagePost(req).then(() => jsonAPI.getFeedMessages(req.user._id, limit, messageTypes))
         .then(messages => {
-          return doRender(req, res, "partials/track-messages.ejs", {
+          return doRender(req, res, "partials/track/track-messages.ejs", {
             messages: messages,
             showTrack: showTrack,
             noContentMessage: req.body.nocontent
@@ -330,7 +330,7 @@ export class HomeRouter {
         })
         .catch(err => {
           console.log("Failed to load track messages: " + err);
-          return doRender(req, res, "partials/track-messages.ejs", { messages: [] });
+          return doRender(req, res, "partials/track/track-messages.ejs", { messages: [] });
         })
     });
 
@@ -428,7 +428,7 @@ export class HomeRouter {
       const rs = jsonAPI.getNewReleasesByGenre(150, maxGroupSize, search, genre, sort).catchReturn([]);
       const as = jsonAPI.getNewArtists(maxGroupSize, search, genre).catchReturn([]);
       Promise.join(rs, as, function (releases, artists) {
-        return this.doRender(req, res, "browse.ejs", {
+        return doRender(req, res, "browse.ejs", {
           searchTerm: search,
           genreFilter: genre,
           releases: releases,
