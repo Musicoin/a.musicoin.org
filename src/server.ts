@@ -59,7 +59,8 @@ ConfigUtils.loadConfig()
       store: new RedisStore({ url: config.redis.url }),
       cookie: {
         path: '/',
-        domain: '.musicoin.org',
+        // domain: '.musicoin.org',
+        domain: config.sessionDomain,
         maxAge: ONE_YEAR
       },
     }));

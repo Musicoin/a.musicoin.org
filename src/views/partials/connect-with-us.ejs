@@ -1,16 +1,38 @@
 <style>
+    .footer {
+        background-color: #050505;
+        color: white;
+        height: 160px;
+    }
+
+    .footer-text {
+        color: white;
+    }
+
     .links {
         list-style-type: none;
         display: flex;
         font-size: 24px;
-        justify-content: center;
+    }
+    .footer-row {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .footer-column {
+        padding: 1rem 1rem 1rem 3rem;
+        height: 80px;
+    }
+
+    .column-middle-last {
+        border-left: solid 0.5px white;
     }
 </style>
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12 text-center">
-            <h5 class="subtle-text">Connect with us</h5>
-            <div class="links text-center">
+<div class="container-fluid footer">
+    <div class="row footer-row">
+        <div class="col-sm-6 footer-column">
+            <h5 class="footer-text subtle-text">Connect with us</h5>
+            <div class="links">
                 <li><a class="pad5 subtle-text" href="https://discord.gg/gA8gjxC" target="_blank"><img src="/images/discord.svg" width="50px"></li></a>
                 <li><a class="pad5 subtle-text" href="http://slack.musicoin.org/" target="_blank"><i class="fa fa-slack" aria-hidden="true" style="color: white"></i></a></li>
                 <li><a class="pad5 subtle-text" href="https://twitter.com/musicoins" target="_blank"><i class="fa fa-twitter" aria-hidden="true" style="color: white"></i></a></li>
@@ -18,9 +40,11 @@
                 <li><a class="pad5 subtle-text" href="mailto:musicoin@musicoin.org"><i class="fa fa-envelope" aria-hidden="true" style="color: white"></i></a></li>
                 <li><a class="pad5 subtle-text" href="https://medium.com/@musicoin" target="_blank"><i class="fa fa-medium" aria-hidden="true" style="color: white"></i></a></li>
             </div>
-            <div style="position: absolute; left: 10px">
-                Designed by the <b>Musicoin project</b>, © 2017 <br> Site best viewed with Chrome on macOS
-            </div>
+            
+        </div>
+        <div class="col-sm-6 footer-column column-middle-last">
+            Designed by the <b>Musicoin project</b>, © <% new Date().getFullYear() %> <br>Site best viewed with Chrome on macOS
         </div>
     </div>
+    
 </div>

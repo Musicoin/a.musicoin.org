@@ -1,5 +1,7 @@
 const request = require('request');
 
+require('dotenv').config() // Loading environment variables from .env file
+
 let appConfig = null;
 
 const loadConfig = function (argsv) {
@@ -31,7 +33,8 @@ function getConfig() {
 
 function getStructuredConfig(keyValueConfig) {
   return {
-    hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'staging.musicoin.org',
+    // hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'staging.musicoin.org',
+    hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'localhost',
     port: keyValueConfig.port,
     publicPagesEnabled: keyValueConfig.publicPagesEnabled,
     sessionSecret: keyValueConfig.sessionSecret,
@@ -266,6 +269,7 @@ function getDefaultKeyValueConfig() {
         ipfsAddEndpoint: env.IPFS_ADD_ENDPOINT || 'http://localhost:5001',
 
         sessionSecret: env.SESSION_SECRET || '329nsdvkjns9081234)(*)(*#(',
+        sessionDomain: env.SESSION_DOMAIN || '.musicoin.org',
 
         captchaSecret: env.CAPTCHA_SECRET || 'captchaSecret',
 
