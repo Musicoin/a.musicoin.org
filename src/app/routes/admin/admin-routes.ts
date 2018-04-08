@@ -102,6 +102,15 @@ export class AdminRoutes {
                 })
         });
 
+        router.post('/admin/session/boot', (req, res) => {
+            const idx = bootSession.indexOf(req.body.session);
+            if (idx < 0) {
+                console.log(`Adding ${req.body.session} to blacklist`);
+                bootSession.push(req.body.session);
+            }
+            res.redirect("/admin/overview");
+        });
+
         router.post('/admin/session/unboot', (req, res) => {
             const idx = bootSession.indexOf(req.body.session);
             if (idx >= 0) {
