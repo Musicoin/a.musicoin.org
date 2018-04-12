@@ -31,10 +31,11 @@ function getConfig() {
 
 function getStructuredConfig(keyValueConfig) {
   return {
-    hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'staging.musicoin.org',
+    hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'localhost',
     port: keyValueConfig.port,
     publicPagesEnabled: keyValueConfig.publicPagesEnabled,
     sessionSecret: keyValueConfig.sessionSecret,
+    sessionDomain: keyValueConfig.sessionDomain,
     serverEndpoint: keyValueConfig.authCallbackEndpoint,
     autoFollowUserId: keyValueConfig.musicoinAutoFollowUserId,
     loggingConfig: {
@@ -297,7 +298,9 @@ function getDefaultKeyValueConfig() {
 
         whiteLocalIpList: env.LOCAL_IP || ['127.0.0.1', 'localhost', '10.0.2.2'],
 
-        baseUrl: env.BASE_URL || 'https://musicoin.org'
+        baseUrl: env.BASE_URL || 'https://musicoin.org',
+
+        sessionDomain: env.SESSION_DOMAIN || '.musicoin.org'
 
 
       };
