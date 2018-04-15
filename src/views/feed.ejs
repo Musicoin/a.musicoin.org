@@ -22,6 +22,12 @@
             color: #e4aa17;
         }
 
+        .dismiss-notice {
+            top: -1.4rem;
+            right: -2.2rem;
+            font-size: 3.4rem;
+        }
+
 
     </style>
     <link rel="stylesheet" href="/styles/track-message.css">
@@ -53,8 +59,13 @@
             </div>
 
             <% if ((user.verified != true) && (user.mostRecentReleaseDate != null)) { %>
-                <div style="padding: 30px 10px 10px 50px;font-size: 25px;color: red;font-weight: bolder;">
-                  If you want to verify your status as a musician please follow <a href="https://forum.musicoin.org/topic/479/what-should-i-do-to-increase-the-chances-for-verification-of-my-profile">this basic guide</a> in order to show us as much proof as you can so that we may recognize you as a musician and verify your profile
+                <div class="alert alert-danger alert-dismissible show" role="alert">
+                    <button type="button" class="close dismiss-notice" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <p>
+                        If you want to verify your status as a musician please follow <a href="https://forum.musicoin.org/topic/479/what-should-i-do-to-increase-the-chances-for-verification-of-my-profile">this basic guide</a> in order to show us as much proof as you can so that we may recognize you as a musician and verify your profile
+                    </p>
                 </div>
             <% } %>
 
