@@ -20,6 +20,7 @@ const app = express();
 const flash = require('connect-flash');
 const ConfigUtils = require('./config/config');
 const MediaProvider = require('./media/media-provider');
+const get_ip = require('request-ip');
 
 ConfigUtils.loadConfig()
   .then(config => {
@@ -39,9 +40,9 @@ ConfigUtils.loadConfig()
 
     passportConfigurer.configure(passport as any, mediaProvider, config.auth);
     app.use(cors(config.cors));
-    const get_ip = require('ipware')().get_ip;
+
     app.use(function (req, res, next) {
-      get_ip(req);
+      get_ip.getClientIp(req);
       next();
     });
 
