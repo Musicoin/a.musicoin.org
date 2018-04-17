@@ -1,7 +1,5 @@
 const request = require('request');
 
-require('dotenv').config() // Loading environment variables from .env file
-
 let appConfig = null;
 
 const loadConfig = function (argsv) {
@@ -33,8 +31,7 @@ function getConfig() {
 
 function getStructuredConfig(keyValueConfig) {
   return {
-    // hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'staging.musicoin.org',
-    hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'localhost',
+    hostname: process.env.NODE_ENV === 'production' ? 'musicoin.org' : 'staging.musicoin.org',
     port: keyValueConfig.port,
     publicPagesEnabled: keyValueConfig.publicPagesEnabled,
     sessionSecret: keyValueConfig.sessionSecret,
