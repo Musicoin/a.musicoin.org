@@ -364,6 +364,7 @@
                     </div>
 
                     <table class="mb5" style="width: 100%">
+                    <!--
                       <tr>
                         <td>
                           <button class="vote-button fa fa-thumbs-up <%= license.votes.viewerVote === 'UP_VOTE' ? 'voted' : '' %>">
@@ -376,6 +377,7 @@
                           </button>
                         </td>
                       </tr>
+                      -->
                       <tr>
                         <td align="center" class="pr5">
                           <div class="dynamic-data" data-behavior="track-earnings" de-refresh-period="20" de-releaseId="<%=releaseId%>" de-url="/json-api/track/earnings/">
@@ -557,7 +559,7 @@
               </div>
               <div class="col-sm-7 chat-area">
                 <div class="chat-input-area">
-                  <% if (isAuthenticated && user.profileAddress) {%>
+                  <% if ((isAuthenticated) && (user.profileAddress)) {%>
                     <div class="chat-input">
                       <input id="chat-input" maxlength="1000" placeholder="Say something about '<%=license.title%>' by '<%=license.artistName%>'">
                     </div>
@@ -571,7 +573,7 @@
                         </div>
                         <% } %>
                 </div>
-                <div class="alert alert-danger abuse-alert" <%=l icense.markedAsAbuse ? " " : "display:none " %> ">
+                <div class="alert alert-danger abuse-alert" <%=license.markedAsAbuse ? " " : "display:none " %> ">
                   <%= abuseMessage %>
                 </div>
                 <div class="dynamic-element" data-behavior="chat-message-area" style="min-height: 180px" id="de-track-messages" de-refresh-period="20"
@@ -700,7 +702,7 @@
     })(jQuery);
   </script>
   <%- include ('partials/player-hook.ejs') %>
-  <%- include ('partials/track/connect-with-us.ejs') %>
+  <%- include ('partials/connect-with-us.ejs') %>
       <script async src="/js/vote.js" charset="utf-8"></script>
       <script>
         function setupPopWatch() {
