@@ -34,6 +34,7 @@ const AnonymousUser = require('./models/anonymous-user');
 const TrackMessage = require('./models/track-message');
 const EmailConfirmation = require('./models/email-confirmation');
 const User = require('./models/user');
+const get_ip = require('request-ip');
 const sendSeekable = require('send-seekable');
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
@@ -209,6 +210,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       return res.redirect(url);
     }
     res.redirect('/nav/feed');
+    let loginTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+    let ip = get_ip.getClientIp(req);
+    let uAgent = req.headers['user-agent'];
+    mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
+      .then(() => console.log("Message notification sent to " + req.user.primaryEmai))
+      .catch(err => `Failed to send message to ${req.user.primaryEmai}, error: ${err}`);
   });
 
   app.post('/login/confirm', function (req, res) {
@@ -227,9 +234,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       } else {
         var emailState = false;
       }
-      EmailConfirmation.create({ email: req.body.email, code: code })
+      return EmailConfirmation.create({ email: req.body.email, code: code })
         .then(() => {
-          return mailSender.sendEmailConfirmationCode(req.body.email, code)
+          mailSender.sendEmailConfirmationCode(req.body.email, code)
             .then(() => {
               console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
               res.json({
@@ -481,14 +488,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       message: message,
     });
     //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
-  });
-
-  app.get('/connect/email', function (req, res) {
-    // render the page and pass in any flash data if it exists
-    const message = req.flash('loginMessage');
-    doRender(req, res, 'landing.ejs', {
-      message: message,
-    });
   });
 
   app.post('/login/reset', (req, res) => {

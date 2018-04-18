@@ -67,12 +67,7 @@ export class AuthRouter {
                 smsBird();
             }
         });
-
-        router.post('/connect/email', functions.setSignUpFlag(false), functions.validateLoginEmail('/connect/email'), passport.authenticate('local', {
-            failureRedirect: '/connect/email', // redirect back to the signup page if there is an error
-            failureFlash: true // allow flash messages
-        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect);
-
+        
         router.post('/login', functions.setSignUpFlag(false), functions.validateLoginEmail('/login'), passport.authenticate('local', {
             failureRedirect: '/login', // redirect back to the signup page if there is an error
             failureFlash: true // allow flash messages

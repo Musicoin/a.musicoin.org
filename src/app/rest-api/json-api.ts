@@ -308,6 +308,7 @@ export class MusicoinOrgJsonAPI {
           { "google.name": { "$regex": search, "$options": "i" } },
           { "twitter.username": { "$regex": search, "$options": "i" } },
           { "twitter.displayName": { "$regex": search, "$options": "i" } },
+          { "twitter.email": { "$regex": search, "$options": "i" } },
           { "facebook.email": { "$regex": search, "$options": "i" } },
           { "facebook.name": { "$regex": search, "$options": "i" } },
           { "soundcloud.name": { "$regex": search, "$options": "i" } },
@@ -1636,6 +1637,7 @@ export class MusicoinOrgJsonAPI {
     if (user.preferredEmail) return user.preferredEmail;
     if (user.google && user.google.email) return user.google.email;
     if (user.facebook && user.facebook.email) return user.facebook.email;
+    if (user.twitter && user.twitter.email) return user.twitter.email;
     if (user.local && user.local.email) return user.local.email;
     if (user.invite && user.invite.invitedAs) return user.invite.invitedAs;
     return null;
