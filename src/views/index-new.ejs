@@ -42,6 +42,10 @@
 
             <div class="pad10">
                 <div class="event-header text-center subtle-text">new releases</div>
+                <% if (user.primaryEmail == "") { %>
+                <div class="mr5"><a href="/nav/profile" target="_top">Please add your email in the profile</a></div>
+                <% } else { %>
+                <% } %>
                 <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
                      de-target-id="de-new-releases">
                     <i class="fa fa-refresh" aria-hidden="true"></i>

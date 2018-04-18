@@ -59,6 +59,11 @@ export class MailSender {
     return this.sendTemplate(`${appDir}/views/mail/message.ejs`, recipient, subject, { notification: notification });
   }
 
+  sendLoginNotification(recipient: string, loginTime: string, ip: string, uAgent: string): Promise<any> {
+    const subject = `Musicoin Login Notification`;
+    return this.sendTemplate(`${appDir}/views/mail/login-notification.ejs`, recipient, subject, { loginTime: loginTime, ip: ip, uAgent: uAgent });
+  }
+
   sendActivityReport(recipient: string, report: any): Promise<any> {
     const subject = report.description;
     return this.sendTemplate(`${appDir}/views/mail/activity-report.ejs`, recipient, subject, { report: report });
@@ -72,6 +77,10 @@ export class MailSender {
         const content = new helper.Content("text/html", html);
         const mail = new helper.Mail(from_email, subject, to_email, content);
         const sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+        if (process.env.CAPTCHA_SECRET == "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe") {
+          console.log(`SendGrid key is: ` + process.env.SENDGRID_API_KEY);
+          console.log(mail.toJSON());
+        }
         const request = sg.emptyRequest({
           method: 'POST',
           path: '/v3/mail/send',
@@ -83,7 +92,7 @@ export class MailSender {
             if (response.statusCode < 300) {
               return response;
             }
-            throw new Error(`Failed to send e-mail, template: ${template}, server returned status code: ${response.statusCode}`);
+            throw new Error(`Failed to send e-mail, template: ${template}, server returned status code: ${response.statusCode}` + response);
           });
       });
 
