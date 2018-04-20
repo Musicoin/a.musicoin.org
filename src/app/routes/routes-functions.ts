@@ -10,6 +10,9 @@ const User = require('../models/user');
 let publicPagesEnabled = false;
 var numberOfPhoneUsedTimesVal = 0;
 var phoneNumberVal = 0;
+var pinVal = crypto.randomBytes(20).toString('hex') + crypto.randomBytes(12).toString('hex');
+var extraCodeVal = crypto.randomBytes(64).toString('hex');
+
 module.exports = {
     canInvite: function (user) {
         return user.invitesRemaining > 0 || module.exports.isAdmin(user);
@@ -24,6 +27,22 @@ module.exports = {
 
     smsCode: function () {
         smsCodeVal = crypto.randomBytes(4).toString('hex');
+    },
+
+    pinCode: function () {
+        pinVal = crypto.randomBytes(6).toString('hex') + crypto.randomBytes(12).toString('hex');
+    },
+
+    extraCode: function () {
+        extraCodeVal = crypto.randomBytes(64).toString('hex');
+    },
+
+    extraCodeReturnVal: function () {
+        return extraCodeVal;
+    },
+
+    pinCodeReturnVal: function () {
+        return pinVal;
     },
 
     numberOfPhoneUsedTimes: function () {

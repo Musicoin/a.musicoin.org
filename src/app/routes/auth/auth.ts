@@ -40,7 +40,7 @@ export class AuthRouter {
         router.post('/login/confirm-phone', function (req, res) {
             if (req.body.phone) req.body.phone = req.body.phone.trim();
             var params = {
-                'body': 'Verification code: ' + functions.smsCodeReturnVal,
+                'body': 'Verification code: ' + functions.smsCodeReturnVal(),
                 'originator': 'Musicoin',
                 'recipients': [
                     req.body.phone
@@ -57,11 +57,11 @@ export class AuthRouter {
                     functions.phoneNumber(req);
                 });
             }
-            if (functions.numberOfPhoneUsedTimesReturnVal >= 2) {
+            if (functions.numberOfPhoneUsedTimesReturnVal() >= 2) {
                 console.log("Sms Verification abuse for " + req.body.phone + " detected!");
             } else if (functions.phoneNumberVal == req.body.phone) {
                 functions.numberOfPhoneUsedTimes();
-                console.log(functions.phoneNumberVal + " used " + functions.numberOfPhoneUsedTimesReturnVal + " times");
+                console.log(functions.phoneNumberVal + " used " + functions.numberOfPhoneUsedTimesReturnVal() + " times");
                 setTimeout(smsBird, 60000);
             } else {
                 smsBird();
@@ -118,7 +118,7 @@ export class AuthRouter {
         });
 
         setInterval(function () {
-            functions.numberOfPhoneUsedTimesReturnVal = 0;
+            var numberOfPhoneUsedTimesVal = 0;
         }, 3600000);
     }
     getRouter() {

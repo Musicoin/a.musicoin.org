@@ -12,6 +12,8 @@ import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
 import * as FormUtils from '../../utils/form-utils';
 
+const get_ip = require('request-ip');
+
 const router = express.Router();
 const Playback = require('../../models/user-playback');
 const maxImageWidth = 400;
@@ -20,6 +22,9 @@ var functions = require('../routes-functions');
 const User = require('../../models/user');
 const Release = require('../../models/release');
 let publicPagesEnabled = false;
+let pin = functions.pinCodeReturnVal();
+let extraCode = functions.extraCodeReturnVal();
+var txRequest = [];
 const MESSAGE_TYPES = {
     admin: "admin",
     comment: "comment",
@@ -191,6 +196,11 @@ export class ProfileRouter {
                         error: req.query.sendError,
                     };
                 }
+                if (typeof req.query.sendMail != "undefined") {
+                    output['sendMailResult'] = {
+                        error: req.query.sendMail,
+                    };
+                }
                 output['metadata'] = {
                     languages: MetadataLists.languages,
                     moods: MetadataLists.moods,
@@ -350,24 +360,48 @@ export class ProfileRouter {
         });
 
         router.post('/send', functions.isLoggedIn, function (req, res) {
-            //var valueProvided = req.body.recipient;
             if ((req.body.recipient == "0x0000000000000000000000000000000000000000") || (req.body.recipient == "0x1111111111111111111111111111111111111111")) {
-                throw new Error(`Invalid recipient address`);
+                res.redirect("/profile?sendError=false");
             } else {
-                musicoinApi.sendFromProfile(req.user.profileAddress, req.body.recipient, req.body.amount)
+                functions.pinCode();
+                let amount = req.body.amount;
+                let txRecipient = req.body.recipient;
+                let rTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                let ip = get_ip.getClientIp(req);
+                let uAgent = "" + req.headers['user-agent'];
+                functions.extraCode();
+                txRequest = [req.user.profileAddress, txRecipient, amount, ip, extraCode];
+                mailSender.sendWithdrawConfirmation(req.user.primaryEmail, amount, txRecipient, rTime, ip, uAgent, pin)
+                    .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
+                    .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
+                res.redirect("/profile?sendMail=false");
+            }
+        });
+
+        router.get('/send/:pinId', functions.isLoggedIn, function (req, res) {
+            if (req.params.pinId == pin && txRequest[4] == extraCode) {
+                musicoinApi.sendFromProfile(txRequest[0], txRequest[1], txRequest[2])
                     .then(function (tx) {
                         if (tx) {
                             console.log(`Payment submitted! tx : ${tx}`);
+                            functions.pinCode();
+                            functions.extraCode();
                             res.redirect("/profile?sendError=false");
                         }
                         else throw new Error(`Failed to send payment, no tx id was returned: from: ${req.user.profileAddress} to ${req.body.recipient}, amount: ${req.body.amount}`);
                     })
                     .catch(function (err) {
                         console.log(err);
+                        functions.pinCode();
+                        functions.extraCode();
                         res.redirect("/profile?sendError=true");
-                    })
+                    });
+
+            } else {
+                res.redirect("/profile?sendError=true");
             }
         });
+
         router.post('/api/getUserInfoById', function (req, res) {
             //checking request's ip adress. if request source not local network, we don't servise api.
             if (ipMatch(req.ip, whiteLocalIpList)) {

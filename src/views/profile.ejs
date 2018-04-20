@@ -350,13 +350,13 @@
                     <p>
 
                         <br>
-                    <div class="text-center subtle-text">my wallet address</div>
-                    <div class="text-center"><%= user.profileAddress %></div>
+                    <div class="text-center subtle-text">My Wallet Address</div>
+                    <div class="text-center" style="font-family: monospace; font-weight: 700"><%= user.profileAddress %></div>
                     <br>
                     <p class="subtle-text">
                         Send musicoins to a friend or transfer to another wallet (desktop/geth client) for safe keeping.
                     </p>
-                    <form action="/send" method="post">
+                    <form name="sendFunds"  action="/send" method="post">
                         <table cellpadding="3">
                             <tr>
                                 <td colspan="2">
@@ -366,31 +366,22 @@
                                     </div>
                                 </td>
                             </tr>
+                            <div class="form-group text-center">
+                                <label>Recipient</label>
+                                <input id="recip1" name=recipient type="text" class="form-control" placeholder="Address">
+                            </div>
+                            <div class="form-group text-center">
+                                <label>Amount</label>
+                                <input name=amount type="number" step="0.0001" class="form-control text-right form-number" placeholder="0.0001" style="margin-left:40%">
+                            </div>
                             <tr>
-                                <td>Recipient</td>
-                                <td width="99%"><input id="recip1" name=recipient type="text" class="form-control"
-                                                       placeholder="address" ></td>
+                            <td class="text-center">
+                                <button id="sendme" class="btn btn-warning mb10">Create Withdrawal Request</button>
+                            </td>
                             </tr>
-                            <tr>
-                                <td>Amount</td>
-                                <td>
-                                    <div class="flex-row">
-                                        <input name=amount type="number" class="form-control text-right form-number"
-                                               placeholder="0">
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td class="text-right">
-                                    <button type="submit" class="btn btn-warning mb10">
-                                        Send
-                                    </button>
-                                </td>
-                            </tr>
-
                         </table>
                     </form>
+                </form>
                 </div>
                 <div class="flex-row wallet-action-bar">
                     <div onclick='$(".wallet-actions").toggle()'
@@ -409,9 +400,16 @@
                     Send failed!
                 </div>
                 <% } else { %>
-                <div class="text-center">
                     Payment sent!
+                <% } %>
+                <% } %>
+                <% if (typeof sendMailResult != "undefined") { %>
+                <% if (sendMailResult.sendError) { %>
+                <div class="text-center">
+                    Email send failed!
                 </div>
+                <% } else { %>
+                   Check inbox for email with subject Musicoin Withdrawal Verification!
                 <% } %>
                 <% } %>
             </div>
