@@ -64,6 +64,11 @@ export class MailSender {
     return this.sendTemplate(`${appDir}/views/mail/login-notification.ejs`, recipient, subject, { loginTime: loginTime, ip: ip, uAgent: uAgent });
   }
 
+  sendWithdrawConfirmation(recipient: string, amount: number, txRecipient: string, rTime: string, ip: string, uAgent: string, pin: string): Promise<any> {
+    const subject = `Musicoin Withdrawal Verification`;
+    return this.sendTemplate(`${appDir}/views/mail/withdraw-confirmation.ejs`, recipient, subject, { amount: amount, txRecipient: txRecipient, rTime: rTime, ip: ip, uAgent: uAgent, pin:pin });
+  }
+
   sendActivityReport(recipient: string, report: any): Promise<any> {
     const subject = report.description;
     return this.sendTemplate(`${appDir}/views/mail/activity-report.ejs`, recipient, subject, { report: report });

@@ -50,7 +50,6 @@ const MESSAGE_TYPES = {
 };
 
 let publicPagesEnabled = false;
-var smsCodeVal = crypto.randomBytes(4).toString('hex');
 var phoneNumberVal = 0;
 var numberOfPhoneUsedTimesVal = 0;
 
@@ -214,8 +213,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     let ip = get_ip.getClientIp(req);
     let uAgent = req.headers['user-agent'];
     mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
-      .then(() => console.log("Message notification sent to " + req.user.primaryEmai))
-      .catch(err => `Failed to send message to ${req.user.primaryEmai}, error: ${err}`);
+      .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
+      .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
   });
 
   app.post('/login/confirm', function (req, res) {
