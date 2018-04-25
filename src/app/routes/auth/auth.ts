@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import * as express from 'express';
 import * as passport from 'passport';
 import * as qr from 'qr-image';
@@ -9,6 +10,11 @@ import { MusicoinAPI } from '../../internal/musicoin-api';
 import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
 
+let Validator = require("fastest-validator");
+let v = new Validator();
+let emailSchema = {
+    email: { type: "email" }
+};
 const router = express.Router();
 var functions = require('../routes-functions');
 const mailSender = new MailSender();
@@ -67,7 +73,7 @@ export class AuthRouter {
                 smsBird();
             }
         });
-        
+
         router.post('/login', functions.setSignUpFlag(false), functions.validateLoginEmail('/login'), passport.authenticate('local', {
             failureRedirect: '/login', // redirect back to the signup page if there is an error
             failureFlash: true // allow flash messages
@@ -87,11 +93,53 @@ export class AuthRouter {
             doRender(req, res, "password-forgot.ejs", {});
         });
 
+        router.post('/login/forgot', (req, res) => {
+
+            const email = req.body.email || "";
+            if (v.validate({ email: req.body.email }, emailSchema) == false)  
+                res.redirect("/welcome"); 
+                //return doRender(req, res, "landing.ejs", { message: "Invalid email address: " + req.body.email });
+
+            functions.checkCaptcha(req)
+                .then(captchaOk => {
+                    if (!captchaOk) {
+                        return
+                    } else {
+                        User.findOne({ "local.email": req.body.email }).exec()
+                            .then(user => {
+                                if (!user) return doRender(req, res, "password-reset.ejs", { message: "User not found: " + req.body.email });
+                                user.local.resetExpiryTime = Date.now() + config.auth.passwordResetLinkTimeout;
+                                user.local.resetCode = "MUSIC" + crypto.randomBytes(11).toString('hex');
+                                return user.save()
+                                    .then(user => {
+                                        if (!user) {
+                                            console.log("user.save() during password reset did not return a user record");
+                                            //return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
+                                            res.redirect("/welcome"); 
+                                        }
+                                        return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
+                                            .then(() => {
+                                                //return doRender(req, res, "landing.ejs", { message: "An email has been sent to " + req.body.email });
+                                                res.redirect("/welcome-musician"); 
+                                            })
+                                    })
+                                    .catch(err => {
+                                        console.log(`An error occurred when sending the pasword reset email for ${email}: ${err}`);
+                                        res.redirect("/welcome");
+                                        //return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
+                                    })
+                            })
+                    }
+                });
+
+        });
+
+
         router.get('/login/reset', functions.redirectIfLoggedIn('/loginRedirect'), (req, res) => {
             // if the code is expired, take them back to the login
             const code = req.query.code;
             const failMessage = "Your password reset code is invalid or has expired";
-            if (!code) return doRender(req, res, "landing.ejs", { message: failMessage });
+            if (!code) res.redirect("/welcome");
             User.findOne({ "local.resetCode": code }).exec()
                 .then(user => {
                     // code does not exist, just go to the login page
