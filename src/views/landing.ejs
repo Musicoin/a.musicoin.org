@@ -1,303 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles/signup_page.css">
-  <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Raleway:100" rel="stylesheet">
-
-  <!--Google Fonts-->
-  <link href='https://fonts.googleapis.com/css?family=Playfair+Display' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
-  <title>Signup for Musicoin</title>
-  <style>
-    .hidden {
-      visibility: hidden;
-    }
-    .visible {
-      visibility: visible;
-    }
-  </style>
-</head>
+<meta charset="utf-8"
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Musicoin Sign Up</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta property="wb:webmaster" content="388a22fbc545b0b0" />
-<link rel="stylesheet" href="/dependencies/messg-2.1.0/index.css">
-<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha256-NJWeQ+bs82iAeoT5Ktmqbi3NXwxcHlfaVejzJI2dklU=" crossorigin="anonymous" />
+<style>a, a:hover {height: 24px;	width: 42px;	color: #FFAF00;	font-family: Ubuntu;	font-size: 12px;	font-weight: 300;	line-height: 24px;}</style>
 <link rel="shortcut icon" href="/favicon.ico">
-
-<script src="/dependencies/jquery/js/jquery-3.1.1.js"></script>
-<script src="/dependencies/jquery/js/jquery-ui.js"></script>
-<script src="/dependencies/bootstrap/js/bootstrap.min.js"></script>
-<script src="/dependencies/messg-2.1.0/index.js"></script>
-<script src="/dependencies/prefixfree/prefixfree.min.js"></script>
-
-
-<script src="/js/dynamic-elements.js"></script>
-<script src="/js/musicoin.js"></script>
-<script src="/js/utils.js"></script>
-<script src="/js/tips.js"></script>
-<script src="/js/following.js"></script>
-<script src="/js/track-messages.js"></script>
-<script src="/js/more.js"></script>
-<script src="/js/hero.js"></script>
-<script src="/js/modal.js"></script>
-<script src="/js/format.js"></script>
-<script src="/js/auto-complete.js"></script>
-
+<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+<div style="background-color: #ffffff;box-shadow: 1px 1px 1px 1px #FFAF004D;border-radius:50%;width: 124px;height: 124px; position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;"></div>
+<div style="height:1px;margin-right: 38.8%;width: 6%;background: linear-gradient(45deg, #FECE00 0%, #FF9000 100%);position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;margin-right: 40.8%;"></div>
+<div style="background-color:#FFAF00;box-shadow: 1px 1px 1px 1px #FFAF004D;border-radius:50%;width: 114px;height: 114px; position:absolute;top:0;left:0;right:0;bottom:0;margin:auto; margin-left: 56%;margin-bottom: 36.8%;"></div>
+<p style="height: 64px;width: 72px;color: #ffffff;font-family:Ubuntu;font-size:48px;font-weight: bold;line-height:64px;text-align:center;position:absolute;top:0;left:0;right:0;bottom:0;margin:auto; margin-left: 57%;margin-bottom: 38.2%;">1</p>
+<img src="/images/status/success.png" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:auto; margin-left: 60.2%;margin-bottom: 40.9%;width: 31px;height: 33px;">
+<div style="border-radius:50%;width:100px;height:100px;position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;background-color: #ffffff;box-shadow: 1px 1px 1px 1px #FFAF004D;"></div>
+<div style="border-radius:50%;width:80px;height:80px;position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;background-color: #ffffff;box-shadow: 1px 1px 1px 1px #FFAF004D;"></div>
+<p style="height: 64px;width: 72px;color: #FFAF00;font-family:Ubuntu;font-size:48px;font-weight: bold;line-height:64px;text-align:center;position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;">2</p>
+<p style="height: 36px;	width: 406px;	color: #ffffff;	font-family: Ubuntu;	font-size: 24px;	font-weight: bold;	line-height:36px;position:absolute;top:0;left:0;right:0;bottom:0;margin:auto; margin-left: 63.3%;margin-bottom: 40%;">Select your role</p>
+<p style="	height: 40px;	width: 355px;	color: #FFFFFF;	font-family: Ubuntu;	font-size: 14px;	line-height: 20px;position:absolute;top:0;left:0;right:0;bottom:0;margin:auto; margin-left: 63.3%;margin-bottom: 37.4%;">Musicians and listeners have different account types.  Selected "listener" role</p>
+<div id="container" class="text-center" style="width:100%;">
+  <div style="float:left; width:50%;">
+    <img src="/images/logo/logo.svg" alt="Musicoin Logo" style="margin-top:56px">
+    <p style="margin-top:21px;height: 24px;color: #000000;font-family:Ubuntu;font-size:14px;font-weight: 300;line-height:24px;">Already Musicoin member? <a href="/welcome-musician">Sign In</a></p>
+    <span class="badge" style="margin-right: 260px;	height: 24px;	width: 312px;	opacity: 0.5;	color: #000000;	font-family: Ubuntu;	font-size: 12px;	font-weight: 300;	line-height: 24px;">Email</span>
+    <form name="signupForm" id="signupForm" class="signup" action="/signup" method="post">
+    <input class="form-control" type="email" name="email" placeholder="@" required style="width:296px;display:unset;opacity:0.85;color:#000000;font-family:Ubuntu;font-size:14px;line-height: 20px;"><br>
+    <span class="badge" style="margin-right: 240px;	margin-top:12px; height: 24px;	width: 312px;	opacity: 0.5;	color: #000000;	font-family: Ubuntu;	font-size: 12px;	font-weight: 300;	line-height: 24px;">Password</span><br>
+    <input class="form-control" type="password" name="password" placeholder="****************" required style="width:296px;display:unset;opacity:0.85;color:#000000;font-family:Ubuntu;font-size:14px;line-height: 20px;"><br>
+    <button type="submit" class="btn-lg btn-warning g-recaptcha" style="width:296px; margin-top:30px;	color: #FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;	line-height: 20px;" data-sitekey="6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU">SIGN UP WITH EMAIL</button>
+ </form>
+  </div>
+  <div style="float:right; width:50%; background-color:#000000">
+    <div class="container">
+    <div class="row">
+        <div class="col-lg-offset-1 col-lg-2">
+        <div style="height: 81.24px;width:81px;opacity: 0.25;border-radius: 4px;background:linear-gradient(0deg, rgba(254,206,0,0) 0%, #FF9000 100%);margin-left:125%;margin-top:56px"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-offset-7 col-lg-2">
+        <div style="height: 93.15px;width: 93px;opacity: 0.25;border-radius: 4px;background: linear-gradient(0deg, rgba(254,206,0,0) 0%, #FF9000 100%);margin-left:380%;"></div>
+        </div>
+    </div>
+    <div style="height:500px; width:417px; margin-top: -19%;margin-left: -22%;"></div>
+    <div class="row">
+        <div class="col-lg-offset-3 col-lg-2">
+        <div style="height: 81.24px;width: 81px;opacity: 0.25;border-radius: 4px;background: linear-gradient(0deg, rgba(254,206,0,0) 0%, #FF9000 100%);margin-left:165%; margin-top:-180%"></div>
+        </div>
+    </div>
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-lg-offset-8 col-lg-2">
+        <div style="height: 167.89px;width: 167px;opacity: 0.25;border-radius: 4px;background: linear-gradient(0deg, rgba(254,206,0,0) 0%, #FF9000 100%);margin-left:380%"></div>
+        </div>
+    </div>
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-lg-offset-2 col-lg-1">
+        <div style="height: 34.66px;width: 35px;opacity: 0.25;border-radius: 4px;background:linear-gradient(0deg, rgba(254,206,0,0) 0%, #FF9000 100%);margin-left:360%"></div>
+      </div>
+    </div>
+    <div class="row">
+       <div style="height: 167.89px;width: 167px;margin-bottom:20%"></div>
+    </div>
+</div>
+  </div>
+</div>
 <script>
-  (function(i, s, o, g, r, a, m) {
-    i['GoogleAnalyticsObject'] = r;
-    i[r] = i[r] || function() {
-      (i[r].q = i[r].q || []).push(arguments)
-    }, i[r].l = 1 * new Date();
-    a = s.createElement(o),
-      m = s.getElementsByTagName(o)[0];
-    a.async = 1;
-    a.src = g;
-    m.parentNode.insertBefore(a, m)
-  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
   ga('create', 'UA-92055754-1', 'auto');
   ga('send', 'pageview');
+
 </script>
-
-<body>
-
-  <div id="wrapper" class="signup-wrapper">
-      <div id="header">
-          <img src="/images/Logo.svg" height="90px" alt="Musicoin Logo" />
-          <div id="role-selector" class="container">
-              <div class="row">
-              </div>
-          </div>
-      </div>
-      <div id="social-signup">
-          <div class="container">
-              <div class="row">
-                  <div class="col-md-4 col-md-push-4">
-                      <div class="row">
-                          <div class="col-md-12">
-                              <a href="/signup/twitter" class="twitter">Sign up with Twitter</a>
-                          </div>
-                          <div class="col-md-12">
-                              <a href="/signup/facebook" class="facebook">Sign up with Facebook</a>
-                          </div>
-                          <div class="col-md-12">
-                              <a href="/signup/google" class="google">Sign up with Google</a>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <div id="email-signup">
-          <div class="container">
-              <div class="row">
-                <h2 class="hdr-l">Musicians need to use social sign-up for verification</h2>
-                  <strong class="line-thru">or</strong>
-                  <h2 class="hdr-l">if you're a listener, <br> sign up with your email address or social account</h2>
-
-                  <div class="col-md-6 col-md-push-3">
-                      <form name="signupForm" class="signup" action="/signup" target=_top method="post"
-                            onsubmit="return validateSignupFields()">
-                          <input class="hidden" name="attribute" type="text" id="attr1" value="musician" />
-                          <div id="hidethis">
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="text" id="screenname" name="name" required />
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="name">
-                                  <span class="input__label-content input__label-content--hoshi">Name</span>
-                              </label>
-                          </span>
-
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="text" id="email" name="email" required />
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="email">
-                                  <span class="input__label-content input__label-content--hoshi">E-mail</span>
-                              </label>
-                          </span>
-                          
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="text" id="confirmation" name="confirmation" required />
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="confirmation">
-                                  <span class="input__label-content input__label-content--hoshi">Confirmation Code</span>
-                              </label>
-                          </span>
-                        <span id="confirm" class="crazy1">Get a code</span>
-
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="password" id="password" name="password" required />
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password">
-                                  <span class="input__label-content input__label-content--hoshi">Password</span>
-                              </label>
-                          </span>
-                          <span class="input input--hoshi input__label-content" style="display: inline-block" id ="passworddetail">Password must contain a minimum of <br> 10 characters,<br>1 Special character & 1 letter from both cases</span>
-
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="password" id="password1" name="password2" required />
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="password1">
-                                  <span class="input__label-content input__label-content--hoshi">Repeat Password</span>
-                              </label>
-                          </span>
-
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="text" id="phone" name="phone" />
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="phone">
-                                  <span class="input__label-content input__label-content--hoshi">Phone</span>
-                              </label>
-                          </span>
-                          <span class="input input--hoshi input__label-content" style="display: inline-block" id ="phonedetail">Phone should include country code, for example: <strong>18889087930</strong> or <strong>+18889087930</strong><br>You don't need to fill in Phone or Phone Verification Code in case you already solved captcha</span>
-                      
-                          <span class="input input--hoshi">
-                              <input class="input__field input__field--hoshi" type="text" id="confirmationphone" name="confirmationphone" />
-                              <label class="input__label input__label--hoshi input__label--hoshi-color-3" for="confirmationphone">
-                                  <span class="input__label-content input__label-content--hoshi">Phone Verification Code</span>
-                              </label>
-                          </span>
-                          <span id="confirm-phone" class="crazy1">Get phone verification code</span>
-
-                          <div id="signUpCaptcha" class="mt20" style="padding-top: 8%;padding-left: 18%;"></div>
-                          <span class="input input--hoshi input__label-content" style="display: inline-block; font-weight: 900" id ="captchadetail">You can fill in Phone and Phone Verification Code in case can't or don't want to solve captcha</span>
-                          <div class="cta">
-                              <button type="submit" class="btn btn-primary pull-left" id="signUpButton">Sign Up</button>
-                          </div>
-                        </div>
-                        <a id="signin-button" style="position: relative; left: 35%" href="https://musicoin.org/welcome-musician">Already have an account?</a>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/scripts.js"></script>
-  <script src="js/classie.js"></script>
-  <script>
-    <% if (message.length > 0) { %>
-    new Message("<%=message%>", 'warning', 5000);
-    <% } %>
-    $(document).ready(function() {
-      $("#confirm").on('click', function() {
-        var email = document.forms["signupForm"]["email"].value;
-        if (!email || email.trim().length == 0) {
-          new Message("Enter your email address, then you can request a code", 'warning', 5000);
-        } else {
-          $.post('/login/confirm', {
-              email: email
-            },
-            function(data) {
-              if (data.success) {
-                new Message("A Request Code was sent to " + data.email, 'success', 5000);
-              } else {
-                new Message("Failed to send Request Code: " + data.reason, 'error', 5000);
-              }
-            })
-        }
-      });
-      $("#confirm-phone").on('click', function() {
-        var phone = document.forms["signupForm"]["phone"].value;
-        if (!phone || phone.trim().length == 0) {
-          new Message("Enter your phone, then you can request phone verification", 'warning', 5000);
-        } else if (!phone || phone.trim().length > 15) {
-          new Message("Incorrect number provided", 'warning', 5000);
-        } else {
-          new Message("Verification Code was sent to " + phone, 'success', 5000);
-          $.post('/login/confirm-phone', {
-              phone: phone
-            })
-        }
-      });
-        $("#signin-button").on('click', function(e){
-            e.preventDefault();
-            $(".signin-wrapper").toggleClass("hidden");
-            $(".signup-wrapper").toggleClass("hidden");
-        });
-        $("#signup-button").on('click', function(e){
-            e.preventDefault();
-            $(".signup-wrapper").toggleClass("hidden");
-            $(".signin-wrapper").toggleClass("hidden");
-        });
-    });
-
-    function validateSignupFields() {
-      if (document.forms["signupForm"]["password2"].value != pwd) {
-        new Message("Passwords do not match!", 'error', 5000);
-      } else {
-        grecaptcha.execute();
-      }
-    }
-
-    var onloadCallback = function() {
-      grecaptcha.render(document.getElementById('signUpCaptcha'), {
-        'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU',
-        'theme': 'light'
-      });
-
-      grecaptcha.render(document.getElementById('signInCaptcha'), {
-        'theme': 'light',
-        'sitekey': '6LeXVh8UAAAAAEWUGDhYBu0CHgmQbpeJkCeWNlrU'
-      });
-    }
-    $('#passworddetail').css('display', 'none');
-    $('#password').on('focus', function(){
-      $('#passworddetail').css('visibility', 'visible');
-      $('#passworddetail').css('display', 'block');
-
-    });
-
-    $('#password').on('focusout', function(){
-      $('#passworddetail').css('visibility', 'hidden');
-      $('#passworddetail').css('display', 'none');
-    });
-
-    $('#phonedetail').css('display', 'none');
-    $('#phone').on('focus', function(){
-      $('#phonedetail').css('visibility', 'visible');
-      $('#phonedetail').css('display', 'block');
-
-    });
-
-    $('#phone').on('focusout', function(){
-      $('#phonedetail').css('visibility', 'hidden');
-      $('#phonedetail').css('display', 'none');
-    });
-
-  </script>
-
-  <script>
-    // Hovering stuff
-    (function() {
-      [].slice.call(document.querySelectorAll('input.input__field')).forEach(function(inputEl) {
-        // in case the input is already filled..
-        if (inputEl.value.trim() !== '') {
-          classie.add(inputEl.parentNode, 'input--filled');
-        }
-
-        // events:
-        inputEl.addEventListener('focus', onInputFocus);
-        inputEl.addEventListener('blur', onInputBlur);
-      });
-
-      function onInputFocus(ev) {
-        classie.add(ev.target.parentNode, 'input--filled');
-      }
-
-      function onInputBlur(ev) {
-        if (ev.target.value.trim() === '') {
-          classie.remove(ev.target.parentNode, 'input--filled');
-        }
-      }
-    })();
-  </script>
-  <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
 </body>
-
 </html>
