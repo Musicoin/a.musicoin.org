@@ -200,6 +200,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.delete('/admin/user/delete', (req,res) => {
+    if (req.body.email) { req.body.email = req.body.email.trim(); }
+    jsonAPI.removeUser(req.body.email)
+    .then(result => {
+      res.json(result);
+  });
+  });
+
+  app.post('/admin/user/blacklist',(req,res)=> {
+    if(req.body.email) {
+      jsonAPI.blacklistUser(req.body.email.trim())
+      .then(result=> {
+        res.json(result);
+      });
+    }
+  });
+
+  app.get('/relases/random', (req,res) => {
+    jsonAPI.randomSong()
+    .then(result => {
+      res.json(result);
+    });
+  });
+
   app.get('/loginRedirect', (req, res) => {
 
     if (req.session && req.session.destinationUrl) {

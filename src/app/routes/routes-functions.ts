@@ -7,6 +7,7 @@ import * as FormUtils from '../utils/form-utils';
 var smsCodeVal = crypto.randomBytes(4).toString('hex');
 const EmailConfirmation = require('../models/email-confirmation');
 const User = require('../models/user');
+const Blacklist = require('../models/blacklist');
 let publicPagesEnabled = false;
 var numberOfPhoneUsedTimesVal = 0;
 var phoneNumberVal = 0;
@@ -439,6 +440,15 @@ module.exports = {
                 req.flash('loginMessage', `Please enter a screen name`);
                 return res.redirect(errRedirect);
             }
+
+            var blackListed = Blacklist.findOne({email:req.body.email}).exec()
+            .then(user => {
+                req.flash('errorMessage', `There is an error`);
+                return res.redirect(errRedirect);
+            })
+            .then(() => {
+                res.json({ success: true });
+            });
 
             // minimum password strength
             const error = FormUtils.checkPasswordStrength(req.body.password);

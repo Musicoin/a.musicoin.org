@@ -228,6 +228,7 @@
     });
 
     function validateSignupFields() {
+      var pwd =document.forms["signupForm"]["password"].value;
       if (document.forms["signupForm"]["password2"].value != pwd) {
         new Message("Passwords do not match!", 'error', 5000);
       } else {

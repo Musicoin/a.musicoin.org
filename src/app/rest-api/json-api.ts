@@ -18,6 +18,7 @@ const UserPlayback = require('../models/user-playback');
 const TrackMessage = require('../models/track-message');
 const Hero = require('../models/hero');
 const APIClient = require('../models/api-client');
+const BlackList = require('../models/blacklist');
 // const defaultProfileIPFSImage = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
 const defaultProfileIPFSImage = "ipfs://QmR8mmsMn9TUdJiA6Ja3SYcQ4ckBdky1v5KGRimC7LkhGF";
 const uuidV4 = require('uuid/v4');
@@ -1721,5 +1722,43 @@ export class MusicoinOrgJsonAPI {
     const parts = raw.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join(".");
+  }
+  // basically remove user from db using primaryEmail column.
+  removeUser(primaryEmail:string): Promise<any> {
+  return User.findOneAndRemove({"primaryEmail": primaryEmail}).exec()
+      .then(findUser => {
+        if (findUser) {
+          return { success: true,"email":primaryEmail };
+        }
+        return { success: false };
+      });
+  }
+
+  // adding a email to blacklist so he can not register again and remove it from mongo
+  blacklistUser(email:string): Promise<any> {
+    return User.findOne({"primaryEmail": email}).exec()
+    .then(findUser => {
+      if(findUser) {
+         BlackList.create({
+          email: email,
+          description: "This user blacklisted"
+        });
+      }
+      return this.removeUser(email)
+      .catch(err => {
+        console.log(`Failed to remove user: ${err}`);
+        return findUser;
+      })
+      .then(() => findUser);
+    });
+  }
+  // return a random songs
+  randomSong():Promise<any> {
+    return Release.find().count()
+      .then(count => {
+        let offset = Math.floor(Math.random() * count);
+        return Release.findOne()
+          .skip(offset);
+      });
   }
 }
