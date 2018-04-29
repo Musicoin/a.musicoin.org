@@ -119,10 +119,9 @@ export class AuthRouter {
                                         }
                                         return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
                                             .then(() => {
-
+                                          
                                                 return doRender(req, res, "password-forgot-restored-link.ejs", { recipient: email });
                                                 //res.redirect("/welcome-musician"); 
-
                                             })
                                     })
                                     .catch(err => {

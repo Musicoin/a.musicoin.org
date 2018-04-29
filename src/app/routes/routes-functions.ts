@@ -107,11 +107,6 @@ module.exports = {
             // in cases where the user is creating/linking an email address, check the password
             const isLinking = req.isAuthenticated();
             if (isLinking) {
-                // passwords must match (also check client side, but don't count on it)
-                if (req.body.password != req.body.password2) {
-                    req.flash('loginMessage', `Your passwords did not match`);
-                    return res.redirect(errRedirect);
-                }
 
                 // minimum password strength
                 const error = FormUtils.checkPasswordStrength(req.body.password);
@@ -135,14 +130,14 @@ module.exports = {
             return module.exports.checkCaptcha(req)
                 .then(captchaOk => {
                     if (!captchaOk) {
-                        const smsConfirmationCode = req.body.confirmationphone;
-                        if (smsCodeVal == smsConfirmationCode) {
-                            module.exports.smsCode();
-                        } else {
-                            module.exports.smsCode();
-                            req.flash('loginMessage', "Incorrect captcha or phone verification code");
-                            return res.redirect(errRedirect);
-                        }
+                        // const smsConfirmationCode = req.body.confirmationphone;
+                        // if (smsCodeVal == smsConfirmationCode) {
+                        //     module.exports.smsCode();
+                        // } else {
+                        //     module.exports.smsCode();
+                        //     req.flash('loginMessage', "Incorrect captcha or phone verification code");
+                        //     return res.redirect(errRedirect);
+                        // }
                     }
                     return next();
                 });
@@ -425,18 +420,6 @@ module.exports = {
             if (req.body.email) req.body.email = req.body.email.trim().toLowerCase();
             if (!FormUtils.validateEmail(req.body.email)) {
                 req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
-                return res.redirect(errRedirect);
-            }
-
-            // in cases where the user is creating/linking an email address, check the password
-            // passwords must match (also check client side, but don't count on it)
-            if (req.body.password != req.body.password2) {
-                req.flash('loginMessage', `Your passwords did not match`);
-                return res.redirect(errRedirect);
-            }
-
-            if ((!req.body.name || req.body.name.length == 0)) {
-                req.flash('loginMessage', `Please enter a screen name`);
                 return res.redirect(errRedirect);
             }
 
