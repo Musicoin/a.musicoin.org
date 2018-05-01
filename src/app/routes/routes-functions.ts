@@ -7,6 +7,7 @@ import * as FormUtils from '../utils/form-utils';
 var smsCodeVal = crypto.randomBytes(4).toString('hex');
 const EmailConfirmation = require('../models/email-confirmation');
 const User = require('../models/user');
+const Blacklist = require('../models/blacklist');
 let publicPagesEnabled = false;
 var numberOfPhoneUsedTimesVal = 0;
 var phoneNumberVal = 0;
@@ -130,14 +131,14 @@ module.exports = {
             return module.exports.checkCaptcha(req)
                 .then(captchaOk => {
                     if (!captchaOk) {
-                        // const smsConfirmationCode = req.body.confirmationphone;
-                        // if (smsCodeVal == smsConfirmationCode) {
-                        //     module.exports.smsCode();
-                        // } else {
-                        //     module.exports.smsCode();
-                        //     req.flash('loginMessage', "Incorrect captcha or phone verification code");
-                        //     return res.redirect(errRedirect);
-                        // }
+                        const smsConfirmationCode = req.body.confirmationphone;
+                        if (smsCodeVal == smsConfirmationCode) {
+                            module.exports.smsCode();
+                        } else {
+                            module.exports.smsCode();
+                            req.flash('loginMessage', "Incorrect captcha or phone verification code");
+                            return res.redirect(errRedirect);
+                        }
                     }
                     return next();
                 });
@@ -422,6 +423,15 @@ module.exports = {
                 req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
                 return res.redirect(errRedirect);
             }
+
+            var blackListed = Blacklist.findOne({email:req.body.email}).exec()
+            .then(user => {
+                req.flash('errorMessage', `There is an error`);
+                return res.redirect(errRedirect);
+            })
+            .then(() => {
+                res.json({ success: true });
+            });
 
             // minimum password strength
             const error = FormUtils.checkPasswordStrength(req.body.password);
