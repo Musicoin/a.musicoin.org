@@ -9,6 +9,7 @@ import { AddressResolver } from '../../internal/address-resolver';
 import { MusicoinAPI } from '../../internal/musicoin-api';
 import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
+import * as FormUtils from '../../utils/form-utils';
 
 let Validator = require("fastest-validator");
 let v = new Validator();
@@ -74,11 +75,6 @@ export class AuthRouter {
             }
         });
 
-        router.post('/login', functions.setSignUpFlag(false), functions.validateLoginEmail('/login'), passport.authenticate('local', {
-            failureRedirect: '/login', // redirect back to the signup page if there is an error
-            failureFlash: true // allow flash messages
-        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect);
-
         router.post('/signin/newroutethat', functions.setSignUpFlag(false), functions.validateLoginEmail('/welcome'), passport.authenticate('local', {
             failureRedirect: '/welcome', // redirect back to the signup page if there is an error
             failureFlash: true // allow flash messages
@@ -93,12 +89,20 @@ export class AuthRouter {
             doRender(req, res, "password-forgot.ejs", {});
         });
 
+        router.post('/login/confirm', (req, res) => {
+            const email = req.body.email || "";
+            if (v.validate({ email: req.body.email }, emailSchema) == false)
+                return doRender(req, res, "landing-login.ejs", { message: "Invalid email address: " + req.body.email });
+
+            return doRender(req, res, "landing-login-final.ejs", { email: req.body.email });
+        });
+
         router.post('/login/forgot', (req, res) => {
 
             const email = req.body.email || "";
-            if (v.validate({ email: req.body.email }, emailSchema) == false)  
-                res.redirect("/welcome"); 
-                //return doRender(req, res, "landing.ejs", { message: "Invalid email address: " + req.body.email });
+            if (v.validate({ email: req.body.email }, emailSchema) == false)
+                return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
+
 
             functions.checkCaptcha(req)
                 .then(captchaOk => {
@@ -114,20 +118,16 @@ export class AuthRouter {
                                     .then(user => {
                                         if (!user) {
                                             console.log("user.save() during password reset did not return a user record");
-                                            //return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
-                                            res.redirect("/welcome"); 
+                                            return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
                                         }
                                         return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
                                             .then(() => {
-                                          
                                                 return doRender(req, res, "password-forgot-restored-link.ejs", { recipient: email });
-                                                //res.redirect("/welcome-musician"); 
                                             })
                                     })
                                     .catch(err => {
                                         console.log(`An error occurred when sending the pasword reset email for ${email}: ${err}`);
-                                        res.redirect("/welcome");
-                                        //return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
+                                        return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
                                     })
                             })
                     }

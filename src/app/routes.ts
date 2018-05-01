@@ -494,7 +494,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     doRender(req, res, 'landing.ejs', {
       message: message,
     });
-    //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
   });
 
   app.get('/welcome-musician', function (req, res) {
@@ -504,44 +503,39 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing_musicians.ejs', {
+    doRender(req, res, 'landing-login.ejs', {
       message: message,
     });
-    //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
   });
 
   app.post('/login/reset', (req, res) => {
     const code = String(req.body.code);
     if (!code)
-      return doRender(req, res, "landing.ejs", { message: "There was a problem resetting your password" });
+      return doRender(req, res, "password-forgot.ejs", { message: "There was a problem resetting your password" });
 
     const error = FormUtils.checkPasswordStrength(req.body.password);
     if (error) {
-      return doRender(req, res, "password-reset.ejs", { code: code, message: error });
-    }
-
-    if (req.body.password != req.body.password2) {
-      return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match" });
+      return doRender(req, res, "password-reset.ejs", { message: error });
     }
 
     if (typeof code != "string") {
-      return doRender(req, res, "landing.ejs", { message: "The password reset link has expired" });
+      return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
     }
 
     User.findOne({ "local.resetCode": code }).exec()
       .then(user => {
         // code does not exist or is expired, just go to the login page
         if (!user || !user.local || !user.local.resetExpiryTime)
-          return doRender(req, res, "landing.ejs", { message: "The password reset link has expired" });
+          return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
 
         // make sure code is not expired
         const expiry = new Date(user.local.resetExpiryTime).getTime();
         if (Date.now() > expiry)
-          return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match" });
+          return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
 
         const error = FormUtils.checkPasswordStrength(req.body.password);
         if (error) {
-          return doRender(req, res, "password-reset.ejs", { code: code, message: error });
+          return doRender(req, res, "password-reset.ejs", { message: error });
         }
 
         user.local.password = user.generateHash(req.body.password);

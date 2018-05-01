@@ -131,6 +131,7 @@ module.exports = {
             return module.exports.checkCaptcha(req)
                 .then(captchaOk => {
                     if (!captchaOk) {
+                        // On the other side we want to have captcha or sms check for login
                         const smsConfirmationCode = req.body.confirmationphone;
                         if (smsCodeVal == smsConfirmationCode) {
                             module.exports.smsCode();
@@ -447,13 +448,14 @@ module.exports = {
 
             return Promise.join(cc, eu, cp, smsConfirmationCode, function (confirmation, existingUser, captchaOk) {
                 if (!captchaOk) {
-                    if (smsCodeVal == smsConfirmationCode) {
-                        module.exports.smsCode();
-                    } else {
-                        module.exports.smsCode();
-                        req.flash('loginMessage', "Incorrect captcha or phone verification code");
-                        return res.redirect(errRedirect);
-                    }
+                    // This should disable captcha check for registration
+                    //if (smsCodeVal == smsConfirmationCode) {
+                    //    module.exports.smsCode();
+                    //} else {
+                    //    module.exports.smsCode();
+                    //    req.flash('loginMessage', "Incorrect captcha or phone verification code");
+                    //    return res.redirect(errRedirect);
+                    //}
                 }
 
                 if (existingUser) {

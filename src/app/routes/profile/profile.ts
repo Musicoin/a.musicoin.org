@@ -371,7 +371,7 @@ export class ProfileRouter {
                 let uAgent = "" + req.headers['user-agent'];
                 functions.extraCode();
                 txRequest = [req.user.profileAddress, txRecipient, amount, ip, extraCode];
-
+              
                 mailSender.sendWithdrawConfirmation(req.user.primaryEmail, amount, txRecipient, rTime, ip, uAgent, config.serverEndpoint + "/send/" + pin)
                     .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
                     .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
