@@ -89,7 +89,7 @@ export class AuthRouter {
             doRender(req, res, "password-forgot.ejs", {});
         });
 
-        router.post('/login/confirm', (req, res) => {
+        router.post('/login/music', (req, res) => {
             const email = req.body.email || "";
             if (v.validate({ email: req.body.email }, emailSchema) == false)
                 return doRender(req, res, "landing-login.ejs", { message: "Invalid email address: " + req.body.email });
