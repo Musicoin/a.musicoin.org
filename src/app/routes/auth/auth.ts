@@ -118,7 +118,7 @@ export class AuthRouter {
                                     .then(user => {
                                         if (!user) {
                                             console.log("user.save() during password reset did not return a user record");
-                                            return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
+                                            return doRender(req, res, "landing-musician-vs-listener.ejs", { message: "An internal error occurred, please try again later" });
                                         }
                                         return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
                                             .then(() => {
@@ -127,7 +127,7 @@ export class AuthRouter {
                                     })
                                     .catch(err => {
                                         console.log(`An error occurred when sending the pasword reset email for ${email}: ${err}`);
-                                        return doRender(req, res, "landing.ejs", { message: "An internal error occurred, please try again later" });
+                                        return doRender(req, res, "landing-musician-vs-listener.ejs", { message: "An internal error occurred, please try again later" });
                                     })
                             })
                     }
@@ -144,11 +144,11 @@ export class AuthRouter {
             User.findOne({ "local.resetCode": code }).exec()
                 .then(user => {
                     // code does not exist, just go to the login page
-                    if (!user || !user.local || !user.local.resetExpiryTime) return doRender(req, res, "landing.ejs", { message: failMessage });
+                    if (!user || !user.local || !user.local.resetExpiryTime) return doRender(req, res, "landing-musician-vs-listener.ejs", { message: failMessage });
 
                     // make sure code is not expired
                     const expiry = new Date(user.local.resetExpiryTime).getTime();
-                    if (Date.now() > expiry) return doRender(req, res, "landing.ejs", { message: failMessage });
+                    if (Date.now() > expiry) return doRender(req, res, "landing-musician-vs-listener.ejs", { message: failMessage });
 
                     return doRender(req, res, "password-reset.ejs", { code: code });
                 })
