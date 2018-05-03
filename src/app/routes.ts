@@ -482,8 +482,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
 
   app.get('/welcome', function (req, res) {
-    if (req.user) {
-      console.log("User is already logged in, redirecting away from login page");
+    if (req.user) { 
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -498,7 +497,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/welcome-musician', function (req, res) {
     if (req.user) {
-      console.log("User is already logged in, redirecting away from login page");
       return res.redirect('/loginRedirect');
     }
     // render the page and pass in any flash data if it exists
@@ -509,8 +507,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/welcome-listener', function (req, res) {
-    if (req.user) {
-      console.log("User is already logged in, redirecting away from login page");
+    if (req.user) {      
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
