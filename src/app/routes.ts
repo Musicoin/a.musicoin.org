@@ -520,6 +520,20 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
+  app.get('/welcome-artist', function (req, res) {
+    if (req.user) {      
+      return res.redirect('/loginRedirect');
+    }
+    if (req.query.returnTo) {
+      req.session.destinationUrl = req.query.returnTo;
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    doRender(req, res, 'landing-musician.ejs', {
+      message: message,
+    });
+  });
+
   app.post('/login/reset', (req, res) => {
     const code = String(req.body.code);
     if (!code)
