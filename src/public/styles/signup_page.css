@@ -48,6 +48,7 @@ audio:not([controls]) {
 
 a {
     background: transparent;
+    color: #FDB83B;
 }
 
 a:active, a:hover {
@@ -3197,12 +3198,12 @@ input, button, select, textarea {
 }
 
 a {
-    color: #428bca;
+    color: #FDB83B;
     text-decoration: none;
 }
 
 a:hover, a:focus {
-    color: #2a6496;
+    color: #FDB83B;
     text-decoration: underline;
 }
 
@@ -4768,23 +4769,6 @@ hr {
     background: #f7edd2;
 }
 
-#signUpButton, #signInButton{
-    background: #1db954;
-    display: block;
-    box-sizing: border-box;
-    width: 100%;
-    border-radius: 50px;
-    color: white;
-    padding: 10px;
-    font-size: 14px;
-    border: none;
-    margin-top: 20px;
-    font-family: 'Circular' !important;
-    text-transform: uppercase;
-    font-weight: 800;
-    letter-spacing: 2px;
-    height: 50px;
-}
 #signin-button{
     color: black;
     font-size: 16px;
@@ -4822,14 +4806,6 @@ hr {
     top: 49%;
     width: 100%;
     z-index: -2
-}
-
-
-
-#signUpButton:hover, #signInButton:hover{
-    background: #1ed760;
-    transition-property: background-color,border-color,color,box-shadow,filter;
-    transition-duration: .3s;
 }
 
 /* CTA animation just in case we want to implement it
