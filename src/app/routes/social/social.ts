@@ -66,10 +66,6 @@ export class SocialRouter {
             unlinkProvider('facebook', req, res);
         });
 
-        router.post('/unlink/local', function (req, res) {
-            unlinkProvider('local', req, res);
-        });
-
         function setSignUpFlag(isSignup) {
             return function (req, res, next) {
                 req.session.signup = isSignup;
