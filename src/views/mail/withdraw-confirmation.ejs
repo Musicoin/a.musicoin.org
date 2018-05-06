@@ -35,7 +35,8 @@
 <p>Dear Musicoin user,</p>
 <p>We've received a withdrawal request of <%= amount %> MUSIC. To ensure your safety, we require you to confirm the withdrawal.</p>
 <blockquote><p>Amount: <%= amount %> MUSIC</p><p>To: <%= txRecipient %></p><p>Requested At: <%= rTime %> UTC</p><p>From: <%= ip %></p><p>User Agent: <%= uAgent %></p></blockquote>
-<p>Please click on the link below or copy and paste it into your browser to confirm your withdrawal.</p> 
-<p>https://musicoin.org/send/<%= pin %></p>
+<p>Please click on the link below or copy and paste it into your browser to confirm your withdrawal.</p>
+<a href="<%= pin %>"</a>
+<p><%= pin %></p>
 </body>
 </html>

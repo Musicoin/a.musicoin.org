@@ -1,4 +1,4 @@
-#: src/views/landing.ejs:207
+#: src/views/landing-musician-vs-listener.ejs:207
 msgid "sign in or sign up using one of these services:"
 msgstr "Melde dich an oder nutze einen dieser Dienste:"
 
