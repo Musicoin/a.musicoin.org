@@ -8,7 +8,7 @@ export class FrontRouter {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/for-listeners', (req, res) => {
+        router.get('/musicians', (req, res) => {
             res.render('../overview/index.html', {});
         });
 
@@ -16,19 +16,43 @@ export class FrontRouter {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/for-musicians', (req, res) => {
+        router.get('/resources', (req, res) => {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/currency', (req, res) => {
+        router.get('/resources/faq', (req, res) => {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/faq', (req, res) => {
+        router.get('/gettingstarted', (req, res) => {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/bounty', (req, res) => {
+        router.get('/gettingstarted/wallet', (req, res) => {
+            res.render('../overview/index.html', {});
+        });
+
+        router.get('/gettingstarted/mycrypto', (req, res) => {
+            res.render('../overview/index.html', {});
+        });
+
+        router.get('/gettingstarted/coinomi', (req, res) => {
+            res.render('../overview/index.html', {});
+        });
+
+        router.get('/gettingstarted/exchange', (req, res) => {
+            res.render('../overview/index.html', {});
+        });
+
+        router.get('/developers', (req, res) => {
+            res.render('../overview/index.html', {});
+        });
+
+        router.get('/developers/api', (req, res) => {
+            res.render('../overview/index.html', {});
+        });
+
+        router.get('/developers/bounty', (req, res) => {
             res.render('../overview/index.html', {});
         });
     }
@@ -36,4 +60,3 @@ export class FrontRouter {
         return router;
     }
 }
-
