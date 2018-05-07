@@ -83,12 +83,12 @@ export class ExtendedRouter {
       res.redirect('/');
     });
 
-    //    router.post('/user/canPlay', functions.populateAnonymousUser, function (req, res) {
-    //      getPlaybackEligibility(req)
-    //        .then(result => {
-    //          res.json(result);
-    //        })
-    //    });
+    router.post('/user/canPlay', functions.populateAnonymousUser, function (req, res) {
+      getPlaybackEligibility(req)
+        .then(result => {
+          res.json(result);
+        })
+    });
 
     router.get('/rss/new-releases', (req, res) => {
       const feedConfig = config.ui.rss.newReleases;
