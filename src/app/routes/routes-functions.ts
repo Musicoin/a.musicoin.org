@@ -426,6 +426,15 @@ module.exports = {
                 return res.redirect(errRedirect);
             }
 
+            //var blackListed = Blacklist.findOne({email:req.body.email}).exec()
+            //.then(user => {
+            //    req.flash('errorMessage', `There is an error`);
+            //    return res.redirect(errRedirect);
+            //})
+            //.then(() => {
+            //    res.json({ success: true });
+            //});
+
             // minimum password strength
             const error = FormUtils.checkPasswordStrength(req.body.password);
             if (error) {
