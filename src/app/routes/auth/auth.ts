@@ -9,7 +9,8 @@ import { AddressResolver } from '../../internal/address-resolver';
 import { MusicoinAPI } from '../../internal/musicoin-api';
 import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
-import * as FormUtils from '../../utils/form-utils';
+
+const get_ip = require('request-ip');
 
 let Validator = require("fastest-validator");
 let v = new Validator();
@@ -78,7 +79,7 @@ export class AuthRouter {
         router.post('/signin/newroutethat', functions.setSignUpFlag(false), functions.validateLoginEmail('/welcome'), passport.authenticate('local', {
             failureRedirect: '/welcome', // redirect back to the signup page if there is an error
             failureFlash: true // allow flash messages
-        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect, functions.sendLoginEmail);
+        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect, sendLoginEmail);
 
         router.post('/signup', functions.setSignUpFlag(true), functions.validateNewAccount('/welcome'), passport.authenticate('local', {
             failureRedirect: '/welcome', // redirect back to the signup page if there is an error
@@ -165,6 +166,15 @@ export class AuthRouter {
             });
 
         });
+
+        function sendLoginEmail(req, res) {
+            let loginTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+            let ip = get_ip.getClientIp(req);
+            let uAgent = req.headers['user-agent'];
+            mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
+                .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
+                .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
+        }
 
         setInterval(function () {
             var numberOfPhoneUsedTimesVal = 0;

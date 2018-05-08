@@ -5,10 +5,7 @@ import * as request from 'request';
 import * as FormUtils from '../utils/form-utils';
 
 var smsCodeVal = crypto.randomBytes(4).toString('hex');
-const get_ip = require('request-ip');
 const EmailConfirmation = require('../models/email-confirmation');
-import { MailSender } from '../extra/mail-sender';
-const mailSender = new MailSender();
 const User = require('../models/user');
 const Blacklist = require('../models/blacklist');
 let publicPagesEnabled = false;
@@ -148,15 +145,6 @@ module.exports = {
                 });
         }
     },
-    sendLoginEmail: function (req, res) {
-        let loginTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-        let ip = get_ip.getClientIp(req);
-        let uAgent = req.headers['user-agent'];
-        mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
-          .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
-          .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);       
-
-    },
     SetSessionAfterLoginSuccessfullyAndRedirect: function (req, res) {
         //user loggined succesfully, then redirect to '/loginRedirect' URL
         if (req.user) {
@@ -208,7 +196,7 @@ module.exports = {
         // console.log(`User is not logged in, redirecting`);
         // if they aren't redirect them to the home page
         req.session.destinationUrl = req.originalUrl;
-        res.redirect('/welcome');
+        return res.redirect('/welcome');
     },
 
 
@@ -437,15 +425,6 @@ module.exports = {
                 req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
                 return res.redirect(errRedirect);
             }
-
-            var blackListed = Blacklist.findOne({email:req.body.email}).exec()
-            .then(user => {
-                req.flash('errorMessage', `There is an error`);
-                return res.redirect(errRedirect);
-            })
-            .then(() => {
-                res.json({ success: true });
-            });
 
             // minimum password strength
             const error = FormUtils.checkPasswordStrength(req.body.password);
