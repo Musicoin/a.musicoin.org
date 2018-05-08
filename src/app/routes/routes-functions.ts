@@ -5,7 +5,10 @@ import * as request from 'request';
 import * as FormUtils from '../utils/form-utils';
 
 var smsCodeVal = crypto.randomBytes(4).toString('hex');
+const get_ip = require('request-ip');
 const EmailConfirmation = require('../models/email-confirmation');
+import { MailSender } from '../extra/mail-sender';
+const mailSender = new MailSender();
 const User = require('../models/user');
 const Blacklist = require('../models/blacklist');
 let publicPagesEnabled = false;
@@ -145,6 +148,15 @@ module.exports = {
                 });
         }
     },
+    sendLoginEmail: function (req, res) {
+        let loginTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        let ip = get_ip.getClientIp(req);
+        let uAgent = req.headers['user-agent'];
+        mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
+          .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
+          .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);       
+
+    },
     SetSessionAfterLoginSuccessfullyAndRedirect: function (req, res) {
         //user loggined succesfully, then redirect to '/loginRedirect' URL
         if (req.user) {
@@ -190,6 +202,7 @@ module.exports = {
         // console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionID}`);
         // if user is authenticated in the session, carry on
         if (req.isAuthenticated())
+        
             return next();
 
         // console.log(`User is not logged in, redirecting`);

@@ -78,7 +78,7 @@ export class AuthRouter {
         router.post('/signin/newroutethat', functions.setSignUpFlag(false), functions.validateLoginEmail('/welcome'), passport.authenticate('local', {
             failureRedirect: '/welcome', // redirect back to the signup page if there is an error
             failureFlash: true // allow flash messages
-        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect);
+        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect, functions.sendLoginEmail);
 
         router.post('/signup', functions.setSignUpFlag(true), functions.validateNewAccount('/welcome'), passport.authenticate('local', {
             failureRedirect: '/welcome', // redirect back to the signup page if there is an error

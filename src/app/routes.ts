@@ -34,7 +34,6 @@ const AnonymousUser = require('./models/anonymous-user');
 const TrackMessage = require('./models/track-message');
 const EmailConfirmation = require('./models/email-confirmation');
 const User = require('./models/user');
-const get_ip = require('request-ip');
 const sendSeekable = require('send-seekable');
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
@@ -232,13 +231,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       req.session.destinationUrl = null;
       return res.redirect(url);
     }
-    res.redirect('/nav/feed');
-    let loginTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-    let ip = get_ip.getClientIp(req);
-    let uAgent = req.headers['user-agent'];
-    mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
-      .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
-      .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
+      return res.redirect('/nav/feed');
   });
 
   app.post('/login/confirm', function (req, res) {
@@ -490,7 +483,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing-musician-vs-listener.ejs', {
+    return doRender(req, res, 'landing-musician-vs-listener.ejs', {
       message: message,
     });
   });
@@ -501,7 +494,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing-login.ejs', {
+    return doRender(req, res, 'landing-login.ejs', {
       message: message,
     });
   });
@@ -515,7 +508,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing-listener.ejs', {
+    return doRender(req, res, 'landing-listener.ejs', {
       message: message,
     });
   });
@@ -529,7 +522,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing-musician.ejs', {
+    return doRender(req, res, 'landing-musician.ejs', {
       message: message,
     });
   });
