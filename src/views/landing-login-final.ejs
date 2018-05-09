@@ -89,15 +89,16 @@ function onSubmit(token) {
 $(document).ready(function() {
   $("#confirm-phone").on('click', function() {
     var phone = document.getElementById('phone').value;
+    var xhr = new XMLHttpRequest();
     if (!phone || phone.trim().length == 0) {
       document.getElementById('msg').textContent = "Enter your phone, then you can request phone verification";
     } else if (!phone || phone.trim().length > 15) {
       document.getElementById('msg').textContent = "Incorrect number provided, phone should include country code";
     } else {
       document.getElementById('msg').textContent = "Verification Code was sent to " + phone;
-      $.post('/login/confirm-phone', {
-          phone: phone
-        })
+      xhr.open("POST", '/login/confirm-phone', true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+      xhr.send('phone='+ phone);
     }
   });
 });
