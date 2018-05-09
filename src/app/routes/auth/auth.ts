@@ -9,6 +9,10 @@ import { AddressResolver } from '../../internal/address-resolver';
 import { MusicoinAPI } from '../../internal/musicoin-api';
 import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
+import * as FormUtils from '../../utils/form-utils';
+
+const User = require('../../models/user');
+
 
 const get_ip = require('request-ip');
 
@@ -135,6 +139,40 @@ export class AuthRouter {
                 });
 
         });
+
+        router.post('/login/reset', (req, res) => {
+            const code = String(req.body.code);
+            if (!code)
+                return doRender(req, res, "password-forgot.ejs", { message: "There was a problem resetting your password" });
+
+            const error = FormUtils.checkPasswordStrength(req.body.password);
+            if (error) {
+                return doRender(req, res, "password-reset.ejs", { message: error });
+            }
+
+            User.findOne({ "local.resetCode": code }).exec()
+                .then(user => {
+                    // code does not exist or is expired, just go to the login page
+                    if (!user || !user.local || !user.local.resetExpiryTime)
+                        return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
+
+                    // make sure code is not expired
+                    const expiry = new Date(user.local.resetExpiryTime).getTime();
+                    console.log(expiry);
+                    if (Date.now() > expiry)
+                        return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
+
+                    user.local.password = user.generateHash(req.body.password);
+                    user.local.resetCode = null;
+                    user.local.resetExpiryTime = null;
+
+                    return user.save()
+                        .then(() => {
+                            return doRender(req, res, "landing-login.ejs", { message: "Your password has been reset. Please use new password for login." });
+                        })
+                })
+        });
+
 
 
         router.get('/login/reset', functions.redirectIfLoggedIn('/loginRedirect'), (req, res) => {

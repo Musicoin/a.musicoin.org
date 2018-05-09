@@ -15,6 +15,7 @@ import { AuthRouter } from './routes/auth/auth';
 import { ExtendedRouter } from './routes/extended-routes/extended';
 import { IpfsRouter } from './routes/extended-routes/ipfs';
 import { PlayerRouter } from './routes/extended-routes/player';
+import { PlayerRouterTwo } from './routes/extended-routes/player2';
 import { FrontRouter } from './routes/front-parts/front-routes';
 import { HomeRouter } from './routes/home-page/home';
 import { ProfileRouter } from './routes/profile/profile';
@@ -110,6 +111,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     config,
     doRender);
 
+  const playerRouterTwo = new PlayerRouterTwo(musicoinApi,
+    jsonAPI,
+    addressResolver,
+    exchangeRateProvider,
+    mediaProvider,
+    config,
+    doRender);
+
   const extendedRouter = new ExtendedRouter(musicoinApi,
     jsonAPI,
     addressResolver,
@@ -185,6 +194,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/', profileRouter.getRouter());
   app.use('/', authRouter.getRouter());
   app.use('/', playerRouter.getRouter());
+  app.use('/', playerRouterTwo.getRouter());
   app.use('/', ipfsRouter.getRouter());
   app.use('/', extendedRouter.getRouter());
   app.use('/admin/', dashboardManager.getRouter());
@@ -199,28 +209,28 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.delete('/admin/user/delete', (req,res) => {
+  app.delete('/admin/user/delete', (req, res) => {
     if (req.body.email) { req.body.email = req.body.email.trim(); }
     jsonAPI.removeUser(req.body.email)
-    .then(result => {
-      res.json(result);
-  });
-  });
-
-  app.post('/admin/user/blacklist',(req,res)=> {
-    if(req.body.email) {
-      jsonAPI.blacklistUser(req.body.email.trim())
-      .then(result=> {
+      .then(result => {
         res.json(result);
       });
+  });
+
+  app.post('/admin/user/blacklist', (req, res) => {
+    if (req.body.email) {
+      jsonAPI.blacklistUser(req.body.email.trim())
+        .then(result => {
+          res.json(result);
+        });
     }
   });
 
-  app.get('/relases/random', (req,res) => {
+  app.get('/relases/random', (req, res) => {
     jsonAPI.randomSong()
-    .then(result => {
-      res.json(result);
-    });
+      .then(result => {
+        res.json(result);
+      });
   });
 
   app.get('/loginRedirect', (req, res) => {
@@ -231,7 +241,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       req.session.destinationUrl = null;
       return res.redirect(url);
     }
-      return res.redirect('/nav/feed');
+    return res.redirect('/nav/feed');
   });
 
   app.post('/login/confirm', function (req, res) {
@@ -475,7 +485,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
 
   app.get('/welcome', function (req, res) {
-    if (req.user) { 
+    if (req.user) {
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -500,7 +510,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/welcome-listener', function (req, res) {
-    if (req.user) {      
+    if (req.user) {
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -514,7 +524,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/welcome-artist', function (req, res) {
-    if (req.user) {      
+    if (req.user) {
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -525,48 +535,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return doRender(req, res, 'landing-musician.ejs', {
       message: message,
     });
-  });
-
-  app.post('/login/reset', (req, res) => {
-    const code = String(req.body.code);
-    if (!code)
-      return doRender(req, res, "password-forgot.ejs", { message: "There was a problem resetting your password" });
-
-    const error = FormUtils.checkPasswordStrength(req.body.password);
-    if (error) {
-      return doRender(req, res, "password-reset.ejs", { message: error });
-    }
-
-    if (typeof code != "string") {
-      return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
-    }
-
-    User.findOne({ "local.resetCode": code }).exec()
-      .then(user => {
-        // code does not exist or is expired, just go to the login page
-        if (!user || !user.local || !user.local.resetExpiryTime)
-          return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
-
-        // make sure code is not expired
-        const expiry = new Date(user.local.resetExpiryTime).getTime();
-        if (Date.now() > expiry)
-          return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
-
-        const error = FormUtils.checkPasswordStrength(req.body.password);
-        if (error) {
-          return doRender(req, res, "password-reset.ejs", { message: error });
-        }
-
-        user.local.password = user.generateHash(req.body.password);
-        user.local.resetCode = null;
-        user.local.resetExpiryTime = null;
-
-        return user.save()
-          .then(() => {
-            req.flash('loginMessage', "Your password has been reset.  Please login with your new password");
-            return res.redirect("/welcome");
-          })
-      })
   });
 
   app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
