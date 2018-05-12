@@ -14,16 +14,16 @@
     <div class="player-widget-right" style="background:  #fff;height:  200px !important;/* color:  black; */border-radius: 5px;padding:  15px 15px 15px 15px;">
       <div class="song-badge-info">
         <div id=player-title-area class="flex-row middle clickable title-link">
-          <div id="player-title" class="player-song-name mr10" style="font-size: 20px;">Song title which styupidly long that will cause some sort of snafu</div>
+          <div id="player-title" class="player-song-name mr10" style="font-size: 20px; color: black">Song title which styupidly long that will cause some sort of snafu</div>
         </div>
         <div id="player-artist" class="player-artist-name clickable" style="color: black;font-size: 16px;">Artist name which styupidly long that will cause some sort of snafu</div>
-        <div id="track-description-in-player" style="height: 100px;font-size: 16px;"><%=data.license.description || "Find this track and other amazing tracks on musicoin.org"%></div>
+        <div id="track-description-in-player" style="height: 100px;font-size: 16px; color: black"><%=data.license.description || "Find this track and other amazing tracks on musicoin.org"%></div>
       </div>
       <div class="player-controls-wrapper">
         <i id="player-play-button" class="fa fa-play btn btn-plain player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="margin-right: 5px;color: black;" aria-hidden="true"></i>
-        <i id="player-pause-button" class="fas fa-pause player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="width: 55px;height: 55px;padding-right: 25px;background:  grey;margin-right: 4px;color: black;"></i>
+        <i id="player-pause-button" class="fas fa-pause player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="padding-right: 25px;background:  grey;margin-right: 4px;color: black;"></i>
         <div id=player-progress class="player-progress mr5 big-screen-only">
-          <div class="progress-bar progress-background" style="background: grey;"></div>
+          <div class="progress-bar progress-background" style="background: white"></div>
           <div id="player-progress-div" class="progress-bar progress-foreground" style="background-color: green">
           </div>
           <div class="spread mt5">
@@ -34,7 +34,7 @@
         </div>
         <i id="player-next-button" class="fa fa-lg fa-step-forward btn btn-plain player-control" onclick="musicoin.audioPlayer.skipTrack()" style="color: #AE8C00" aria-hidden="true"></i>
         <div id="player-tip-button" title="Send a tip" class="clickable text-large mr10" context-type="Release" recipient="">
-          <i class="fa fa-2x fa-heart btn btn-plain btn-sm" style="padding: 5px; color: black" aria-hidden="true"></i>
+          <i class="fa fa-2x fa-sign-language btn btn-plain btn-sm" style="padding: 5px; color: black" aria-hidden="true"></i>
         </div>
         <div class="clickable text-large mr10">
           <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle" style="padding: 5px; color: black" aria-hidden="true"></i>
