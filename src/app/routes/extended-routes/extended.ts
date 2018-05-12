@@ -40,10 +40,7 @@ export class ExtendedRouter {
             console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
             return res.render('not-found.ejs');
           }
-          res.render('index-frames.ejs', {
-            license: license,
-            mainFrameLocation: req.originalUrl.substr(4)
-          });
+          res.render('error.ejs');
         });
     });
 
@@ -324,3 +321,4 @@ export class ExtendedRouter {
     return router;
   }
 }
+

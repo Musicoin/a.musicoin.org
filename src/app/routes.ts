@@ -192,13 +192,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/admin', functions.isLoggedIn, functions.adminOnly);
   app.use('/admin/*', functions.isLoggedIn, functions.adminOnly);
 
-  app.post('/user/canPlay', populateAnonymousUser, function (req, res) {
-    getPlaybackEligibility(req)
-      .then(result => {
-        res.json(result);
-      })
-  });
-
   app.delete('/admin/user/delete', (req,res) => {
     if (req.body.email) { req.body.email = req.body.email.trim(); }
     jsonAPI.removeUser(req.body.email)
