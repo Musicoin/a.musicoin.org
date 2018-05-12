@@ -1,4 +1,4 @@
-<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 <audio id="player"></audio>
 <div id="player-section" class="fixed-footer player show-on-play">
   <div id="player-options-overlay" >
@@ -8,35 +8,44 @@
     </div>
 </div>
   <div class="player-foreground no_selection" style="background: black; opacity: 0.9">
-    <div class="player-widget-right">
+    <div class="player-badge-image-wrapper player-widget-left">
+      <img id="player-badge-image" src="/images/default-profile.png" class="song-badge-image big-screen-only" style="width:;height: 200px !important;">
+    </div>
+    <div class="player-widget-right" style="background:  #fff;height:  200px !important;/* color:  black; */border-radius: 5px;padding:  15px 15px 15px 15px;">
       <div class="song-badge-info">
         <div id=player-title-area class="flex-row middle clickable title-link">
-          <div id="player-title" class="player-song-name mr10" style=" font-family: Ubuntu, sans-serif; line-height:  1.6;" class="player-song-name mr10">Song title which styupidly long that will cause some sort of snafu</div>
+          <div id="player-title" class="player-song-name mr10" style="font-size: 20px;">Song title which styupidly long that will cause some sort of snafu</div>
         </div>
-        <div id="player-artist" class="player-artist-name clickable" style="width:;font-family:  Ubuntu, sans-serif;color: white; display:  inline-block;font-size: 20px; position: relative ; left: -25px;" class="player-artist-name clickable">Artist name which styupidly long that will cause some sort of snafu</div>
-        <div id="track-description-in-player" style="font-family:  'Ubuntu', sans-serif;"><%=data.license.description || "Find this track and other amazing tracks on musicoin.org"%></div>
+        <div id="player-artist" class="player-artist-name clickable" style="color: black;font-size: 16px;">Artist name which styupidly long that will cause some sort of snafu</div>
+        <div id="track-description-in-player" style="height: 100px;font-size: 16px;"><%=data.license.description || "Find this track and other amazing tracks on musicoin.org"%></div>
       </div>
-      <div class="player-controls-wrapper" style="background:  #fff">
-        <i id="player-play-button" style="position: relative; left: 30px; color: black"class="fa fa-play btn btn-plain player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="margin-right: 5px; color: black" aria-hidden="true"></i>
-        <img id="player-pause-button" onclick="musicoin.audioPlayer.togglePlayState()" src="/images/player/pause.png" style="width: 55px; height: 55px; padding-right: 5px; margin-right: 4px; background-color: black" class="player-control">
+      <div class="player-controls-wrapper">
+        <i id="player-play-button" class="fa fa-play btn btn-plain player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="margin-right: 5px;color: black;" aria-hidden="true"></i>
+        <i id="player-pause-button" class="fas fa-pause player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="width: 55px;height: 55px;padding-right: 25px;background:  grey;margin-right: 4px;color: black;"></i>
         <div id=player-progress class="player-progress mr5 big-screen-only">
-          <div class="progress-bar progress-background" style="background-color: #E0E0E0; width: 98%;"></div>
-          <div id="player-progress-div" class="progress-bar progress-foreground" style="background-color: black">
+          <div class="progress-bar progress-background" style="background: grey;"></div>
+          <div id="player-progress-div" class="progress-bar progress-foreground" style="background-color: green">
           </div>
           <div class="spread mt5">
             <div id="player-time-played" style="color: black" class="player-time-field big-screen-only">00:00</div>
-            <div id="player-time-left" style="color: black; padding-right: 25px" class="player-time-field">00:00</div>
+            <div id="player-time-left" style="color: black" class="player-time-field">00:00</div>
           </div>
-          <div id="progress-thumb" style="width: 10px; height: 15px; background-color: black" class="progress-thumb draggable ui-widget-content ui-draggable ui-draggable-handle" style="background-color:  black;left: -8px;transition: none;"></div>
+          <div id=progress-thumb class="progress-thumb draggable ui-widget-content" style="left: -8px;transition: none;background-color:  black;"></div>
         </div>
         <i id="player-next-button" class="fa fa-lg fa-step-forward btn btn-plain player-control" onclick="musicoin.audioPlayer.skipTrack()" style="color: #AE8C00" aria-hidden="true"></i>
+        <div id="player-tip-button" title="Send a tip" class="clickable text-large mr10" context-type="Release" recipient="">
+          <i class="fa fa-2x fa-heart btn btn-plain btn-sm" style="padding: 5px; color: black" aria-hidden="true"></i>
+        </div>
         <div class="clickable text-large mr10">
-          <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle" style="" aria-hidden="true"></i>
+          <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle" style="padding: 5px; color: black" aria-hidden="true"></i>
         </div>
         <div title="Show or hide the playlist" class="clickable text-large mr10" style="position: relative">
           <i id="play-queue-trigger" class="fa fa-list-ul btn-plain btn-sm play-queue-trigger" style="padding: 5px" aria-hidden="true"></i>
           <i id="play-queue-count" class="queue-size" aria-hidden="true" style="position: absolute;bottom: -9px;right: -13px;">0</i>
         </div>
+      </div>
+      <div class="musicoin-declaration-banner">
+        <a href="https://medium.com/@musicoin/musicoin-project-white-paper-v2-0-6be5fd53191b" target="_blank" style="color: black;">You play for free, we pay to musicians!</a>
       </div>
     </div>
   </div>
