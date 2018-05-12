@@ -34,7 +34,6 @@ const AnonymousUser = require('./models/anonymous-user');
 const TrackMessage = require('./models/track-message');
 const EmailConfirmation = require('./models/email-confirmation');
 const User = require('./models/user');
-const get_ip = require('request-ip');
 const sendSeekable = require('send-seekable');
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
@@ -232,13 +231,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       req.session.destinationUrl = null;
       return res.redirect(url);
     }
-    res.redirect('/nav/feed');
-    let loginTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-    let ip = get_ip.getClientIp(req);
-    let uAgent = req.headers['user-agent'];
-    mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
-      .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
-      .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
+    return res.redirect('/nav/feed');
   });
 
   app.post('/login/confirm', function (req, res) {
@@ -490,7 +483,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing-musician-vs-listener.ejs', {
+    return doRender(req, res, 'landing-musician-vs-listener.ejs', {
       message: message,
     });
   });
@@ -501,7 +494,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing-login.ejs', {
+    return doRender(req, res, 'landing-login.ejs', {
       message: message,
     });
   });
@@ -515,7 +508,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing-listener.ejs', {
+    return doRender(req, res, 'landing-listener.ejs', {
       message: message,
     });
   });
@@ -529,51 +522,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing-musician.ejs', {
+    return doRender(req, res, 'landing-musician.ejs', {
       message: message,
     });
-  });
-
-  app.post('/login/reset', (req, res) => {
-    const code = String(req.body.code);
-    if (!code)
-      return doRender(req, res, "password-forgot.ejs", { message: "There was a problem resetting your password" });
-
-    const error = FormUtils.checkPasswordStrength(req.body.password);
-    if (error) {
-      return doRender(req, res, "password-reset.ejs", { message: error });
-    }
-
-    if (typeof code != "string") {
-      return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
-    }
-
-    User.findOne({ "local.resetCode": code }).exec()
-      .then(user => {
-        // code does not exist or is expired, just go to the login page
-        if (!user || !user.local || !user.local.resetExpiryTime)
-          return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
-
-        // make sure code is not expired
-        const expiry = new Date(user.local.resetExpiryTime).getTime();
-        if (Date.now() > expiry)
-          return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
-
-        const error = FormUtils.checkPasswordStrength(req.body.password);
-        if (error) {
-          return doRender(req, res, "password-reset.ejs", { message: error });
-        }
-
-        user.local.password = user.generateHash(req.body.password);
-        user.local.resetCode = null;
-        user.local.resetExpiryTime = null;
-
-        return user.save()
-          .then(() => {
-            req.flash('loginMessage', "Your password has been reset.  Please login with your new password");
-            return res.redirect("/welcome");
-          })
-      })
   });
 
   app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {

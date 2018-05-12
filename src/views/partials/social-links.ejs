@@ -23,9 +23,7 @@
 
     if (value) { %>
     <a href="<%=value%>" target="_blank" class="fa mr10 <%= icon %> mr5 social-link"></a>
-    <% }
-    }
-    %>
+    <% } %>
     <div style="position: absolute; top: 80%; background: none; width: 160px; left: 160px;">
                 <form action="/qr-code" method="post">
                     <input type="text" name="profileAddress" value="<%=artist.profileAddress%>" style="visibility: hidden">

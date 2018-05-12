@@ -11,6 +11,11 @@ import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
 import * as FormUtils from '../../utils/form-utils';
 
+const User = require('../../models/user');
+
+
+const get_ip = require('request-ip');
+
 let Validator = require("fastest-validator");
 let v = new Validator();
 let emailSchema = {
@@ -78,7 +83,7 @@ export class AuthRouter {
         router.post('/signin/newroutethat', functions.setSignUpFlag(false), functions.validateLoginEmail('/welcome'), passport.authenticate('local', {
             failureRedirect: '/welcome', // redirect back to the signup page if there is an error
             failureFlash: true // allow flash messages
-        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect);
+        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect, sendLoginEmail);
 
         router.post('/signup', functions.setSignUpFlag(true), functions.validateNewAccount('/welcome'), passport.authenticate('local', {
             failureRedirect: '/welcome', // redirect back to the signup page if there is an error
@@ -135,6 +140,40 @@ export class AuthRouter {
 
         });
 
+        router.post('/login/reset', (req, res) => {
+            const code = String(req.body.code);
+            if (!code)
+                return doRender(req, res, "password-forgot.ejs", { message: "There was a problem resetting your password" });
+
+            const error = FormUtils.checkPasswordStrength(req.body.password);
+            if (error) {
+                return doRender(req, res, "password-reset.ejs", { message: error });
+            }
+
+            User.findOne({ "local.resetCode": code }).exec()
+                .then(user => {
+                    // code does not exist or is expired, just go to the login page
+                    if (!user || !user.local || !user.local.resetExpiryTime)
+                        return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
+
+                    // make sure code is not expired
+                    const expiry = new Date(user.local.resetExpiryTime).getTime();
+                    console.log(expiry);
+                    if (Date.now() > expiry)
+                        return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
+
+                    user.local.password = user.generateHash(req.body.password);
+                    user.local.resetCode = null;
+                    user.local.resetExpiryTime = null;
+
+                    return user.save()
+                        .then(() => {
+                            return doRender(req, res, "landing-login.ejs", { message: "Your password has been reset. Please use new password for login." });
+                        })
+                })
+        });
+
+
 
         router.get('/login/reset', functions.redirectIfLoggedIn('/loginRedirect'), (req, res) => {
             // if the code is expired, take them back to the login
@@ -165,6 +204,15 @@ export class AuthRouter {
             });
 
         });
+
+        function sendLoginEmail(req, res) {
+            let loginTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+            let ip = get_ip.getClientIp(req);
+            let uAgent = req.headers['user-agent'];
+            mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
+                .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
+                .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
+        }
 
         setInterval(function () {
             var numberOfPhoneUsedTimesVal = 0;

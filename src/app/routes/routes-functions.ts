@@ -195,7 +195,7 @@ module.exports = {
         // console.log(`User is not logged in, redirecting`);
         // if they aren't redirect them to the home page
         req.session.destinationUrl = req.originalUrl;
-        res.redirect('/welcome');
+        return res.redirect('/welcome');
     },
 
 
@@ -425,14 +425,14 @@ module.exports = {
                 return res.redirect(errRedirect);
             }
 
-            var blackListed = Blacklist.findOne({email:req.body.email}).exec()
-            .then(user => {
-                req.flash('errorMessage', `There is an error`);
-                return res.redirect(errRedirect);
-            })
-            .then(() => {
-                res.json({ success: true });
-            });
+            //var blackListed = Blacklist.findOne({email:req.body.email}).exec()
+            //.then(user => {
+            //    req.flash('errorMessage', `There is an error`);
+            //    return res.redirect(errRedirect);
+            //})
+            //.then(() => {
+            //    res.json({ success: true });
+            //});
 
             // minimum password strength
             const error = FormUtils.checkPasswordStrength(req.body.password);
