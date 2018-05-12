@@ -114,7 +114,7 @@ export class ProfileRouter {
                     let totalShares = 0;
                     resolvedAddresses.forEach(r => totalShares += parseInt(r.shares));
                     resolvedAddresses.forEach(r => r.percentage = functions._formatNumber(100 * r.shares / totalShares, 1));
-                    const plays = 0;
+                    const plays = release.directPlayCount || 0;
                     const tips = release.directTipCount || 0;
                     const usd = exchangeRate.success ? "$" + functions._formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
                     return doRender(req, res, "track.ejs", {
@@ -371,7 +371,7 @@ export class ProfileRouter {
                 let uAgent = "" + req.headers['user-agent'];
                 functions.extraCode();
                 txRequest = [req.user.profileAddress, txRecipient, amount, ip, extraCode];
-              
+
                 mailSender.sendWithdrawConfirmation(req.user.primaryEmail, amount, txRecipient, rTime, ip, uAgent, config.serverEndpoint + "/send/" + pin)
                     .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
                     .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
