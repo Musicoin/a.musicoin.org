@@ -190,7 +190,6 @@ module.exports = {
         // console.log(`Checking is user isAuthenticated: ${req.isAuthenticated()}, ${req.originalUrl}, session:${req.sessionID}`);
         // if user is authenticated in the session, carry on
         if (req.isAuthenticated())
-        
             return next();
 
         // console.log(`User is not logged in, redirecting`);

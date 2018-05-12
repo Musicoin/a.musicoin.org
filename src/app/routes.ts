@@ -15,7 +15,6 @@ import { AuthRouter } from './routes/auth/auth';
 import { ExtendedRouter } from './routes/extended-routes/extended';
 import { IpfsRouter } from './routes/extended-routes/ipfs';
 import { PlayerRouter } from './routes/extended-routes/player';
-import { PlayerRouterTwo } from './routes/extended-routes/player2';
 import { FrontRouter } from './routes/front-parts/front-routes';
 import { HomeRouter } from './routes/home-page/home';
 import { ProfileRouter } from './routes/profile/profile';
@@ -111,14 +110,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     config,
     doRender);
 
-  const playerRouterTwo = new PlayerRouterTwo(musicoinApi,
-    jsonAPI,
-    addressResolver,
-    exchangeRateProvider,
-    mediaProvider,
-    config,
-    doRender);
-
   const extendedRouter = new ExtendedRouter(musicoinApi,
     jsonAPI,
     addressResolver,
@@ -194,7 +185,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/', profileRouter.getRouter());
   app.use('/', authRouter.getRouter());
   app.use('/', playerRouter.getRouter());
-  app.use('/', playerRouterTwo.getRouter());
   app.use('/', ipfsRouter.getRouter());
   app.use('/', extendedRouter.getRouter());
   app.use('/admin/', dashboardManager.getRouter());
@@ -209,28 +199,28 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.delete('/admin/user/delete', (req, res) => {
+  app.delete('/admin/user/delete', (req,res) => {
     if (req.body.email) { req.body.email = req.body.email.trim(); }
     jsonAPI.removeUser(req.body.email)
-      .then(result => {
-        res.json(result);
-      });
+    .then(result => {
+      res.json(result);
+  });
   });
 
-  app.post('/admin/user/blacklist', (req, res) => {
-    if (req.body.email) {
+  app.post('/admin/user/blacklist',(req,res)=> {
+    if(req.body.email) {
       jsonAPI.blacklistUser(req.body.email.trim())
-        .then(result => {
-          res.json(result);
-        });
+      .then(result=> {
+        res.json(result);
+      });
     }
   });
 
-  app.get('/relases/random', (req, res) => {
+  app.get('/relases/random', (req,res) => {
     jsonAPI.randomSong()
-      .then(result => {
-        res.json(result);
-      });
+    .then(result => {
+      res.json(result);
+    });
   });
 
   app.get('/loginRedirect', (req, res) => {
@@ -485,7 +475,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
 
   app.get('/welcome', function (req, res) {
-    if (req.user) {
+    if (req.user) { 
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -510,7 +500,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/welcome-listener', function (req, res) {
-    if (req.user) {
+    if (req.user) {      
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -524,7 +514,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/welcome-artist', function (req, res) {
-    if (req.user) {
+    if (req.user) {      
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
