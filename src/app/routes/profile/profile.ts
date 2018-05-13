@@ -86,7 +86,7 @@ export class ProfileRouter {
             })
         });
 
-        router.get('/track/:address', functions.isLoggedInOrIsPublic, function (req, res) {
+        router.get('/track/:address', function (req, res) {
 
             console.log("Loading track page for track address: " + req.params.address);
             const address = FormUtils.defaultString(req.params.address, null);
