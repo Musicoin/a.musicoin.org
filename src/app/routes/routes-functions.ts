@@ -7,9 +7,13 @@ import * as FormUtils from '../utils/form-utils';
 var smsCodeVal = crypto.randomBytes(4).toString('hex');
 const EmailConfirmation = require('../models/email-confirmation');
 const User = require('../models/user');
+const Blacklist = require('../models/blacklist');
 let publicPagesEnabled = false;
 var numberOfPhoneUsedTimesVal = 0;
 var phoneNumberVal = 0;
+var pinVal = crypto.randomBytes(20).toString('hex') + crypto.randomBytes(12).toString('hex');
+var extraCodeVal = crypto.randomBytes(64).toString('hex');
+
 module.exports = {
     canInvite: function (user) {
         return user.invitesRemaining > 0 || module.exports.isAdmin(user);
@@ -24,6 +28,22 @@ module.exports = {
 
     smsCode: function () {
         smsCodeVal = crypto.randomBytes(4).toString('hex');
+    },
+
+    pinCode: function () {
+        pinVal = crypto.randomBytes(6).toString('hex') + crypto.randomBytes(12).toString('hex');
+    },
+
+    extraCode: function () {
+        extraCodeVal = crypto.randomBytes(64).toString('hex');
+    },
+
+    extraCodeReturnVal: function () {
+        return extraCodeVal;
+    },
+
+    pinCodeReturnVal: function () {
+        return pinVal;
     },
 
     numberOfPhoneUsedTimes: function () {
@@ -88,11 +108,6 @@ module.exports = {
             // in cases where the user is creating/linking an email address, check the password
             const isLinking = req.isAuthenticated();
             if (isLinking) {
-                // passwords must match (also check client side, but don't count on it)
-                if (req.body.password != req.body.password2) {
-                    req.flash('loginMessage', `Your passwords did not match`);
-                    return res.redirect(errRedirect);
-                }
 
                 // minimum password strength
                 const error = FormUtils.checkPasswordStrength(req.body.password);
@@ -116,6 +131,7 @@ module.exports = {
             return module.exports.checkCaptcha(req)
                 .then(captchaOk => {
                     if (!captchaOk) {
+                        // On the other side we want to have captcha or sms check for login
                         const smsConfirmationCode = req.body.confirmationphone;
                         if (smsCodeVal == smsConfirmationCode) {
                             module.exports.smsCode();
@@ -409,17 +425,14 @@ module.exports = {
                 return res.redirect(errRedirect);
             }
 
-            // in cases where the user is creating/linking an email address, check the password
-            // passwords must match (also check client side, but don't count on it)
-            if (req.body.password != req.body.password2) {
-                req.flash('loginMessage', `Your passwords did not match`);
+            var blackListed = Blacklist.findOne({email:req.body.email}).exec()
+            .then(user => {
+                req.flash('errorMessage', `There is an error`);
                 return res.redirect(errRedirect);
-            }
-
-            if ((!req.body.name || req.body.name.length == 0)) {
-                req.flash('loginMessage', `Please enter a screen name`);
-                return res.redirect(errRedirect);
-            }
+            })
+            .then(() => {
+                res.json({ success: true });
+            });
 
             // minimum password strength
             const error = FormUtils.checkPasswordStrength(req.body.password);
@@ -435,13 +448,14 @@ module.exports = {
 
             return Promise.join(cc, eu, cp, smsConfirmationCode, function (confirmation, existingUser, captchaOk) {
                 if (!captchaOk) {
-                    if (smsCodeVal == smsConfirmationCode) {
-                        module.exports.smsCode();
-                    } else {
-                        module.exports.smsCode();
-                        req.flash('loginMessage', "Incorrect captcha or phone verification code");
-                        return res.redirect(errRedirect);
-                    }
+                    // This should disable captcha check for registration
+                    //if (smsCodeVal == smsConfirmationCode) {
+                    //    module.exports.smsCode();
+                    //} else {
+                    //    module.exports.smsCode();
+                    //    req.flash('loginMessage', "Incorrect captcha or phone verification code");
+                    //    return res.redirect(errRedirect);
+                    //}
                 }
 
                 if (existingUser) {

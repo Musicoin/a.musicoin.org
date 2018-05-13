@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import * as express from 'express';
 import * as passport from 'passport';
 import * as qr from 'qr-image';
@@ -8,7 +9,13 @@ import { AddressResolver } from '../../internal/address-resolver';
 import { MusicoinAPI } from '../../internal/musicoin-api';
 import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
+import * as FormUtils from '../../utils/form-utils';
 
+let Validator = require("fastest-validator");
+let v = new Validator();
+let emailSchema = {
+    email: { type: "email" }
+};
 const router = express.Router();
 var functions = require('../routes-functions');
 const mailSender = new MailSender();
@@ -40,7 +47,7 @@ export class AuthRouter {
         router.post('/login/confirm-phone', function (req, res) {
             if (req.body.phone) req.body.phone = req.body.phone.trim();
             var params = {
-                'body': 'Verification code: ' + functions.smsCodeReturnVal,
+                'body': 'Verification code: ' + functions.smsCodeReturnVal(),
                 'originator': 'Musicoin',
                 'recipients': [
                     req.body.phone
@@ -57,21 +64,16 @@ export class AuthRouter {
                     functions.phoneNumber(req);
                 });
             }
-            if (functions.numberOfPhoneUsedTimesReturnVal >= 2) {
+            if (functions.numberOfPhoneUsedTimesReturnVal() >= 2) {
                 console.log("Sms Verification abuse for " + req.body.phone + " detected!");
             } else if (functions.phoneNumberVal == req.body.phone) {
                 functions.numberOfPhoneUsedTimes();
-                console.log(functions.phoneNumberVal + " used " + functions.numberOfPhoneUsedTimesReturnVal + " times");
+                console.log(functions.phoneNumberVal + " used " + functions.numberOfPhoneUsedTimesReturnVal() + " times");
                 setTimeout(smsBird, 60000);
             } else {
                 smsBird();
             }
         });
-        
-        router.post('/login', functions.setSignUpFlag(false), functions.validateLoginEmail('/login'), passport.authenticate('local', {
-            failureRedirect: '/login', // redirect back to the signup page if there is an error
-            failureFlash: true // allow flash messages
-        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect);
 
         router.post('/signin/newroutethat', functions.setSignUpFlag(false), functions.validateLoginEmail('/welcome'), passport.authenticate('local', {
             failureRedirect: '/welcome', // redirect back to the signup page if there is an error
@@ -87,19 +89,66 @@ export class AuthRouter {
             doRender(req, res, "password-forgot.ejs", {});
         });
 
+        router.post('/login/music', (req, res) => {
+            const email = req.body.email || "";
+            if (v.validate({ email: req.body.email }, emailSchema) == false)
+                return doRender(req, res, "landing-login.ejs", { message: "Invalid email address: " + req.body.email });
+
+            return doRender(req, res, "landing-login-final.ejs", { email: req.body.email });
+        });
+
+        router.post('/login/forgot', (req, res) => {
+
+            const email = req.body.email || "";
+            if (v.validate({ email: req.body.email }, emailSchema) == false)
+                return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
+
+
+            functions.checkCaptcha(req)
+                .then(captchaOk => {
+                    if (!captchaOk) {
+                        return
+                    } else {
+                        User.findOne({ "local.email": req.body.email }).exec()
+                            .then(user => {
+                                if (!user) return doRender(req, res, "password-reset.ejs", { message: "User not found: " + req.body.email });
+                                user.local.resetExpiryTime = Date.now() + config.auth.passwordResetLinkTimeout;
+                                user.local.resetCode = "MUSIC" + crypto.randomBytes(11).toString('hex');
+                                return user.save()
+                                    .then(user => {
+                                        if (!user) {
+                                            console.log("user.save() during password reset did not return a user record");
+                                            return doRender(req, res, "landing-musician-vs-listener.ejs", { message: "An internal error occurred, please try again later" });
+                                        }
+                                        return mailSender.sendPasswordReset(user.local.email, config.serverEndpoint + "/login/reset?code=" + user.local.resetCode)
+                                            .then(() => {
+                                                return doRender(req, res, "password-forgot-restored-link.ejs", { recipient: email });
+                                            })
+                                    })
+                                    .catch(err => {
+                                        console.log(`An error occurred when sending the pasword reset email for ${email}: ${err}`);
+                                        return doRender(req, res, "landing-musician-vs-listener.ejs", { message: "An internal error occurred, please try again later" });
+                                    })
+                            })
+                    }
+                });
+
+        });
+
+
         router.get('/login/reset', functions.redirectIfLoggedIn('/loginRedirect'), (req, res) => {
             // if the code is expired, take them back to the login
             const code = req.query.code;
             const failMessage = "Your password reset code is invalid or has expired";
-            if (!code) return doRender(req, res, "landing.ejs", { message: failMessage });
+            if (!code) res.redirect("/welcome");
             User.findOne({ "local.resetCode": code }).exec()
                 .then(user => {
                     // code does not exist, just go to the login page
-                    if (!user || !user.local || !user.local.resetExpiryTime) return doRender(req, res, "landing.ejs", { message: failMessage });
+                    if (!user || !user.local || !user.local.resetExpiryTime) return doRender(req, res, "landing-musician-vs-listener.ejs", { message: failMessage });
 
                     // make sure code is not expired
                     const expiry = new Date(user.local.resetExpiryTime).getTime();
-                    if (Date.now() > expiry) return doRender(req, res, "landing.ejs", { message: failMessage });
+                    if (Date.now() > expiry) return doRender(req, res, "landing-musician-vs-listener.ejs", { message: failMessage });
 
                     return doRender(req, res, "password-reset.ejs", { code: code });
                 })
@@ -118,7 +167,7 @@ export class AuthRouter {
         });
 
         setInterval(function () {
-            functions.numberOfPhoneUsedTimesReturnVal = 0;
+            var numberOfPhoneUsedTimesVal = 0;
         }, 3600000);
     }
     getRouter() {

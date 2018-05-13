@@ -50,7 +50,6 @@ const MESSAGE_TYPES = {
 };
 
 let publicPagesEnabled = false;
-var smsCodeVal = crypto.randomBytes(4).toString('hex');
 var phoneNumberVal = 0;
 var numberOfPhoneUsedTimesVal = 0;
 
@@ -201,6 +200,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.delete('/admin/user/delete', (req,res) => {
+    if (req.body.email) { req.body.email = req.body.email.trim(); }
+    jsonAPI.removeUser(req.body.email)
+    .then(result => {
+      res.json(result);
+  });
+  });
+
+  app.post('/admin/user/blacklist',(req,res)=> {
+    if(req.body.email) {
+      jsonAPI.blacklistUser(req.body.email.trim())
+      .then(result=> {
+        res.json(result);
+      });
+    }
+  });
+
+  app.get('/relases/random', (req,res) => {
+    jsonAPI.randomSong()
+    .then(result => {
+      res.json(result);
+    });
+  });
+
   app.get('/loginRedirect', (req, res) => {
 
     if (req.session && req.session.destinationUrl) {
@@ -214,8 +237,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     let ip = get_ip.getClientIp(req);
     let uAgent = req.headers['user-agent'];
     mailSender.sendLoginNotification(req.user.primaryEmail, loginTime, ip, uAgent)
-      .then(() => console.log("Message notification sent to " + req.user.primaryEmai))
-      .catch(err => `Failed to send message to ${req.user.primaryEmai}, error: ${err}`);
+      .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
+      .catch(err => `Failed to send message to ${req.user.primaryEmail}, error: ${err}`);
   });
 
   app.post('/login/confirm', function (req, res) {
@@ -239,10 +262,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           mailSender.sendEmailConfirmationCode(req.body.email, code)
             .then(() => {
               console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
-              res.json({
-                success: true,
-                email: req.body.email
-              });
+              return doRender(req, res, "landing-email-confirmation.ejs", { email: req.body.email });
             })
         })
         .catch((err) => {
@@ -462,8 +482,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
 
   app.get('/welcome', function (req, res) {
-    if (req.user) {
-      console.log("User is already logged in, redirecting away from login page");
+    if (req.user) { 
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -471,57 +490,78 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing.ejs', {
+    doRender(req, res, 'landing-musician-vs-listener.ejs', {
       message: message,
     });
-    //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
   });
 
   app.get('/welcome-musician', function (req, res) {
     if (req.user) {
-      console.log("User is already logged in, redirecting away from login page");
       return res.redirect('/loginRedirect');
     }
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
-    doRender(req, res, 'landing_musicians.ejs', {
+    doRender(req, res, 'landing-login.ejs', {
       message: message,
     });
-    //doRender(req, res, 'landing.ejs', { message: req.flash('loginMessage') });
+  });
+
+  app.get('/welcome-listener', function (req, res) {
+    if (req.user) {      
+      return res.redirect('/loginRedirect');
+    }
+    if (req.query.returnTo) {
+      req.session.destinationUrl = req.query.returnTo;
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    doRender(req, res, 'landing-listener.ejs', {
+      message: message,
+    });
+  });
+
+  app.get('/welcome-artist', function (req, res) {
+    if (req.user) {      
+      return res.redirect('/loginRedirect');
+    }
+    if (req.query.returnTo) {
+      req.session.destinationUrl = req.query.returnTo;
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    doRender(req, res, 'landing-musician.ejs', {
+      message: message,
+    });
   });
 
   app.post('/login/reset', (req, res) => {
     const code = String(req.body.code);
     if (!code)
-      return doRender(req, res, "landing.ejs", { message: "There was a problem resetting your password" });
+      return doRender(req, res, "password-forgot.ejs", { message: "There was a problem resetting your password" });
 
     const error = FormUtils.checkPasswordStrength(req.body.password);
     if (error) {
-      return doRender(req, res, "password-reset.ejs", { code: code, message: error });
-    }
-
-    if (req.body.password != req.body.password2) {
-      return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match" });
+      return doRender(req, res, "password-reset.ejs", { message: error });
     }
 
     if (typeof code != "string") {
-      return doRender(req, res, "landing.ejs", { message: "The password reset link has expired" });
+      return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
     }
 
     User.findOne({ "local.resetCode": code }).exec()
       .then(user => {
         // code does not exist or is expired, just go to the login page
         if (!user || !user.local || !user.local.resetExpiryTime)
-          return doRender(req, res, "landing.ejs", { message: "The password reset link has expired" });
+          return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
 
         // make sure code is not expired
         const expiry = new Date(user.local.resetExpiryTime).getTime();
         if (Date.now() > expiry)
-          return doRender(req, res, "password-reset.ejs", { code: code, message: "Passwords did not match" });
+          return doRender(req, res, "password-forgot.ejs", { message: "The password reset link has expired" });
 
         const error = FormUtils.checkPasswordStrength(req.body.password);
         if (error) {
-          return doRender(req, res, "password-reset.ejs", { code: code, message: error });
+          return doRender(req, res, "password-reset.ejs", { message: error });
         }
 
         user.local.password = user.generateHash(req.body.password);

@@ -1,7 +1,7 @@
 git submodule init
 git submodule update
 rm -rf src/overview/
-cd musicoin-frontend/
+cd website/
 rm -rf build/
 npm install
 npm run build

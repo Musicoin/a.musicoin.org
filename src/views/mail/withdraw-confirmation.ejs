@@ -38,18 +38,23 @@
       margin: 5%;
     }
 
-    h1 {
+    .form > p {
       color: white;
-      font-size: 4em;
+      font-size: 1em;
       color: black;
       margin-left: auto;
       margin-right: auto;
       -webkit-text-fill-color: #ffaf00;
       /* Will override color (regardless of order) */
-      -webkit-text-stroke-width: .03em;
+      -webkit-text-stroke-width: .01em;
       -webkit-text-stroke-color: black;
       font-family: "IBM Plex Mono", sans-serif;
       font-weight: 900;
+    }
+
+    h5 {
+      font-size: 0.8em;
+      font-family: "IBM Plex Mono", sans-serif;
     }
 
     h3 {
@@ -66,8 +71,8 @@
       font-weight: 900;
     }
 
-    .form > p {
-      font-size: 0.8em;
+    .form > blockquote > p {
+      font-size: 1.2em;
       font-family: "IBM Plex Mono", sans-serif;
     }
 
@@ -134,9 +139,14 @@
       <div class="col-xs-12 col-md-8 searchBox">
 
         <div class="form search">
-          <h1>Hello there, <br><%=code%> is your confirmation code</h1>
+          <p>Dear Musicoin user,</p>
+          <p>We've received a withdrawal request of <%= amount %> MUSIC. To ensure your safety, we require you to confirm the withdrawal.</p>
+          <blockquote><p>Amount: <%= amount %> MUSIC</p><p>To: <%= txRecipient %></p><p>Requested At: <%= rTime %> UTC</p><p>From: <%= ip %></p><p>User Agent: <%= uAgent %></p></blockquote>
+          <p>Please click on the link below or copy and paste it into your browser to confirm your withdrawal.</p>
+          <a href="<%= pin %>"</a>
+          <p><%= pin %></p>
           <h3>With love, from <img src="https://marketing-image-production.s3.amazonaws.com/uploads/fd101f8e53b0fd0718118a98b6d109f76509da8007e528d4d86c41f946f49e524115cdfe40c1a3c92c730fb08239347994b6e9bef05d4cf7382f120d5af8bf8b.png" width="30"></img>&nbsp;Musicoin<br><a href="mailto:support@musicoin.org">support@musicoin.org</a></h3>
-          <p>We never send you unsolicited emails asking for password resets and similar. Stay safe and stay sharp.</p>
+          <h5>We never send you unsolicited emails asking for password resets and similar. Stay safe and stay sharp.</h5>
         </div>
       </div>
       <div class="col-md-2"></div>

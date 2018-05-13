@@ -302,8 +302,6 @@ function getDefaultKeyValueConfig() {
         baseUrl: env.BASE_URL || 'https://musicoin.org',
 
         sessionDomain: env.SESSION_DOMAIN || '.musicoin.org'
-
-
       };
     });
 }

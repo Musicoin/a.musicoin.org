@@ -3,3 +3,4 @@
 *.js.map
 !public/
 !overview/
+src/overview/*
