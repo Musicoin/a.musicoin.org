@@ -9,7 +9,6 @@ import { MusicoinHelper } from './internal/musicoin-helper';
 import { PendingTxDaemon } from './internal/tx-daemon';
 import { MusicoinOrgJsonAPI } from './rest-api/json-api';
 import { MusicoinRestAPI } from './rest-api/rest-api';
-import { DashboardRouter } from './routes/admin/admin-dashboard-routes';
 import { AdminRoutes } from './routes/admin/admin-routes';
 import { AuthRouter } from './routes/auth/auth';
 import { ExtendedRouter } from './routes/extended-routes/extended';
@@ -127,14 +126,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     config,
     doRender);
 
-  const dashboardManager = new DashboardRouter(musicoinApi,
-    jsonAPI,
-    addressResolver,
-    maxImageWidth,
-    mediaProvider,
-    config,
-    doRender);
-
   const newProfileListener = p => {
     jsonAPI.sendRewardsForInvite(p)
       .then((results) => console.log(`Rewards sent for inviting ${p._id} profile=${p.profileAddress}, txs: ${JSON.stringify(results)}`))
@@ -187,33 +178,32 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/', playerRouter.getRouter());
   app.use('/', ipfsRouter.getRouter());
   app.use('/', extendedRouter.getRouter());
-  app.use('/admin/', dashboardManager.getRouter());
   app.use('/', adminRoutes.getRouter());
   app.use('/admin', functions.isLoggedIn, functions.adminOnly);
   app.use('/admin/*', functions.isLoggedIn, functions.adminOnly);
 
-  app.delete('/admin/user/delete', (req,res) => {
+  app.delete('/admin/user/delete', (req, res) => {
     if (req.body.email) { req.body.email = req.body.email.trim(); }
     jsonAPI.removeUser(req.body.email)
-    .then(result => {
-      res.json(result);
-  });
-  });
-
-  app.post('/admin/user/blacklist',(req,res)=> {
-    if(req.body.email) {
-      jsonAPI.blacklistUser(req.body.email.trim())
-      .then(result=> {
+      .then(result => {
         res.json(result);
       });
+  });
+
+  app.post('/admin/user/blacklist', (req, res) => {
+    if (req.body.email) {
+      jsonAPI.blacklistUser(req.body.email.trim())
+        .then(result => {
+          res.json(result);
+        });
     }
   });
 
-  app.get('/relases/random', (req,res) => {
+  app.get('/relases/random', (req, res) => {
     jsonAPI.randomSong()
-    .then(result => {
-      res.json(result);
-    });
+      .then(result => {
+        res.json(result);
+      });
   });
 
   app.get('/loginRedirect', (req, res) => {
@@ -260,6 +250,27 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           });
         });
     }
+  });
+
+  app.get('/admin/su', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+    // render the page and pass in any flash data if it exists
+    res.render('su.ejs', { message: req.flash('loginMessage') });
+  });
+
+  // process the login form
+  app.post('/admin/su', functions.isLoggedIn, functions.adminOnly, passport.authenticate('local-su', {
+    failureRedirect: '/admin/su', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
+  }), function (req, res) {
+    //admin loggined succesfully
+    if (req.user) {
+      if (req.user.profileAddress && req.user.profileAddress !== '') {
+        req.session.userAccessKey = req.user.profileAddress; //set session value as user.profileAddress;
+      } else if (req.user.id && req.user.id !== '') {
+        req.session.userAccessKey = req.user.id;  //set session value as user.id
+      }
+    }
+    res.redirect('/profile'); // redirect to the secure profile section
   });
 
   function doRender(req, res, view, context) {
@@ -468,7 +479,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   // =====================================
 
   app.get('/welcome', function (req, res) {
-    if (req.user) { 
+    if (req.user) {
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -493,7 +504,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/welcome-listener', function (req, res) {
-    if (req.user) {      
+    if (req.user) {
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {
@@ -507,7 +518,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/welcome-artist', function (req, res) {
-    if (req.user) {      
+    if (req.user) {
       return res.redirect('/loginRedirect');
     }
     if (req.query.returnTo) {

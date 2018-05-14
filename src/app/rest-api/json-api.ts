@@ -1508,21 +1508,6 @@ export class MusicoinOrgJsonAPI {
       })
   }
 
-  getErrors(_search: string, start: number, length: number): Promise<any> {
-    const search = _search;
-    let filter = {};
-    if (search) {
-      filter = {
-        $or: [
-          { "errorCode": { "$regex": search, "$options": "i" } },
-          { "errorContext": { "$regex": search, "$options": "i" } }
-        ]
-      };
-    }
-  }
-
-
-
   getArtistEarnings(id: string): Promise<any> {
     const x = this.exchangeRateProvider.getMusicoinExchangeRate();
     const u = User.findById(id).exec();
