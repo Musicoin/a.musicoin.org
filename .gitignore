@@ -5,3 +5,4 @@
 .DS_Store
 *.js.map
 src/overview/*
+.env

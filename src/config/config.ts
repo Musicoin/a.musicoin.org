@@ -267,6 +267,7 @@ function getDefaultKeyValueConfig() {
         ipfsAddEndpoint: env.IPFS_ADD_ENDPOINT || 'http://localhost:5001',
 
         sessionSecret: env.SESSION_SECRET || '329nsdvkjns9081234)(*)(*#(',
+        sessionDomain: env.SESSION_DOMAIN || '.musicoin.org',
 
         captchaSecret: env.CAPTCHA_SECRET || 'captchaSecret',
 
