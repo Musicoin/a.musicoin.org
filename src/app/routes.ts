@@ -633,17 +633,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  function populateAnonymousUser(req, res, next) {
-    if (!req.isAuthenticated()) {
-      return getAnonymousUser(req)
-        .then(anon => {
-          req.anonymousUser = anon;
-          next();
-        })
+  app.post('/user/canPlay', populateAnonymousUser, function (req, res) {
+    getPlaybackEligibility(req)
+      .then(result => {
+        res.json(result);
+      })
+  });
+  
+    function populateAnonymousUser(req, res, next) {
+      if (!req.isAuthenticated()) {
+        return getAnonymousUser(req)
+          .then(anon => {
+            req.anonymousUser = anon;
+            next();
+          })
+      }
+      return next();
     }
-    return next();
-  }
-
+    
   function getAnonymousUser(req) {
     return AnonymousUser.findOne({ session: req.session.id })
       .then(anonymous => {
@@ -685,26 +692,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   }
 
-  function getPlaybackEligibility(req) {
+ function getPlaybackEligibility(req) {
     const user = req.isAuthenticated() ? req.user : req.anonymousUser;
-
-    // if ((!req.anonymousUser) && (!req.user)) {
-
-    // most probably this guy must be a anonymous user, do nothing
-    //   return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request.  (code: 1)" });
-    // }
-
-    if (req.anonymousUser) {
-      user.accountLocked == false;
-    }
-
-    if (user.accountLocked) {
-      console.log("Blocking playback for locked user.");
-      return Promise.resolve({ success: false, skip: false, message: "Sorry, there was a problem with this request (code: 2)" });
-    }
-
-    // if the request if for their current track AND the current playback isn't expired
-    // short circuit these checks
     const address = req.body && req.body.address ? req.body.address : req.params.address;
     const canUseCache = user.currentPlay
       && user.currentPlay.licenseAddress == address
