@@ -292,7 +292,7 @@ function getDefaultKeyValueConfig() {
 
         defaultProfileIPFSImage: env.IPSFS_IMAGE || "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C",
 
-        messagebirdID: env.MESSAGEBIRD_ID || "fuyTqPYj17gT480RtlJjPbuDr",
+        messagebirdID: env.MESSAGEBIRD_ID || "G9U8C06UgzptD0AmsnuL1E8En",
 
         bootSession: env.BOOTSESSION || ["4i_eBdaFIuXXnQmPcD-Xb5e1lNSmtb8k", "Et_OEXYXR0ig-8yLmXWkVLSr8T7HM_y1"],
 
