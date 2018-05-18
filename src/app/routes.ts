@@ -639,18 +639,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.json(result);
       })
   });
-  
-    function populateAnonymousUser(req, res, next) {
-      if (!req.isAuthenticated()) {
-        return getAnonymousUser(req)
-          .then(anon => {
-            req.anonymousUser = anon;
-            next();
-          })
-      }
-      return next();
+
+  function populateAnonymousUser(req, res, next) {
+    if (!req.isAuthenticated()) {
+      return getAnonymousUser(req)
+        .then(anon => {
+          req.anonymousUser = anon;
+          next();
+        })
     }
-    
+    return next();
+  }
+
   function getAnonymousUser(req) {
     return AnonymousUser.findOne({ session: req.session.id })
       .then(anonymous => {
@@ -692,7 +692,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   }
 
- function getPlaybackEligibility(req) {
+  function getPlaybackEligibility(req) {
     const user = req.isAuthenticated() ? req.user : req.anonymousUser;
     const address = req.body && req.body.address ? req.body.address : req.params.address;
     const canUseCache = user.currentPlay
@@ -732,6 +732,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               }
               else if (!verifiedArtist) {
                 return { success: false, skip: true, message: "Only tracks from verified artists are eligible for free plays." }
+              }
+              else if (req.anonymousUser) {
+                return { success: true, message: "Thank you for listening" };
               }
               else {
                 const diff = new Date(user.nextFreePlayback).getTime() - Date.now();

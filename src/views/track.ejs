@@ -559,7 +559,7 @@
                         </div>
                         <% } %>
                 </div>
-                <div class="alert alert-danger abuse-alert" <%=license.markedAsAbuse ? " " : "display:none " %> ">
+                <div class="alert alert-danger abuse-alert" style="<%=license.markedAsAbuse ? " " : "display:none " %> ">
                   <%= abuseMessage %>
                 </div>
                 <div class="dynamic-element" data-behavior="chat-message-area" style="min-height: 180px" id="de-track-messages" de-refresh-period="20"
