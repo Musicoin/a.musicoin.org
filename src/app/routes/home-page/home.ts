@@ -35,7 +35,7 @@ export class HomeRouter {
       const h = jsonAPI.getHero();
       const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
       Promise.join(rs, fa, b, h, tpw, ttw, function (releases, artists, balance, hero, topPlayed, topTipped) {
-        return doRender(req, res, "index-new.ejs", {
+        return doRender(req, res, "index-new2.ejs", {
           musicoinClientBalance: balance,
           hero: hero,
           releases: releases,
@@ -190,6 +190,15 @@ export class HomeRouter {
       jsonAPI.getUserRecentPlays(req.user._id, start, limit)
         .then(function (recentlyPlayed) {
           res.render('partials/release-events.ejs', { releases: recentlyPlayed, elementId: req.body.elementid });
+        });
+    });
+
+    router.post('/elements/user-recently-played-new', function (req, res) {
+      const limit = req.body.limit && req.body.limit > 0 ? parseInt(req.body.limit) : 10;
+      const start = req.body.start && req.body.start > 0 ? parseInt(req.body.start) : 0;
+      jsonAPI.getUserRecentPlays(req.user._id, start, limit)
+        .then(function (recentlyPlayed) {
+          res.render('partials/recent-plays.ejs', { releases: recentlyPlayed, elementId: req.body.elementid });
         });
     });
 

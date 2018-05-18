@@ -1,0 +1,20 @@
+
+    <a href="#" class="active">Recent Plays</a>
+    <br>
+    <ul style="margin-left: -10% !important">
+      <%  for (var i=0; i < releases.length; i++) { 
+            var release=releases[i]; %>
+            <% if (releases[i].markedAsAbuse) { %>
+            <% } else { %>
+                <li>
+                    <a href="/track/<%=release.address%>">
+                        <%=release.artistName%> &nbsp;
+                            <%=release.title%> 
+                    </a>
+                </li>
+                <% } %>
+                    <%}%>                    
+                        <li>
+                            <a href="#" class="showMore">Show More</a>
+                        </li>
+    </ul>

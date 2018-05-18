@@ -1,0 +1,24 @@
+
+<div class="sidebarRight">
+    <ul>
+        <% for (var i=0; i < artists.length; i++) {
+            var artist = artists[i];
+        %>
+        <li>
+            <div class="feedNotes">
+                <div class="imageFeed">
+                    <br>
+                    <a href="/artist/<%=artist.profileAddress%>"><img src="<%=artist.image%>" alt="" class="oval3" width="40" height="40"></a>     
+                </div>
+                <div class="alignFeedNotes">
+                        <a href="/artist/<%=artist.profileAddress%>"><%=artist.artistName%></a>
+                      <br><span><%=artist.timeSince%></span>
+                      <div class="feedInfo">
+                          <%=artist.description%>
+                      </div>
+                </div>
+            </div>
+        </li>
+        <%}%>
+    </ul>
+    </div>

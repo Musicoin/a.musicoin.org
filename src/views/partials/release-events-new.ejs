@@ -1,0 +1,52 @@
+<div <% if (typeof elementId !="undefined" && elementId) { %>
+    id = "
+    <%=elementId%>"
+        <% } %>
+            class="chat-messages">
+            <%
+    var periodTexts = {
+        day: "yesterday",
+        week: "last week",
+        month: "last month"
+    }
+
+    if(!releases.length) {
+        return;
+    }
+
+    var iconBackground = releases[0].image;
+
+    for (var i=0; i < releases.length; i++) {
+        var release = releases[i];
+        var periodText = release.stats ? periodTexts[release.stats.period] : "";
+
+    %>
+                <% if (releases[i].markedAsAbuse) { %>
+                    <% } else { %>
+                        <div class="topTipped">
+                            <img class="topTippedImage" src="<%=release.image%>" width="120" height="120">
+                            <h1 class="topTippedName">
+                                <a href="/artist/<%=release.artistProfileAddress%>">
+                                    <%=release.artistName%>
+                                </a>
+                            </h1>
+                            <p class="topTippedSong">
+                                <a href="/track/<%=release.address%>">
+                                    <%=release.title%>
+                                </a>
+                            </p>
+                            <p class="topTippedSongDescription">
+                                <%=release.description%>
+                            </p>
+                            <div class="topTippedBadges">
+                                   <% if (release.genres) {%>
+                                        <% for (var j =0; j<release.genres.length;j++) { %>
+                                            <div class="badgesBox"> release.genres[j]; </div>
+                                           <% } %>
+                                            <% } else { %>
+                                                <% }%>
+                            </div>
+                        </div>
+                        <% } %>
+                            <%}%>
+</div>
