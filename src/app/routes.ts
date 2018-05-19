@@ -192,7 +192,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.post('/user/blacklist', (req, res) => {
+  app.post('/admin/user/blacklist', (req, res) => {
     if (req.body.email) {
       jsonAPI.blacklistUser(req.body.email.trim())
         .then(result => {
