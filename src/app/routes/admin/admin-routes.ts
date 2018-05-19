@@ -355,11 +355,11 @@ export class AdminRoutes {
     });
 
     router.post('/admin/elements/play-count', function (req, res) {
-      return UserStats.aggregate(
+      return UserStats.aggregate([
         { $match: { duration: "all" } },
-        { $group: { _id: "all", plays: { $sum: "$playCount" } } })
+        { $group: { _id: "all", plays: { $sum: "$playCount" } } }])
         .then(results => {
-          let count = results.length ? results[0].plays : 0;
+          let count:number = results.length ? results[0].plays : 0;
           doRender(req, res, 'admin/count.ejs', {
             count: count,
             type: "Total Plays"
@@ -368,13 +368,13 @@ export class AdminRoutes {
     });
 
     router.post('/admin/elements/tip-count', function (req, res) {
-      const releaseTips = UserStats.aggregate(
+      const releaseTips = UserStats.aggregate([
         { $match: { duration: "all" } },
-        { $group: { _id: "all", tips: { $sum: "$tipCount" } } });
+        { $group: { _id: "all", tips: { $sum: "$tipCount" } } }]);
 
-      const userTips = UserStats.aggregate(
+      const userTips = UserStats.aggregate([
         { $match: { duration: "all" } },
-        { $group: { _id: "all", tips: { $sum: "$tipCount" } } });
+        { $group: { _id: "all", tips: { $sum: "$tipCount" } } }]);
 
       return Promise.join(releaseTips, userTips, (releaseResults, userResults) => {
         let count = (releaseResults.length ? releaseResults[0].tips : 0) + (userResults.length ? userResults[0].tips : 0);
