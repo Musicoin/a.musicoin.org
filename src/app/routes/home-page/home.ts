@@ -35,7 +35,7 @@ export class HomeRouter {
       const h = jsonAPI.getHero();
       const b = musicoinApi.getMusicoinAccountBalance().catchReturn(0);
       Promise.join(rs, fa, b, h, tpw, ttw, function (releases, artists, balance, hero, topPlayed, topTipped) {
-        return doRender(req, res, "index-new2.ejs", {
+        return doRender(req, res, "index-new.ejs", {
           musicoinClientBalance: balance,
           hero: hero,
           releases: releases,
