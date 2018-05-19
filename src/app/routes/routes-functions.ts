@@ -424,23 +424,18 @@ module.exports = {
                 req.flash('loginMessage', `The email address you entered '${req.body.email}' does not appear to be valid`);
                 return res.redirect(errRedirect);
             }
-
-            //var blackListed = Blacklist.findOne({email:req.body.email}).exec()
-            //.then(user => {
-            //    req.flash('errorMessage', `There is an error`);
-            //    return res.redirect(errRedirect);
-            //})
-            //.then(() => {
-            //    res.json({ success: true });
-            //});
-
+            Blacklist.findOne({ email: req.body.email }).exec().then(blackUser => {
+                if (blackUser) {
+                    req.flash('loginMessage', 'Your email can not use for sign up please contact with admin');
+                    return res.redirect(errRedirect);
+                }
+            });
             // minimum password strength
             const error = FormUtils.checkPasswordStrength(req.body.password);
             if (error) {
                 req.flash('loginMessage', error);
                 return res.redirect(errRedirect);
             }
-
             const cc = EmailConfirmation.findOne({ email: req.body.email, code: req.body.confirmation });
             const eu = User.findOne({ "local.email": req.body.email });
             const cp = module.exports.checkCaptcha(req);

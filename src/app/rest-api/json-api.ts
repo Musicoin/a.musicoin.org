@@ -1709,36 +1709,37 @@ export class MusicoinOrgJsonAPI {
     return parts.join(".");
   }
   // basically remove user from db using primaryEmail column.
-  removeUser(primaryEmail:string): Promise<any> {
-  return User.findOneAndRemove({"primaryEmail": primaryEmail}).exec()
+  removeUser(primaryEmail: string): Promise<any> {
+    return User.findOneAndRemove({ "primaryEmail": primaryEmail }).exec()
       .then(findUser => {
         if (findUser) {
-          return { success: true,"email":primaryEmail };
+          return { success: true, "email": primaryEmail };
         }
         return { success: false };
       });
   }
 
   // adding a email to blacklist so he can not register again and remove it from mongo
-  blacklistUser(email:string): Promise<any> {
-    return User.findOne({"primaryEmail": email}).exec()
-    .then(findUser => {
-      if(findUser) {
-         BlackList.create({
-          email: email,
-          description: "This user blacklisted"
-        });
-      }
-      return this.removeUser(email)
-      .catch(err => {
-        console.log(`Failed to remove user: ${err}`);
-        return findUser;
-      })
-      .then(() => findUser);
-    });
+  blacklistUser(email: string): Promise<any> {
+    return User.findOne({ "primaryEmail": email }).exec()
+      .then(findUser => {
+        if (findUser) {
+          console.log(findUser);
+          BlackList.create({
+            email: email,
+            description: "This user blacklisted"
+          });
+        }
+        return this.removeUser(email)
+          .catch(err => {
+            console.log(`Failed to remove user: ${err}`);
+            return findUser;
+          })
+          .then(() => findUser);
+      });
   }
   // return a random songs
-  randomSong():Promise<any> {
+  randomSong(): Promise<any> {
     return Release.find().count()
       .then(count => {
         let offset = Math.floor(Math.random() * count);

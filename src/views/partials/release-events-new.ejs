@@ -2,24 +2,19 @@
     id = "
     <%=elementId%>"
         <% } %>
-            class="chat-messages">
             <%
     var periodTexts = {
         day: "yesterday",
         week: "last week",
         month: "last month"
     }
-
     if(!releases.length) {
         return;
     }
-
     var iconBackground = releases[0].image;
-
     for (var i=0; i < releases.length; i++) {
         var release = releases[i];
         var periodText = release.stats ? periodTexts[release.stats.period] : "";
-
     %>
                 <% if (releases[i].markedAsAbuse) { %>
                     <% } else { %>
@@ -39,10 +34,10 @@
                                 <%=release.description%>
                             </p>
                             <div class="topTippedBadges">
-                                   <% if (release.genres) {%>
-                                        <% for (var j =0; j<release.genres.length;j++) { %>
-                                            <div class="badgesBox"> release.genres[j]; </div>
-                                           <% } %>
+                                <% if (release.genres) {%>
+                                    <% for (var j =0; j<release.genres.length;j++) { %>
+                                        <div class="badgesBox"> release.genres[j]; </div>
+                                        <% } %>
                                             <% } else { %>
                                                 <% }%>
                             </div>

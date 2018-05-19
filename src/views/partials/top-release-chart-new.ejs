@@ -1,33 +1,36 @@
 <% if (typeof releases != "undefined") { %>
-    <div>
-        <h1 class="topTippedNav ttn1"><%=title%>&nbsp;&nbsp;&nbsp;</h1>
-        <div class="flex-row center-text" target=top-played >
-                <h1 class="topTippedNav option-button ttn2" period="day" onclick="selectTopPlayedPeriod($(this))">Day&nbsp;&nbsp;&nbsp;</h1>          
-                <h1 class="topTippedNav option-button ttn3" period="week" onclick="selectTopPlayedPeriod($(this))">Week&nbsp;&nbsp;&nbsp;</h1>
-                <h1 class="topTippedNav option-button ttn4" period="month" onclick="selectTopPlayedPeriod($(this))">Month&nbsp;&nbsp;&nbsp;</h1>
-        </div>
-        <div class="dynamic-element"
-             style="min-height: 180px"
-             de-limit="<%= ui.topPlayLastWeek %>"
-             de-period="week"
-             de-url="/elements/<%=elementEndpoint%>">
-            <%- include('release-events-new.ejs', {releases: releases}) %>
-        </div>
+  <div>
+    <h1 class="topTippedNav ttn1">
+      <%=title%>&nbsp;&nbsp;&nbsp;</h1>
+    <div class="flex-row center-text" target=top-played>
+      <a href="#">
+        <h1 class="topTippedNav option-button ttn2" period="day" onclick="selectTopPlayedPeriod($(this))">Day&nbsp;&nbsp;&nbsp;</h1>
+      </a>
+      <a href="#">
+        <h1 class="topTippedNav option-button ttn3" period="week" onclick="selectTopPlayedPeriod($(this))">Week&nbsp;&nbsp;&nbsp;</h1>
+      </a>
+      <a href="#">
+        <h1 class="topTippedNav option-button ttn4" period="month" onclick="selectTopPlayedPeriod($(this))">Month&nbsp;&nbsp;&nbsp;</h1>
+      </a>
     </div>
-    
-    <script>
-      // don't include this multiple times
-      if (typeof selectTopPlayedPeriod == "undefined") {
-        function selectTopPlayedPeriod(element) {
-          var section = element.parent();
-          section.find('.option-button').attr('selected', false);
-    
-          element.attr('selected', true);
-    
-          // var dynamicElement = element.parent().parent().find(".dynamic-element");
-          // dynamicElement.attr('de-period', element.attr('period'));
-          // dynamic.refreshElement(dynamicElement);
-        }
+    <div style="min-height: 180px" de-limit="<%= ui.topPlayLastWeek %>" de-period="week" de-url="/elements/<%=elementEndpoint%>">
+      <%- include('release-events-new.ejs', {releases: releases}) %>
+    </div>
+  </div>
+
+  <script>
+    // don't include this multiple times
+    if (typeof selectTopPlayedPeriod == "undefined") {
+      function selectTopPlayedPeriod(element) {
+        var section = element.parent();
+        section.find('.option-button').attr('selected', false);
+
+        element.attr('selected', true);
+
+        // var dynamicElement = element.parent().parent().find(".dynamic-element");
+        // dynamicElement.attr('de-period', element.attr('period'));
+        // dynamic.refreshElement(dynamicElement);
       }
-    </script>
-    <% } %>
+    }
+  </script>
+  <% } %>

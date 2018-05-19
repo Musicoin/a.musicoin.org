@@ -192,7 +192,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
   });
 
-  app.post('/admin/user/blacklist', (req, res) => {
+  app.post('/user/blacklist', (req, res) => {
     if (req.body.email) {
       jsonAPI.blacklistUser(req.body.email.trim())
         .then(result => {
@@ -237,11 +237,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       }
       return EmailConfirmation.create({ email: req.body.email, code: code })
         .then(() => {
-          mailSender.sendEmailConfirmationCode(req.body.email, code)
-            .then(() => {
-              console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
-              return doRender(req, res, "landing-email-confirmation.ejs", { email: req.body.email });
-            })
+          // mailSender.sendEmailConfirmationCode(req.body.email, code)
+          //   .then(() => {
+          //     console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
+          //   })
+            return doRender(req, res, "landing-email-confirmation.ejs", { email: req.body.email });
         })
         .catch((err) => {
           console.log(`Failed to send email confirmation code ${code}: ${err}`);
