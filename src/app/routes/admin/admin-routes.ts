@@ -1,7 +1,7 @@
 import { Promise } from 'bluebird';
+import * as crypto from 'crypto';
 import * as express from 'express';
 import * as passport from 'passport';
-import * as crypto from 'crypto';
 
 import { ExchangeRateProvider } from '../../extra/exchange-service';
 import { AddressResolver } from '../../internal/address-resolver';
@@ -243,7 +243,7 @@ export class AdminRoutes {
           });
         });
     });
-    router.post('/elements/playback-history', function (req, res) {
+    router.post('/admin/elements/playback-history', function (req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 20;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       var options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -305,7 +305,7 @@ export class AdminRoutes {
         })
     });
 
-    router.post('/elements/release-count', function (req, res) {
+    router.post('/admin/elements/release-count', function (req, res) {
       const a = Release.count({ contractAddress: { $exists: true, $ne: null }, state: "published" }).exec();
       const d = Release.count({ contractAddress: { $exists: true, $ne: null }, state: "published", releaseDate: { $gte: Date.now() - DAY } }).exec();
       return Promise.join(a, d, (all, day) => {
@@ -318,7 +318,7 @@ export class AdminRoutes {
       })
     });
 
-    router.post('/elements/artist-count', function (req, res) {
+    router.post('/admin/elements/artist-count', function (req, res) {
 
       let a = User.count({
         profileAddress: { $exists: true, $ne: null },
@@ -341,7 +341,7 @@ export class AdminRoutes {
       })
     });
 
-    router.post('/elements/user-count', function (req, res) {
+    router.post('/admin/elements/user-count', function (req, res) {
       const a = User.count({ profileAddress: { $exists: true, $ne: null } }).exec();
       const d = User.count({ profileAddress: { $exists: true, $ne: null }, joinDate: { $gte: Date.now() - DAY } }).exec();
       return Promise.join(a, d, (all, day) => {
@@ -354,7 +354,7 @@ export class AdminRoutes {
       })
     });
 
-    router.post('/elements/play-count', function (req, res) {
+    router.post('/admin/elements/play-count', function (req, res) {
       return UserStats.aggregate(
         { $match: { duration: "all" } },
         { $group: { _id: "all", plays: { $sum: "$playCount" } } })
@@ -367,7 +367,7 @@ export class AdminRoutes {
         });
     });
 
-    router.post('/elements/tip-count', function (req, res) {
+    router.post('/admin/elements/tip-count', function (req, res) {
       const releaseTips = UserStats.aggregate(
         { $match: { duration: "all" } },
         { $group: { _id: "all", tips: { $sum: "$tipCount" } } });
@@ -385,7 +385,7 @@ export class AdminRoutes {
       });
     });
 
-    router.post('/elements/users', function (req, res) {
+    router.post('/admin/elements/users', function (req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       const invitedByIds = req.body.invitedby ? req.body.invitedby.split("|") : [];
@@ -419,7 +419,7 @@ export class AdminRoutes {
         });
     });
 
-    router.post('/elements/releases', function (req, res) {
+    router.post('/admin/elements/releases', function (req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       jsonAPI.getAllReleases(req.body.search, start, length)
@@ -457,7 +457,7 @@ export class AdminRoutes {
         });
     });
 
-    router.post('/elements/account-balances', function (req, res) {
+    router.post('/admin/elements/account-balances', function (req, res) {
       // render the page and pass in any flash data if it exists
       const b = musicoinApi.getMusicoinAccountBalance();
       const o = musicoinApi.getAccountBalances(config.trackingAccounts.map(ta => ta.address));
@@ -485,7 +485,7 @@ export class AdminRoutes {
       })
     });
 
-    router.post('/elements/api-clients', function (req, res) {
+    router.post('/admin/elements/api-clients', function (req, res) {
       const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
       const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
       jsonAPI.getAllAPIClients(start, length)

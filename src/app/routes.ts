@@ -180,7 +180,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/', extendedRouter.getRouter());
   app.use('/', adminRoutes.getRouter());
   app.use('/admin', functions.isLoggedIn, functions.adminOnly);
+  app.use('/elements', functions.isLoggedIn, functions.adminOnly);
   app.use('/admin/*', functions.isLoggedIn, functions.adminOnly);
+  app.use('/elements/*', functions.isLoggedIn, functions.adminOnly);
 
   app.delete('/admin/user/delete', (req, res) => {
     if (req.body.email) { req.body.email = req.body.email.trim(); }

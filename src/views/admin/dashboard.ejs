@@ -56,162 +56,67 @@
 
 
 <div class="container">
-    <h1 class="alert alert-default">Musicoin Admin Portal</h1>
-    <div class="row">
-        <div class="col-sm-2">
-            <div class="alert alert-info small-shadow-no-hover">
-                <div class="dynamic-element"
-                     de-refresh-period="30"
-                     de-refresh-offset="0"
-                     de-url="/admin/elements/user-count">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-2">
-            <div class="alert alert-info small-shadow-no-hover">
-                <div class="dynamic-element"
-                     de-refresh-period="30"
-                     de-refresh-offset="0"
-                     de-url="/admin/elements/artist-count">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-2">
-            <div class="alert alert-info small-shadow-no-hover">
-                <div class="dynamic-element"
-                     de-refresh-period="30"
-                     de-refresh-offset="0"
-                     de-url="/admin/elements/release-count">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <div class="alert alert-success small-shadow-no-hover">
-                <div class="dynamic-element"
-                     de-refresh-period="30"
-                     de-refresh-offset="0"
-                     de-url="/admin/elements/play-count">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <div class="alert alert-success small-shadow-no-hover">
-                <div class="dynamic-element"
-                     de-refresh-period="30"
-                     de-refresh-offset="0"
-                     de-url="/admin/elements/tip-count">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col-sm-6">
-            <div class="well white-well small-shadow-no-hover admin-section">
-                <div class="dynamic-element"
-                     de-refresh-period="30"
-                     de-refresh-offset="0"
-                     de-url="/admin/elements/account-balances">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-6">
-            <div class="well white-well small-shadow-no-hover admin-section">
-                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
-                     de-target-id="de-playback-history">
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
-                </div>
-                <div class="dynamic-element"
-                     id="de-playback-history"
-                     de-reset="user=,anonuser=,release=,start=0,length=6"
-                     de-id="de-playback-history"
-                     de-refresh-period="30"
-                     de-refresh-offset="0"
-                     de-start="0"
-                     de-length="6"
-                     de-user=""
-                     de-release=""
-                     de-url="/admin/elements/playback-history">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="col-sm-12">
-            <div class="well white-well small-shadow-no-hover admin-section">
-                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
-                     de-target-id="de-users">
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
-                </div>
-                <div class="dynamic-element"
-                     id="de-users"
-                     de-refresh-period="360"
-                     de-refresh-offset="0"
-                     de-reset="search=,invitedby=,verified=,artist=,start=0,length=10"
-                     de-start="0"
-                     de-length="10"
-                     de-url="/admin/elements/users">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="col-sm-12">
-            <div class="well white-well small-shadow-no-hover admin-section">
-                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
-                     de-target-id="de-releases">
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
-                </div>
-                <div class="dynamic-element"
-                     id="de-releases"
-                     de-reset="search=,start=0,length=10"
-                     de-refresh-period="360"
-                     de-refresh-offset="0"
-                     de-start="0"
-                     de-length="10"
-                     de-url="/admin/elements/releases">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-12">
-            <div class="well white-well small-shadow-no-hover small-admin-section">
-                <div class="de-refresh-button abs-top-right subtle-text clickable show-on-well-hover"
-                     de-target-id="de-api-clients">
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
-                </div>
-                <div class="dynamic-element"
-                     id="de-api-clients"
-                     de-refresh-period="1200"
-                     de-refresh-offset="0"
-                     de-reset="start=0,length=10"
-                     de-start="0"
-                     de-length="10"
-                     de-url="/admin/elements/api-clients">
-                    <div class="placeholder center-text"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <form action="/admin/elements/user-count" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show User Count</button>
+      </div>
+    </form>
+    <br>
+    <form action="/admin/elements/user-count" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show Artist Count</button>
+      </div>
+    </form>
+    <br>
+    <form action="/admin/elements/release-count" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show Release Count</button>
+      </div>
+    </form>
+    <br>
+    <form action="/admin/elements/play-count" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show Play Count</button>
+      </div>
+    </form>
+    <br>
+    <form action="/admin/elements/tip-count" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show Tip Count</button>
+      </div>
+    </form>
+    <br>
+    <form action="/admin/elements/account-balances" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show Account Balances</button>
+      </div>
+    </form>
+    <br>
+    <form action="/admin/elements/playback-history" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show Playback History</button>
+      </div>
+    </form>
+    <br>
+    <form action="/admin/elements/users" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show Users</button>
+      </div>
+    </form>
+   <br>
+    <form action="/admin/elements/releases" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show Releases</button>
+      </div>
+    </form>
+    <br>
+    <form action="/admin/elements/api-clients" method="post">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-warning" style="color:#FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;line-height: 20px;">Show API Clients</button>
+      </div>
+    </form>
 </div>
+<br>
 <%- include ../partials/connect-with-us.ejs %>
-<script>
-  $( document ).ready(function() {
-    dynamic.refreshAll(true);
-  });
-</script>
 </body>
 </html>
