@@ -721,11 +721,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               : Promise.resolve(null);
 
             const l = musicoinApi.getLicenseDetails(address);
-            return Promise.join(b, l, (pendingPayments, profileBalance, license) => {
+            return Promise.join(b, l, (profileBalance, license) => {
               if (payFromProfile) {
                 let totalCoinsPending = 0;
-                pendingPayments.forEach(r => totalCoinsPending += r.coins);
-                console.log("Pending ppp payments: " + totalCoinsPending);
                 if (profileBalance.musicoins - totalCoinsPending < license.coinsPerPlay)
                   return { success: false, skip: false, message: "It looks like you don't have enough coins or are trying to play a track from a non verified artist" }
               }
