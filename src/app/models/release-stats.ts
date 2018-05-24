@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
 
-module.exports = mongoose.model('UserStats', mongoose.Schema({
-  user: {
+module.exports = mongoose.model('ReleaseStats', mongoose.Schema({
+  release: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Release',
     index: true
   },
   startDate: {
@@ -14,11 +14,15 @@ module.exports = mongoose.model('UserStats', mongoose.Schema({
     type: String,
     index: true
   },
+  playCount: {
+    type: Number,
+    default: 0
+  },
   tipCount: {
     type: Number,
     default: 0
   },
-  followCount: {
+  commentCount: {
     type: Number,
     default: 0
   }

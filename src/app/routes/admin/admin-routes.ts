@@ -14,6 +14,7 @@ const User = require('../../models/user');
 const Release = require('../../models/release');
 const APIClient = require('../../models/api-client');
 const UserStats = require('../../models/user-stats');
+const ReleaseStats = require('../../models/release-stats');
 const router = express.Router();
 const DAY = 1000 * 60 * 60 * 24;
 const MESSAGE_TYPES = {
@@ -355,7 +356,7 @@ export class AdminRoutes {
     });
 
     router.post('/admin/elements/play-count', function (req, res) {
-      return UserStats.aggregate([
+      return ReleaseStats.aggregate([
         { $match: { duration: "all" } },
         { $group: { _id: "all", plays: { $sum: "$playCount" } } }])
         .then(results => {
@@ -368,7 +369,7 @@ export class AdminRoutes {
     });
 
     router.post('/admin/elements/tip-count', function (req, res) {
-      const releaseTips = UserStats.aggregate([
+      const releaseTips = ReleaseStats.aggregate([
         { $match: { duration: "all" } },
         { $group: { _id: "all", tips: { $sum: "$tipCount" } } }]);
 

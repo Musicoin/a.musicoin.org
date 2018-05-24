@@ -14,6 +14,7 @@ const User = require('../models/user');
 const UserStats = require('../models/user-stats');
 const Follow = require('../models/follow');
 const Release = require('../models/release');
+const ReleaseStats = require('../models/release-stats');
 const UserPlayback = require('../models/user-playback');
 const TrackMessage = require('../models/track-message');
 const Hero = require('../models/hero');
@@ -413,6 +414,29 @@ export class MusicoinOrgJsonAPI {
     });
   }
 
+  getReleasesCount(): Promise<any> {
+    const c = Release.count({}).exec();
+    return Promise.join(c, (count) => {
+      return {
+        count: count,
+      }
+    });
+  }
+
+  getPlaysCount(): Promise<any> {
+    return ReleaseStats.aggregate(
+      {$match: {duration: "all"}},
+      {$group: {_id: "all", plays: {$sum: "$playCount"}}})
+      .then(results => {
+        let c = results.length ? results[0].plays : 0;
+        return Promise.join(c, (count) => {
+          return {
+            count: count,
+          }
+        });
+      });
+  }
+
   getInvitedBy(userId: string, start: number, length: number): Promise<any> {
     return User.find({ "invite.invitedBy": userId })
       .sort({ "invite.invitedOn": 'desc' })
@@ -447,7 +471,7 @@ export class MusicoinOrgJsonAPI {
 
   getTopPlayedLastPeriod(limit: number, period: string): Promise<any> {
     const start = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), period);
-    return UserStats.find({ startDate: start, duration: period })
+    return ReleaseStats.find({ startDate: start, duration: period })
       .sort({ "playCount": "desc" })
       .populate("release")
       .limit(Math.max(20, limit))
@@ -474,7 +498,7 @@ export class MusicoinOrgJsonAPI {
 
   getTopTippedLastPeriod(limit: number, period: string): Promise<any> {
     const start = MusicoinOrgJsonAPI._getPreviousDatePeriodStart(Date.now(), period);
-    return UserStats.find({ startDate: start, duration: period })
+    return ReleaseStats.find({ startDate: start, duration: period })
       .sort({ "tipCount": "desc" })
       .populate("release")
       .limit(Math.max(20, limit))
@@ -1042,7 +1066,7 @@ export class MusicoinOrgJsonAPI {
 
   private static _updateReleaseStat(releaseId: string, date: number, duration: string, update: any): Promise<any> {
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    return UserStats.findOneAndUpdate(
+    return ReleaseStats.findOneAndUpdate(
       this._getReleaseStatsCondition(releaseId, date, duration),
       update,
       options
@@ -1387,7 +1411,7 @@ export class MusicoinOrgJsonAPI {
   }
 
   getOverallReleaseStats(): Promise<any> {
-    return UserStats.aggregate([
+    return ReleaseStats.aggregate([
       {
         $match: { duration: "all" }
       },
@@ -1468,7 +1492,7 @@ export class MusicoinOrgJsonAPI {
         });
       const rstats = releases.map(release => {
         const rStatsCondition = MusicoinOrgJsonAPI._getReleaseStatsCondition(release._id, date, duration);
-        return UserStats.findOne(rStatsCondition)
+        return ReleaseStats.findOne(rStatsCondition)
           .then(stats => {
             if (!stats) {
               stats = Object.assign(rStatsCondition, { playCount: 0, tipCount: 0, commentCount: 0 });
