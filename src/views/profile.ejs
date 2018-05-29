@@ -4,137 +4,685 @@
     <%- include('partials/page-head.ejs') %>
     <title>Profile - Musicoin.org</title>
     <style>
-        body {
-          background-color: black;
+
+        @font-face {
+            font-family: Ubuntu;
+            src: url('../fonts/Ubuntu-R.ttf');
         }
 
-        .profile-image {
-            justify-content: center;
+        .container > * {
+            font-family: Ubuntu;
+        }
+
+        .container a,
+        .container a:hover {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .profile-cover-wrapper {
+            position: relative;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
+            width: 100%;
+            max-height: 400px;
+            /* height: 20%; */
+            height: 400px;
+            /* background-image: url(http://localhost:3001/static/media/microphone.b22ca3ce.jpg);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover; */
+            overflow: hidden;
         }
 
-        .hero-image {
-            justify-content: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .social-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .flex-row {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .stat {
-            margin-right: 20px;
-        }
-
-        .upload-image {
-            cursor: pointer;
-            width: 96px;
-            height: 96px;
-            object-fit: contain;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .instructions {
-        }
-
-        .form-entry {
-            background-color: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            font-weight: normal;
-            color: #aaa
-        }
-        .subtle-text {
-          color: white !important;
-        }
-        h3.section-title {
-            /*font-family: monospace;*/
-            text-transform: none;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .profile-release-item {
-            display: flex;
-            flex-direction: column;
-            min-height: 100px;
-            justify-content: space-around;
-            padding-left: 10px;
+        .cover-image {
             width: 100%;
         }
 
-        .balance {
-            font-size: 72px;
-            line-height: 0.9;
-            text-align: center;
+        .edit-picture {
+            position: absolute;
+            left: 0;
+            top: 0;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 2rem;
         }
 
-        .wallet-action-toggle {
-            text-align: left;
-            cursor: pointer;
+        .edit-picture:hover {
+            color: rgba(255, 255, 255, 1);
+            transform: scale(1.2);
         }
 
-        input.form-number {
-            max-width: 100px;
+        .view-public-profile {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 3rem;
         }
 
-        input.form-control, label.form-entry {
-            margin: 2px;
+        .view-public-profile > .public-profile-button {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 0.7rem;
+            background-color: #555;
+            color: #fff;
+            opacity: 0.5;
         }
 
-        .profile-release-item > * {
-            margin-bottom: 10px;
+        .view-public-profile > .public-profile-button:hover {
+            opacity: 1;
+        }
+        .view-public-profile > .public-profile-button:active {
+            transform: scale(0.97);
         }
 
-        .row-template {
-            display: none;
+        .public-profile-button > span {
+            margin-left: 1rem;
         }
 
-        .release-distribution {
+        .unpublished-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            width: 1.8rem;
+            height: 1.8rem;
+            border: 1px solid #fff;
+            background-color: #fff1a9;
+            color: #8a6d3b;
+            opacity: 0.5;
         }
 
-        #licensePreview {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 75%;
-            transform: translate(-50%, -50%);
-            height: 500px;
+        .unpublished-info:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .hero-name-container {
+            position: absolute;
+            bottom: 0;
+            left: 380px;
+            padding: 2rem;
+        }
+
+        .profile-content-wrapper {
+            display: flex;
+            width: 100%;
+            height: fit-content;
+            min-height: 1000px;
+            background-color: #c3c3c3;
+        }
+
+        .profile-info-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 350px;
+            height: fit-content;
+            margin: -200px 10px 10px 10px;
+            background-color: #383733;
+            box-shadow: 2px 3px 20px #000;
+            z-index: 1;
+        }
+
+        .profile-image-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            height: 400px;
+            background-color: #1b0d00;
+            overflow: hidden;
+        }
+
+        .profile-image {
+            height: 100%;
+        }
+
+        .profile-details-wrapper {
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            min-width: 350px;
+        }
+
+        .notifications-setting-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+        }
+
+        .balance-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            height: fit-content;
+        }
+
+        .my-wallet {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+            margin-bottom: 1.4rem;
+        }
+
+        .wallet-header {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .wallet-header > h3 {
+            margin: 0;
+        }
+
+        .wallet-header > a {
+            position: absolute;
+            right: 0;
+        }
+
+        .my-wallet > .balance {
+            font-size: 5rem;
+            line-height: 5rem;
+        }
+
+        .my-wallet > .balance-with-label {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width:100%;
+            margin: 1rem 0;
+            padding: 1rem 1.5rem;
+            background-color: rgba(167, 159, 122, 0.05);
             border-radius: 4px;
-            z-index: 2;
-            background-color: white;
-            display: none;
-            color: black;
         }
 
-        .contributors {
-            margin-top: 20px;
-            margin-bottom: 0;
+        .profile-section-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+            color: #c1c1c1;
+            font-size: 1.9rem;
         }
 
-        .wallet-actions {
+        .profile-section-header > i {
+            margin-left: 1rem;
+            font-size: 1.3rem;
         }
 
-        .wallet-action-bar {
+        input.profile-input,
+        textarea.profile-input {
+            background-color: transparent;
+            box-shadow: none;
+            border-bottom: 1px solid #555;
+            border-radius: 0;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        input.profile-input:focus,
+        textarea.profile-input:focus {
+            box-shadow: none;
+            border-bottom-color: #a79f7a;
+        }
+
+        .td-profile-input {
+            margin: 0.4rem 0;
+        }
+
+        .td-profile-label {
+            color: grey;
+        }
+
+        .td-profile-label.active {
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group > label {
+            font-size: 1.7rem;
+            color: grey;
+        }
+
+        .submit-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .submit-container > .submit-button {
+            background-color: #545454;
+            border-radius: 0;
+        }
+
+        .submit-container > .submit-button.publish-button {
+            background-color: #545454;
+            border-radius: 0;
+            -webkit-animation: glowing 1500ms infinite;
+            -moz-animation: glowing 1500ms infinite;
+            -o-animation: glowing 1500ms infinite;
+            animation: glowing 1500ms infinite;
+        }
+        @-webkit-keyframes glowing {
+            0% { background-color: #545454; -webkit-box-shadow: 0 0 3px #545454; }
+            50% { background-color: #a79f7a; -webkit-box-shadow: 0 0 40px #a79f7a; }
+            100% { background-color: #545454; -webkit-box-shadow: 0 0 3px #545454; }
+        }
+
+        @-moz-keyframes glowing {
+            0% { background-color: #545454; -moz-box-shadow: 0 0 3px #545454; }
+            50% { background-color: #a79f7a; -moz-box-shadow: 0 0 40px #a79f7a; }
+            100% { background-color: #545454; -moz-box-shadow: 0 0 3px #545454; }
+        }
+
+        @-o-keyframes glowing {
+            0% { background-color: #545454; box-shadow: 0 0 3px #545454; }
+            50% { background-color: #a79f7a; box-shadow: 0 0 40px #a79f7a; }
+            100% { background-color: #545454; box-shadow: 0 0 3px #545454; }
+        }
+
+        @keyframes glowing {
+            0% { background-color: #545454; box-shadow: 0 0 3px #545454; }
+            50% { background-color: #a79f7a; box-shadow: 0 0 40px #a79f7a; }
+            100% { background-color: #545454; box-shadow: 0 0 3px #545454; }
+        }
+
+        .submit-container > .submit-button:hover {
+            background-color: #a79f7a;
+            color: #000;
+            -webkit-animation: none;
+            -moz-animation: none;
+            -o-animation: none;
+            animation: none;
+        }
+
+        .submit-container > .submit-button:active {
+            transform: scale(0.97);
+        }
+
+        input:checked + .slider {
+            background-color: #a79f7a;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            width: 100%;
+            height: fit-content;
+            padding: 2.4rem;
+        }
+
+        .widgets-wrapper {
+            display: flex;
+            flex-direction: row;
             justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            height: 200px;
+            margin-bottom: 2rem;
         }
 
-        #email-verify-link-sent {
-            display: none;
+        .widget-wrapper {
+            margin: 0 1rem;
         }
+
+        .widget-wrapper:first-child {
+            margin-left: 0 !important;
+        }
+
+        .widget-wrapper:last-child {
+            margin-right: 0 !important;
+        }
+
+        .widget-error-placeholder-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            width: 100%;
+            height: 100%;
+            padding: 1rem 2rem;
+            background-color: #a79f7a;
+            box-shadow: 2px 3px 20px #000;
+        }
+
+        .widget-error-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+        }
+
+        .widget-error-header > h3 {
+            margin: 0;
+        }
+
+        .widget-error-message {
+            padding-top: 2rem;
+            font-size: 1.7rem;
+            line-height: 1.9rem;
+        }
+
+        .wallet-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            width: 50%;
+            height: 100%;
+
+        }
+
+        .wallet-balance {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 0 2rem;
+        }
+
+        .wallet-balance > .balance {
+            font-size: 6rem;
+            line-height: 6.3rem;
+        }
+
+        .wallet-wrapper-sides {
+            width: 100%;
+            height: 100%;
+            background-color: #f99f23;
+            box-shadow: 2px 3px 20px #000;
+        }
+
+        .wallet-transfers {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            width: 100%;
+            height: fit-content;
+            padding: 1rem;
+        }
+
+        .wallet-address {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+        }
+
+        .wallet-address > p,
+        .wallet-address > h4 {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        .wallet-address > p {
+            margin-top: 1rem;
+            padding: 1rem;
+            font-size: 1.7rem;
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .transfer-message-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+            padding: 1rem;
+        }
+
+        .invites-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            width: 50%;
+            height: 100%;
+
+        }
+
+        .invites-wrapper-sides {
+            width: 100%;
+            height: 100%;
+            background-color: #f99f23;
+            box-shadow: 2px 3px 20px #000;
+        }
+
+        .invites-header {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+            margin-bottom: 2rem;
+            padding: 0.4rem 2rem;
+        }
+
+        .invites-header > h3 {
+            margin: 0;
+        }
+
+        .invites-header > a {
+            position: absolute;
+            right: 2rem;
+        }
+
+        .invites-content {
+            width: 100%;
+            height: fit-content;
+        }
+
+        .invite-counter {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+            padding: 0 2rem;
+        }
+
+        .invite-counter > .balance {
+            font-size: 10rem;
+            line-height: 10rem;
+        }
+
+        .invite-counter > .counter-label {
+            font-size: 2rem;
+            line-height: 2rem;
+        }
+
+        .invite-options {
+            width: 100%;
+            height: fit-content;
+            padding: 2rem 2rem 0 2rem;
+        }
+
+        .feed-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            height: fit-content;
+            padding: 3rem 2rem;
+            margin: 2rem 0;
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .feed-error-placeholder-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            width: 100%;
+            height: fit-content;
+            padding: 1rem 0;
+        }
+
+        /* HELPER CSS CLASSES - TODO! move to a global css file */
+        textarea.fixed-width {
+            resize: vertical;
+        }
+
+        .clickable-icon:hover {
+            opacity: 0.8;
+        }
+
+        .clickable-icon:active {
+            transform: scale(0.9);
+        }
+
+        .notice-paragraph {
+            margin: 0.4rem;
+            padding: 0.4rem 1rem;
+            background-color: #fff1a9;
+            border: 1px solid #ffe35f;
+            border-radius: 4px;
+            font-size: 1.7rem;
+            color: #8a6d3b;
+        }
+
+        .notice-paragraph > a {
+            font-weight: bold;
+        }
+
+        .notice-paragraph > a:hover {
+            color: #664b1c;
+        }
+
+        .golden-grey {
+            color: #a79f7a !important;
+        }
+
+        .toggle-label {
+            margin-left: 1rem;
+        }
+
+        .faded {
+            opacity: 0.8;
+        }
+
+        .faded:hover {
+            opacity: 1;
+        }
+
+        .musicoin-currency-label {
+            display: block;
+            margin-left: 1rem;
+            line-height: inherit;
+            transform: scale(0.5);
+        }
+
+        .justify-left {
+            justify-content: flex-start;
+        }
+
+        /* -------------------------- */
+        /* | Flip Div animation CSS | */
+        /* -------------------------- */
+
+            .flip-container {
+                perspective: 1000px;
+                transform-style: preserve-3d;
+            }
+
+            .flip-container.flipped .flipper {
+                transform: rotateY(180deg);
+            }
+
+            .flipper {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                transition: 0.6s;
+                transform-style: preserve-3d;
+            }
+
+            .front, .back {
+                backface-visibility: hidden;
+                position: absolute;
+                top: 0;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .front {
+                z-index: 2;
+                /* for firefox 31 */
+                transform: rotateY(0deg);
+            }
+
+            .back {
+                transform: rotateY(180deg);
+            }
+
+            .toggle-flip-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                align-items: center;
+                width: 100%;
+                padding: 1rem 1rem 0 0;
+                opacity: 0.9;
+            }
+
+            .toggle-flip-container * {
+                margin: 0;
+                padding: 0;
+            }
+
+            .toggle-flip-container.container-space-between {
+                justify-content: space-between;
+                padding: 1rem 1rem 0 1rem;
+            }
+
+            .toggle-flip-container > div:not(.not-clickable):hover {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+        /* --------------------------------- */
+        /* | End of Flip Div animation CSS | */
+        /* --------------------------------- */
+
 
     </style>
 </head>
@@ -142,126 +690,198 @@
 <%- include('partials/header.ejs') %>
 <div id="licensePreview"></div>
 <div class="container">
+    <div class="profile-cover-wrapper">
+        <div id="profileCoverEdit" class="edit-cover edit-picture clickable">
+            <i class="fa fa-pencil" aria-hidden="true"></i>
+        </div>
+        <div class="view-public-profile">
+            <% if (user.profileAddress) { %>
+            <a href="/artist/<%= user.profileAddress %>" class="public-profile-button golden-grey" title="View your public profile">
+                <i class="fa fa-users" aria-hidden="true"></i>
+                <span>My Page</span>
+            </a>
+            <% } else { %>
+                <div class="unpublished-info" data-toggle="tooltip" data-html="true"
+                    data-placement="auto" title="By publishing your profile, you agree to our <a href='/terms'>terms of use</a>">
+                        <i class="fa fa-info" aria-hidden="true"></i>
+                </div>
+            <% } %>
+        </div>
 
-    <div>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="section-title">Public Profile</h3>
-                <form id=profileForm action="/profile/save" enctype="multipart/form-data" method="post">
-                    <div class="form-group profile-image">
-                        <img id="profileImage"
-                             style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"
-                             src="<%= user.profile.image %>">
-                        (click to change)
-                        <input style="display: none" id="imageInput" type="file" name="photo">
+        <form id="profileCoverForm" action="/profile/save" enctype="multipart/form-data" method="post">
+            <img src="<%= user.profile.heroImage %>" class="cover-image" title="Click to change your cover" />
+            <!-- <img id="coverImage" src="http://localhost:3001/static/media/microphone.b22ca3ce.jpg" class="cover-image" title="Click to change your cover" /> -->
+            <input style="display: none" id="coverInput" type="file" name="cover">
+        </form>
+        <div class="hero-name-container">
+            <h1><%= user.profile.artistName %></h1>
+            <!-- <h1>New Artist</h1> -->
+        </div>
+    </div>
+    <div class="profile-content-wrapper">
+        <div class="profile-info-wrapper">
+            <div class="profile-image-wrapper">
+                <div id="profileImageEdit" class="edit-image edit-picture clickable">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </div>
+                <form id="profileImageForm" action="/profile/save" enctype="multipart/form-data" method="post">
+                    <img src="<%= user.profile.heroImage %>" class="profile-image" title="Click to change your profile"/>
+                    <!-- <img id="profileImage" src="https://musicoin.org/static/media/ad-free-streaming.6c7ee93a.png" -->
+                        <!-- class="profile-image" title="Click to change your profile"/> -->
+                    <input style="display: none" id="imageInput" type="file" name="image">
+                </form>
+            </div>
+            <div class="profile-details-wrapper">
+                <div class="notifications-setting-wrapper">
+                    <label class="switch">
+                        <input id="messagePreference"
+                                type="checkbox" <%= user.preferences && user.preferences.notifyOnComment ? "checked" : "" %>>
+                        <div class="slider round"></div>
+                    </label>
+                    <span class="toggle-label clickable golden-grey" onclick="$('#messagePreference').click()">Notify me about comments/tips</span>
+                </div>
+                <div class="balance-wrapper">
+                    <div class="my-wallet">
+                        <!-- <div class="wallet-header">
+                            <h3 class="golden-grey">My Wallet</h3>
+                            <a id="showTransactionHistory" href="/tx/history/<%= user.profileAddress %>"
+                                class="clickable clickable-icon " title="Transaction history">
+                                <i class="fa fa-list-ul golden-grey" aria-hidden="true"></i>
+                            </a>
+                        </div> -->
+
+                        <div class="text-center balance balance-with-label golden-grey">
+                            <span style="display: block; overflow: hidden; text-overflow: ellipsis;"><%= artist.formattedBalance %></span>
+                            <span class="musicoin-currency-label">MUSIC</span>
+                        </div>
+                        <!-- <% if (exchangeRate.success) { %>
+                        <div class="text-center" style="color: #337ab7;">
+                            <a href="<%=exchangeRate.link%>" target=_blank title="<%=exchangeRate.disclaimer%>" ><%= artist.formattedUSD %> USD</a>
+                        </div>
+                        <% } %> -->
                     </div>
-                    <div class="form-group hero-image">
-                        <img id="heroImage" alt="No promo image selected" class="clickable"
-                             style="width: 300px; height: 70px; object-fit: contain"
-                             src="<%= user.profile.heroImage %>">
-                        (click to set a wide-format promo image, 1300x300)
-                        <input style="display: none" id="heroInput" type="file" name="hero">
+                </div>
+                <div class="profile-section-header clickable golden-grey" data-content="profileDetailsForm">
+                    <span>My Profile</span>
+                    <i class="fa fa-chevron-right" aria-hidden="true" style="display: none;"></i>
+                    <i class="fa fa-chevron-down" aria-hidden="true"  style="display: block;"></i>
+                </div>
+                <form id="profileDetailsForm" action="/profile/save" enctype="multipart/form-data" method="post" style="display: block;">
+                    <div class="form-group">
+                        <label for="artistName">Name</label>
+                        <input type="text" class="form-control profile-input" name="artistName" value="<%= user.profile.artistName %>"
+                                placeholder="This can be a username or a band name">
                     </div>
                     <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" class="form-control" name="artistName" value="<%= user.profile.artistName %>"
-                               placeholder="this can be a username or band name">
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="form-control" name="primaryEmail" value="<%= user.genericProfile.primaryEmail %>"
-                               placeholder="Email address">
+                        <label for="primaryEmail">Email</label>
+                        <input type="email" class="form-control profile-input" name="primaryEmail" value="<%= user.genericProfile.primaryEmail %>"
+                                placeholder="Email address">
                         <% if (user.genericProfile.primaryEmail && !user.genericProfile.emailVerified) { %>
                         <div class="send-email-verify-link-holder">
-                            <span id="email-verify-link-sent">Verfication email sent to your address! Please check your inbox!</span>
-                            <a href="#" id="send-email-verify-link">Send verify email</a>
+                            <p id="email-verify-link-sent" class="notice-paragraph">Verfication email sent to your inbox!
+                                <a href="#" id="send-email-verify-link">Send verify email again</a>
+                            </p>
                         </div>
                         <% } %>
                     </div>
                     <div class="form-group">
-                        <label>Description</label>
-                        <textarea class="form-control" name="description"
-                                  placeholder="let people know who you are"><%= user.profile.description %></textarea>
+                        <label for="description">About</label>
+                        <textarea rows="2" class="form-control fixed-width profile-input" name="description"
+                                    placeholder="Let people know who you are"><%= user.profile.description %></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Location</label>
-                        <input name=regions class="form-control no-submit region-list"
-                               placeholder=""
-                               value="<%= user.profile.regions ? user.profile.regions.join(", ") : "" %>">
+                        <label for="regions">Location</label>
+                        <input name="regions" class="form-control no-submit region-list profile-input"
+                                placeholder=""
+                                value="<%= user.profile.regions ? user.profile.regions.join(", ") : "" %>">
                     </div>
                     <div class="form-group">
-                        <label>Genres</label>
-                        <input name=genres class="form-control no-submit genre-list"
-                               placeholder="e.g. Rock, Country, etc"
-                               value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
+                        <label for="genres">Genres</label>
+                        <input name="genres" class="form-control no-submit genre-list profile-input"
+                                placeholder="e.g. Rock, Country, etc"
+                                value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
                     </div>
+                    <div class="submit-container">
+                            <button type="submit" class="btn submit-button <%= (user.pendingTx || user.profileAddress) ? '' : 'publish-button' %>">
+                                <%= (user.pendingTx || user.profileAddress) ? "Update Profile" : "Publish Profile" %>
+                            </button>
+                        </div>
+                </form>
+                <div class="profile-section-header clickable golden-grey" data-content="socialVerification">
+                        <span>Social Accounts For Verification</span>
+                        <i class="fa fa-chevron-right" aria-hidden="true" style="display: block;"></i>
+                        <i class="fa fa-chevron-down" aria-hidden="true"  style="display: none;"></i>
+                </div>
+                <div id="socialVerification" style="display: none;">
                     <div class="form-group">
-                      <label>Social Accounts For Verification</label>
-                      <br>
-
-                      <table class="social-group">
+                        <table class="social-group">
                             <% if (user.facebook.token) { %>
                             <tr>
                             <td>
                                 <span class="fa fa-facebook"></span>
                             </td>
                             <td width="99%">
-                              <div class="flex-row m10" style="justify-content: space-between;">
+                            <div class="flex-row m10" style="justify-content: space-between;">
                                 <a class="mr10" target=_blank href="<%= user.facebook.url %>">
-                                  <%= user.facebook.name %>
+                                <%= user.facebook.name %>
                                 </a>
                                 <!---
                                 <div class="flex-row">
-                                  <label class="switch">
+                                <label class="switch">
                                             <input id=facebookUrlIsPublic
-                                                   type="checkbox" <%= user.facebook && user.facebook.urlIsPublic ? "checked" : "" %>>
+                                                    type="checkbox" <%= user.facebook && user.facebook.urlIsPublic ? "checked" : "" %>>
                                             <div class="slider round"></div>
                                         </label>
                                 </div> -->
-                              </div>
+                            </div>
 
                                 <% if (user.twitter.token) { %>
-                                  <div class="flex-row m10" style="justify-content: space-between;">
+                                <div class="flex-row m10" style="justify-content: space-between;">
                                     <a class="mr10" target=_blank href="<%= user.twitter.url %>">
-                                      <%= user.twitter.username %>
+                                    <%= user.twitter.username %>
                                     </a>
                                     <!---
                                     <div class="flex-row">
-                                      <label class="switch">
+                                    <label class="switch">
                                             <input id=twitterUrlIsPublic
-                                                   type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
+                                                    type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
                                             <div class="slider round"></div>
                                         </label>
                                     </div>-->
-                                  </div>
-                                  <% } %>
+                                </div>
+                                <% } %>
 
                                 <% } else if (user.twitter.token) { %>
                                     <div class="flex-row m10" style="justify-content: space-between;">
-                                      <a class="mr10" target=_blank href="<%= user.twitter.url %>">
+                                    <a class="mr10" target=_blank href="<%= user.twitter.url %>">
                                         <%= user.twitter.username %>
-                                      </a>
-                                      <!--
-                                      <div class="flex-row">
+                                    </a>
+                                    <!--
+                                    <div class="flex-row">
                                         <label class="switch">
                                             <input id=twitterUrlIsPublic
-                                                   type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
+                                                    type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
                                             <div class="slider round"></div>
                                         </label>
-                                      </div>-->
+                                    </div>-->
                                     </div>
                                 </td>
-                              </tr>
-                        <% } else { %>
-                          <p class="subtle-text">Link your Twitter and Facebook Accounts to help get verified as a musician.</p>
-                        <% } %>
-                      </table>
-
+                            </tr>
+                            <% } else { %>
+                            <p class="notice-paragraph">Link your Twitter and Facebook Accounts to help get verified as a musician.</p>
+                            <% } %>
+                        </table>
                     </div>
+                </div>
+
+                <div class="profile-section-header clickable golden-grey" data-content="otherSocial">
+                        <span>Other Social</span>
+                        <i class="fa fa-chevron-right" aria-hidden="true" style="display: block;"></i>
+                        <i class="fa fa-chevron-down" aria-hidden="true"  style="display: none;"></i>
+                </div>
+                <form id="otherSocial" action="/profile/save" enctype="multipart/form-data" method="post" style="display: none;">
                     <div class="form-group">
-                        <label>other social</label>
-                        <br>
-                        <p class="subtle-text">Add links to your other social pages as well</p>
+                        <p class="">Add links to your other social pages as well</p>
                         <table class="social-group">
                             <%
                             var socialTypes = [
@@ -282,282 +902,163 @@
                                 var icon = item.icon ? item.icon : "fa-" + item.id;
                             %>
                             <tr>
-                                <td><span class="fa <%= icon %>"></span></td>
-                                <td width="99%"><input type="text" class="form-control" name="social.<%= item.id %>"
-                                                       value="<%= value %>" placeholder="<%= name %> profile page url">
+                                <td class="td-profile-label <%= value ? 'active' : '' %>"><span class="fa <%= icon %>"></span></td>
+                                <td width="99%"><input type="text" class="form-control profile-input td-profile-input" name="social.<%= item.id %>"
+                                                        value="<%= value %>" placeholder="<%= name %> profile page url">
                                 </td>
                             </tr>
                             <% } %>
                         </table>
                     </div>
-                    <div class="flex-row m10" style="justify-content: center">
-                        <label class="switch">
-                            <input id=messagePreference
-                                   type="checkbox" <%= user.preferences && user.preferences.notifyOnComment ? "checked" : "" %>>
-                            <div class="slider round"></div>
-                        </label>
-                        <span class="center-text clickable" onclick="$('#messagePreference').click()">Notify me about comments/tips</span>
-                    </div>
-                    <% if (user.profileAddress) { %>
-                    <div class="text-center">
-                        View your public profile page here <a href="/artist/<%= user.profileAddress %>">here</a>
-                    </div>
-                    <br><br>
-                    <% } else { %>
-                    <div class="text-center">By publishing your profile, you agree to our <a href="/terms">terms of
-                            use</a></div>
-                    <% } %>
-                    <div style="display:flex; justify-content: flex-end">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <%= (user.pendingTx || user.profileAddress) ? "Update Profile" : "Save Profile" %>
+                    <div class="submit-container">
+                        <button type="submit" class="btn submit-button">
+                            <%= (user.pendingTx || user.profileAddress) ? "Update Socials" : "Save Socials" %>
                         </button>
                     </div>
-                    <% if (typeof profileUpdateError != "undefined" && profileUpdateError) { %>
-                    <div class="text-center text-danger">
-                        Update failed! Please try again later.
-                    </div>
-                    <% } %>
-
-                    <% if (user.pendingTx) { %>
-                    <div class="text-center subtle-text mt10">
-                        Your updates were sent to the network and we're just waiting for confirmation.<BR>
-                        <span class="subtle-text"><a target="_blank"
-                                                     href="https://explorer.musicoin.org/tx/<%= user.pendingTx %>">view transaction</a></span>
-                    </div>
-                    <% } %>
-
                 </form>
-
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <% if (user.profileAddress) { %>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="section-title">My Wallet</h3>
-                <div>
-                    <div class="balance"><%= artist.formattedBalance %></div>
-                    <div class="text-center subtle-text">musicoins</div>
-                    <% if (exchangeRate.success) { %>
-                    <div class="text-center subtle-text">
-                        <a target=_blank title="<%=exchangeRate.disclaimer%>" href="<%=exchangeRate.link%>"><%= artist.formattedUSD %> USD</a>
+        <div class="main-wrapper">
+            <div class="widgets-wrapper">
+                <div class="widget-wrapper wallet-wrapper flip-container">
+                    <% if (user.profileAddress) { %>
+                    <div class="flipper">
+                        <div class="front wallet-wrapper-sides">
+                            <div class="toggle-flip-container container-space-between">
+                                <div></div>
+                                <div class="not-clickable"><h3>My Wallet</h3></div>
+                                <div class="toggle-flip clickable"><i class="fa fa-chevron-right" aria-hidden="true"></i></div>
+                            </div>
+                            <div class="wallet-balance">
+                                <div class="balance"><%= artist.formattedBalance %></div>
+                                <div class="balance-label">MUSIC</div>
+                            </div>
+                        </div>
+                        <div class="back wallet-wrapper-sides">
+                            <div class="toggle-flip-container container-space-between">
+                                <div>
+                                    <a id="showTransactionHistory" href="/tx/history/<%= user.profileAddress %>"
+                                        class="clickable clickable-icon " title="Transaction history">
+                                        <i class="fa fa-list-ul" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div class="not-clickable"><h3>My Wallet</h3></div>
+                                <div class="toggle-flip clickable"><i class="fa fa-chevron-left" aria-hidden="true"></i></div>
+                            </div>
+                            <div class="wallet-transfers">
+                                <div class="wallet-address">
+                                    <h4>My Wallet Address</h4>
+                                    <p style="font-family: monospace; font-weight: 700"><%= user.profileAddress %></p>
+                                </div>
+                                <br>
+                                <div class="transfer-message-container">
+                                    <p>Send musicoins to a friend or transfer to another wallet (desktop/geth client) for safe keeping.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <% } else { %>
+                        <div class="widget-error-placeholder-wrapper">
+                            <div class="widget-error-header">
+                                <h3 class="section-title">My Wallet</h3>
+                            </div>
+                            <div class="widget-error-message">
+                                Once you publish a profile, you can check your balance here and send coins to other users.
+                            </div>
+                        </div>
                     <% } %>
                 </div>
-                <div class=wallet-actions style="display: none">
-                    <p>
 
-                        <br>
-                    <div class="text-center subtle-text">My Wallet Address</div>
-                    <div class="text-center" style="font-family: monospace; font-weight: 700"><%= user.profileAddress %></div>
-                    <br>
-                    <p class="subtle-text">
-                        Send musicoins to a friend or transfer to another wallet (desktop/geth client) for safe keeping.
-                    </p>
-                    <form name="sendFunds"  action="/send" method="post">
-                        <table cellpadding="3">
-                            <tr>
-                                <td colspan="2">
-                                    <div class="text-warning text-center mb20" style="font-size: 25px !important;">Warning! Exchanges will not recognize
-                                        coins sent directly from your profile.
-                                        (<a href="/faq/#ExchangeDeposit">Here's why</a>)
+                <div class="widget-wrapper invites-wrapper flip-container">
+                    <% if (user.profileAddress) { %>
+                        <% if (user.canInvite) { %>
+                        <div class="flipper">
+                            <div class="front invites-wrapper-sides">
+                                <div class="toggle-flip-container">
+                                    <div class="toggle-flip clickable"><i class="fa fa-chevron-right" aria-hidden="true"></i></div>
+                                </div>
+                                <div class="invite-counter">
+                                    <div class="balance"><%= user.invitesRemaining %></div>
+                                    <div class="counter-label">invites left</div>
+                                </div>
+                            </div>
+                            <div class="back invites-wrapper-sides">
+                                <div class="toggle-flip-container container-space-between">
+                                    <div>
+                                        <a id="showInviteTransactionHistory" href="/invite-history"
+                                            class="clickable clickable-icon" title="Invite History">
+                                            <i class="fa fa-list-ul" aria-hidden="true"></i>
+                                        </a>
                                     </div>
-                                </td>
-                            </tr>
-                            <div class="form-group text-center">
-                                <label>Recipient</label>
-                                <input id="recip1" name=recipient type="text" class="form-control" placeholder="Address">
+                                    <div class="not-clickable"><h3>Invites</h3></div>
+                                    <div class="toggle-flip clickable"><i class="fa fa-chevron-left" aria-hidden="true"></i></div>
+                                </div>
+                                <% if (invited.inviteUrl) { %>
+                                <div class="invite-options">
+                                    <h4>Referral Link</h4>
+                                    <p class="subtle-text">
+                                        Your referral link is reusable! When some one signs up with your referral link, your
+                                        invites remaining will go down by one and you will get your reward.
+                                    <div class="text-success center-text">
+                                        Your referral link
+                                    </div>
+                                    <div class="center-text">
+                                        https://musicoin.org/accept/<%= user.reusableInviteCode %>
+                                    </div>
+                                    </p>
+                                </div>
+                                <% } else { %>
+                                <div class="invite-options">
+                                    <p>Your referral link has been used up already or is invalid.</p>
+                                </div>
+                                <% } %>
                             </div>
-                            <div class="form-group text-center">
-                                <label>Amount</label>
-                                <input name=amount type="number" step="0.0001" class="form-control text-right form-number" placeholder="0.0001" style="margin-left:40%">
+                        </div>
+                        <% } %>
+                    <% } else { %>
+                        <div class="widget-error-placeholder-wrapper">
+                            <div class="widget-error-header">
+                                <h3 class="section-title">Invites</h3>
                             </div>
-                            <tr>
-                            <td class="text-center">
-                                <button id="sendme" class="btn btn-warning mb10">Create Withdrawal Request</button>
-                            </td>
-                            </tr>
-                        </table>
-                    </form>
-                </form>
+                            <div class="widget-error-message">
+                                Once you publish a profile, you can invite other users to join here.
+                            </div>
+                        </div>
+                    <% } %>
                 </div>
-                <div class="flex-row wallet-action-bar">
-                    <div onclick='$(".wallet-actions").toggle()'
-                         class="wallet-action-toggle subtle-text wallet-actions">Show options
-                    </div>
-                    <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions"
-                         style="display: none">Hide options
-                    </div>
-                    <a class="subtle-text" href="/tx/history/<%= user.profileAddress %>"><i title="transaction history"
-                                                                                            class="fa fa-list-ul"
-                                                                                            aria-hidden="true"></i></a>
+
+            </div>
+            <div class="feed-wrapper">
+                <% if (user.profileAddress) { %>
+
+                <div class="dynamic-element col-sm-6"
+                    id="de-pending-releases"
+                    de-refresh-period="none"
+                    de-url="/elements/pending-releases">
+                    <%- include('partials/pending-releases.ejs') %>
                 </div>
-                <% if (typeof sendResult != "undefined") { %>
-                <% if (sendResult.sendError) { %>
-                <div class="text-center text-danger">
-                    Send failed!
+
+                <div class="dynamic-element col-sm-6"
+                    id="de-release-list"
+                    de-refresh-period="none"
+                    de-url="/elements/release-list">
+                    <%- include('partials/release-list.ejs') %>
                 </div>
                 <% } else { %>
-                    Payment sent!
-                <% } %>
-                <% } %>
-                <% if (typeof sendMailResult != "undefined") { %>
-                <% if (sendMailResult.sendError) { %>
-                <div class="text-center">
-                    Email send failed!
-                </div>
-                <% } else { %>
-                   Check inbox for email with subject Musicoin Withdrawal Verification!
-                <% } %>
-                <% } %>
-            </div>
-        </div>
-
-        <% if (user.canInvite) { %>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="section-title">Invites</h3>
-                <div>
-                    <div class="balance"><%= user.invitesRemaining %></div>
-                    <div class="text-center subtle-text">invites left</div>
-                </div>
-                <div class="invite-options" style="<%= invited.inviteUrl ? "" : "display: none" %>">
-                    <h4>Referral Link</h4>
-                    <p class="subtle-text">
-                        Your referral link is reusable! When some one signs up with your referral link, your
-                        invites remaining will go down by one and you will get your reward.
-                    <div class="text-success center-text">
-                        Your referral link
+                    <div class="feed-error-placeholder-wrapper">
+                        <div class="widget-error-header justify-left">
+                            <h3 class="section-title">Release</h3>
+                        </div>
+                        <div class="widget-error-message">
+                            Once you publish a profile, you can release songs here.
+                        </div>
                     </div>
-                    <div class="center-text">
-                        https://musicoin.org/accept/<%= user.reusableInviteCode %>
-                    </div>
-                    <br>
-                    <!--
-                    Remove individual invite since people are using it more than once.
-                    <h4>Individual Invite Link</h4>
-                    <p class="subtle-text">
-                        If you want to create an invite for a <em>specific person</em>, enter an address below and we'll
-                        send an invite to that address. You can also copy and paste the generated link and send it to
-                        them separately. However, this type invite can only be used once.
-                    </p>
-                    -->
-                    <!--
-                    <form action="/invite" method="post">
-                        <table cellpadding="3">
-                            <tr>
-                                <td class="text-nowrap">e-mail</td>
-                                <td width="99%"><input id=inviteEmail name=email type="text" class="form-control"
-                                                       placeholder="email address"></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td class="text-right">
-                                    <button id=btnInvite type="submit" class="btn btn-success">
-                                        Create invite link
-                                    </button>
-                                </td>
-                            </tr>
-                            <% if (invited.inviteUrl) { %>
-                            <tr>
-                                <td></td>
-                                <td>
-                                    <% if (invited.success) { %>
-                                    <div class="text-center">
-                                        <%= invited.email ? "An invite was sent to " + invited.email : "" %><br>
-                                        You can send this link via social media: <br>
-                                        <%= invited.inviteUrl %>
-                                    </div>
-                                    <% } else if (invited.reason == "exists"){ %>
-                                    <div class="text-warning"><%= invited.email %> already has an invite.</div>
-                                    <% } else if (invited.reason == "invalid"){ %>
-                                    <div class="text-danger"><%= invited.email %> is not a valid email address.</div>
-                                    <% } else { %>
-                                    <div class="text-danger">Failed to invite <%= invited.email %>, try again later
-                                    </div>
-                                    <% } %>
-                                </td>
-                            </tr>
-                            <% } %>
-                        </table>
-                    </form>
-                    -->
-
-                </div>
-                <div class="flex-row wallet-action-bar">
-                    <div class="wallet-action-toggle subtle-text"
-                         onclick='$(".invite-options").toggle()'>
-                        <div class="invite-options">Send an Invite</div>
-                        <div class="invite-options" style="display: none">Hide</div>
-                    </div>
-                    <a class="subtle-text" href="/invite-history"><i title="invite history" class="fa fa-list-ul"
-                                                                     aria-hidden="true"></i></a>
-                </div>
-            </div>
-        </div>
-        <% } %>
-
-        <div class="dynamic-element col-sm-6"
-             id="de-pending-releases"
-             de-refresh-period="none"
-             de-url="/elements/pending-releases">
-            <%- include('partials/pending-releases.ejs') %>
-        </div>
-
-        <div class="dynamic-element col-sm-6"
-             id="de-release-list"
-             de-refresh-period="none"
-             de-url="/elements/release-list">
-            <%- include('partials/release-list.ejs') %>
-        </div>
-
-        <%
-            // I don't want to have this page constantly refreshing the pending releases unless
-            // we have reason to believe there is likely to be a change.  When the user posts a
-            // new release, the page will refresh.  At which point, we should see an pending release.
-            // So, in those cases, set up two checks: 1min and 2mins from now.  After than, they user
-            // will have to user the manual refresh option on the widget, or refresh the page.
-        if (pendingReleases.length > 0) { %>
-        <script>
-          console.log("Setting up two auto-refreshes...");
-          window.setTimeout(function () {
-            console.log("auto-refreshes 1 ...");
-            dynamic.refreshElement($("#de-release-list"));
-            dynamic.refreshElement($("#de-pending-releases"));
-          }, 60 * 1000)
-          window.setTimeout(function () {
-            console.log("auto-refreshes 2 ...");
-            dynamic.refreshElement($("#de-release-list"));
-            dynamic.refreshElement($("#de-pending-releases"));
-          }, 120 * 1000)
-        </script>
-        <% } %>
-
-        <% } else { %>
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="section-title">wallet</h3>
-                Once you publish a profile, you can check your balance here and send coins to other users.
+                <% } %>
             </div>
         </div>
 
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="section-title">invite</h3>
-                Once you publish a profile, you can invite other users to join here.
-            </div>
-        </div>
-
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="section-title">release</h3>
-                Once you publish a profile, you can release songs here.
-            </div>
-        </div>
-        <% } %>
     </div>
+
 
 </div>
 <%- include('partials/player-hook.ejs') %>
@@ -579,19 +1080,66 @@
   $(document).ready(function () {
     $("#imageInput").change(function () {
       readURL('profileImage', this);
+      $("#profileImageForm").submit();
     });
 
-    $("#heroInput").change(function () {
-      readURL('heroImage', this);
+    $("#coverInput").change(function () {
+      readURL('coverImage', this);
+      $("#profileCoverForm").submit();
     });
 
-    $("#profileImage").click(function () {
+    $("#profileImageEdit").click(function () {
       $("#imageInput").click();
-    })
+    });
 
-    $("#heroImage").click(function () {
-      $("#heroInput").click();
-    })
+    $("#profileCoverEdit").click(function () {
+      $("#coverInput").click();
+    });
+
+    $(".profile-section-header").click(function () {
+      var sectionId = $(this).data('content');
+      var section = $('#' + sectionId);
+
+      section.slideToggle(400, () => {
+          $(this).find('i').toggle();
+      });
+    });
+
+    $('.toggle-flip').click(function() {
+        console.log($(this).parents('.flip-container'));
+        $(this).parents('.flip-container').toggleClass('flipped');
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $('#messagePreference').change(function() {
+        var option = $(this).is(':checked');
+        // TODO! Not sent to the api with payload - can't implement
+        // $.post({
+        //     type: 'POST',
+        //     url: '/artist/save',
+        //     data: {},
+        //     success: (res) => {
+
+        //     },
+        //     error: (err) => {
+
+        //     },
+        //     dataType: 'json'
+        // });
+    });
+
+    // A consideration: sticky profile section
+    // var profileBoxScroll = $('.profile-info-wrapper').position().top;
+    // $(document).on('scroll', function(e) {
+    //     console.log(e.target.scrollingElement.scrollTop);
+    //     if (e.target.scrollingElement.scrollTop > profileBoxScroll) {
+    //         $('.profile-info-wrapper').css('top', 0).css('position', 'fixed');
+    //     } else {
+    //         $('.profile-info-wrapper').css('top', 'unset').css('position', 'unset');;
+    //     }
+    // });
+
 
     function updateUrlVisibility(element, provider) {
       var checked = element[0].checked;

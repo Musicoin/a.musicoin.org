@@ -1,53 +1,70 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 <audio id="player"></audio>
-<div id="player-section" class="fixed-footer player show-on-play">
-  <div id="player-options-overlay" >
-    <div id="player-options">
-        <button id="continue-random-tracks-button">Continue with random songs</button>
-        <button id="continue-artist-random-tracks-button">Continue with random songs of Artist</button>
-    </div>
-</div>
-  <div class="player-foreground no_selection" style="background: black; opacity: 0.9">
-    <div class="player-badge-image-wrapper player-widget-left">
-      <img id="player-badge-image" src="/images/default-profile.png" class="song-badge-image big-screen-only" style="width:;height: 200px !important;">
-    </div>
-    <div class="player-widget-right" style="background:  #fff;height:  200px !important;/* color:  black; */border-radius: 5px;padding:  15px 15px 15px 15px;">
-      <div class="song-badge-info">
-        <div id=player-title-area class="flex-row middle clickable title-link">
-          <div id="player-title" class="player-song-name mr10" style="font-size: 20px; color: black">Song title which styupidly long that will cause some sort of snafu</div>
-        </div>
-        <div id="player-artist" class="player-artist-name clickable" style="color: black;font-size: 16px;">Artist name which styupidly long that will cause some sort of snafu</div>
-        <div id="track-description-in-player" style="height: 100px;font-size: 16px; color: black"><%=data.license.description || "Find this track and other amazing tracks on musicoin.org"%></div>
-      </div>
-      <div class="player-controls-wrapper">
-        <i id="player-play-button" class="fa fa-play btn btn-plain player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="margin-right: 5px;color: black;" aria-hidden="true"></i>
-        <i id="player-pause-button" class="fas fa-pause player-control" onclick="musicoin.audioPlayer.togglePlayState()" style="padding-right: 25px;margin-right: 4px;color: black;"></i>
-        <div id=player-progress class="player-progress mr5 big-screen-only">
-          <div class="progress-bar progress-background" style="background: white"></div>
-          <div id="player-progress-div" class="progress-bar progress-foreground" style="background-color: green">
-          </div>
-          <div class="spread mt5">
-            <div id="player-time-played" style="color: black" class="player-time-field big-screen-only">00:00</div>
-            <div id="player-time-left" style="color: black" class="player-time-field">00:00</div>
-          </div>
-          <div id=progress-thumb class="progress-thumb draggable ui-widget-content" style="left: -8px;transition: none;background-color:  black;"></div>
-        </div>
-        <i id="player-next-button" class="fa fa-lg fa-step-forward btn btn-plain player-control" onclick="musicoin.audioPlayer.skipTrack()" style="color: #AE8C00" aria-hidden="true"></i>
-        <div id="player-tip-button" title="Send a tip" class="clickable text-large mr10" context-type="Release" recipient="">
-          <i class="fa fa-2x fa-sign-language btn btn-plain btn-sm" style="padding: 5px; color: black" aria-hidden="true"></i>
-        </div>
-        <div class="clickable text-large mr10">
-          <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle" style="padding: 5px; color: black" aria-hidden="true"></i>
-        </div>
-        <div title="Show or hide the playlist" class="clickable text-large mr10" style="position: relative">
-          <i id="play-queue-trigger" class="fa fa-list-ul btn-plain btn-sm play-queue-trigger" style="padding: 5px" aria-hidden="true"></i>
-          <i id="play-queue-count" class="queue-size" aria-hidden="true" style="position: absolute;bottom: -9px;right: -13px;">0</i>
-        </div>
-      </div>
-      <div class="musicoin-declaration-banner">
-        <a href="https://medium.com/@musicoin/musicoin-project-white-paper-v2-0-6be5fd53191b" target="_blank" style="color: black;">You play for free, we pay to musicians!</a>
-      </div>
-    </div>
-  </div>
-  <div id="player-background" class="player-background" style="background-image: url('')"></div>
+<div id="player-section" class="fixed-footer show-on-play">
+	<div id="player-options-overlay" style="display:none;">
+		<div id="player-options">
+				<button id="continue-random-tracks-button">Continue with random songs</button>
+				<button id="continue-artist-random-tracks-button">Continue with random songs of Artist</button>
+		</div>
+	</div>
+	<div class="embedded-player-foreground no_selection">
+		<div class="song-badge-container player-widget-left">
+			<div class="player-badge-image-wrapper">
+				<img id="player-badge-image" src="/images/default-profile.png" class="song-badge-image big-screen-only">
+			</div>
+			<div class="song-badge-info">
+				<div id="player-title" class="player-song-name clickable">Song title which styupidly long that will cause some sort of snafu</div>
+				<div id="player-artist" class="player-artist-name clickable">Artist name which styupidly long that will cause some sort of snafu</div>
+        		<div id="track-description-in-player" class="player-description" style="font-size: 16px; color: black"><%=data.license.description || "Find this track and other amazing tracks on musicoin.org"%></div>
+	</div>
+		</div>
+		<div class="player-widget-right">
+			<div class="embedded-player-controls">
+				<div class="player-controls-wrapper">
+					<div class="player-controls">
+						<div class="repeat-button-wrapper player-button clickable" title="Repeat" onclick="musicoin.audioPlayer.toggleRepeatTrack()">
+							<i id="player-repeat-button" class="fas fa-repeat toggle-repeat player-control"  aria-hidden="true"></i>
+						</div>
+						<div class="previous-button-wrapper player-button clickable" title="Previous Track" onclick="musicoin.audioPlayer.prevTrack()">
+							<i id="player-prev-button" class="fas fa-backward player-control"  aria-hidden="true"></i>
+						</div>
+						<div class="play-button-wrapper player-button clickable" title="Play" onclick="musicoin.audioPlayer.togglePlayState()">
+							<i id="player-play-button" class="fas fa-play player-control" aria-hidden="true"></i>
+							<i id="player-pause-button" class="fas fa-pause player-control" aria-hidden="true"></i>
+						</div>
+						<div class="next-button-wrapper player-button clickable" title="Next Track" onclick="musicoin.audioPlayer.skipTrack()">
+							<i id="player-next-button" class="fas fa-forward player-control" aria-hidden="true"></i>
+						</div>
+						<div class="shuffle-button-wrapper player-button clickable" title="Shuffle" onclick="musicoin.audioPlayer.toggleShuffle()">
+							<i id="shuffle" class="fas fa-random toggle-shuffle player-control" aria-hidden="true"></i>
+						</div>
+					</div>
+
+					<div class="player-progress">
+						<div id="player-time-played"class="player-time-field big-screen-only">00:00</div>
+						<div class="progress-spread">
+							<div id="player-progress" class="progress-bar progress-background"></div>
+							<div id="player-progress-div" class="progress-bar progress-foreground"></div>
+							<div id="progress-thumb" class="progress-thumb draggable ui-widget-content"></div>
+						</div>
+						<div id="player-time-left"class="player-time-field">00:00</div>
+					</div>
+				</div>
+				<div class="player-extra-controls-wrapper">
+					<div id="player-tip-button" title="Send a tip" class="player-tip-button player-button extra-control clickable" context-type="Release" recipient="">
+						<i class="fas fa-sign-language" aria-hidden="true"></i>
+					</div>
+					<div title="Show or hide the playlist" class="queue-wrapper player-button extra-control clickable">
+						<i id="play-queue-trigger" class="fas fa-list-ul play-queue-trigger clickable" aria-hidden="true"></i>
+						<i id="play-queue-count" class="queue-size" aria-hidden="true">0</i>
+					</div>
+				</div>
+
+			</div>
+			<div class="musicoin-declaration-banner">
+				<a href="https://medium.com/@musicoin/musicoin-project-white-paper-v2-0-6be5fd53191b" target="_blank" style="color: black;">You play for free, we pay to musicians!</a>
+			</div>
+		</div>
+	</div>
+	<!-- <div id="player-background" class="player-background" style="background-image: url('')"></div> -->
 </div>

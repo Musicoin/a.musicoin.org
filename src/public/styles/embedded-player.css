@@ -3,7 +3,7 @@
   height: 200px;
 } */
 
-#player-badge-image {}
+/* #player-badge-image {}
 
 .player-foreground {}
 
@@ -136,4 +136,249 @@
     margin: 5px auto;
     display: block;
     padding: 12px;
+} */
+
+body {
+  background-color: transparent;
 }
+
+* {
+  font-family: ubuntu sans-serif;
+}
+
+.disabled {
+  color: grey !important;
+}
+
+.player-widget-left {
+  width: 40%;
+}
+
+.player-widget-right {
+  width: 60%;
+}
+
+.embedded-player-foreground {
+  display: flex;
+  min-width: 700px;
+  width: 100%;
+  height: 100%;
+  padding: 0 5px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 5px;
+}
+
+.song-badge-container {
+  display: flex;
+  min-width: 400px;
+}
+
+.song-badge-info {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  width: 260px !important;
+}
+
+.player-badge-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 5px;
+  width: 40%;
+  max-width: 160px;
+  background-color: #000;
+  border-radius: 5px;
+}
+
+.song-badge-image {
+  max-height: 100px;
+  max-width: unset !important;
+  width: unset !important;
+  height: unset !important;
+  object-fit: unset !important;
+}
+
+/* .embedded-player .player-artist-name::before {
+  content: '';
+} */
+
+.player-song-name,
+.player-artist-name,
+.player-description {
+  flex: unset !important;
+  margin: 2px 5px;
+  color: black;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.player-song-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.player-artist-name {
+  font-size: 18px;
+}
+
+.player-description {
+  margin: 15px 5px 5px 5px;
+  font-size: 12px;
+  color: #333;
+}
+
+.embedded-player-controls {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 15px;
+  background: none !important;
+}
+
+.player-controls-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.player-controls {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  max-width: 600px;
+  padding: 0 2rem;
+  padding-top: 3rem;
+  justify-content: space-between;
+}
+
+.player-control {
+  color: inherit;
+  font-size: 1.6rem;
+  cursor: unset;
+}
+
+.player-control:active {
+  color: inherit;
+  text-shadow: inherit;
+}
+
+.player-control:hover {
+  cursor: inherit;
+}
+
+.player-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  padding: 0.6rem;
+  color: #000;
+}
+
+.player-button:not(.disabled):hover {
+  transform: scale(1.1);
+  color: rgb(226, 192, 0);
+  text-shadow: 1px 1px 1px rgb(226, 192, 0);
+
+}
+
+.player-progress {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  height: 2rem;
+  margin-top: 10px;
+  max-width: 600px;
+}
+
+.progress-bar {
+  position: absolute;
+  float: left;
+  left: unset;
+  right: unset;
+  width: 100%;
+  height: 4px;
+  box-shadow: unset;
+}
+
+.progress-background {
+  background-color: #fff;
+}
+
+.progress-foreground {
+  width: 0;
+  background-color: gold;
+}
+
+.progress-spread {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 80%;
+  height: 4px;
+  margin: 0 0.8rem;
+}
+
+.player-extra-controls-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+}
+
+.extra-control {
+  padding: 0 1rem;
+  font-size: 3rem !important;
+  color: #000;
+}
+
+.queue-wrapper {
+  position: relative;
+}
+
+.queue-size {
+  position: absolute;
+  bottom: -10px;
+  right: 4px;
+  display: flex;
+  border-radius: 6px;
+  border: 2px solid white;
+  background-color: #e4aa17;
+  color: white;
+  font-weight: bold;
+  font-size: 0.7em;
+  min-width: 20px;
+  align-items: center;
+  min-height: 20px;
+  justify-content: center;
+}
+
+.musicoin-declaration-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* BUTTON CONTROLS */
+ .play-button-wrapper {
+    border: 1px solid #000;
+    border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
+ }
+ .play-button-wrapper:not(.disabled):hover {
+    border: 1px solid rgb(226, 192, 0);
+    color: rgb(226, 192, 0);
+  }
+
+  .play-button-wrapper:not(.disabled):active {
+    border: 1px solid rgb(226, 192, 0);
+    color: rgb(226, 192, 0);
+  }

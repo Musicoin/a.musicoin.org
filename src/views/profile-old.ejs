@@ -1,0 +1,670 @@
+<!doctype html>
+<html>
+<head>
+    <%- include('partials/page-head.ejs') %>
+    <title>Profile - Musicoin.org</title>
+    <style>
+        body {
+          background-color: black;
+        }
+
+        .profile-image {
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .hero-image {
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .social-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .stat {
+            margin-right: 20px;
+        }
+
+        .upload-image {
+            cursor: pointer;
+            width: 96px;
+            height: 96px;
+            object-fit: contain;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .instructions {
+        }
+
+        .form-entry {
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: normal;
+            color: #aaa
+        }
+        .subtle-text {
+          color: white !important;
+        }
+        h3.section-title {
+            /*font-family: monospace;*/
+            text-transform: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .profile-release-item {
+            display: flex;
+            flex-direction: column;
+            min-height: 100px;
+            justify-content: space-around;
+            padding-left: 10px;
+            width: 100%;
+        }
+
+        .balance {
+            font-size: 72px;
+            line-height: 0.9;
+            text-align: center;
+        }
+
+        .wallet-action-toggle {
+            text-align: left;
+            cursor: pointer;
+        }
+
+        input.form-number {
+            max-width: 100px;
+        }
+
+        input.form-control, label.form-entry {
+            margin: 2px;
+        }
+
+        .profile-release-item > * {
+            margin-bottom: 10px;
+        }
+
+        .row-template {
+            display: none;
+        }
+
+        .release-distribution {
+        }
+
+        #licensePreview {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 75%;
+            transform: translate(-50%, -50%);
+            height: 500px;
+            border-radius: 4px;
+            z-index: 2;
+            background-color: white;
+            display: none;
+            color: black;
+        }
+
+        .contributors {
+            margin-top: 20px;
+            margin-bottom: 0;
+        }
+
+        .wallet-actions {
+        }
+
+        .wallet-action-bar {
+            justify-content: space-between;
+        }
+
+        #email-verify-link-sent {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+<%- include('partials/header.ejs') %>
+<div id="licensePreview"></div>
+<div class="container">
+
+    <div>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">Public Profile</h3>
+                <form id=profileForm action="/profile/save" enctype="multipart/form-data" method="post">
+                    <div class="form-group profile-image">
+                        <img id="profileImage"
+                             style="min-width: 64px; min-height: 64px; width: 256px; max-height:256px; object-fit: contain"
+                             src="<%= user.profile.image %>">
+                        (click to change)
+                        <input style="display: none" id="imageInput" type="file" name="photo">
+                    </div>
+                    <div class="form-group hero-image">
+                        <img id="heroImage" alt="No promo image selected" class="clickable"
+                             style="width: 300px; height: 70px; object-fit: contain"
+                             src="<%= user.profile.heroImage %>">
+                        (click to set a wide-format promo image, 1300x300)
+                        <input style="display: none" id="heroInput" type="file" name="hero">
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="artistName" value="<%= user.profile.artistName %>"
+                               placeholder="this can be a username or band name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" name="primaryEmail" value="<%= user.genericProfile.primaryEmail %>"
+                               placeholder="Email address">
+                        <% if (user.genericProfile.primaryEmail && !user.genericProfile.emailVerified) { %>
+                        <div class="send-email-verify-link-holder">
+                            <span id="email-verify-link-sent">Verfication email sent to your address! Please check your inbox!</span>
+                            <a href="#" id="send-email-verify-link">Send verify email</a>
+                        </div>
+                        <% } %>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" name="description"
+                                  placeholder="let people know who you are"><%= user.profile.description %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input name=regions class="form-control no-submit region-list"
+                               placeholder=""
+                               value="<%= user.profile.regions ? user.profile.regions.join(", ") : "" %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Genres</label>
+                        <input name=genres class="form-control no-submit genre-list"
+                               placeholder="e.g. Rock, Country, etc"
+                               value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
+                    </div>
+                    <div class="form-group">
+                      <label>Social Accounts For Verification</label>
+                      <br>
+
+                      <table class="social-group">
+                            <% if (user.facebook.token) { %>
+                            <tr>
+                            <td>
+                                <span class="fa fa-facebook"></span>
+                            </td>
+                            <td width="99%">
+                              <div class="flex-row m10" style="justify-content: space-between;">
+                                <a class="mr10" target=_blank href="<%= user.facebook.url %>">
+                                  <%= user.facebook.name %>
+                                </a>
+                                <!---
+                                <div class="flex-row">
+                                  <label class="switch">
+                                            <input id=facebookUrlIsPublic
+                                                   type="checkbox" <%= user.facebook && user.facebook.urlIsPublic ? "checked" : "" %>>
+                                            <div class="slider round"></div>
+                                        </label>
+                                </div> -->
+                              </div>
+
+                                <% if (user.twitter.token) { %>
+                                  <div class="flex-row m10" style="justify-content: space-between;">
+                                    <a class="mr10" target=_blank href="<%= user.twitter.url %>">
+                                      <%= user.twitter.username %>
+                                    </a>
+                                    <!---
+                                    <div class="flex-row">
+                                      <label class="switch">
+                                            <input id=twitterUrlIsPublic
+                                                   type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
+                                            <div class="slider round"></div>
+                                        </label>
+                                    </div>-->
+                                  </div>
+                                  <% } %>
+
+                                <% } else if (user.twitter.token) { %>
+                                    <div class="flex-row m10" style="justify-content: space-between;">
+                                      <a class="mr10" target=_blank href="<%= user.twitter.url %>">
+                                        <%= user.twitter.username %>
+                                      </a>
+                                      <!--
+                                      <div class="flex-row">
+                                        <label class="switch">
+                                            <input id=twitterUrlIsPublic
+                                                   type="checkbox" <%= user.twitter && user.twitter.urlIsPublic ? "checked" : "" %>>
+                                            <div class="slider round"></div>
+                                        </label>
+                                      </div>-->
+                                    </div>
+                                </td>
+                              </tr>
+                        <% } else { %>
+                          <p class="subtle-text">Link your Twitter and Facebook Accounts to help get verified as a musician.</p>
+                        <% } %>
+                      </table>
+
+                    </div>
+                    <div class="form-group">
+                        <label>other social</label>
+                        <br>
+                        <p class="subtle-text">Add links to your other social pages as well</p>
+                        <table class="social-group">
+                            <%
+                            var socialTypes = [
+                                {id: "website", name: "Artist website", icon: "fa-external-link"},
+                                {id: "bandcamp"},
+                                {id: "google", icon: "fa-google-plus"},
+                                {id: "soundcloud", name: "SoundCloud"}, "linkedin", "youtube",
+                                {id: "Reverbnation", icon: "fa-star", name: "ReverbNation"},
+                                "Pinterest", "Instagram", "Medium"
+                            ]
+                            for (var i = 0; i < socialTypes.length; i++) {
+                                var item = socialTypes[i];
+                                if (typeof item == "string") {
+                                    item = {id: item};
+                                }
+                                var value = user.profile && user.profile.social ? user.profile.social[item.id] : "";
+                                var name = item.name ? item.name : item.id;
+                                var icon = item.icon ? item.icon : "fa-" + item.id;
+                            %>
+                            <tr>
+                                <td><span class="fa <%= icon %>"></span></td>
+                                <td width="99%"><input type="text" class="form-control" name="social.<%= item.id %>"
+                                                       value="<%= value %>" placeholder="<%= name %> profile page url">
+                                </td>
+                            </tr>
+                            <% } %>
+                        </table>
+                    </div>
+                    <div class="flex-row m10" style="justify-content: center">
+                        <label class="switch">
+                            <input id=messagePreference
+                                   type="checkbox" <%= user.preferences && user.preferences.notifyOnComment ? "checked" : "" %>>
+                            <div class="slider round"></div>
+                        </label>
+                        <span class="center-text clickable" onclick="$('#messagePreference').click()">Notify me about comments/tips</span>
+                    </div>
+                    <% if (user.profileAddress) { %>
+                    <div class="text-center">
+                        View your public profile page here <a href="/artist/<%= user.profileAddress %>">here</a>
+                    </div>
+                    <br><br>
+                    <% } else { %>
+                    <div class="text-center">By publishing your profile, you agree to our <a href="/terms">terms of
+                            use</a></div>
+                    <% } %>
+                    <div style="display:flex; justify-content: flex-end">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <%= (user.pendingTx || user.profileAddress) ? "Update Profile" : "Save Profile" %>
+                        </button>
+                    </div>
+                    <% if (typeof profileUpdateError != "undefined" && profileUpdateError) { %>
+                    <div class="text-center text-danger">
+                        Update failed! Please try again later.
+                    </div>
+                    <% } %>
+
+                    <% if (user.pendingTx) { %>
+                    <div class="text-center subtle-text mt10">
+                        Your updates were sent to the network and we're just waiting for confirmation.<BR>
+                        <span class="subtle-text"><a target="_blank"
+                                                     href="https://explorer.musicoin.org/tx/<%= user.pendingTx %>">view transaction</a></span>
+                    </div>
+                    <% } %>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <% if (user.profileAddress) { %>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">My Wallet</h3>
+                <div>
+                    <div class="balance"><%= artist.formattedBalance %></div>
+                    <div class="text-center subtle-text">musicoins</div>
+                    <% if (exchangeRate.success) { %>
+                    <div class="text-center subtle-text">
+                        <a target=_blank title="<%=exchangeRate.disclaimer%>" href="<%=exchangeRate.link%>"><%= artist.formattedUSD %> USD</a>
+                    </div>
+                    <% } %>
+                </div>
+                <div class=wallet-actions style="display: none">
+                    <p>
+
+                        <br>
+                    <div class="text-center subtle-text">My Wallet Address</div>
+                    <div class="text-center" style="font-family: monospace; font-weight: 700"><%= user.profileAddress %></div>
+                    <br>
+                    <p class="subtle-text">
+                        Send musicoins to a friend or transfer to another wallet (desktop/geth client) for safe keeping.
+                    </p>
+                    <form name="sendFunds"  action="/send" method="post">
+                        <table cellpadding="3">
+                            <tr>
+                                <td colspan="2">
+                                    <div class="text-warning text-center mb20" style="font-size: 25px !important;">Warning! Exchanges will not recognize
+                                        coins sent directly from your profile.
+                                        (<a href="/faq/#ExchangeDeposit">Here's why</a>)
+                                    </div>
+                                </td>
+                            </tr>
+                            <div class="form-group text-center">
+                                <label>Recipient</label>
+                                <input id="recip1" name=recipient type="text" class="form-control" placeholder="Address">
+                            </div>
+                            <div class="form-group text-center">
+                                <label>Amount</label>
+                                <input name=amount type="number" step="0.0001" class="form-control text-right form-number" placeholder="0.0001" style="margin-left:40%">
+                            </div>
+                            <tr>
+                            <td class="text-center">
+                                <button id="sendme" class="btn btn-warning mb10">Create Withdrawal Request</button>
+                            </td>
+                            </tr>
+                        </table>
+                    </form>
+                </form>
+                </div>
+                <div class="flex-row wallet-action-bar">
+                    <div onclick='$(".wallet-actions").toggle()'
+                         class="wallet-action-toggle subtle-text wallet-actions">Show options
+                    </div>
+                    <div onclick='$(".wallet-actions").toggle()' class="wallet-action-toggle subtle-text wallet-actions"
+                         style="display: none">Hide options
+                    </div>
+                    <a class="subtle-text" href="/tx/history/<%= user.profileAddress %>"><i title="transaction history"
+                                                                                            class="fa fa-list-ul"
+                                                                                            aria-hidden="true"></i></a>
+                </div>
+                <% if (typeof sendResult != "undefined") { %>
+                <% if (sendResult.sendError) { %>
+                <div class="text-center text-danger">
+                    Send failed!
+                </div>
+                <% } else { %>
+                    Payment sent!
+                <% } %>
+                <% } %>
+                <% if (typeof sendMailResult != "undefined") { %>
+                <% if (sendMailResult.sendError) { %>
+                <div class="text-center">
+                    Email send failed!
+                </div>
+                <% } else { %>
+                   Check inbox for email with subject Musicoin Withdrawal Verification!
+                <% } %>
+                <% } %>
+            </div>
+        </div>
+
+        <% if (user.canInvite) { %>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">Invites</h3>
+                <div>
+                    <div class="balance"><%= user.invitesRemaining %></div>
+                    <div class="text-center subtle-text">invites left</div>
+                </div>
+                <div class="invite-options" style="<%= invited.inviteUrl ? "" : "display: none" %>">
+                    <h4>Referral Link</h4>
+                    <p class="subtle-text">
+                        Your referral link is reusable! When some one signs up with your referral link, your
+                        invites remaining will go down by one and you will get your reward.
+                    <div class="text-success center-text">
+                        Your referral link
+                    </div>
+                    <div class="center-text">
+                        https://musicoin.org/accept/<%= user.reusableInviteCode %>
+                    </div>
+                    <br>
+                    <!--
+                    Remove individual invite since people are using it more than once.
+                    <h4>Individual Invite Link</h4>
+                    <p class="subtle-text">
+                        If you want to create an invite for a <em>specific person</em>, enter an address below and we'll
+                        send an invite to that address. You can also copy and paste the generated link and send it to
+                        them separately. However, this type invite can only be used once.
+                    </p>
+                    -->
+                    <!--
+                    <form action="/invite" method="post">
+                        <table cellpadding="3">
+                            <tr>
+                                <td class="text-nowrap">e-mail</td>
+                                <td width="99%"><input id=inviteEmail name=email type="text" class="form-control"
+                                                       placeholder="email address"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="text-right">
+                                    <button id=btnInvite type="submit" class="btn btn-success">
+                                        Create invite link
+                                    </button>
+                                </td>
+                            </tr>
+                            <% if (invited.inviteUrl) { %>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <% if (invited.success) { %>
+                                    <div class="text-center">
+                                        <%= invited.email ? "An invite was sent to " + invited.email : "" %><br>
+                                        You can send this link via social media: <br>
+                                        <%= invited.inviteUrl %>
+                                    </div>
+                                    <% } else if (invited.reason == "exists"){ %>
+                                    <div class="text-warning"><%= invited.email %> already has an invite.</div>
+                                    <% } else if (invited.reason == "invalid"){ %>
+                                    <div class="text-danger"><%= invited.email %> is not a valid email address.</div>
+                                    <% } else { %>
+                                    <div class="text-danger">Failed to invite <%= invited.email %>, try again later
+                                    </div>
+                                    <% } %>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </table>
+                    </form>
+                    -->
+
+                </div>
+                <div class="flex-row wallet-action-bar">
+                    <div class="wallet-action-toggle subtle-text"
+                         onclick='$(".invite-options").toggle()'>
+                        <div class="invite-options">Send an Invite</div>
+                        <div class="invite-options" style="display: none">Hide</div>
+                    </div>
+                    <a class="subtle-text" href="/invite-history"><i title="invite history" class="fa fa-list-ul"
+                                                                     aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <div class="dynamic-element col-sm-6"
+             id="de-pending-releases"
+             de-refresh-period="none"
+             de-url="/elements/pending-releases">
+            <%- include('partials/pending-releases.ejs') %>
+        </div>
+
+        <div class="dynamic-element col-sm-6"
+             id="de-release-list"
+             de-refresh-period="none"
+             de-url="/elements/release-list">
+            <%- include('partials/release-list.ejs') %>
+        </div>
+
+        <%
+            // I don't want to have this page constantly refreshing the pending releases unless
+            // we have reason to believe there is likely to be a change.  When the user posts a
+            // new release, the page will refresh.  At which point, we should see an pending release.
+            // So, in those cases, set up two checks: 1min and 2mins from now.  After than, they user
+            // will have to user the manual refresh option on the widget, or refresh the page.
+        if (pendingReleases.length > 0) { %>
+        <script>
+          console.log("Setting up two auto-refreshes...");
+          window.setTimeout(function () {
+            console.log("auto-refreshes 1 ...");
+            dynamic.refreshElement($("#de-release-list"));
+            dynamic.refreshElement($("#de-pending-releases"));
+          }, 60 * 1000)
+          window.setTimeout(function () {
+            console.log("auto-refreshes 2 ...");
+            dynamic.refreshElement($("#de-release-list"));
+            dynamic.refreshElement($("#de-pending-releases"));
+          }, 120 * 1000)
+        </script>
+        <% } %>
+
+        <% } else { %>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">wallet</h3>
+                Once you publish a profile, you can check your balance here and send coins to other users.
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">invite</h3>
+                Once you publish a profile, you can invite other users to join here.
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="section-title">release</h3>
+                Once you publish a profile, you can release songs here.
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+</div>
+<%- include('partials/player-hook.ejs') %>
+<%- include('partials/connect-with-us.ejs') %>
+</body>
+<script type="text/javascript" src="/js/musicoin.js"></script>
+<script type="text/javascript" src="/js/profile.js"></script>
+<script>
+  (function ($) {
+    // prevent dynamically created input elements from submitting the form
+    $('.contributors').on('keydown', '.no-submit', function (e) {
+      if (e.keyCode == 13) {
+        console.log('No way it will still submit the form...');
+        return false;
+      }
+    });
+  })(jQuery);
+
+  $(document).ready(function () {
+    $("#imageInput").change(function () {
+      readURL('profileImage', this);
+    });
+
+    $("#heroInput").change(function () {
+      readURL('heroImage', this);
+    });
+
+    $("#profileImage").click(function () {
+      $("#imageInput").click();
+    })
+
+    $("#heroImage").click(function () {
+      $("#heroInput").click();
+    })
+
+    function updateUrlVisibility(element, provider) {
+      var checked = element[0].checked;
+      $.post("/preferences/urlIsPublic", {
+        provider: provider,
+        urlIsPublic: checked
+      }, function (data) {
+        if (data.success) {
+
+        }
+        else {
+          new Message("Failed to update url prefs for " + provider, "error", 3000);
+          element[0].checked = !checked;
+        }
+      })
+    }
+
+    $("#facebookUrlIsPublic").change(function () {
+      updateUrlVisibility($(this), "facebook")
+    })
+    $("#twitterUrlIsPublic").change(function () {
+      updateUrlVisibility($(this), "twitter")
+    })
+
+    var inviteEmail = $("#inviteEmail");
+    var btnInvite = $("#btnInvite");
+    $("#inviteEmail").keyup(function () {
+      if (inviteEmail.val() && inviteEmail.val().trim().length > 0) {
+        btnInvite.text("Send invite");
+        btnInvite.addClass("btn-warning");
+        btnInvite.removeClass("btn-success");
+      }
+      else {
+        btnInvite.text("Create invite link");
+        btnInvite.removeClass("btn-warning");
+        btnInvite.addClass("btn-success");
+      }
+    })
+
+    var availableGenres = ["<%-metadata.genres.join('","')%>"];
+    var availableRegions = ["<%-metadata.regions.join('","')%>"];
+
+    autocomplete.linkAutoComplete(".genre-list", availableGenres, 0);
+    autocomplete.linkAutoComplete(".region-list", availableRegions, 2);
+
+    $.fn.serializeObject = function () {
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function () {
+        if (o[this.name] !== undefined) {
+          if (!o[this.name].push) {
+            o[this.name] = [o[this.name]];
+          }
+          o[this.name].push(this.value || '');
+        } else {
+          o[this.name] = this.value || '';
+        }
+      });
+      return o;
+    };
+
+  });
+
+  function readURL(targetId, input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        $('#' + targetId).attr('src', e.target.result);
+      }
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+</html>

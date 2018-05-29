@@ -88,6 +88,7 @@ export class PlayerRouter {
       if (!address) {
         console.log(`Failed to load track page, no address provided`);
         return res.render('not-found.ejs', { error: 'Failed to load track page, no address provided' }); // TODO: Change later
+
       }
       const messagePromise = jsonAPI.getLicenseMessages(address, 20);
       const licensePromise = jsonAPI.getLicense(address);
