@@ -142,8 +142,9 @@ body {
   background-color: transparent;
 }
 
-* {
-  font-family: ubuntu sans-serif;
+.embedded-player * {
+  font-family: Ubuntu;
+
 }
 
 .disabled {
