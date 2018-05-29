@@ -6,7 +6,7 @@
         {id: "website", name: "artist website", icon: "fa-external-link"},
         {id: "bandcamp"},
         {id: "google", icon: "fa-google-plus"},
-        "facebook", "twitter",
+         "facebook", "twitter",
         {id: "soundcloud", name: "sound cloud"}, "linkedin", "youtube",
         {id: "reverbnation", icon: "fa-star", name: "reverb nation"},
         "pinterest", "instagram", "medium"
@@ -19,11 +19,10 @@
         var value = artist && artist.social ? artist.social[item.id] : "";
         var name = item.name ? item.name : item.id;
         var icon = item.icon ? item.icon : "fa-" + item.id;
-        }
-
-    if (value) { %>
-    <a href="<%=value%>" target="_blank" class="fa mr10 <%= icon %> mr5 social-link"></a>
-    <% } %>
+        if (value) { %>
+            <a href="<%=value%>" target="_blank" class="fa mr10 <%= icon %> mr5 social-link"></a>        
+      <% }
+     } %>
     <div style="position: absolute; top: 80%; background: none; width: 160px; left: 160px;">
                 <form action="/qr-code" method="post">
                     <input type="text" name="profileAddress" value="<%=artist.profileAddress%>" style="visibility: hidden">
