@@ -26,14 +26,14 @@ export function resolveExpiringLink(encrypted: string) {
 }
 
 const decryptText = function (text, ) {
-  var decipher = crypto.createDecipheriv(algorithm, key, null)
+  var decipher = crypto.createDecipher(algorithm, key)
   var dec = decipher.update(text, 'hex', 'utf8')
   dec += decipher.final('utf8');
   return dec;
 };
 
 const encryptText = function (text) {
-  var cipher = crypto.createCipheriv(algorithm, key, null)
+  var cipher = crypto.createCipher(algorithm, key)
   var crypted = cipher.update(text, 'utf8', 'hex')
   crypted += cipher.final('hex');
   return crypted;

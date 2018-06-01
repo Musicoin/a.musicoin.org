@@ -101,7 +101,7 @@ MediaProvider.prototype.getIpfsResource = function (resourceUrl, keyProvider) {
 
         const headers = proxyRes.headers;
         let stream = proxyRes;
-        stream = options.decrypt ? stream.pipe(crypto.createDecipher(algorithm, keyProvider(), null)) : stream;
+        stream = options.decrypt ? stream.pipe(crypto.createDecipher(algorithm, keyProvider())) : stream;
         stream = options.unzip ? stream.pipe(zlib.createGunzip()) : stream;
 
         if (!aborted) {
@@ -253,20 +253,20 @@ const _encrypt = function (pathOrStream, encryptionKeyProvider) {
     if (!encryptionKeyProvider)
       return reject(new Error("A key provider is required to encrypt a stream or file"));
 
-    const encrypt = crypto.createCipheriv(algorithm, encryptionKeyProvider(), null);
+    const encrypt = crypto.createCipher(algorithm, encryptionKeyProvider());
     resolve(StreamUtils.asStream(pathOrStream).pipe(encrypt));
   })
 };
 
 const encryptText = function (text, encryptionKeyProvider) {
-  var cipher = crypto.createCipheriv(algorithm, encryptionKeyProvider(), null)
+  var cipher = crypto.createCipher(algorithm, encryptionKeyProvider())
   var crypted = cipher.update(text, 'utf8', 'hex')
   crypted += cipher.final('hex');
   return crypted;
 };
 
 const decryptText = function (text, encryptionKeyProvider) {
-  var decipher = crypto.createDecipher(algorithm, encryptionKeyProvider(), null)
+  var decipher = crypto.createDecipher(algorithm, encryptionKeyProvider())
   var dec = decipher.update(text, 'hex', 'utf8')
   dec += decipher.final('utf8');
   return dec;
