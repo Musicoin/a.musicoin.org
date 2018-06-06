@@ -405,7 +405,7 @@ export class ProfileRouter {
 
         router.post('/api/getUserInfoById', function (req, res) {
             //checking request's ip adress. if request source not local network, we don't servise api.
-            if (ipMatch(req.ip, whiteLocalIpList)) {
+            if (ipMatch(get_ip.getClientIp(req), whiteLocalIpList)) {
                 //request's ipaddress local. we can send user information.
                 functions.FindUserByIdOrProfileAddress(req, function (_result) {
                     res.send(JSON.stringify(_result));
@@ -415,7 +415,7 @@ export class ProfileRouter {
                 var result = {
                     result: false,
                     message: 'unauthorized request',
-                    ip: req.ip || 'your-ip'
+                    ip: get_ip.getClientIp(req) || 'your-ip'
                 }
                 res.send(JSON.stringify(result));
             }
@@ -423,7 +423,7 @@ export class ProfileRouter {
         router.get('/api/getUserInfoById/:userAccessKey', function (req, res) {
             //checking request's ip adress. if request source not local network, we don't servise api.
 
-            if (ipMatch(req.ip, whiteLocalIpList)) {
+            if (ipMatch(get_ip.getClientIp(req), whiteLocalIpList)) {
                 //request's ipaddress local. we can send user information.
                 functions.FindUserByIdOrProfileAddress(req, function (_result) {
                     res.send(JSON.stringify(_result));
@@ -433,7 +433,7 @@ export class ProfileRouter {
                 var result = {
                     result: false,
                     message: 'unauthorized request',
-                    ip: req.ip || 'your-ip'
+                    ip: get_ip.getClientIp(req) || 'your-ip'
                 }
                 res.send(JSON.stringify(result));
             }
@@ -607,6 +607,7 @@ export class ProfileRouter {
 
         var ipMatch = function (clientIp, list) {
             var Address = require('ipaddr.js');
+            
 
             if (clientIp && Address.isValid(clientIp)) {
                 // `Address.process` return the IP instance in IPv4 or IPv6 form.

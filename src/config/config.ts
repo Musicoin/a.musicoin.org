@@ -49,7 +49,7 @@ function getStructuredConfig(keyValueConfig) {
       }
     },
     ipSessionChangeTimeout: 1000 * 60 * 10,
-    playbackLinkTTLMillis: 1000 * 60,
+    playbackLinkTTLMillis: 3000 * 60,
     freePlayDelay: 1000 * 60, //let's increase the free play delay to a few more seconds so that people don't switch as often
     musicoinAdminProfile: keyValueConfig.musicoinAdminProfile,
     termsOfUseVersion: keyValueConfig.termsOfUseVersion,

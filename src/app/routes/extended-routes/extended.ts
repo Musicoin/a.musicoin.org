@@ -18,6 +18,7 @@ const addressResolver = new AddressResolver();
 const User = require('../../models/user');
 const mailSender = new MailSender();
 const sendSeekable = require('send-seekable');
+const get_ip = require('request-ip');
 let publicPagesEnabled = false;
 const AnonymousUser = require('../../models/anonymous-user');
 const cachedRequest = new RequestCache();
@@ -253,9 +254,9 @@ export class ExtendedRouter {
       else {
         const userName = req.user && req.user.draftProfile
           ? req.user.draftProfile.artistName
-          : req.user ? req.user._id : req.ip;
+          : req.user ? req.user._id : get_ip.getClientIp(req);
         const profileAddress = req.user ? req.user.profileAddress : "Anonymous";
-        console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}, user: ${profileAddress} (${userName})`);
+        console.log(`Resolve ppp request for ${resolved}, ip: ${get_ip.getClientIp(req)}, session: ${req.session.id}, user: ${profileAddress} (${userName})`);
       }
       req.params.address = resolved;
       next();

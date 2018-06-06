@@ -86,7 +86,7 @@ MediaProvider.prototype.readTextFromIpfs = function (url) {
 };
 
 MediaProvider.prototype.getIpfsResource = function (resourceUrl, keyProvider) {
-  var timeout = 5000;
+  var timeout = 30000;
   return new Promise(function (resolve, reject) {
     const options = this._parseIpfsUrl(resourceUrl);
     if (options.err) return reject(options.err);

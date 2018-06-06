@@ -10,6 +10,7 @@ const FacebookStrategy = require('passport-facebook').Strategy
 
 // load up the user model
 const User = require('../app/models/user');
+const get_ip = require('request-ip');
 
 const defaultProfile = {
   artistName: "",
@@ -71,7 +72,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     function (req, email, password, done) { // callback with email and password from our form
 
       if (!req.isAuthenticated()) {
-        console.log(`Anonymous attempt to use admin tools: ip=${req.ip}, session=${req.session.id}`);
+        console.log(`Anonymous attempt to use admin tools: ip=${get_ip.getClientIp(req)}, session=${req.session.id}`);
         return done(null, false, req.flash('loginMessage', 'You must be logged in to perform this action'));
       }
 
@@ -80,7 +81,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         const name = req.user.draftProfile && req.user.draftProfile.artistName ?
           `${req.user.draftProfile.artistName} (${req.user.profileAddress})` :
           req.user.profileAddress;
-        console.log(`Unauthorized attempt to use admin tools: ip=${req.ip}, session=${req.session.id}, user._id=${req.user._id}, user=${name}`);
+        console.log(`Unauthorized attempt to use admin tools: ip=${get_ip.getClientIp(req)}, session=${req.session.id}, user._id=${req.user._id}, user=${name}`);
         return done(null, false, req.flash('loginMessage', 'You must be an administrator to perform this action'));
       }
 
@@ -323,7 +324,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     done,
     validation?) {
 
-    console.log(`Handling login request: ip=${req.ip}, session=${req.session.id}, auth=${authProvider}, id=${localProfile.id}`);
+    console.log(`Handling login request: ip=${get_ip.getClientIp(req)}, session=${req.session.id}, auth=${authProvider}, id=${localProfile.id}`);
     // if the user is already logged in, see if the account can be linked
     if (req.user) {
       const user = req.user;

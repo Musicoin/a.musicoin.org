@@ -34,6 +34,7 @@ const TrackMessage = require('./models/track-message');
 const EmailConfirmation = require('./models/email-confirmation');
 const User = require('./models/user');
 const sendSeekable = require('send-seekable');
+const get_ip = require('request-ip');
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
 const MAX_MESSAGE_LENGTH = 1000;
@@ -657,23 +658,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     return AnonymousUser.findOne({ session: req.session.id })
       .then(anonymous => {
         // normal case.  Same IP, same session
-        if (anonymous && anonymous.ip && anonymous.ip == req.ip)
+        if (anonymous && anonymous.ip && anonymous.ip == get_ip.getClientIp(req))
           return anonymous;
 
         if (anonymous) {
           // the ip don't match.  probably some scammer trying to use the same sessionID
           // across multiple hosts.
-          console.log(`Matching session with mismatched IPs: req.session: ${req.session.id}, recordIP: ${anonymous.ip}, req.ip: ${req.ip}`);
+          console.log(`Matching session with mismatched IPs: req.session: ${req.session.id}, recordIP: ${anonymous.ip}, get_ip.getClientIp(req): ${get_ip.getClientIp(req)}`);
           return null;
         }
         else {
           // maybe create an new entry in the DB for this session, but first make sure this IP isn't
           // used by another session
-          return AnonymousUser.findOne({ ip: req.ip })
+          return AnonymousUser.findOne({ ip: get_ip.getClientIp(req) })
             .then(otherRecord => {
               if (!otherRecord) {
                 // new IP, new session.
-                const newUserData = { ip: req.ip, session: req.session.id };
+                const newUserData = { ip: get_ip.getClientIp(req), session: req.session.id };
                 console.log(`Creating new user for ${JSON.stringify(newUserData)}`);
                 return AnonymousUser.create(newUserData);
               }
@@ -687,7 +688,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 otherRecord.sessionDate = Date.now();
                 return otherRecord.save();
               }
-              console.log(`Different session with same IPs: session changed too quickly: req.session: ${req.session.id}, recordSession: "Anonymous Session", req.ip: ${req.ip}, msSinceLastSession: ${diff}`);
+              console.log(`Different session with same IPs: session changed too quickly: req.session: ${req.session.id}, recordSession: "Anonymous Session", get_ip.getClientIp(req): ${get_ip.getClientIp(req)}, msSinceLastSession: ${diff}`);
               return null;
             });
         }
@@ -766,9 +767,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     else {
       const userName = req.user && req.user.draftProfile
         ? req.user.draftProfile.artistName
-        : req.user ? req.user._id : req.ip;
+        : req.user ? req.user._id : get_ip.getClientIp(req);
       const profileAddress = req.user ? req.user.profileAddress : "Anonymous";
-      console.log(`Resolve ppp request for ${resolved}, ip: ${req.ip}, session: ${req.session.id}, user: ${profileAddress} (${userName})`);
+      console.log(`Resolve ppp request for ${resolved}, ip: ${get_ip.getClientIp(req)}, session: ${req.session.id}, user: ${profileAddress} (${userName})`);
     }
     req.params.address = resolved;
     next();

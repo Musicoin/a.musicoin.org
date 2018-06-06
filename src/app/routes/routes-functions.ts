@@ -8,6 +8,7 @@ var smsCodeVal = crypto.randomBytes(4).toString('hex');
 const EmailConfirmation = require('../models/email-confirmation');
 const User = require('../models/user');
 const Blacklist = require('../models/blacklist');
+const get_ip = require('request-ip');
 let publicPagesEnabled = false;
 var numberOfPhoneUsedTimesVal = 0;
 var phoneNumberVal = 0;
@@ -66,7 +67,7 @@ module.exports = {
         const userResponse = req.body['g-recaptcha-response'];
         const url = "https://www.google.com/recaptcha/api/siteverify";
         return new Promise(function (resolve, reject) {
-            const verificationUrl = `${url}?secret=${process.env.CAPTCHA_SECRET}&response=${userResponse}&remoteip=${req.ip}`;
+            const verificationUrl = `${url}?secret=${process.env.CAPTCHA_SECRET}&response=${userResponse}&remoteip=${get_ip.getClientIp(req)}`;
             console.log(`Sending post to reCAPTCHA,  url=${verificationUrl}`);
             const options = {
                 method: 'post',
