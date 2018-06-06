@@ -1,4 +1,4 @@
-<% if (releases && releases.length > 0) { %>
+black;<% if (releases && releases.length > 0) { %>
     <style>
         .release-container {
             position: relative;
@@ -20,7 +20,7 @@
 
         }
         .track-artist {
-            color: #aaa;
+            color: black;
         }
         .track-list {
             display: flex;
@@ -78,7 +78,7 @@
 
         .release-actions > a {
             padding: 0;
-            color: #aaa;
+            color: black;
         }
 
         .release-actions > a:hover {
@@ -89,7 +89,7 @@
         .release-actions > a.text-danger {
             padding: 0;
             margin-top: 10px;
-            color: #aaa;
+            color: black;
         }
 
         .release-actions > a.text-danger:hover {
@@ -161,7 +161,7 @@
                     <%= release.address %>
                 </div>
             </div>
-            <div class="dropdown">
+            <div class="dropdown" style="position: relative ; right: 100px;  top: 20px">
                 <div class="dropdown-toggle clickable subtle-text" type="button" data-toggle="dropdown">options <i class="fa fa-chevron-down" aria-hidden="true"></i></div>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li><a title="View History"

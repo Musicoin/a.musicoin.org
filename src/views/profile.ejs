@@ -60,7 +60,7 @@
             justify-content: center;
             align-items: center;
             padding: 1rem 0.7rem;
-            background-color: #555;
+            background-color: transparent;
             color: #fff;
             opacity: 0.5;
         }
@@ -693,10 +693,10 @@
         <div id="profileCoverEdit" class="edit-cover edit-picture clickable">
             <i class="fa fa-pencil" aria-hidden="true"></i>
         </div>
-        <div class="view-public-profile">
+        <div class="view-public-profile" style="color: white">
             <% if (user.profileAddress) { %>
-            <a href="/artist/<%= user.profileAddress %>" class="public-profile-button golden-grey" title="View your public profile">
-                <i class="fa fa-users" aria-hidden="true"></i>
+            <a href="/artist/<%= user.profileAddress %>" class="public-profile-button" title="View your public profile" style="color: white">
+                <i class="fa fa-users" aria-hidden="true" style="color: white"></i>
                 <span>My Page</span>
             </a>
             <% } else { %>
@@ -902,10 +902,10 @@
                             <%
                             var socialTypes = [
                                 {id: "website", name: "Artist website", icon: "fa-external-link"},
-                                {id: "bandcamp"},
-                                {id: "google", icon: "fa-google-plus"},
-                                {id: "soundcloud", name: "SoundCloud"}, "linkedin", "youtube",
-                                {id: "Reverbnation", icon: "fa-star", name: "ReverbNation"},
+                                {id: "Bandcamp"},
+                                {id: "G+", icon: "fa-google-plus"},
+                                {id: "SoundCloud", name: "SoundCloud"}, "LinkedIn", "YouTube",
+                                {id: "ReverbNation", icon: "fa-star", name: "ReverbNation"},
                                 "Pinterest", "Instagram", "Medium"
                             ]
                             for (var i = 0; i < socialTypes.length; i++) {
@@ -939,7 +939,7 @@
                 <div class="widget-wrapper wallet-wrapper flip-container">
                     <% if (user.profileAddress) { %>
                     <div class="flipper">
-                        <div class="front wallet-wrapper-sides">
+                        <div class="front wallet-wrapper-sides" style="height: 30%">
                             <div class="toggle-flip-container container-space-between">
                                 <div></div>
                                 <div class="not-clickable"><h3>My Wallet</h3></div>
@@ -995,7 +995,7 @@
                                     </div>
                                     <tr>
                                     <td class="text-center">
-                                        <button id="sendme" class="btn btn-warning mb10">Create Withdrawal Request</button>
+                                        <button id="sendme" class="btn btn-warning mb10">Send Coins</button>
                                     </td>
                                     </tr>
                                 </table>
@@ -1038,7 +1038,6 @@
                                     <div class="not-clickable"><h3>Invites</h3></div>
                                     <div class="toggle-flip clickable"><i class="fa fa-chevron-left" aria-hidden="true"></i></div>
                                 </div>
-                                <% if (invited.inviteUrl) { %>
                                 <div class="invite-options">
                                     <h4>Referral Link</h4>
                                     <p class="subtle-text">
@@ -1052,11 +1051,6 @@
                                     </div>
                                     </p>
                                 </div>
-                                <% } else { %>
-                                <div class="invite-options">
-                                    <p>Your referral link has been used up already or is invalid.</p>
-                                </div>
-                                <% } %>
                             </div>
                         </div>
                         <% } %>

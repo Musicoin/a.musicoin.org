@@ -48,7 +48,7 @@ export class ExtendedRouter {
         });
     });
 
-    router.get('/nav/artist/:address', functions.isLoggedInOrIsPublic, (req, res) => {
+    router.get('/nav/artist/:address', (req, res) => {
       console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);
       jsonAPI.getArtist(req.params.address, false, false)
         .then(result => {
