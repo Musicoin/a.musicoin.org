@@ -690,12 +690,17 @@
 <div id="licensePreview"></div>
 <div class="container">
     <div class="profile-cover-wrapper">
-        <div id="profileCoverEdit" class="edit-cover edit-picture clickable">
-            <i class="fa fa-pencil" aria-hidden="true"></i>
+        <form id=profileCoverForm action="/profile/save" enctype="multipart/form-data" method="post">
+        <img id="profileCoverEdit" alt="No promo image selected" class="clickable"
+             style="object-fit: contain"
+             src="<%= user.profile.heroImage %>">
+             (click to set a wide-format promo image, 1300x300)
+        <input style="display: none" id="coverInput" type="file" name="hero">
+          </div>
         </div>
         <div class="view-public-profile" style="color: white">
             <% if (user.profileAddress) { %>
-            <a href="/artist/<%= user.profileAddress %>" class="public-profile-button" title="View your public profile" style="color: white">
+            <a href="/artist/<%= user.profileAddress %>" class="public-profile-button" title="View your public profile" style="color: white; padding-top:45px">
                 <i class="fa fa-users" aria-hidden="true" style="color: white"></i>
                 <span>My Page</span>
             </a>
@@ -705,16 +710,6 @@
                         <i class="fa fa-info" aria-hidden="true"></i>
                 </div>
             <% } %>
-        </div>
-
-        <form id="profileCoverForm" action="/profile/save" enctype="multipart/form-data" method="post">
-            <img src="<%= user.profile.heroImage %>" class="cover-image" title="Click to change your cover" />
-            <!-- <img id="coverImage" src="http://localhost:3001/static/media/microphone.b22ca3ce.jpg" class="cover-image" title="Click to change your cover" /> -->
-            <input style="display: none" id="coverInput" type="file" name="cover">
-        </form>
-        <div class="hero-name-container">
-            <h1><%= user.profile.artistName %></h1>
-            <!-- <h1>New Artist</h1> -->
         </div>
     </div>
     <div class="profile-content-wrapper">
@@ -822,6 +817,7 @@
                                 <%= (user.pendingTx || user.profileAddress) ? "Update Profile" : "Publish Profile" %>
                             </button>
                         </div>
+                </form>
                 </form>
                 <div class="profile-section-header clickable golden-grey" data-content="socialVerification">
                         <span>Social Accounts For Verification</span>
@@ -979,9 +975,8 @@
                                 <table cellpadding="3">
                                     <tr>
                                         <td colspan="2">
-                                            <div class="text-warning text-center mb20" style="font-size: 25px !important;">Warning! Exchanges will not recognize
-                                                coins sent directly from your profile.
-                                                (<a href="/faq/#ExchangeDeposit">Here's why</a>)
+                                            <div class="text-warning text-center mb20" style="font-size: 20px !important;">Warning! Some exchanges will not recognize
+                                                coins sent directly from your profile. For ex. Cryptopia.
                                             </div>
                                         </td>
                                     </tr>
@@ -1027,7 +1022,7 @@
                                     <div class="counter-label">invites left</div>
                                 </div>
                             </div>
-                            <div class="back invites-wrapper-sides" style="margin-left:35%">
+                            <div class="back invites-wrapper-sides" style="margin-left:35%;height: 400px;">
                                 <div class="toggle-flip-container container-space-between">
                                     <div>
                                         <a id="showInviteTransactionHistory" href="/invite-history"
