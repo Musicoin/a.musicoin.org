@@ -506,6 +506,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
+  // have /login route for forum
+  app.get('/login', function(req, res) {
+    if (req.user) {
+      return res.redirect('/loginRedirect');
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    return doRender(req, res, 'landing-login.ejs', {
+      message: message,
+    });
+  })
+
   app.get('/welcome-listener', function (req, res) {
     if (req.user) {
       return res.redirect('/loginRedirect');
