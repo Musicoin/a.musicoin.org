@@ -37,10 +37,6 @@ export class AdminRoutes {
     config: any,
     doRender: any) {
 
-    router.get('/admin/', functions.isLoggedIn, functions.adminOnly, function (req, res) {
-      doRender(req, res, 'admin/dashboard.ejs', {});
-    });
-
     const bootSession = config.musicoinApi.bootSession;
 
     router.post('/admin/send-weekly-report', (req, res) => {
@@ -206,27 +202,32 @@ export class AdminRoutes {
         });
     });
 
-    router.get('/admin/releases', (req, res) => {
-      const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
-      const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
-      const previous = Math.max(0, start - length);
-      const url = '/admin/releases?search=' + (req.query.search ? req.query.search : '');
-      jsonAPI.getAllReleases(req.query.search, start, length)
-        .then(result => {
-          const releases = result.releases;
-          return doRender(req, res, 'admin-releases.ejs', {
-            search: req.query.search,
-            releases: releases,
-            navigation: {
-              show10: `${url}&length=10`,
-              show25: `${url}&length=25`,
-              show50: `${url}&length=50`,
-              description: `Showing ${start + 1} to ${start + releases.length} of ${result.count}`,
-              start: previous > 0 ? `${url}&length=${length}` : null,
-              back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
-              next: releases.length >= length ? `${url}&length=${length}&start=${start + length}` : null
-            }
+    router.get('/admin/elements/releases', (req, res) => {
+      let l: any = req.query.length;
+      let s: any = req.query.start;
+      const length = typeof l !== "undefined" ? parseInt(l) : 10;
+      const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
+      jsonAPI.getAllReleases(req.body.search, start, length)
+        .then(results => {
+          const releases = results.releases;
+          const addresses = releases.map(u => u.contractAddress).filter(a => a);
+
+          releases.forEach(r => {
+            r.timeSince = _timeSince(r.releaseDate);
           });
+
+          const balanceMap = {};
+          musicoinApi.getAccountBalances(addresses)
+            .then(balances => {
+              balances.forEach((balance, idx) => {
+                balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
+              });
+              releases.forEach(u => {
+                u.balance = balanceMap[u.contractAddress];
+              });
+              res.json(releases);
+            });
+
         });
     });
 
@@ -360,7 +361,7 @@ export class AdminRoutes {
         { $match: { duration: "all" } },
         { $group: { _id: "all", plays: { $sum: "$playCount" } } }])
         .then(results => {
-          let count:number = results.length ? results[0].plays : 0;
+          let count: number = results.length ? results[0].plays : 0;
           doRender(req, res, 'admin/count.ejs', {
             count: count,
             type: "Total Plays"
@@ -386,11 +387,101 @@ export class AdminRoutes {
       });
     });
 
-    router.post('/admin/elements/users', function (req, res) {
-      const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
-      const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
+    router.get('/admin/new-releases', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      doRender(req, res, 'admin/releases.ejs', {});
+    });
+    router.get("/admin", functions.isLoggedIn, functions.adminOnly, function (req: any, res: any): any {
+      let totalUser: number = User.count({ profileAddress: { $exists: true, $ne: null } }).exec();
+      let lastDayUser: number = User.count({ profileAddress: { $exists: true, $ne: null }, joinDate: { $gte: Date.now() - DAY } }).exec();
+
+      let artistCount: number = User.count({
+        profileAddress: { $exists: true, $ne: null },
+        mostRecentReleaseDate: { $exists: true, $ne: null }
+      });
+
+      let verifiedCount: number = User.count({
+        profileAddress: { $exists: true, $ne: null },
+        mostRecentReleaseDate: { $exists: true, $ne: null }, verified: true
+      });
+
+      let totalRelease: number = Release.count({ contractAddress: { $exists: true, $ne: null }, state: "published" }).exec();
+      let lastDayRelease: number = Release.count({
+        contractAddress: { $exists: true, $ne: null },
+        state: "published", releaseDate: { $gte: Date.now() - DAY }
+      }).exec();
+
+      let playCount: number = ReleaseStats.aggregate([
+        { $match: { duration: "all" } },
+        { $group: { _id: "all", plays: { $sum: "$playCount" } } }])
+        .then(results => {
+          let count: number = results.length ? results[0].plays : 0;
+          return count;
+        });
+
+      let releaseTips: number = ReleaseStats.aggregate([
+        { $match: { duration: "all" } },
+        { $group: { _id: "all", tips: { $sum: "$tipCount" } } }]);
+
+      let userTips: number = UserStats.aggregate([
+        { $match: { duration: "all" } },
+        { $group: { _id: "all", tips: { $sum: "$tipCount" } } }]);
+
+      let totalTip: number = (releaseTips > 0 ? releaseTips[0].tips : 0) + (userTips > 0 ? userTips[0].tips : 0);
+      // tslint:disable-next-line:max-line-length
+      return Promise.join(totalUser, lastDayUser, artistCount, verifiedCount, totalRelease, lastDayRelease, playCount, totalTip, (totalUsers, lastDayUsers, artistCounts, verifiedCounts, totalReleases, lastDayReleases, playCounts, totalTips) => {
+        doRender(req, res, "admin/admin.ejs", {
+          totalUser: totalUsers.toLocaleString("en"),
+          lastDayUser: lastDayUsers.toLocaleString("en"),
+          artistCount: artistCounts.toLocaleString("en"),
+          verifiedCount: verifiedCounts.toLocaleString("en"),
+          totalRelease: totalReleases.toLocaleString("en"),
+          lastDayRelease: lastDayReleases.toLocaleString("en"),
+          playCount: playCounts.toLocaleString("en"),
+          totalTip: totalTips.toLocaleString("en")
+        });
+      });
+    });
+
+
+
+    router.get('/admin/playback-history', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      doRender(req, res, 'admin/playback-history.ejs', {});
+    });
+    router.get('/admin/elements/playback-history', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      let l: any = req.query.length;
+      let s: any = req.query.start;
+      const length = typeof l !== "undefined" ? parseInt(l) : 10;
+      const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
+      var options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+
+      jsonAPI.getPlaybackHistory(req.body.user, req.body.anonuser, req.body.release, start, length)
+        .then(output => {
+          output.records.forEach(r => {
+            r.playbackDateDisplay = jsonAPI._timeSince(r.playbackDate) || "seconds ago";
+            const user = r.user ? r.user : r.anonymousUser;
+            r.nextPlaybackDateDisplay = user && user.freePlaysRemaining > 0 && user.nextFreePlayback
+              ? user.nextFreePlayback.toLocaleDateString('en-US', options) + " (" + user.freePlaysRemaining + ")"
+              : "N/A";
+          });
+          return output;
+        })
+        .then(output => {
+          res.json(output.records);
+        });
+    });
+
+    router.get('/admin/new-users', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      doRender(req, res, 'admin/users.ejs', {});
+    });
+
+    router.get('/admin/elements/users', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      let l: any = req.query.length;
+      let s: any = req.query.start;
+      const length = typeof l !== "undefined" ? parseInt(l) : 10;
+      const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
       const invitedByIds = req.body.invitedby ? req.body.invitedby.split("|") : [];
-      jsonAPI.getAllUsers(req.body.search, invitedByIds, req.body.verified, req.body.artist, start, length)
+      const search = req.query.search["value"];
+      jsonAPI.getAllUsers(search, invitedByIds, req.body.verified, req.body.artist, start, length)
         .then(results => {
           const users = results.users;
           const addresses = users.map(u => u.profileAddress).filter(a => a);
@@ -401,64 +492,15 @@ export class AdminRoutes {
             balances.forEach((balance, idx) => {
               balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
             });
-
             users.forEach(u => {
               u.balance = balanceMap[u.profileAddress];
             });
-            doRender(req, res, 'admin/users.ejs', {
-              search: req.body.search,
-              users: users,
-              invitedBy: invitedBy && invitedBy.draftProfile ? invitedBy.draftProfile.artistName : "",
-              totalUsers: results.count,
-              navigation: {
-                description: `Showing ${start + 1} to ${start + users.length} of ${results.count}`,
-                start: start,
-                length: users.length
-              }
-            });
+            res.json(users);
           });
         });
     });
 
-    router.post('/admin/elements/releases', function (req, res) {
-      const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
-      const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
-      jsonAPI.getAllReleases(req.body.search, start, length)
-        .then(results => {
-          const releases = results.releases;
-          const addresses = releases.map(u => u.contractAddress).filter(a => a);
-
-          releases.forEach(r => {
-            r.timeSince = _timeSince(r.releaseDate);
-          });
-
-          const balanceMap = {};
-          musicoinApi.getAccountBalances(addresses)
-            .then(balances => {
-              balances.forEach((balance, idx) => {
-                balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
-              });
-              releases.forEach(u => {
-                u.balance = balanceMap[u.contractAddress];
-              });
-              doRender(req, res, 'admin/releases.ejs', {
-                search: req.body.search,
-                releases: releases,
-                totalReleases: results.count,
-                navigation: {
-                  description: `Showing ${start + 1} to ${start + releases.length} of ${results.count}`,
-                  length: length,
-                  start: start
-                }
-              });
-            });
-
-
-
-        });
-    });
-
-    router.post('/admin/elements/account-balances', function (req, res) {
+    router.get('/admin/elements/account-balances', functions.isLoggedIn, functions.adminOnly, function (req, res) {
       // render the page and pass in any flash data if it exists
       const b = musicoinApi.getMusicoinAccountBalance();
       const o = musicoinApi.getAccountBalances(config.trackingAccounts.map(ta => ta.address));
@@ -479,30 +521,29 @@ export class AdminRoutes {
           name: "MC Client Balance",
           address: "",
         });
-
-        return doRender(req, res, 'admin/account-balances.ejs', {
-          accounts: output,
-        });
-      })
+        res.json(output);
+      });
     });
 
-    router.post('/admin/elements/api-clients', function (req, res) {
-      const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 10;
-      const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
+    router.get('/admin/account-balances', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      doRender(req, res, 'admin/account-balances.ejs', {});
+    });
+
+    router.get('/admin/api-clients', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      doRender(req, res, 'admin/api-clients.ejs', {});
+    });
+    router.get('/admin/elements/api-clients', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      let l: any = req.query.length;
+      let s: any = req.query.start;
+      const length = typeof l !== "undefined" ? parseInt(l) : 10;
+      const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
       jsonAPI.getAllAPIClients(start, length)
         .then(results => {
           const clients = results.clients;
-          doRender(req, res, 'admin/api-clients.ejs', {
-            apiClients: clients,
-            totalClients: results.count,
-            navigation: {
-              description: `Showing ${start + 1} to ${start + clients.length} of ${results.count}`,
-              start: start,
-              length: clients.length
-            }
-          });
+          res.json(clients);
         });
     });
+
 
     router.post('/api-clients/delete', (req, res) => {
       APIClient.findById(req.body.id).exec()

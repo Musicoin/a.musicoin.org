@@ -1,79 +1,165 @@
-<%- include ../partials/admin-page-head.ejs %>
-<h3 class="text-center">Playback History</h3>
-<div class="history-nav">
-    <div>
-        <%=navigation.description%>
-    </div>
-    <div>
-        Show
-        <a class="de-parameter-setter history-nav-link" de-parameter="length" de-value="20">20</a>
-        <a class="de-parameter-setter history-nav-link" de-parameter="length" de-value="50">50</a>
-        <a class="de-parameter-setter history-nav-link" de-parameter="length" de-value="100">100</a>
-        <a class="de-parameter-setter history-nav-link" de-parameter="length" de-value="500">500</a>
-    </div>
-    <div>
-        <a class="de-parameter-setter history-nav-link" de-parameter="start" de-value="0"><i class="fa fa-step-backward" aria-hidden="true"></i></a>
-        <a class="de-parameter-setter history-nav-link" de-parameter="start" de-value="<%=(navigation.start - navigation.length)%>"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
-        <a class="de-parameter-setter history-nav-link" de-parameter="start" de-value="<%=(navigation.start + navigation.length)%>"><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
-        <a class="de-parameter-reset history-nav-link">reset</a>
-    </div>
-</div>
-<table class="table table-responsive table-condensed table-striped">
-    <tr>
-        <th class="text-center">Time</th>
-        <th class="text-center">User</th>
-        <th class="text-center">Track</th>
-        <th class="text-center">Plays&nbsp;/&nbsp;Tips</th>
-    </tr>
+<!DOCTYPE html>
+<html lang="en">
 
-    <% for (var p = 0; p < playbacks.length; p++) {
-        var playback = playbacks[p];
-    %>
-    <tr id="<%= playback._id %>">
-        <td class="text-center middle">
-            <%= playback.playbackDateDisplay %><br>
-        </td>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Musicoin Admin Dashboard Template</title>
+    <link rel="stylesheet" href="/dependencies/admin/css/admin.min.css">
+    <link rel="stylesheet" href="/dependencies/admin/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/dependencies/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/dependencies/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
 
-        <% if (playback.user != null) { %>
-        <td class="text-center middle">
-            <%= playback.user.draftProfile.artistName %><br>
-            <a class="de-parameter-setter clickable <%= playback.user.accountLocked ? "text-danger" : "" %>"
-               de-parameters="user=<%=playback.user._id%>,start=0"
-               title="filter by user">
-                filter
-            </a>
-            &nbsp;
-            <a target="track-window" href="/artist/<%= playback.user.profileAddress %>">view</a>
-        </td>
-        <% } else if (playback.anonymousUser != null) { %>
-        <td class="text-center middle">
-            <%= playback.anonymousUser.ip %><br>
-            <%= playback.anonymousUser.session %><br>
-            <a class="de-parameter-setter clickable <%= playback.anonymousUser.accountLocked ? "text-danger" : "" %>"
-               de-parameters="anonuser=<%=playback.anonymousUser._id%>,start=0"
-               title="filter by user">
-                filter
-            </a>
-        </td>
-        <% } else { %>
-        <td class="text-center middle"></td>
-        <% } %>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include admin-header.ejs %>
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+                <div class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1 class="m-0 text-dark">Dashboard v2</h1>
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item">
+                                        <a href="#">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Dashboard v2</li>
+                                </ol>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.container-fluid -->
+                </div>
+                <!-- /.content-header -->
+                <!-- Main content -->
 
-        <td class="text-center middle">
-            <%= playback.release.title %>
-            <br>
-            <a class="de-parameter-setter clickable  <%= playback.release.markedAsAbuse ? "text-danger" : "" %>"
-               de-parameters="release=<%=playback.release._id%>,start=0"
-               title="filter by track">
-                filter
-            </a>
-            &nbsp;
-            <a target="release-window" href="/track/<%= playback.release.contractAddress %>">view</a>
-        </td>
-        <td class="text-center middle">
-            <%= playback.release.directPlayCount %> /
-            <%= playback.release.directTipCount || 0 %>
-        </td>
-    </tr>
-    <% } %>
-</table>
+                <section class="content">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>User</th>
+                                            <th>Track</th>
+                                            <th>Plays&nbsp;/&nbsp;Tips</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>User</th>
+                                            <th>Track</th>
+                                            <th>Plays&nbsp;/&nbsp;Tips</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.card -->
+            </div>
+            <!-- /.col -->
+    </div>
+
+    <!-- /.row -->
+    </section>
+    <!--/. container-fluid -->
+    <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    </div>
+    <script src="/dependencies/admin/js/jquery.min.js" type="text/javascript"></script>
+    <!-- Bootstrap -->
+    <script src="/dependencies/admin/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/dataTables.bootstrap4.js" type="text/javascript"></script>
+    <!-- AdminLTE App -->
+    <script src="/dependencies/admin/js/admin.js" type="text/javascript"></script>
+    <!-- PAGE PLUGINS -->
+    <!-- SparkLine -->
+    <script src="/dependencies/admin/js/jquery.sparkline.min.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/chart.min.js" type="text/javascript"></script>
+  
+    <!-- ./wrapper -->
+    <%- include admin-footer.ejs %>
+        <!-- plugins:js -->
+       <!-- End custom js for this page-->
+        <script>
+            $( document ).ready(function() {
+                $(function () {
+                $("#example1").DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "/admin/elements/playback-history", "dataSrc": function (json) {
+                            var return_data = new Array();
+
+                            for (var i = 0; i < json.length; i++) {
+                                var playback = json[i];
+                                console.log("PLAYBACK", playback);
+                                var playbackDateDisplay = "";
+                                var artistName = "";
+                                var title = "";
+                                var directPlayCount = "";
+                                var directTipCount = "";
+                                var user = "";
+                                var tip = "";
+                                if (playback.user != null) {
+                                    user += '<td>' + playback.user.draftProfile.artistName + '</td>';
+                                }
+                                else if (playback.anonymousUser != null) {
+                                    user += '<td>' + playback.anonymousUser.ip + '<br>' + playback.anonymousUser.session + '<br><a class="de-parameter-setter clickable ' + playback.anonymousUser.accountLocked != null ? "text-danger" : "" + 'de-parameters="anonuser=' + playback.anonymousUser._id + ',start=0" title="filter by user"> filter</a></td>';
+                                }
+                                else {
+                                    user += '<td></td>';
+                                }
+
+                                title += '<td>' + playback.release.title + '<br><a target="release-window" href="/track/' + playback.release.contractAddress + '">view</a></td>';
+
+                                playbackDateDisplay += playback.playbackDate;
+
+                                directPlayCount = playback.release.directPlayCount || "0";
+                                directTipCount += playback.release.directTipCount || "0";
+
+                                tip = '<td>' + directPlayCount + '/' +
+                                    directTipCount + '</td>';
+
+                                return_data.push({
+                                    'playbackDateDisplay': playbackDateDisplay,
+                                    'user': user,
+                                    'title': title,
+                                    'tip': tip
+                                });
+                            }
+                            return return_data;
+                        }
+                    },
+                    columns: [
+                        { 'data': 'playbackDateDisplay' },
+                        { 'data': 'user' },
+                        { 'data': 'title' },
+                        { 'data': 'tip' }
+                    ]
+                });
+            });
+});
+   
+        </script>
+</body>
+
+</html>

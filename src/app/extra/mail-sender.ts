@@ -5,7 +5,7 @@ import { mail as helper } from 'sendgrid';
 import serviceEventEmitter from '../rest-api/eventing';
 import { SEND_EMAIL } from '../rest-api/eventing/events';
 
-const renderFile = Promise.promisify(ejs.renderFile);
+const renderFile = Promise.promisify(ejs.renderFile)
 const path = require('path');
 const appDir = path.dirname(require.main.filename);
 
@@ -27,12 +27,14 @@ export class MailSender {
   }
 
   private handleSendEmailEvent(payload: any) {
-
     return this.sendTemplate(`${appDir}/views/${payload.template}`, payload.recipient, payload.subject, payload.data)
       .then(null, () => { });
-
   }
-
+  public sendEmail(payload: any): any {
+    console.log("Sender", payload);
+    return this.sendTemplate(`${appDir}/views/${payload.template}`, payload.recipient, payload.subject, payload.data)
+      .then(null, () => { });
+  }
   sendEmailConfirmationCode(recipient: string, code: string): Promise<any> {
     const subject = `Your Musicoin confirmation code`;
     return this.sendTemplate(`${appDir}/views/mail/email-confirmation.ejs`, recipient, subject, { code: code });
@@ -66,7 +68,7 @@ export class MailSender {
 
   sendWithdrawConfirmation(recipient: string, amount: number, txRecipient: string, rTime: string, ip: string, uAgent: string, pin: string): Promise<any> {
     const subject = `Musicoin Withdrawal Verification`;
-    return this.sendTemplate(`${appDir}/views/mail/withdraw-confirmation.ejs`, recipient, subject, { amount: amount, txRecipient: txRecipient, rTime: rTime, ip: ip, uAgent: uAgent, pin:pin });
+    return this.sendTemplate(`${appDir}/views/mail/withdraw-confirmation.ejs`, recipient, subject, { amount: amount, txRecipient: txRecipient, rTime: rTime, ip: ip, uAgent: uAgent, pin: pin });
   }
 
   sendActivityReport(recipient: string, report: any): Promise<any> {
@@ -77,6 +79,7 @@ export class MailSender {
   private sendTemplate(template: string, recipient: string, subject: string, data: any) {
     return renderFile(template, data)
       .then(html => {
+        console.log("send template then");
         const from_email = new helper.Email("musicoin@musicoin.org");
         const to_email = new helper.Email(recipient);
         const content = new helper.Content("text/html", html);

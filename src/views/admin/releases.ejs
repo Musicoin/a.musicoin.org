@@ -1,52 +1,177 @@
-<%- include ../partials/admin-page-head.ejs %>
-<style>
-    tr.abuse {
-        background-color: rgba(200, 0, 0, 0.2);
-    }
-</style>
+<!DOCTYPE html>
+<html lang="en">
 
-<div>
-    <h3 class="text-center flex-row" style="justify-content: space-between">
-        <div style="width: 200px"></div>
-        <div>Releases</div>
-        <div><input type="text"
-                    class="admin-search de-parameter-input"
-                    de-parameter="search"
-                    de-parameters="start=0"
-                    value="<%=search%>"></div>
-    </h3>
-    <%- include element-nav.ejs %>
-    <table class="table table-responsive table-condensed">
-        <tr>
-            <th class="text-center">Title</th>
-            <th class="text-center">Released</th>
-            <th class="text-center">Balance</th>
-            <th class="text-center">Artist</th>
-            <th class="text-center">Plays&nbsp;/&nbsp;Tips</th>
-            <th class="text-center">Abuse</th>
-        </tr>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Musicoin Admin Dashboard Template</title>
+    <link rel="stylesheet" href="/dependencies/admin/css/admin.min.css">
+    <link rel="stylesheet" href="/dependencies/admin/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/dependencies/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/dependencies/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
 
-        <% for (var ivt = 0; ivt < releases.length; ivt++) {
-            var release = releases[ivt];
-        %>
-        <tr class="<%= !!release.markedAsAbuse || release.markedAsAbuse == "true" ? "abuse" : ""%>">
-            <td class="text-center"><a target=release href="/track/<%=release.contractAddress%>"><%= release.title %></a></td>
-            <td class="text-center"><%= release.timeSince %></td>
-            <td class="text-center"><%= release.balance %></td>
-            <td class="text-center">
-                <% if (release.artist) { %>
-                <a target=artist href="/artist/<%=release.artist.profileAddress%>"><%= release.artist.draftProfile.artistName%>
-                    <% if (release.artistName !== release.artist.draftProfile.artistName) { %>
-                    (<%= release.artistName %>)
-                    <%} %>
-                </a>
-                <% } else { %>
-                <a target=artist href="/artist/<%=release.artistAddress%>"><%= release.artistName %></a> *
-                <% } %>
-            </td>
-            <td class="text-center"><%= release.directPlayCount || 0 %>&nbsp;/&nbsp;<%= release.directTipCount || 0 %></td>
-            <td class="text-center"><%= !!release.markedAsAbuse %></td>
-        </tr>
-        <% } %>
-    </table>
-</div>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include admin-header.ejs %>
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+                <div class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1 class="m-0 text-dark">Dashboard v2</h1>
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item">
+                                        <a href="#">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Dashboard v2</li>
+                                </ol>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.container-fluid -->
+                </div>
+                <!-- /.content-header -->
+                <!-- Main content -->
+
+                <section class="content">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Released</th>
+                                            <th>Balance</th>
+                                            <th>Artist</th>
+                                            <th>Plays&nbsp;/&nbsp;Tips</th>
+                                            <th>Abuse</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Released</th>
+                                            <th>Balance</th>
+                                            <th>Artist</th>
+                                            <th>Plays&nbsp;/&nbsp;Tips</th>
+                                            <th>Abuse</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.card -->
+            </div>
+            <!-- /.col -->
+    </div>
+
+    <!-- /.row -->
+    </section>
+    <!--/. container-fluid -->
+    <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    </div>
+    <script src="/dependencies/admin/js/jquery.min.js" type="text/javascript"></script>
+    <!-- Bootstrap -->
+    <script src="/dependencies/admin/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/dataTables.bootstrap4.js" type="text/javascript"></script>
+    <!-- AdminLTE App -->
+    <script src="/dependencies/admin/js/admin.js" type="text/javascript"></script>
+    <!-- PAGE PLUGINS -->
+    <!-- SparkLine -->
+    <script src="/dependencies/admin/js/jquery.sparkline.min.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/chart.min.js" type="text/javascript"></script>
+    <!-- End custom js for this page-->
+    <!-- ./wrapper -->
+    <%- include admin-footer.ejs %>
+        <!-- plugins:js -->
+
+        <script>
+            $(document).ready(function () {
+                $(function () {
+                    $("#example1").DataTable({
+                        "processing": true,
+                        "serverSide": true,
+                        "ajax": {
+                            "url": "/admin/elements/releases", "dataSrc": function (json) {
+                                var return_data = new Array();
+
+                                for (var i = 0; i < json.length; i++) {
+                                    var release = json[i];
+                                    var title = "";
+                                    var timeSince = "";
+                                    var user = "";
+                                    var balance = "";
+                                    var artistName = "";
+                                    var directPlayCount = "";
+                                    var directTipCount = "";
+                                    var tip = "";
+                                    var markedAsAbuse = "";
+
+                                    title += '<td><a target=release href="/track/' + release.contractAddress + '">' + release.title + '</a></td>';
+                                    timeSince += release.releaseDate;
+                                    balance += release.balance;
+                                    if (release.user) {
+                                        user += '<td><a target=artist href="/artist/' + release.artist.profileAddress + '">' + release.artist.draftProfile.artistName;
+                                        if (release.artistName !== release.artist.draftProfile.artistName) {
+                                            user += '(' + release.artistName + ')';
+                                        }
+                                        user += '</a>';
+                                    }
+                                    else {
+                                        user += '<td><a target=artist href="/artist/' + release.artistAddress + '">' + release.artistName + '</a> *';
+                                    }
+                                    user += '</td>';
+
+                                    markedAsAbuse += !!release.markedAsAbuse;
+
+                                    directPlayCount = release.directPlayCount || "0";
+                                    directTipCount += release.directTipCount || "0";
+
+                                    tip = '<td>' + directPlayCount + '/' +
+                                        directTipCount + '</td>';
+                                    return_data.push({
+                                        'title': title,
+                                        'timeSince': timeSince,
+                                        'balance': balance,
+                                        'user': user,
+                                        'tip': tip,
+                                        'markedAsAbuse': markedAsAbuse
+                                    });
+                                }
+                                return return_data;
+                            }
+                        },
+                        columns: [
+                            { 'data': 'title' },
+                            { 'data': 'timeSince' },
+                            { 'data': 'balance' },
+                            { 'data': 'user' },
+                            { 'data': 'tip' },
+                            { 'data': 'markedAsAbuse' }
+                        ]
+                    });
+                });
+            });
+
+        </script>
+</body>
+
+</html>

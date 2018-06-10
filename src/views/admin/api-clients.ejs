@@ -1,158 +1,155 @@
-<%- include ../partials/admin-page-head.ejs %>
-<style>
-    tr.claimed {
-        background-color: rgba(0, 200, 0, 0.1);
-    }
+<!DOCTYPE html>
+<html lang="en">
 
-    tr.profile {
-        background-color: rgba(0, 200, 0, 0.2);
-    }
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Musicoin Admin Dashboard Template</title>
+    <link rel="stylesheet" href="/dependencies/admin/css/admin.min.css">
+    <link rel="stylesheet" href="/dependencies/admin/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/dependencies/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/dependencies/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
 
-    tr.no-release {
-        background-color: rgba(228, 170, 23, 0.3);
-    }
-
-    tr.locked {
-        background-color: rgba(200, 0, 0, 0.2);
-    }
-</style>
-
-<div id="api-client-container">
-    <div class="text-center flex-row" style="justify-content: space-between">
-        <div></div>
-        <h3>API Clients</h3>
-        <div class="btn btn-warning" onclick="createNewClient()">New Client</div>
-    </div>
-    <%- include element-nav.ejs %>
-    <table class="table table-responsive white-well">
-        <tr>
-            <th class="text-center"></th>
-            <th class="text-center">Name</th>
-            <th class="text-center">ClientId</th>
-            <th class="text-center">Domains</th>
-            <th class="text-center">Methods</th>
-            <th class="text-center">Locked</th>
-        </tr>
-
-        <% for (var ivt = 0; ivt < apiClients.length; ivt++) {
-            var apiClient = apiClients[ivt];
-            var state = apiClient.accountLocked ? "locked" : "";
-            var name = apiClient.name;
-        %>
-        <tr class="<%= state %> client-account-row">
-            <td class="text-center middle">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Edit<span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)" onclick="lockClientAccount(this, '<%= apiClient._id %>', '<%= name %>')"><%= apiClient.accountLocked ? "Unlock Account" : "Lock Account"%></a></li>
-                        <li class="divider"></li>
-                        <li><a href="javascript:void(0)" onclick="saveClientAccount(this, '<%= apiClient._id %>', '<%= name %>')">Save</a></li>
-                        <li class="divider"></li>
-                        <li><a href="javascript:void(0)" onclick="deleteClientAccount(this, '<%= apiClient._id %>', '<%= name %>')">Delete</a></li>
-                    </ul>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include admin-header.ejs %>
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+                <div class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1 class="m-0 text-dark">Dashboard v2</h1>
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item">
+                                        <a href="#">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Dashboard v2</li>
+                                </ol>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.container-fluid -->
                 </div>
-            </td>
-            <td class="text-center middle"><%= name %></td>
-            <td class="text-center middle"><%= apiClient.clientId %></td>
-            <td class="text-center middle"><input class="client-domains"
-                                                  value="<%= apiClient.domains %>"
-                                                  onkeydown="$(this).css('background-color', '#ffe')"></td>
-            <td class="text-center middle"><input class="client-methods"
-                                                  value="<%= apiClient.methods %>"
-                                                  onkeydown="$(this).css('background-color', '#ffe')"></td>
-            <td class="text-center middle"><%= apiClient.accountLocked ? "Locked" : "" %></td>
-        </tr>
-        <% } %>
-    </table>
-</div>
+                <!-- /.content-header -->
+                <!-- Main content -->
 
-<script>
-  function createNewClient() {
-    var name = prompt("Enter a name for this client");
-    if (name) {
-      $.post('/admin/api-clients/add', {
-        name: name
-      }, function (data) {
-        if (data.success) {
-          new Message("Client added!", "success", 3000);
-          refreshAPIClientContainer();
-        }
-        else {
-          new Message("Failed: " + data.reason, 'error', 5000)
-        }
-      });
-    }
-  }
+                <section class="content">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>ClientId</th>
+                                            <th>Domains</th>
+                                            <th>Methods</th>
+                                            <th>Locked</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-  function lockClientAccount(element, id, name) {
-    var button= $(element);
-    var lock = button.text() == "Lock Account";
-    var msg = lock
-      ? "Are you sure you want to lock " + name + "? The user will not be able to log in."
-      : "Are you sure you want to enable " + name + "? The user will be able to log in again.";
-    var resultMsg = lock
-      ? "User account locked"
-      : "User account unlocked";
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>ClientId</th>
+                                            <th>Domains</th>
+                                            <th>Methods</th>
+                                            <th>Locked</th>
 
-    new Message(msg, 'error', 5000)
-      .button("Yes", function() {
-        $.post('/admin/api-clients/lock', {
-          id: id,
-          lock: lock
-        }, function (data) {
-          if (data.success) {
-            $(element).text(lock ? "Unlock Account" : "Lock Account");
-            $(element).toggleClass("btn-danger", !lock);
-            $(element).toggleClass("btn-success", lock);
-            new Message(resultMsg, "success", 3000);
-            refreshAPIClientContainer();
-          }
-          else {
-            new Message("Failed: " + data.reason, 'error', 5000)
-          }
-        })
-      })
-  }
 
-  function saveClientAccount(element, id, name) {
-    var row = $(element).closest(".client-account-row");
-    var domains = row.find(".client-domains").val();
-    var methods = row.find(".client-methods").val();
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.card -->
+            </div>
+            <!-- /.col -->
+    </div>
 
-    $.post('/admin/api-clients/save', {
-      id: id,
-      domains: domains,
-      methods: methods
-    }, function (data) {
-      if (data.success) {
-        new Message("Saved!", "success", 3000);
-      }
-      else {
-        new Message("Failed: " + data.reason, 'error', 5000)
-      }
-    });
-  }
+    <!-- /.row -->
+    </section>
+    <!--/. container-fluid -->
+    <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    </div> 
+     <!-- plugins:js -->
+        <script src="/dependencies/admin/js/jquery.min.js" type="text/javascript"></script>
+        <!-- Bootstrap -->
+        <script src="/dependencies/admin/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+        <script src="/dependencies/admin/js/jquery.dataTables.js" type="text/javascript"></script>
+        <script src="/dependencies/admin/js/dataTables.bootstrap4.js" type="text/javascript"></script>
+        <!-- AdminLTE App -->
+        <script src="/dependencies/admin/js/admin.js" type="text/javascript"></script>
+        <!-- PAGE PLUGINS -->
+        <!-- SparkLine -->
+        <script src="/dependencies/admin/js/jquery.sparkline.min.js" type="text/javascript"></script>
+        <script src="/dependencies/admin/js/chart.min.js" type="text/javascript"></script>
+        <!-- End custom js for this page-->
+    <!-- ./wrapper -->
+    <%- include admin-footer.ejs %>
+      
+        <script>
+            $( document ).ready(function() {
+                $(function () {
+                $("#example1").DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "/admin/elements/api-clients", "dataSrc": function (json) {
+                            var return_data = new Array();
 
-  function deleteClientAccount(element, id, name) {
-    var button= $(element);
-    var msg = "Are you sure you want to DELETE " + name + "? The user will no longer be able to acccess the API."
-    new Message(msg, 'error', 5000)
-      .button("Yes", function() {
-        $.post('/admin/api-clients/delete', {
-          id: id
-        }, function (data) {
-          if (data.success) {
-            new Message("Client account deleted", "success", 3000);
-            refreshAPIClientContainer();
-          }
-          else {
-            new Message("Failed: " + data.reason, 'error', 5000)
-          }
-        })
-      })
-  }
+                            for (var i = 0; i < json.length; i++) {
+                                var apiClient = json[i];
+                                var name = "";
+                                var clientId = "";
+                                var domains = "";
+                                var methods = "";
+                                var accountLocked = "";
 
-  function refreshAPIClientContainer() {
-    dynamic.refreshElement($($("#api-client-container").closest('.dynamic-element')))
-  }
-</script>
+                                name = apiClient.name;
+                                clientId += apiClient.clientId;
+                                domains += apiClient.domains;
+                                methods += apiClient.methods;
+                                accountLocked += apiClient.accountLocked ? "Locked" : "";
+
+                                return_data.push({
+                                    'name': name,
+                                    'clientId': clientId,
+                                    'domains': domains,
+                                    'methods': methods,
+                                    'accountLocked': accountLocked
+                                });
+                            }
+                            return return_data;
+                        }
+                    },
+                    columns: [
+                        { 'data': 'name' },
+                        { 'data': 'clientId' },
+                        { 'data': 'domains' },
+                        { 'data': 'methods' },
+                        { 'data': 'accountLocked' }
+                    ]
+                });
+            });
+});
+   
+        </script>
+</body>
+
+</html>

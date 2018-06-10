@@ -3,6 +3,7 @@ import { wrapper as redisWrapper } from '../../../redis';
 import serviceEventEmitter from '../../rest-api/eventing';
 import { SEND_EMAIL } from '../../rest-api/eventing/events';
 import ServiceBase from './service-base';
+import { MailSender } from '../../extra/mail-sender';
 
 const ConfigUtils = require('../../../config/config');
 const uuidV4 = require('uuid/v4');
@@ -11,8 +12,8 @@ const User = require('../../models/user');
 let redisClient = null;
 
 export default class UserService implements ServiceBase {
-
-  constructor() {
+  constructor(
+  ) {
 
   }
 
@@ -152,8 +153,9 @@ export default class UserService implements ServiceBase {
           subject: 'Verify your email!',
           data: { code: uuidV4(), hostname: config.hostname }
         };
-
-        serviceEventEmitter.emit(SEND_EMAIL, payload);
+        // serviceEventEmitter.emit(SEND_EMAIL, payload);
+        let maHelper = new MailSender();
+        maHelper.sendEmail(payload);
 
         return redisWrapper.setex(`EMAIL_VERIFICATION_CODE:${payload.data.code}`, config.emailVerificationLinkTimeout, user);
 
