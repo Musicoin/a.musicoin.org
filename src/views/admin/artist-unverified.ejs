@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Users - Musicoin</title>
-    <%- include('partials/page-head.ejs') %>
+    <%- include('../partials/page-head.ejs') %>
     <style>
         body {
             word-wrap: break-word;
@@ -43,16 +43,16 @@
     </style>
 </head>
 <body>
-<%- include('partials/header.ejs') %>
+<%- include('../partials/header.ejs') %>
 <div class="container">
     <div class="search-area mb20">
         <div class="col-sm-5">
-            <form action="/admin/users" method="get">
+            <form action="/admin/artist-unverified" method="get">
                 <div class="flex-row">
                     <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
                     <input class="form-control text-large pl25"
                            name="search"
-                           value="<%= search %>" placeholder="Search Users"
+                           value="<%= search %>" placeholder="Search Unverified Artists"
                            autofocus onfocus="this.value = this.value;">
                 </div>
             </form>
@@ -69,6 +69,7 @@
             <a class="history-nav-link" href="<%= navigation.show10 %>">10</a>
             <a class="history-nav-link" href="<%= navigation.show25 %>">25</a>
             <a class="history-nav-link" href="<%= navigation.show50 %>">50</a>
+            <a class="history-nav-link" href="<%= navigation.show100 %>">100</a>
         </div>
         <div>
             <% if (navigation.start) { %>
@@ -84,6 +85,7 @@
             <% } %>
         </div>
     </div>
+    <a href="https://musicoin.org/admin/" class="btn btn-info btn-sm mr5" role="button">Go To Admin Panel</a>
     <div class="btn btn-success btn-sm mr5" onclick="sendWeeklyReports()">Send Weekly Reports</div>
     <table class="table table-responsive white-well">
         <tr>
@@ -340,6 +342,6 @@
       })
   }
 </script>
-<%- include('partials/connect-with-us.ejs') %>
+<%- include('../partials/connect-with-us.ejs') %>
 </body>
 </html>
