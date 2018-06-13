@@ -50,7 +50,6 @@
                                         <tr>
                                             <th>Title</th>
                                             <th>Released</th>
-                                            <th>Balance</th>
                                             <th>Artist</th>
                                             <th>Plays&nbsp;/&nbsp;Tips</th>
                                             <th>Abuse</th>
@@ -63,7 +62,6 @@
                                         <tr>
                                             <th>Title</th>
                                             <th>Released</th>
-                                            <th>Balance</th>
                                             <th>Artist</th>
                                             <th>Plays&nbsp;/&nbsp;Tips</th>
                                             <th>Abuse</th>
@@ -108,7 +106,6 @@
                 $(function () {
                     $("#example1").DataTable({
                         "processing": true,
-                        "serverSide": true,
                         "ajax": {
                             "url": "/admin/elements/releases", "dataSrc": function (json) {
                                 var return_data = new Array();
@@ -118,7 +115,6 @@
                                     var title = "";
                                     var timeSince = "";
                                     var user = "";
-                                    var balance = "";
                                     var artistName = "";
                                     var directPlayCount = "";
                                     var directTipCount = "";
@@ -127,7 +123,6 @@
 
                                     title += '<td><a target=release href="/track/' + release.contractAddress + '">' + release.title + '</a></td>';
                                     timeSince += release.releaseDate;
-                                    balance += release.balance;
                                     if (release.user) {
                                         user += '<td><a target=artist href="/artist/' + release.artist.profileAddress + '">' + release.artist.draftProfile.artistName;
                                         if (release.artistName !== release.artist.draftProfile.artistName) {
@@ -150,7 +145,6 @@
                                     return_data.push({
                                         'title': title,
                                         'timeSince': timeSince,
-                                        'balance': balance,
                                         'user': user,
                                         'tip': tip,
                                         'markedAsAbuse': markedAsAbuse
@@ -162,7 +156,6 @@
                         columns: [
                             { 'data': 'title' },
                             { 'data': 'timeSince' },
-                            { 'data': 'balance' },
                             { 'data': 'user' },
                             { 'data': 'tip' },
                             { 'data': 'markedAsAbuse' }

@@ -935,7 +935,7 @@
                 <div class="widget-wrapper wallet-wrapper flip-container">
                     <% if (user.profileAddress) { %>
                     <div class="flipper">
-                        <div class="front wallet-wrapper-sides" style="height: 30%">
+                        <div class="front wallet-wrapper-sides" style="height: 36%">
                             <div class="toggle-flip-container container-space-between">
                                 <div></div>
                                 <div class="not-clickable"><h3>My Wallet</h3></div>
@@ -949,6 +949,10 @@
                                     <a target=_blank style="color:white" title="<%=exchangeRate.disclaimer%>" href="<%=exchangeRate.link%>"><%= artist.formattedUSD %> USD</a>
                                 </div>
                                 <% } %>
+                                <div class="text-center subtle-text">
+                                <p style="color:#f9eded" title="withdrawal-warning"> To complete withdrawal request user need to have confirmed email.</p>
+                                <p style="color:#f9eded" title="withdrawal-warning"> You can set email in the profile details (save it first and confirm after).</p>
+                                </div>
                             </div>
                         </div>
                         <div class="back wallet-wrapper-sides">

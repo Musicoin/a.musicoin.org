@@ -172,7 +172,7 @@ export class AdminRoutes {
       const downloadUrl = '/admin/contacts/download?search=' + (req.query.search ? req.query.search : '');
       jsonAPI.getAddressBook(req.query.search, start, length)
         .then(users => {
-          return doRender(req, res, 'admin-contacts.ejs', {
+          return doRender(req, res, 'admin/admin-contacts.ejs', {
             search: req.query.search,
             users: users,
             navigation: {
@@ -190,7 +190,7 @@ export class AdminRoutes {
         });
     });
 
-    router.get('/admin/contacts/download', (req, res) => {
+    router.get('/admin/contacts/download', functions.isLoggedIn, functions.adminOnly, (req, res) => {
       jsonAPI.getAddressBook(req.query.search, 0, -1)
         .then(users => {
           // Handling UTF-8 character set
@@ -203,7 +203,7 @@ export class AdminRoutes {
         });
     });
 
-    router.get('/admin/elements/releases', (req, res) => {
+    router.get('/admin/elements/releases', functions.isLoggedIn, functions.adminOnly, (req, res) => {
       let l: any = req.query.length;
       let s: any = req.query.start;
       const length = typeof l !== "undefined" ? parseInt(l) : 10;
@@ -211,24 +211,7 @@ export class AdminRoutes {
       jsonAPI.getAllReleases(req.body.search, start, length)
         .then(results => {
           const releases = results.releases;
-          const addresses = releases.map(u => u.contractAddress).filter(a => a);
-
-          releases.forEach(r => {
-            r.timeSince = _timeSince(r.releaseDate);
-          });
-
-          const balanceMap = {};
-          musicoinApi.getAccountBalances(addresses)
-            .then(balances => {
-              balances.forEach((balance, idx) => {
-                balanceMap[addresses[idx]] = balance.formattedMusicoinsShort;
-              });
-              releases.forEach(u => {
-                u.balance = balanceMap[u.contractAddress];
-              });
-              res.json(releases);
-            });
-
+          res.json(releases);
         });
     });
 
@@ -243,34 +226,6 @@ export class AdminRoutes {
           return doRender(req, res, 'peer-verification.ejs', {
             search: req.query.search,
             users: users
-          });
-        });
-    });
-    router.post('/admin/elements/playback-history', function (req, res) {
-      const length = typeof req.body.length != "undefined" ? parseInt(req.body.length) : 20;
-      const start = typeof req.body.start != "undefined" ? Math.max(0, parseInt(req.body.start)) : 0;
-      var options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-
-      jsonAPI.getPlaybackHistory(req.body.user, req.body.anonuser, req.body.release, start, length)
-        .then(output => {
-          output.records.forEach(r => {
-            r.playbackDateDisplay = jsonAPI._timeSince(r.playbackDate) || "seconds ago";
-            const user = r.user ? r.user : r.anonymousUser;
-            r.nextPlaybackDateDisplay = user && user.freePlaysRemaining > 0 && user.nextFreePlayback
-              ? user.nextFreePlayback.toLocaleDateString('en-US', options) + " (" + user.freePlaysRemaining + ")"
-              : "N/A";
-          });
-          return output;
-        })
-        .then(output => {
-          doRender(req, res, 'admin/playback-history.ejs', {
-            search: req.body.search,
-            playbacks: output.records,
-            navigation: {
-              description: `Showing ${start + 1} to ${start + output.records.length}`,
-              start: start,
-              length: length,
-            }
           });
         });
     });
@@ -448,6 +403,7 @@ export class AdminRoutes {
     router.get('/admin/playback-history', functions.isLoggedIn, functions.adminOnly, function (req, res) {
       doRender(req, res, 'admin/playback-history.ejs', {});
     });
+
     router.get('/admin/elements/playback-history', functions.isLoggedIn, functions.adminOnly, function (req, res) {
       let l: any = req.query.length;
       let s: any = req.query.start;
@@ -478,8 +434,33 @@ export class AdminRoutes {
       const url = '/admin/artist-verified?search=' + (req.query.search ? req.query.search : '');
       jsonAPI.getAllUsers(req.query.search, null, 'true', 'true', 0, length)
         .then(results => {
-          const users = results.users ;
+          const users = results.users;
           return doRender(req, res, 'admin/artist-verified.ejs', {
+            search: req.query.search,
+            users: users,
+            navigation: {
+              show10: `${url}&length=10`,
+              show25: `${url}&length=25`,
+              show50: `${url}&length=50`,
+              show100: `${url}&length=100`,
+              description: `Showing ${start + 1} to ${start + users.length}`,
+              start: previous > 0 ? `${url}&length=${length}` : null,
+              back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+              next: users.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+            }
+          });
+        });
+    });
+
+    router.get('/admin/user-verified', functions.isLoggedIn, functions.adminOnly, (req, res) => {
+      const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
+      const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+      const previous = Math.max(0, start - length);
+      const url = '/admin/user-verified?search=' + (req.query.search ? req.query.search : '');
+      jsonAPI.getAllUsers(req.query.search, null, 'true', 'false', 0, length)
+        .then(results => {
+          const users = results.users;
+          return doRender(req, res, 'admin/user-verified.ejs', {
             search: req.query.search,
             users: users,
             navigation: {
@@ -503,7 +484,7 @@ export class AdminRoutes {
       const url = '/admin/artist-unverified?search=' + (req.query.search ? req.query.search : '');
       jsonAPI.getAllUsers(req.query.search, null, 'false', 'true', 0, length)
         .then(results => {
-          const users = results.users ;
+          const users = results.users;
           return doRender(req, res, 'admin/artist-unverified.ejs', {
             search: req.query.search,
             users: users,

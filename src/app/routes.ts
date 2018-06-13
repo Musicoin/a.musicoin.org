@@ -257,7 +257,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/admin/su', functions.isLoggedIn, functions.adminOnly, function (req, res) {
     // render the page and pass in any flash data if it exists
-    res.render('su.ejs', { message: req.flash('loginMessage') });
+    res.render('admin/admin-su.ejs', { message: req.flash('loginMessage') });
   });
 
   // process the login form
@@ -466,7 +466,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       trackMetrics.push({ name: "totalTips", value: functions._formatNumber(allReleaseStats[0].totalTips) });
       trackMetrics.push({ name: "totalComments", value: functions._formatNumber(allReleaseStats[0].totalComments) });
 
-      return doRender(req, res, 'admin-overview.ejs', {
+      return doRender(req, res, 'admin/admin-overview.ejs', {
         accounts: output,
         userMetrics: userMetrics,
         trackMetrics: trackMetrics,
