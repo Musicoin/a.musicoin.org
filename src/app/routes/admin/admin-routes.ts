@@ -396,7 +396,7 @@ export class AdminRoutes {
         { $match: { duration: "all" } },
         { $group: { _id: "all", tips: { $sum: "$tipCount" } } }]);
 
-      let totalTip: number = releaseTips[0].tips + userTips[0].tips ;
+      let totalTip: number = (releaseTips > 0 ? releaseTips[0].tips : 0) + (userTips > 0 ? userTips[0].tips : 0);
       // tslint:disable-next-line:max-line-length
       return Promise.join(totalUser, lastDayUser, artistCount, verifiedCount, totalRelease, lastDayRelease, playCount, totalTip, (totalUsers, lastDayUsers, artistCounts, verifiedCounts, totalReleases, lastDayReleases, playCounts, totalTips) => {
         doRender(req, res, "admin/admin.ejs", {
