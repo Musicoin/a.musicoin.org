@@ -82,6 +82,20 @@ export class AdminRoutes {
         })
     });
 
+    router.post('/admin/release/abuse', (req, res) => {
+      const markAsAbuse = req.body.abuse == "true";
+      const msg = markAsAbuse ? config.ui.admin.markAsAbuse : config.ui.admin.unmarkAsAbuse;
+      jsonAPI.markAsAbuse(req.body.licenseAddress, markAsAbuse)
+        .then(result => res.json(result))
+        .then(() => {
+          return jsonAPI.postLicenseMessages(req.body.licenseAddress, null, config.musicoinAdminProfile, msg, MESSAGE_TYPES.admin, null, null);
+        })
+        .catch(err => {
+          console.log("Failed to mark track as abuse: " + err);
+          res.json({ success: false, reason: "error" });
+        });
+    });
+
     router.post('/admin/users/block', (req, res) => {
       const id = FormUtils.defaultString(req.body.id, null);
       if (!id) return res.json({ success: false, reason: "No id" });
@@ -382,7 +396,7 @@ export class AdminRoutes {
         { $match: { duration: "all" } },
         { $group: { _id: "all", tips: { $sum: "$tipCount" } } }]);
 
-      let totalTip: number = (releaseTips > 0 ? releaseTips[0].tips : 0) + (userTips > 0 ? userTips[0].tips : 0);
+      let totalTip: number = releaseTips[0].tips + userTips[0].tips ;
       // tslint:disable-next-line:max-line-length
       return Promise.join(totalUser, lastDayUser, artistCount, verifiedCount, totalRelease, lastDayRelease, playCount, totalTip, (totalUsers, lastDayUsers, artistCounts, verifiedCounts, totalReleases, lastDayReleases, playCounts, totalTips) => {
         doRender(req, res, "admin/admin.ejs", {
