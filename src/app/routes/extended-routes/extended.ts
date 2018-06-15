@@ -188,9 +188,12 @@ export class ExtendedRouter {
       // if the request if for their current track AND the current playback isn't expired
       // short circuit these checks
       const address = req.body && req.body.address ? req.body.address : req.params.address;
-      const canUseCache = user.currentPlay
-        && user.currentPlay.licenseAddress == address
-        && UrlUtils.resolveExpiringLink(user.currentPlay.encryptedKey);
+      var canUseCache = "dummy";
+      if (typeof user != null) {
+        const canUseCache = user.currentPlay
+          && user.currentPlay.licenseAddress == address
+          && UrlUtils.resolveExpiringLink(user.currentPlay.encryptedKey);
+      }
       if (canUseCache) return Promise.resolve({ success: true, canUseCache: true });
 
       return Release.findOne({ contractAddress: address, state: "published" }).exec()
