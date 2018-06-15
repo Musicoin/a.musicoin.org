@@ -202,7 +202,7 @@ function getStructuredConfig(keyValueConfig) {
       approveDomains: keyValueConfig.domains.split(',').map(s => s.trim()).filter(s => s)
     },
     cors: {
-      origin: ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org']
+      origin: ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org', 'https://englandistillbelieve.com']
     },
     emailVerificationLinkTimeout: 60 * 60 * 24 * 3 // in seconds, for redis
   };

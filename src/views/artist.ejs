@@ -211,7 +211,7 @@ function formatNumber(value) {
 <div class="two-columns white-well">
     <% if (artist.verified) { %>
     <div class="pad10">
-        <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i> Posts </div>
+        <div class="center-text event-header" style="font-size: 40px; color: #555; font-family: 'Ubuntu', sans-serif;"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts </div>
         <div class="dynamic-element message-scroller"
              data-behavior="chat-message-area"
              style="min-height: 180px"
@@ -228,7 +228,7 @@ function formatNumber(value) {
     </div>
     <% } else { %>
         <div class="pad10">
-            <div class="center-text event-header"><i class="fa fa-comments subtle-text text-default mr10" aria-hidden="true"></i> Posts (Unverified musician) </div>
+            <div class="center-text event-header"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts (Unverified musician) </div>
             <div class="dynamic-element message-scroller"
                  data-behavior="chat-message-area"
                  style="min-height: 180px"
@@ -248,8 +248,8 @@ function formatNumber(value) {
     <div class="pad10">
         <% if (releases.length > 0) { %>
           <% if (artist.verified) { %>
-            <div class="event-header text-center">
-                Releases
+            <div class="event-header text-center" style="font-size: 40px; font-family: 'Ubuntu', sans-serif;">
+                <i class="fa fa-cloud"></i>Releases
                 <% if (typeof showPlayAll != "undefined" && showPlayAll) { %>
                 <div>
                     <div class="btn btn-success party-button play-list pad5 play-all-button"
