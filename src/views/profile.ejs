@@ -718,7 +718,6 @@
                 <div id="profileImageEdit" class="edit-image edit-picture clickable">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                 </div>
-                <form id="profileImageForm" action="/profile/save" enctype="multipart/form-data" method="post">
                     <img src="<%= user.profile.image %>" class="profile-image" title="Click to change your profile" style="width:400px">
                     <!-- <img id="profileImage" src="https://musicoin.org/static/media/ad-free-streaming.6c7ee93a.png" -->
                         <!-- class="profile-image" title="Click to change your profile"/> -->
@@ -777,7 +776,6 @@
                     <i class="fa fa-chevron-right" aria-hidden="true" style="display: none;"></i>
                     <i class="fa fa-chevron-down" aria-hidden="true"  style="display: block;"></i>
                 </div>
-                <form id="profileDetailsForm" action="/profile/save" enctype="multipart/form-data" method="post" style="display: block;">
                     <div class="form-group">
                         <label for="artistName">Name</label>
                         <input type="text" class="form-control profile-input" name="artistName" value="<%= user.profile.artistName %>"
@@ -812,14 +810,6 @@
                                 placeholder="e.g. Rock, Country, etc"
                                 value="<%= user.profile.genres ? user.profile.genres.join(", ") : "" %>">
                     </div>
-                    <div class="submit-container">
-                            <button type="submit" class="btn submit-button <%= (user.pendingTx || user.profileAddress) ? '' : 'publish-button' %>">
-                                <%= (user.pendingTx || user.profileAddress) ? "Update Profile" : "Publish Profile" %>
-                            </button>
-                        </div>
-                </form>
-                </form>
-                </form>
                 <div class="profile-section-header clickable golden-grey" data-content="socialVerification">
                         <span>Social Accounts For Verification</span>
                         <i class="fa fa-chevron-right" aria-hidden="true" style="display: block;"></i>
@@ -892,7 +882,6 @@
                         <i class="fa fa-chevron-right" aria-hidden="true" style="display: block;"></i>
                         <i class="fa fa-chevron-down" aria-hidden="true"  style="display: none;"></i>
                 </div>
-                <form id="otherSocial" action="/profile/save" enctype="multipart/form-data" method="post" style="display: none;">
                     <div class="form-group">
                         <p class="">Add links to your other social pages as well</p>
                         <table class="social-group">
@@ -924,9 +913,9 @@
                         </table>
                     </div>
                     <div class="submit-container">
-                        <button type="submit" class="btn submit-button">
-                            <%= (user.pendingTx || user.profileAddress) ? "Update Socials" : "Save Socials" %>
-                        </button>
+                            <button type="submit" class="btn submit-button <%= (user.pendingTx || user.profileAddress) ? '' : 'publish-button' %>">
+                                <%= (user.pendingTx || user.profileAddress) ? "Update Profile" : "Publish Profile" %>
+                            </button>
                     </div>
                 </form>
             </div>
@@ -980,7 +969,7 @@
                                 <table cellpadding="3">
                                     <tr>
                                         <td colspan="2">
-                                            <div class="text-warning text-center mb20" style="font-size: 20px !important;">Warning! Some exchanges will not recognize
+                                            <div class="text-warning text-center mb20" style="font-size: 20px !important; color: white">Warning! Some exchanges will not recognize
                                                 coins sent directly from your profile. For ex. Cryptopia.
                                             </div>
                                         </td>
@@ -1040,13 +1029,13 @@
                                 </div>
                                 <div class="invite-options">
                                     <h4>Referral Link</h4>
-                                    <p class="subtle-text">
+                                    <p class="subtle-text" style="color: white">
                                         Your referral link is reusable! When some one signs up with your referral link, your
                                         invites remaining will go down by one and you will get your reward.
-                                    <div class="text-success center-text">
+                                    <div class="text-success center-text" style="color: white">
                                         Your referral link
                                     </div>
-                                    <div class="center-text">
+                                    <div class="center-text" style="color: white">
                                         https://musicoin.org/accept/<%= user.reusableInviteCode %>
                                     </div>
                                     </p>

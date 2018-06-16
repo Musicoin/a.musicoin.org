@@ -4,7 +4,7 @@
 }
 
 .white-well {
-    color: #333;
+    color: black;
     background-color: white;
 }
 
@@ -48,7 +48,7 @@ textarea.form-control {
 }
 
 .social-link {
-    color: #aaa;
+    color: white;
 }
 
 .section-header-center {
@@ -231,7 +231,7 @@ textarea.form-control {
 }
 
 .text-dark {
-    color: #333
+    color: black
 }
 
 @media screen and (max-width: 800px) {
