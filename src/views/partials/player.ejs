@@ -16,7 +16,7 @@
         justify-content: space-around;
         flex-direction: row;
         position: absolute;
-        background: black;
+        background: #FFA700;
         top: 0;
         left: 0;
         bottom: 5px;
@@ -205,7 +205,7 @@
     .progress-thumb {
         position: absolute;
         border-radius: 50%;
-        background-color: black;
+        background-color: #FFA700;
         width: 16px;
         height: 16px;
         top: -6px;
@@ -214,7 +214,7 @@
     }
 
     #shuffle.button-highlight {
-      color: black;
+      color: #FFA700;
       text-shadow: 0px 0px 10px #fcc017;
     }
 
@@ -252,19 +252,19 @@
 
         <i id="player-play-button" class="fa fa-play btn btn-plain player-control"
            onclick="audioPlayer.togglePlayState()"
-           style="margin-right: 5px; color: black"
+           style="margin-right: 5px; color: #FFA700"
            aria-hidden="true"></i>
         <i class="fa fa-pause fa-3x" id="player-pause-button" onclick="audioPlayer.togglePlayState()" src="/images/player/pause.png"
-             style="padding-right: 5px; margin-right: 4px; color: black"
+             style="padding-right: 5px; margin-right: 4px; color: #FFA700"
              class="player-control"></i>
 
-        <div id=player-progress style="background-color: black" class="player-progress mr5 big-screen-only">
+        <div id=player-progress class="player-progress mr5 big-screen-only">
             <div class="progress-bar progress-background"></div>
-            <div id="player-progress-div" class="progress-bar progress-foreground" style="background-color: grey">
+            <div id="player-progress-div" class="progress-bar progress-foreground" style="background-color: #FFA700">
             </div>
             <div class="spread mt5">
-                <div id="player-time-played" style="color: black" class="player-time-field big-screen-only">00:00</div>
-                <div id="player-time-left" style="color: black" class="player-time-field">00:00</div>
+                <div id="player-time-played" style="color: #FFA700" class="player-time-field big-screen-only">00:00</div>
+                <div id="player-time-left" style="color: #FFA700" class="player-time-field">00:00</div>
             </div>
             <div id=progress-thumb class="progress-thumb draggable ui-widget-content"></div>
         </div>
@@ -280,12 +280,12 @@
              context-type="Release"
              recipient="">
             <i class="fa fa-2x fa-sign-language btn btn-plain btn-sm"
-               style="padding: 5px; color: black"
+               style="padding: 5px; color: #FFA700"
                aria-hidden="true"></i>
         </div>
         <div class="clickable text-large mr10">
             <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle"
-               style="color: black" aria-hidden="true"></i>
+               style="color: #FFA700" aria-hidden="true"></i>
         </div>
 
         <div title="Show or hide the playlist"
@@ -293,7 +293,7 @@
                 style="position: relative">
             <i id="play-queue-trigger"
                class="fa fa-list-ul btn-plain btn-sm play-queue-trigger"
-               style="padding: 5px; color:black"
+               style="padding: 5px; color:#FFA700"
                aria-hidden="true"></i>
             <i id="play-queue-count"
                class="queue-size"
