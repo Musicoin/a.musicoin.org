@@ -110,7 +110,7 @@
     .progress-background {
         right: 0;
         width: 100%;
-        background-color: #0097D0;
+        background-color: transparent;
     }
 
     .progress-foreground {
@@ -254,10 +254,9 @@
            onclick="audioPlayer.togglePlayState()"
            style="margin-right: 5px; color: black"
            aria-hidden="true"></i>
-
-        <img id="player-pause-button" onclick="audioPlayer.togglePlayState()" src="/images/player/pause.png"
-             style="width: 55px; height: 55px; padding-right: 5px; margin-right: 4px"
-             class="player-control">
+        <i class="fa fa-pause fa-3x" id="player-pause-button" onclick="audioPlayer.togglePlayState()" src="/images/player/pause.png"
+             style="padding-right: 5px; margin-right: 4px; color: black"
+             class="player-control"></i>
 
         <div id=player-progress style="background-color: black" class="player-progress mr5 big-screen-only">
             <div class="progress-bar progress-background"></div>
@@ -286,7 +285,7 @@
         </div>
         <div class="clickable text-large mr10">
             <i id=shuffle class="fa fa-2x fa-random btn-plain btn-sm toggle-shuffle"
-               aria-hidden="true"></i>
+               style="color: black" aria-hidden="true"></i>
         </div>
 
         <div title="Show or hide the playlist"
@@ -624,12 +623,14 @@
           $("#player-play-button").hide();
           $("#player-pause-button").show();
           audioPlayer._playStateChanged(true);
+          $('.music-player-container').toggleClass('is-playing');
         })
 
         audioPlayer.audioElement.addEventListener('pause', function () {
           audioPlayer.syncProgressNow();
           $("#player-play-button").show();
           $("#player-pause-button").hide();
+          $('.music-player-container').toggleClass('is-playing');
           audioPlayer._playStateChanged(false);
         })
 
