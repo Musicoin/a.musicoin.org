@@ -76,7 +76,7 @@
         color: inherit;
         font-style: italic;
         font-weight: 600;
-        font-family: 'Raleway', sans-serif;
+        font-family: 'Ubuntu', sans-serif;
     }
     .background-cover {
         background-color: rgba(0,0,0,0.9);
@@ -175,7 +175,7 @@
 
 <div class="header">
     <div class="logo-container">
-        <a href="/feed"><img width="200px" height="50px" class="big-screen-only" src="/images/logon.svg"></img></a>
+        <a href="/feed"><img width="200px" height="50px" class="big-screen-only" src="/images/logon.png"></img></a>
         <p class="beta big-screen-only" style="font: 'Lato'; color: grey; position: absolute; top: 17px; left: 215px;"> beta </p>
 
     </div>
@@ -238,10 +238,10 @@
                                 <% if ((user.verified) || (user.mostRecentReleaseDate == null)) { %>
                                     <a href="/release-manager" class="btn btn-default">Release</a>
                                 <% } else { %>
-                                    <a onclick="alert('You are not verified as a musician. \n \nQ: What should I do to increase the chances for verification of my profile? \nA: Link Twitter and Facebook account to your Musicoin profile. Avoid adding newly created accounts if you have better ones(in terms of showing more about you and your music) because that will considerably decrease chances to be verified. The purpose of having these two accounts linked to your Musicoin profile is to confirm to us that you are a real person, you are the owner of the accounts, and also to show us some history of your musical work. \n \nEnter links of your SoundCloud, Bandcamp, ReverbNation, YouTube accounts(if you have any) in corresponding fields at https://musicoin.org/nav/profile \n \nLink of your Facebook artist page can be added in the first field(named Artist website profile page url) \n \nDont forget to upload one of your songs. Artists get in queue for verification only after releasing one song on the platform. You will be able to upload only 1 song before your profile is verified. To avoid any possible issues with uploading make sure file is in mp3 format, and also to enter the title, genre, and tags. \n \nDont forget to enter the profile name, add images, and description in profile edit section https://musicoin.org/nav/profile and upload a cover image')" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a>
+                                    <a style="color: black" onclick="alert('You are not verified as a musician. \n \nQ: What should I do to increase the chances for verification of my profile? \nA: Link Twitter and Facebook account to your Musicoin profile. Avoid adding newly created accounts if you have better ones(in terms of showing more about you and your music) because that will considerably decrease chances to be verified. The purpose of having these two accounts linked to your Musicoin profile is to confirm to us that you are a real person, you are the owner of the accounts, and also to show us some history of your musical work. \n \nEnter links of your SoundCloud, Bandcamp, ReverbNation, YouTube accounts(if you have any) in corresponding fields at https://musicoin.org/nav/profile \n \nLink of your Facebook artist page can be added in the first field(named Artist website profile page url) \n \nDont forget to upload one of your songs. Artists get in queue for verification only after releasing one song on the platform. You will be able to upload only 1 song before your profile is verified. To avoid any possible issues with uploading make sure file is in mp3 format, and also to enter the title, genre, and tags. \n \nDont forget to enter the profile name, add images, and description in profile edit section https://musicoin.org/nav/profile and upload a cover image')" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true" style="color: black"></i>&nbsp;Upload Song</a>
                                 <% } %>
                             <% } %>
-                            <a href="/main" class="btn btn-default"><i class="fa fa-home" aria-hidden="true"></i></a>
+                            <a href="/main" class="btn btn-default"><i class="fa fa-home" aria-hidden="true"></i>&nbsp;Home</a>
                             <a href="/profile" class="btn btn-default">My Profile</a>
                             <a href="/logout" target="_top" class="btn btn-danger">Sign Out</a>
                         </div>

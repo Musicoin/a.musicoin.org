@@ -5,14 +5,14 @@
 
 .white-well {
     color: #333;
-    background-color: #fcfcfc;
+    background-color: white;
 }
 
 body {
-    color: #eee;
+    color: white;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 label {
@@ -142,7 +142,7 @@ textarea.form-control {
     }
 
     .columns-2-to-1 > .col2 {
-        width: 33%;
+        width: 40%;
         padding: 10px;
         min-width: 350px;
     }
@@ -434,7 +434,7 @@ a.morelink {
 }
 
 .play-all-button {
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     border-radius: 20px;
     padding-right: 10px;
     padding-left: 10px;
@@ -442,7 +442,7 @@ a.morelink {
 }
 
 .party-mode-button {
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     border-radius: 20px;
     padding-right: 10px;
     padding-left: 10px;

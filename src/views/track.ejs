@@ -121,21 +121,6 @@
             top: 25%;
           }
 
-          .music-player-container:after {
-            -webkit-filter: blur(8px);
-            filter: blur(8px);
-            background-color: rgba(0, 0, 0, 0.8);
-            bottom: -2px;
-            content: ' ';
-            display: block;
-            height: 10px;
-            left: 19px;
-            position: absolute;
-            transform: rotate(-3deg);
-            width: 70%;
-            z-index: 0;
-          }
-
           .music-player {
             height: 370px;
             padding: 40px 250px 40px 40px;
@@ -330,16 +315,16 @@
                 <div class="well white-well track-info-area">
                   <div class="flex-column center-text">
 
-                    <div class="music-player-container is-playing" style="width: 400px; height: 370px; position: relative;top: 170px;left: 50%;">
+                    <div class="music-player-container is-playing" style="width: 400px; height: 370px; position: relative;top: 170px;left: 50%; margin-bottom: -50px">
 
                       <div class="music-player">
                         <div class="player-content-container">
                           <div class="music-player-controls">
                             <% if ((artist.verified) || (isAuthenticated && user.verified)) { %>
                               <div class="audio-track clickable text-large btn mt5 control-play" id="play-button" licenseAddress='<%=license.address%>'>
-                                <i id="play-button" aria-hidden="true" style="font-size: 100px; position: relative; left: -10px; color: green; display: inline-block;border-radius: 200px;"
+                                <i id="play-button" aria-hidden="true" style="font-size: 50px; position: relative; left: -10px; color: green; display: inline-block;border-radius: 200px;"
                                   class="fa fa-play-circle-o"></i>
-                                <div style="display: inline-block; position: absolute; top: 45px;"> Play Song </div>
+                                <div style="display: inline-block; position: absolute; top: 15px;"> Play Song </div>
                               </div>
                               <% } %>
                           </div>
@@ -796,4 +781,3 @@
 </body>
 
 </html>
-
