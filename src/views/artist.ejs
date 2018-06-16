@@ -64,6 +64,9 @@
             #qrcode1{
                 visibility: hidden !important;
             }
+            #primaryEmail1 {
+                visibility: hidden !important;
+            }
             #abuse1{
                 visibility: hidden !important;
             }
@@ -72,11 +75,14 @@
             }
         }
         @media screen and (min-width:600px) {
-            #qrcode1{
+            #qrcode1, #primaryEmail1 {
                 visibility: visible !important;
                 background: none;
                 font-size: 18px;
                 border: none;
+                color: white;
+            }
+            #primaryEmail1:hover {
                 color: white;
             }
             #abuse1{
