@@ -235,6 +235,10 @@ function formatNumber(value) {
     <% } else { %>
         <div class="pad10">
             <div class="center-text event-header"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts (Unverified musician) </div>
+            <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
+                <a href="/artist/<%=artist.profileAddress%>"><div style="background-image: url('/images/musician.jpg')"></div></a>
+                <textarea class="general-post" target="de-user-messages" placeholder="What's on your mind now?"></textarea>
+            </div>
             <div class="dynamic-element message-scroller"
                  data-behavior="chat-message-area"
                  style="min-height: 180px"
