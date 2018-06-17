@@ -55,6 +55,14 @@ export class FrontRouter {
         router.get('/developers/bounty', (req, res) => {
             res.render('../overview/index.html', {});
         });
+
+        router.get('/privacy', (req, res) => {
+            res.render('../overview/index.html', {});
+        });
+
+        router.get('/privacy/privacy', (req, res) => {
+            res.render('../overview/index.html', {});
+        });
     }
     getRouter() {
         return router;
