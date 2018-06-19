@@ -53,6 +53,11 @@ export class ProfileRouter {
         // =====================================
         // PUBLIC ARTIST PROFILE SECTION =======
         // =====================================
+
+        router.get('/info/:address', function(req, res) {
+          return doRender(req, res, "info.ejs", { artist: req.params.address })
+        })
+
         router.get('/artist/:address', functions.isLoggedInOrIsPublic, function (req, res) {
 
             // find tracks for artist
@@ -607,7 +612,7 @@ export class ProfileRouter {
 
         var ipMatch = function (clientIp, list) {
             var Address = require('ipaddr.js');
-            
+
 
             if (clientIp && Address.isValid(clientIp)) {
                 // `Address.process` return the IP instance in IPv4 or IPv6 form.
