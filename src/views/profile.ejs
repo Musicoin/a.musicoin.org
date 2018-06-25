@@ -769,9 +769,14 @@
                                 placeholder="This can be a username or a band name">
                     </div>
                     <div class="form-group">
-                        <label for="primaryEmail">Active email</label>
+                        <label for="primaryEmail">Active email (email/password auth)</label>
                         <input type="email" class="form-control profile-input" value="<%= user.local.email %>"
-                                placeholder="Email address" disabled><br>
+                                placeholder="Email address" disabled>
+                    <div class="form-group">
+                    <label for="primaryEmail">Current account email</label>
+                        <input type="email" class="form-control profile-input" value="<%= user.primaryEmail %>"
+                                placeholder="Email address" disabled>
+                    </div>
                         <div class="send-email-verify-link-holder">
                             <a href="/connect/email" id="email-verify-link-sent" class="notice-paragraph" style="margin: unset;">Set/change your email or password</a>
                         </div>
