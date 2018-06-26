@@ -94,10 +94,10 @@
                         <a href="/artist/<%=message.artist.profileAddress%>"><%=message.artist.name%></a>
                         <% }  %>
                     </div>
-                    <div><%=message.body%></div>
+                    <div class="replaceThis"><%=message.body%></div>
                 </div>
                 <% } else { %>
-                <%=message.body%>
+                    <div class="replaceThis"><%=message.body%></div>
                 <% } %>
             </div>
             <div class="small-screen-only">
@@ -160,3 +160,11 @@
     </div>
     <%}%>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    var x = document.querySelectorAll(".replaceThis");
+    for (var i = 0 ; i < x.length ; i++){
+        var text = x[i].textContent;
+        x[i].innerHTML = marked(text);
+    }
+</script>

@@ -58,7 +58,7 @@ export class ProfileRouter {
           return doRender(req, res, "info.ejs", { artist: req.params.address })
         })
 
-        router.get('/artist/:address', functions.isLoggedInOrIsPublic, function (req, res) {
+        router.get('/artist/:address', function (req, res) {
 
             // find tracks for artist
             const m = jsonAPI.getUserMessages(req.params.address, 30);
