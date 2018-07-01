@@ -921,10 +921,15 @@
                             </div>
                             <div class="wallet-balance">
                                 <div class="balance"><%= artist.formattedBalance %></div>
-                                <div class="balance-label">$MUSIC</div>
+                                <div class="balance-label">MUSIC</div>
+                                <% if (exchangeRate.success) { %>
                                 <div class="text-center subtle-text">
-                                <p style="color:#f9eded" title="withdrawal-warning"> To complete withdrawal, user needs to have an email attached to profile.</p>
-                                <p style="color:#f9eded" title="withdrawal-warning"> You can set your email in the profile details.</p>
+                                    <a target=_blank style="color:white" title="<%=exchangeRate.disclaimer%>" href="<%=exchangeRate.link%>"><%= artist.formattedUSD %> USD</a>
+                                </div>
+                                <% } %>
+                                <div class="text-center subtle-text">
+                                <p style="color:#f9eded" title="withdrawal-warning"> To complete withdrawal request user need to have active email.</p>
+                                <p style="color:#f9eded" title="withdrawal-warning"> You can set email in the profile details.</p>
                                 </div>
                             </div>
                         </div>
