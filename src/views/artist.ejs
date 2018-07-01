@@ -200,7 +200,7 @@ function formatNumber(value) {
             <div style="top: -6px; position: relative;">
                 <span class="text-large" data-behavior="total-earned"><%=formatNumber(artistStats.totalEarned)%></span><span class="text-medium-small">MC</span>
             </div>
-            <span class="text-medium-small subtle-text" style="position: relative; top: -11px;"><span data-behavior="total-earned-usd"><%=artistStats.formattedTotalUSD%></span> earned</span>
+            <span class="text-medium-small subtle-text" style="position: relative; top: -11px;"><span data-behavior="total-earned-usd"></span> earned</span>
         </div>
         <% if (typeof isAdmin != "undefined" && isAdmin) { %>
             <div style="position: absolute; top: 37%; background: none; width: 160px; right: -70px;">
