@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <%
 if (typeof message == "undefined") message = "";
-if (typeof code == "undefined") code = "";
 if (message.length > 0) message = `<div class=alert role=alert style=color:#ffffff;background-color:#FFAF00;border-color:#FFAF00;font-family:Ubuntu;font-size:14px;font-weight:300;width:296px;margin-left:auto;margin-right:auto;>` + message + `</div>`;
 %>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Reset Password</title>
+<title>Musicoin Sign Up - Listener</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta property="wb:webmaster" content="388a22fbc545b0b0" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha256-NJWeQ+bs82iAeoT5Ktmqbi3NXwxcHlfaVejzJI2dklU=" crossorigin="anonymous" />
 <style>a, a:hover {height: 24px;	width: 42px;	color: #FFAF00;	font-family: Ubuntu;	font-size: 12px;	font-weight: 300;	line-height: 24px;}</style>
 <link rel="shortcut icon" href="/favicon.ico">
 <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-<div id="container" class="text-center" style="width:100%;">    
-  <div style="float:left; width:50%;">  
-    <img src="/images/logo/logo.svg" alt="Musicoin Logo" style="margin-top:56px"><br><br>
+<div id="container" class="text-center" style="width:100%;">
+  <div style="float:left; width:50%;">
+    <img src="/images/logo/logo.svg" alt="Musicoin Logo" style="margin-top:56px">
+    <p style="margin-top:21px;height: 24px;color: #000000;font-family:Ubuntu;font-size:14px;font-weight: 300;line-height:24px;">Here you can connect or change email for email/password authentification!</p>
     <%-message%>
-    <span class="badge" style="margin-right: 240px;	margin-top:12px; height: 24px;	width: 312px;	opacity: 0.5;	color: #000000;	font-family: Ubuntu;	font-size: 12px;	font-weight: 300;	line-height: 24px;">Password</span>
-    <form name="resetForm" id="resetForm" class="signup" action="/login/reset" method="post">
-    <input type="hidden" name="code" value="<%=code%>">
-    <input class="form-control" type="password" name="password" placeholder="****************" required style="width:296px;display:unset;opacity:0.85;color:#000000;font-family:Ubuntu;font-size:14px;line-height: 20px;"><br>
-    <button type="submit" class="btn-lg btn-warning g-recaptcha" style="width:296px; margin-top:21px;color: #FFFFFF;font-family: Ubuntu;font-size: 14px;font-weight: bold;	line-height: 20px;" data-sitekey="6LdZjF0UAAAAAJ1Ef5CiTrTDY2hUWMBiK2fioxmY">RESET PASSWORD</button>
+    <span class="badge" style="margin-right: 260px;	height: 24px;	width: 312px;	opacity: 0.5;	color: #000000;	font-family: Ubuntu;	font-size: 12px;	font-weight: 300;	line-height: 24px;">Email</span>
+    <form name="signupForm" id="signupForm" class="signup" action="/login/confirm-email-connect" method="post">
+    <input class="form-control" type="email" name="email" placeholder="@" required style="width:296px;display:unset;opacity:0.85;color:#000000;font-family:Ubuntu;font-size:14px;line-height: 20px;"><br>
+    <button type="submit" class="btn-lg btn-warning g-recaptcha" style="width:296px; margin-top:30px;	color: #FFFFFF;font-family: Ubuntu;font-size:14px;font-weight: bold;	line-height: 20px;" data-sitekey="6LdZjF0UAAAAAJ1Ef5CiTrTDY2hUWMBiK2fioxmY">CONNECT EMAIL</button>
  </form>
   </div>
   <div style="float:right; width:50%; background-color:#000000">
@@ -37,7 +36,7 @@ if (message.length > 0) message = `<div class=alert role=alert style=color:#ffff
         <div style="height: 93.15px;width: 93px;opacity: 0.25;border-radius: 4px;background: linear-gradient(0deg, rgba(254,206,0,0) 0%, #FF9000 100%);margin-left:380%;"></div>
         </div>
     </div>
-    <img src="/images/restore/bitmap.png" style="margin-top: -19%;margin-left: -22%;">
+    <div style="height:500px; width:417px; margin-top: -19%;margin-left: -22%;"></div>
     <div class="row">
         <div class="col-lg-offset-3 col-lg-2">
         <div style="height: 81.24px;width: 81px;opacity: 0.25;border-radius: 4px;background: linear-gradient(0deg, rgba(254,206,0,0) 0%, #FF9000 100%);margin-left:165%; margin-top:-180%"></div>
