@@ -100,7 +100,7 @@ export class AuthRouter {
         }), functions.SetSessionAfterLoginSuccessfullyAndRedirect);
 
         router.get('/connect/email', function (req, res) {
-            doRender(req, res, 'landing-listener.ejs', {});
+            doRender(req, res, 'landing-connect-email.ejs', {});
         });
 
         router.post('/login/music', (req, res) => {
@@ -112,20 +112,17 @@ export class AuthRouter {
         });
 
         router.post('/login/forgot', (req, res) => {
-
             const email = req.body.email || "";
-            if (v.validate({ email: req.body.email }, emailSchema) == false)
-                return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + req.body.email });
-
+            if (v.validate({ email: email }, emailSchema) == false) return doRender(req, res, "password-forgot.ejs", { message: "Invalid email address: " + email });
 
             functions.checkCaptcha(req)
                 .then(captchaOk => {
                     if (!captchaOk) {
                         return
                     } else {
-                        User.findOne({ "local.email": req.body.email }).exec()
+                        User.findOne({ "local.email": email }).exec()
                             .then(user => {
-                                if (!user) return doRender(req, res, "password-reset.ejs", { message: "User not found: " + req.body.email });
+                                if (user == null) return doRender(req, res, "password-reset.ejs", { message: "User not found or probably you used email that is used for google authentification: " + email });
                                 user.local.resetExpiryTime = Date.now() + config.auth.passwordResetLinkTimeout;
                                 user.local.resetCode = "MUSIC" + crypto.randomBytes(11).toString('hex');
                                 return user.save()
@@ -151,8 +148,7 @@ export class AuthRouter {
 
         router.post('/login/reset', (req, res) => {
             const code = String(req.body.code);
-            if (!code)
-                return doRender(req, res, "password-forgot.ejs", { message: "There was a problem resetting your password" });
+            if (!code) return doRender(req, res, "password-forgot.ejs", { message: "User not found or probably you used email that is used for google authentification" });
 
             const error = FormUtils.checkPasswordStrength(req.body.password);
             if (error) {

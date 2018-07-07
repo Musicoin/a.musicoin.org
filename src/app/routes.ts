@@ -255,6 +255,41 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     }
   });
 
+  app.post('/login/confirm-email-connect', function (req, res) {
+    if (req.body.email) req.body.email = req.body.email.trim();
+    if (!FormUtils.validateEmail(req.body.email)) {
+      res.json({
+        success: false,
+        email: req.body.email,
+        reason: "The email address does not appear to be valid"
+      });
+    }
+    else {
+      const code = "MUSIC" + crypto.randomBytes(11).toString('hex');
+      if (captchaSecret == "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe") {
+        var emailState = true;
+      } else {
+        var emailState = false;
+      }
+      return EmailConfirmation.create({ email: req.body.email, code: code })
+        .then(() => {
+          mailSender.sendEmailConfirmationCode(req.body.email, code)
+            .then(() => {
+              console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
+              return doRender(req, res, "landing-connect-email-confirmation.ejs", { email: req.body.email });
+            })
+        })
+        .catch((err) => {
+          console.log(`Failed to send email confirmation code ${code}: ${err}`);
+          res.json({
+            success: emailState,
+            email: req.body.email,
+            reason: "An internal error occurred.  Please try again later."
+          });
+        });
+    }
+  });
+
   app.get('/admin/su', functions.isLoggedIn, functions.adminOnly, function (req, res) {
     // render the page and pass in any flash data if it exists
     res.render('admin/admin-su.ejs', { message: req.flash('loginMessage') });
