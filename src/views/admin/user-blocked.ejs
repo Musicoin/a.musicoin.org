@@ -1,0 +1,347 @@
+<!doctype html>
+<html>
+<head>
+    <title>Users - Musicoin</title>
+    <%- include('../partials/page-head.ejs') %>
+    <style>
+        body {
+            word-wrap: break-word;
+        }
+
+        .history {
+            padding: 3px;
+            min-width: 20px;
+        }
+
+        .history-nav {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-nav-link {
+            margin-left: 10px;
+            font-size: 14pt;
+        }
+
+        .history-nav-link-disabled {
+            margin-left: 10px;
+            font-size: 14pt;
+            color: #aaa
+        }
+
+        tr.claimed {
+            background-color: rgba(0, 200, 0, 0.1);
+        }
+
+        tr.profile {
+            background-color: rgba(0, 200, 0, 0.2);
+        }
+
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<%- include('../partials/header.ejs') %>
+<div class="container">
+    <div class="search-area mb20">
+        <div class="col-sm-5">
+            <form action="/admin/user-blocked" method="get">
+                <div class="flex-row">
+                    <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
+                    <input class="form-control text-large pl25"
+                           name="search"
+                           value="<%= search %>" placeholder="Search Blocked Users"
+                           autofocus onfocus="this.value = this.value;">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="m10 white-well pad10">
+    <div class="history-nav ">
+        <div>
+            <%= navigation.description %>
+        </div>
+        <div>
+            Show
+            <a class="history-nav-link" href="<%= navigation.show10 %>">10</a>
+            <a class="history-nav-link" href="<%= navigation.show25 %>">25</a>
+            <a class="history-nav-link" href="<%= navigation.show50 %>">50</a>
+            <a class="history-nav-link" href="<%= navigation.show100 %>">100</a>
+        </div>
+        <div>
+            <% if (navigation.start) { %>
+            <a class="history-nav-link" href="<%= navigation.start %>">First</a>
+            <% } %>
+            <% if (navigation.back) { %>
+            <a class="history-nav-link" href="<%= navigation.back %>">Back</a>
+            <% } %>
+            <% if (navigation.next) { %>
+            <a class="history-nav-link" href="<%= navigation.next %>">Next</a>
+            <% } else { %>
+            <span class="history-nav-link-disabled">next</span>
+            <% } %>
+        </div>
+    </div>
+    <a href="https://musicoin.org/admin/" class="btn btn-info btn-sm mr5" role="button">Go To Admin Panel</a>
+    <div class="btn btn-success btn-sm mr5" onclick="sendWeeklyReports()">Send Weekly Reports</div>
+    <table class="table table-responsive white-well">
+        <tr>
+            <th class="text-center"></th>
+            <th class="text-center">Profile</th>
+            <th class="text-center">Invited</th>
+            <th class="text-center">Invite<br>Clicked</th>
+            <th class="text-center">Linked</th>
+            <th class="text-center">Music<br>Released</th>
+            <th class="text-center">Invites<br>Left</th>
+        </tr>
+
+        <% for (var ivt = 0; ivt < users.length; ivt++) {
+            var user = users[ivt];
+            var checked = 'yes';
+            var unchecked = '-';
+            var invite = user.invite ? user.invite : {};
+            var invitedBy = invite.invitedBy || {};
+            var state = invite.claimed
+                    ? (user.profileAddress && user.draftProfile.artistName) ? "profile" : "claimed"
+                    : "";
+            var name = user.draftProfile && user.draftProfile.artistName ? user.draftProfile.artistName : "this user";
+        %>
+        <tr class="<%= state %>">
+            <td class="text-center middle">
+                <div class="flex-row">
+                    <div class="btn btn-sm mr5 <%= user.verified ? "btn-warning" : "btn-success" %>"
+                         onclick="verifyUser(this, '<%= user._id %>', '<%= name %>')"><%= user.verified ? "Unverify" : "Verify"%></div>
+                    <div class="btn btn-sm mr5 <%= user.blocked ? "btn-success" : "btn-warning" %>"
+                         onclick="blockUser(this, '<%= user._id %>', '<%= name %>')"><%= user.blocked ? "Unblock Releases" : "Block Releases"%></div>
+                    <div class="btn btn-sm <%= user.accountLocked ? "btn-success" : "btn-danger" %>"
+                         onclick="lockUserAccount(this, '<%= user._id %>', '<%= name %>')"><%= user.accountLocked ? "Unlock" : "Lock"%></div>
+                </div>
+            </td>
+            <td class="text-center middle">
+                <% if(user.profileAddress && user.draftProfile.artistName) { %>
+                <a target="_blank" href="/artist/<%= user.profileAddress %>"><%= user.draftProfile.artistName %></a>
+                <% } else if (user.draftProfile && user.draftProfile.artistName) { %>
+                <%= user.draftProfile.artistName %>
+                <% } else { %>
+                <%= unchecked %>
+                <% } %>
+
+                <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") { %>
+                (v<%= user.draftProfile.version %>)
+                <% } %>
+                <br>
+                <%=user.timeSinceJoining%>
+            </td>
+            <td class="text-left middle">
+                <%= invite.invitedAs %><br>
+                <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
+                by <a target="_blank"
+                   href="/artist/<%= invitedBy.profileAddress %>"><%= invitedBy.draftProfile.artistName %></a>
+                <% } %>
+                <BR>
+                <%= invite.inviteCode %>
+            </td>
+            <td class="text-center middle"><%- invite.clicked ? checked : unchecked %></td>
+            <td class="text-center middle">
+                <table cellpadding="2">
+                    <% if (!!user.google.token) { %>
+                    <%
+                        const googleUrl = user.google.url ? user.google.url : "https://plus.google.com/" + user.google.id;
+                    %>
+                    <tr>
+                        <td><span class="btn fa fa-google-plus"></span></td>
+                        <td class="text-left">
+                            <a target=_blank href="<%= googleUrl %>">
+                            <%- user.google.name %>, <%- user.google.email %>
+                            </a>
+                        </td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.twitter.token) { %>
+                    <tr>
+                        <td><span class="btn fa fa-twitter"></span></td>
+                        <td class="text-left">
+                            <%
+                             const twitterUrl = user.twitter.url ? user.twitter.url : "https://twitter.com/" + user.twitter.username;
+                            %>
+                            <a target=_blank href="<%= twitterUrl %>"> <%- user.twitter.username %>, <%- user.twitter.displayName %> </a>
+                        </td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.facebook.token) { %>
+                    <%
+                        const facebookUrl = user.facebook.url ? user.facebook.url : "https://www.facebook.com/app_scoped_user_id/" + user.facebook.id;
+                    %>
+                    <tr>
+                        <td class=""><span class="btn fa fa-facebook"></span></td>
+                        <td class="text-left">
+                            <a target=_blank href="<%= facebookUrl %>">
+                            <%- user.facebook.name %>, <%- user.facebook.email %>
+                            </a>
+                        </td>
+                    </tr>
+                    <% } %>
+
+                    <% if (!!user.local.id) { %>
+                    <tr>
+                        <td><span class="btn fa fa-envelope-o"></span></td>
+                        <td class="text-left"><%- user.local.email %></td>
+                    </tr>
+                    <% } %>
+                </table>
+            </td>
+            <td class="text-center middle"><%- user.mostRecentReleaseDate ? checked : unchecked %></td>
+            <td class="text-center middle"><%= user.invitesRemaining %>
+                <div class="flex-row">
+                    <div class="btn btn-success btn-sm mr5" onclick="addInvites('<%= user._id %>', 10)">+10</div>
+                    <% if (user.invite.noReward) { %>
+                    <div class="btn btn-warning btn-sm" onclick="blacklist('<%= user._id %>', false)">De-Blacklist</div>
+                    <% } else { %>
+                    <div class="btn btn-danger btn-sm" onclick="blacklist('<%= user._id %>', true)">Blacklist</div>
+                    <% } %>
+                </div>
+            </td>
+        </tr>
+        <% } %>
+    </table>
+</div>
+
+<script>
+  function addInvites(id, cnt) {
+    $.post('/admin/invites/add', {
+      id: id,
+      count: cnt
+    }, function (data) {
+      if (data.success) {
+        new Message("Invites added!", "success", 3000);
+      }
+      else {
+        new Message("Failed: " + data.reason, 'error', 5000)
+      }
+    })
+  }
+
+  function sendWeeklyReports() {
+    new Message("Are you sure you want to send a weekly reports to all user?", 'error', 5000)
+      .button("Yes", function () {
+          $.post('/admin/send-all-weekly-reports', {}, function (data) {
+            if (data.success) {
+              new Message("Sent!", "success", 3000);
+            }
+            else {
+              new Message("Failed: " + data.reason, 'error', 5000)
+            }
+          })
+        }
+      )
+  }
+
+  function blacklist(id, blacklist) {
+    $.post('/admin/invites/blacklist', {
+      id: id,
+      blacklist: blacklist
+    }, function (data) {
+      if (data.success) {
+        new Message(blacklist ? "User blacklisted!" : "User de-blacklisted", "success", 3000);
+      }
+      else {
+        new Message("Failed: " + data.reason, 'error', 5000)
+      }
+    })
+  }
+
+  function lockUserAccount(element, id, name) {
+    var button= $(element);
+    var lock = button.text() == "Lock";
+    var msg = lock
+      ? "Are you sure you want to lock " + name + "? The user will not be able to log in."
+      : "Are you sure you want to enable " + name + "? The user will be able to log in again.";
+    var resultMsg = lock
+      ? "User account locked"
+      : "User account unlocked";
+
+    new Message(msg, 'error', 5000)
+      .button("Yes", function() {
+        $.post('/admin/users/lock', {
+          id: id,
+          lock: lock
+        }, function (data) {
+          if (data.success) {
+            $(element).text(lock ? "Unlock" : "Lock");
+            $(element).toggleClass("btn-danger", !lock);
+            $(element).toggleClass("btn-success", lock);
+            new Message(resultMsg, "success", 3000);
+          }
+          else {
+            new Message("Failed: " + data.reason, 'error', 5000)
+          }
+        })
+      })
+  }
+
+  function verifyUser(element, id, name) {
+    var button= $(element);
+    var verified = button.text() == "Verify";
+    var msg = verified
+      ? "Are you sure you want to verify " + name + "?"
+      : "Are you sure you want remove verification for " + name + "?"
+    var resultMsg = verified
+      ? "User marked as verified"
+      : "Verification flag removed";
+
+    new Message(msg, 'error', 5000)
+      .button("Yes", function() {
+        $.post('/admin/users/verify', {
+          id: id,
+          verified: verified
+        }, function (data) {
+          if (data.success) {
+            $(element).text(verified ? "Unverify" : "Verify");
+            $(element).toggleClass("btn-warning", verified);
+            $(element).toggleClass("btn-success", !verified);
+            new Message(resultMsg, "success", 3000);
+          }
+          else {
+            new Message("Failed: " + data.reason, 'error', 5000)
+          }
+        })
+      })
+  }
+
+  function blockUser(element, id, name) {
+    var button= $(element);
+    var block = button.text() == "Block Releases";
+    var msg = block
+        ? "Are you sure you want to block releases " + name + "?"
+        : "Are you sure you want to enable releases" + name + "?";
+    var resultMsg = block
+        ? "User releases blocked"
+        : "User releases enabled";
+
+    new Message(msg, 'error', 5000)
+      .button("Yes", function() {
+        $.post('/admin/users/block', {
+          id: id,
+          block: block
+        }, function (data) {
+          if (data.success) {
+            $(element).text(block ? "Unblock Releases" : "Block Releases");
+            $(element).toggleClass("btn-warning", !block);
+            $(element).toggleClass("btn-success", block);
+            new Message(resultMsg, "success", 3000);
+          }
+          else {
+            new Message("Failed: " + data.reason, 'error', 5000)
+          }
+        })
+      })
+  }
+</script>
+<%- include('../partials/connect-with-us.ejs') %>
+</body>
+</html>

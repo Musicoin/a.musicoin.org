@@ -295,7 +295,7 @@ export class MusicoinOrgJsonAPI {
     })
   }
 
-  getAllUsers(_search: string, invitedByIds: string[], verified: string, artist: string, start: number, length: number): Promise<any> {
+  getAllUsers(_search: string, invitedByIds: string[], verified: string, artist: string, start: number, length: number, blocked: string,): Promise<any> {
     let filter = {};
     if (_search) {
       const search = _search.trim();
@@ -329,6 +329,11 @@ export class MusicoinOrgJsonAPI {
     }
     if (artist) {
       filter["mostRecentReleaseDate"] = artist == "true" ? { $exists: true, $ne: null } : { $not: { $exists: true, $ne: null } };
+    }
+    if (blocked) {
+      filter["blocked"] = blocked == "true" ? { $eq: true } : { $ne: true };
+      filter["accountLocked"] = { $ne: true };
+      filter["verified"] = { $ne: true };
     }
 
     const c = User.count(filter).exec();

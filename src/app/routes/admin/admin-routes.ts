@@ -158,7 +158,7 @@ export class AdminRoutes {
       const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
       const previous = Math.max(0, start - length);
       const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
-      jsonAPI.getAllUsers(req.query.search, null, null, null, start, length)
+      jsonAPI.getAllUsers(req.query.search, null, null, null, start, length, null)
         .then(results => {
           const users = results.users;
           return doRender(req, res, 'admin/admin-users.ejs', {
@@ -234,7 +234,7 @@ export class AdminRoutes {
       const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
       const previous = Math.max(0, start - length);
       const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
-      jsonAPI.getAllUsers(req.query.search, null, null, null, start, length)
+      jsonAPI.getAllUsers(req.query.search, null, null, null, start, length, null)
         .then(results => {
           const users = results.users;
           return doRender(req, res, 'peer-verification.ejs', {
@@ -446,10 +446,35 @@ export class AdminRoutes {
       const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
       const previous = Math.max(0, start - length);
       const url = '/admin/artist-verified?search=' + (req.query.search ? req.query.search : '');
-      jsonAPI.getAllUsers(req.query.search, null, 'true', 'true', 0, length)
+      jsonAPI.getAllUsers(req.query.search, null, 'true', 'true', 0, length, null)
         .then(results => {
           const users = results.users;
           return doRender(req, res, 'admin/artist-verified.ejs', {
+            search: req.query.search,
+            users: users,
+            navigation: {
+              show10: `${url}&length=10`,
+              show25: `${url}&length=25`,
+              show50: `${url}&length=50`,
+              show100: `${url}&length=100`,
+              description: `Showing ${start + 1} to ${start + users.length}`,
+              start: previous > 0 ? `${url}&length=${length}` : null,
+              back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
+              next: users.length >= length ? `${url}&length=${length}&start=${start + length}` : null
+            }
+          });
+        });
+    });
+
+    router.get('/admin/user-blocked', functions.isLoggedIn, functions.adminOnly, (req, res) => {
+      const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
+      const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
+      const previous = Math.max(0, start - length);
+      const url = '/admin/user-blocked?search=' + (req.query.search ? req.query.search : '');
+      jsonAPI.getAllUsers(req.query.search, null, 'false', 'false', 0, length, 'true')
+        .then(results => {
+          const users = results.users;
+          return doRender(req, res, 'admin/user-blocked.ejs', {
             search: req.query.search,
             users: users,
             navigation: {
@@ -471,7 +496,7 @@ export class AdminRoutes {
       const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
       const previous = Math.max(0, start - length);
       const url = '/admin/user-verified?search=' + (req.query.search ? req.query.search : '');
-      jsonAPI.getAllUsers(req.query.search, null, 'true', 'false', 0, length)
+      jsonAPI.getAllUsers(req.query.search, null, 'true', 'false', 0, length, null)
         .then(results => {
           const users = results.users;
           return doRender(req, res, 'admin/user-verified.ejs', {
@@ -496,7 +521,7 @@ export class AdminRoutes {
       const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
       const previous = Math.max(0, start - length);
       const url = '/admin/artist-unverified?search=' + (req.query.search ? req.query.search : '');
-      jsonAPI.getAllUsers(req.query.search, null, 'false', 'true', 0, length)
+      jsonAPI.getAllUsers(req.query.search, null, 'false', 'true', 0, length, null)
         .then(results => {
           const users = results.users;
           return doRender(req, res, 'admin/artist-unverified.ejs', {
