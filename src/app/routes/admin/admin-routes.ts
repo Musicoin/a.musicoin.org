@@ -421,7 +421,7 @@ export class AdminRoutes {
     router.get('/admin/elements/playback-history', functions.isLoggedIn, functions.adminOnly, function (req, res) {
       let l: any = req.query.length;
       let s: any = req.query.start;
-      const length = typeof l !== "undefined" ? parseInt(l) : 1000;
+      const length = typeof l !== "undefined" ? parseInt(l) : 30000;
       const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
       var options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
