@@ -56,7 +56,6 @@
     .trigger:hover {
         opacity: 0.7;
     }
-
     .search-container {
         flex: 1;
     }
@@ -160,9 +159,11 @@
     }
 
     nav {
-      background-color: black;
-      width: 100%;
-      height: 46px;
+        padding-top: 10px;
+        padding-bottom: 5px;
+        background-color: black;
+        width: 100%;
+        height: 50px;
     }
 
     i {
@@ -178,21 +179,6 @@
       margin: 0 auto;
       height: 100%;
     }
-
-    .container {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-evenly;
-      height: 100%;
-    }
-
-
-    .container>div {
-      padding: 10px;
-    }
-
-    /* LOGO */
 
     .logo-container {
       flex: 0.15;
@@ -268,7 +254,7 @@
     </div>
 </div>
 
-<nav class="navbar navbar-fixed-top">
+<nav>
   <div class="inner-navbar">
     <div class="container">
         <div class="logo-container">
@@ -276,7 +262,7 @@
               <img width="150px" class="big-screen-only" src="/images/logon.png">
               </img>
             </a>
-            <p class="beta big-screen-only" style="font: 'Lato'; color: #fbbf02; position: absolute; top: 7px; left: 165px;"> beta </p>
+            <p class="beta big-screen-only" style="font: 'Lato'; color: #fbbf02; position: absolute; top: 2px; left: 160px;"> beta </p>
         </div>
 
         <% if (isAuthenticated) { %>
