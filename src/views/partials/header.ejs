@@ -11,6 +11,8 @@
     .logo-container {
         width: 250px;
         margin-right: 1rem;
+        position: absolute;
+        left: 10px;
     }
 
     .logo_image {
@@ -98,8 +100,8 @@
     }
     .user-badge-image {
         border-radius: 50%;
-        width: 32px;
-        height: 32px;
+        width: 20px;
+        height: 20px;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -157,6 +159,99 @@
         margin-right: 2rem;
     }
 
+    nav {
+      background-color: black;
+      width: 100%;
+      height: 46px;
+    }
+
+    i {
+      color: #fbbf02;
+      padding: 5px;
+    }
+
+    /* INNER NAV PARTS */
+
+    .inner-navbar {
+      width: 80%;
+      background-color: black;
+      margin: 0 auto;
+      height: 100%;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-evenly;
+      height: 100%;
+    }
+
+
+    .container>div {
+      padding: 10px;
+    }
+
+    /* LOGO */
+
+    .logo-container {
+      flex: 0.15;
+      flex-shrink: 0;
+    }
+
+    /* SEARCH  */
+
+    .search-container {
+      flex: .5;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      position: absolute;
+      right: 200px;
+    }
+
+    form {
+      background-color: white;
+      border-radius: 50px;
+      height: 30px;
+      padding-bottom: -5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    input[type=text] {
+      width: 80%;
+      border: none;
+      outline: none;
+      color: black;
+    }
+
+    .search-button {
+      border: none;
+      background-color: white;
+      cursor: pointer;
+      position: relative;
+      right: 10px;
+      outline: none;
+    }
+
+    .search-button i {
+      color: #fbbf02;
+    }
+
+    .icon-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: absolute;
+      right: 10px;
+    }
+
+    .content-hide {
+      display: none !important;
+    }
+
 </style>
 <div class="background-cover"></div>
 <!-- The Modal -->
@@ -173,162 +268,151 @@
     </div>
 </div>
 
-<div class="header">
-    <div class="logo-container">
-        <a href="/feed"><img width="200px" height="50px" class="big-screen-only" src="/images/logon.png"></img></a>
-        <p class="beta big-screen-only" style="font: 'Lato'; color: grey; position: absolute; top: 17px; left: 235px;"> beta </p>
-
-    </div>
-
-    <% if (isAuthenticated) { %>
-    <div class="search-container">
-        <form action="/browse?genre=<%= typeof genreFilter != "undefined" ? genreFilter : "" %>&sort=<%= typeof sort != "undefined" ? sort : "" %>" method="post">
-            <div class="flex-row">
-                <a href="/browse" class="fa fa-search shift-r20" style="color: black" aria-hidden="true"></a>
-                <input class="form-control text-large pl25"
-                        name="search"
-                        style="color:inherit;border-radius: 5px;background-color: white;float: left;color: black;width: 40vw;"
-                        value="<%= typeof searchTerm != "undefined" ? searchTerm : ""  %>" placeholder="Search for your favorite tracks">
-            </div>
-        </form>
-    </div>
-
-    <% } %>
-    
-    <div style="color: white">
-    <% if (user.profileAddress) { %>
-    <a href="/artist/<%= user.profileAddress %>" title="View your public profile" style="color: white; margin-right:15px">
-        <i class="fa fa-users" aria-hidden="true" style="color: white"></i>
-        <span>My Page</span>
-    </a>
-    <% } else { %>
-        <div class="unpublished-info" data-toggle="tooltip" data-html="true"
-            data-placement="auto" title="By publishing your profile, you agree to our <a href='/terms'>terms of use</a>">
-                <i class="fa fa-info" aria-hidden="true"></i>
+<nav class="navbar navbar-fixed-top">
+  <div class="inner-navbar">
+    <div class="container">
+        <div class="logo-container">
+            <a href="/feed">
+              <img width="150px" class="big-screen-only" src="/images/logon.png">
+              </img>
+            </a>
+            <p class="beta big-screen-only" style="font: 'Lato'; color: #fbbf02; position: absolute; top: 7px; left: 165px;"> beta </p>
         </div>
-    <% } %>
-    </div>
 
-    <div class="forum-container">
-        <a href="https://forum.musicoin.org" style="color:inherit" target="_blank"><b>Forum</b></a>
-    </div>
-
-    <div class="flex-row">
         <% if (isAuthenticated) { %>
-
-            <!--
-            <% if(!user.twitter.token  && !user.facebook.token) { %>
-                <div id='delete1' style="z-index: 100 ;position: fixed; top: 65px !important; padding-left: 20px; background: #B7950B; width: 100vw; height: 22vh">
-                  <br>
-                  <div id="bold-text" style="font-weight: 900 !important; font-size: 30px;  color: black; font-family: 'Lato' !important;">
-                    Your Profile is not verified yet
-                  </div>
-                  <br>
-                  <div id='sub-text' style="width: 50vw; color: black; font-size: 15px; letter-spacing: 0em; line-height: 1">
-                    <strong>
-                    Please note that the verification process is not automatic and may take upto 3 days.
-                    The admins will verify your profile and you'll get a verified icon on your profile page.
-                  </strong>
-                  </div>
-                  <button style="display: block; float: right; border: none; position: relative; top: -8vh; left: -20vw; width: 100px; border-radius: 50px; color: white; font-family: 'Lato'; font-weight: 900px; font-size: 11px;background: black; cursor: pointer" onclick=""> VERIFY </button>
-                    <i class="fa fa-times fa-2x" style="color: black; position: relative; float: right; top: -8vh; left: -10vw; cursor: pointer" onclick = "$('#delete1').css('visibility', 'hidden')"></i>
-                </div>
-            <% } %>
-            -->
-            <div class="popover-markup">
-
-                <a href="#" class="trigger" title="<%=user.profile.artistName%>">
-                    <div class="balance-placeholder" title="My balance">
-                        <span class="text-large" style="padding-left:5px"><%= user.formattedBalance%></span>
-                        <span style="color: white"><b> MC</b></span>
-                    </div>
-                    <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
-                </a>
-                <div class="head hide"><%=user.profile.artistName%></div>
-                <div class="content hide">
-                    <div class="popoverContentContainer">
-                        <div id="optionMenu">
-                            <% if (user.profileAddress) { %>
-                                <% if ((user.verified) || (user.mostRecentReleaseDate == null)) { %>
-                                    <a href="/release-manager" class="btn btn-default">Release</a>
-                                <% } else { %>
-                                    <a style="color: black" onclick="alert('You are not verified as a musician. \n \nQ: What should I do to increase the chances for verification of my profile? \nA: Link Twitter and Facebook account to your Musicoin profile. Avoid adding newly created accounts if you have better ones(in terms of showing more about you and your music) because that will considerably decrease chances to be verified. The purpose of having these two accounts linked to your Musicoin profile is to confirm to us that you are a real person, you are the owner of the accounts, and also to show us some history of your musical work. \n \nEnter links of your SoundCloud, Bandcamp, ReverbNation, YouTube accounts(if you have any) in corresponding fields at https://musicoin.org/nav/profile \n \nLink of your Facebook artist page can be added in the first field(named Artist website profile page url) \n \nDont forget to upload one of your songs. Artists get in queue for verification only after releasing one song on the platform. You will be able to upload only 1 song before your profile is verified. To avoid any possible issues with uploading make sure file is in mp3 format, and also to enter the title, genre, and tags. \n \nDont forget to enter the profile name, add images, and description in profile edit section https://musicoin.org/nav/profile and upload a cover image')" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true" style="color: black"></i>&nbsp;Upload Song</a>
-                                <% } %>
-                            <% } %>
-                            <a href="/main" class="btn btn-default"><i class="fa fa-home" aria-hidden="true"></i>&nbsp;Home</a>
-                            <a href="/profile" class="btn btn-default">My Profile</a>
-                            <a href="/logout" target="_top" class="btn btn-danger">Sign Out</a>
-                        </div>
-
-                        <% if(!user.google.token || !user.twitter.token || !user.facebook.token) { %>
-                        <div class="center-text subtle-text flex-column mb5 mt10">
-                            <div>Link another account</div>
-                            <div class="flex-row center-text">
-                                <% if(!user.google.token) { %>
-                                <div class="mr5"><a href="/connect/google" target="_top" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>
-                                <% } %>
-
-                                <% if(!user.twitter.token) { %>
-                                <div class="mr5"><a href="/connect/twitter" target="_top" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>
-                                <% } %>
-
-                                <% if(!user.facebook.token) { %>
-                                <div class="mr5"><a href="/connect/facebook" target="_top" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>
-                                <% } %>
-
-                                <% if(!user.local.id) { %>
-                                <div class="mr5"><a href="/connect/email" target="_top" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></a></div>
-                                <% } %>
-                            </div>
-                        </div>
-                        <% } %>
-
-                        <% if(user.google.id || user.twitter.id || user.facebook.id) { %>
-                        <div class="center-text subtle-text flex-column mt20">
-                            <a onclick='$("#unlink").toggle()' class="clickable">Want to unlink an account?</a>
-                            <div id=unlink  style="display: none" class="alert alert-danger">
-                                <div class="flex-row center-text mt10">
-                                    <% if(user.google.token) { %>
-                                    <div class="mr5"><div onclick="unlink('google')" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></div></div>
-                                    <% } %>
-
-                                    <% if(user.twitter.token) { %>
-                                    <div class="mr5"><div onclick="unlink('twitter')" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></div></div>
-                                    <% } %>
-
-                                    <% if(user.facebook.token) { %>
-                                    <div class="mr5"><div onclick="unlink('facebook')" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></div></div>
-                                    <% } %>
-
-                                    <% if(user.local.id) { %>
-                                    <div class="mr5"><div onclick="unlink('local')" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></div></div>
-                                    <% } %>
-                                </div>
-                                <div class="center-text">
-                                    Select an account to unlink
-                                </div>
-                            </div>
-                        </div>
-                        <% } %>
-
-
-                        <% if (typeof isAdmin != "undefined" && isAdmin) { %>
-                        <div class="admin-area">
-                            <div class="text-normal text-center">Admin Functions</div>
-                            <div class="flex-row">
-                                <a href="/admin/users" class="header-admin-item text-danger"><i class="fa fa-users" aria-hidden="true" title="users"></i></a>
-                                <a href="/admin/contacts" class="header-admin-item text-danger"><i class="fa fa-address-card" aria-hidden="true"></i></a>
-                                <a href="/admin/overview" class="header-admin-item text-danger" title="admin"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>
-                                <a href="/admin/su" class="header-admin-item text-danger" title="log in as...">su</a>
-                            </div>
-                        </div>
-                        <% } %>
-                    </div>
-                </div>
+            <div class="search-container">
+                <form action="/browse?genre=<%= typeof genreFilter != "undefined" ? genreFilter : "" %>&sort=<%= typeof sort != "undefined" ? sort : "" %>" method="post">
+                    <input class="search-txt form-control text-large pl25"
+                            type="text"
+                            name="search"
+                            placeholder="Search"
+                            value="<%= typeof searchTerm != "undefined" ? searchTerm : ""  %>"
+                            style="font-size: 13px"
+                    >
+                    <a href="/browse">
+                        <button class="search-button" type="submit"><i class="fa fa-search"></i></button>
+                    </a>
+                </form>
             </div>
         <% } %>
+        <div class="icon-container">
+        <% if (user.profileAddress) { %>
+            <a href="/artist/<%= user.profileAddress %>" title="View your public profile" style="color: white; margin-right:15px">
+                <div>
+                    <a href="/artist/<%= user.profileAddress %>">
+                        <i class="fa fa-users" title="View your public profile" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </a>
+        <% } else { %>
+            <div class="unpublished-info" data-toggle="tooltip" data-html="true"
+                data-placement="auto" title="By publishing your profile, you agree to our <a href='/terms'>terms of use</a>">
+                    <i class="fa fa-info" aria-hidden="true"></i>
+            </div>
+        <% } %>
+        <div>
+            <a href="https://forum.musicoin.org" target="_blank">
+                <i class="fa fa-wpforms" title="Forum"></i>
+            </a>
+        </div>
+        <div class="flex-row">
+            <% if (isAuthenticated) { %>
+                <div class="popover-markup">
+                    <a href="#" class="trigger" title="<%=user.profile.artistName%>">
+                        <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
+                        <div class="balance-placeholder" title="My balance" style="margin-left: -10px">
+                            <span class="text-large" style="padding-left:5px; font-size: 14px; color: #fbbf02"><%= user.formattedBalance%></span>
+                            <span style="color: white; font-size: 14px; color: #fbbf02"><b> MC</b></span>
+                        </div>
+                    </a>
+                    <div class="head hide"><%=user.profile.artistName%></div>
+                    <div class="content hide">
+                        <div class="popoverContentContainer">
+                            <div id="optionMenu">
+                                <% if (user.profileAddress) { %>
+                                    <% if ((user.verified) || (user.mostRecentReleaseDate == null)) { %>
+                                        <a href="/release-manager" class="btn btn-default">Release</a>
+                                    <% } else { %>
+                                        <a style="color: black" onclick="alert('You are not verified as a musician. \n \nQ: What should I do to increase the chances for verification of my profile? \nA: Link Twitter and Facebook account to your Musicoin profile. Avoid adding newly created accounts if you have better ones(in terms of showing more about you and your music) because that will considerably decrease chances to be verified. The purpose of having these two accounts linked to your Musicoin profile is to confirm to us that you are a real person, you are the owner of the accounts, and also to show us some history of your musical work. \n \nEnter links of your SoundCloud, Bandcamp, ReverbNation, YouTube accounts(if you have any) in corresponding fields at https://musicoin.org/nav/profile \n \nLink of your Facebook artist page can be added in the first field(named Artist website profile page url) \n \nDont forget to upload one of your songs. Artists get in queue for verification only after releasing one song on the platform. You will be able to upload only 1 song before your profile is verified. To avoid any possible issues with uploading make sure file is in mp3 format, and also to enter the title, genre, and tags. \n \nDont forget to enter the profile name, add images, and description in profile edit section https://musicoin.org/nav/profile and upload a cover image')" class="header-menu-item" title="release"><i class="fa fa-cloud-upload" aria-hidden="true" style="color: black"></i>&nbsp;Upload Song</a>
+                                    <% } %>
+                                <% } %>
+                                <a href="/main" class="btn btn-default"><i class="fa fa-home" aria-hidden="true"></i>&nbsp;Home</a>
+                                <a href="/profile" class="btn btn-default">My Profile</a>
+                                <a href="/logout" target="_top" class="btn btn-danger">Sign Out</a>
+                            </div>
+
+                            <% if(!user.google.token || !user.twitter.token || !user.facebook.token) { %>
+                            <div class="center-text subtle-text flex-column mb5 mt10">
+                                <div>Link another account</div>
+                                <div class="flex-row center-text">
+                                    <% if(!user.google.token) { %>
+                                    <div class="mr5"><a href="/connect/google" target="_top" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></a></div>
+                                    <% } %>
+
+                                    <% if(!user.twitter.token) { %>
+                                    <div class="mr5"><a href="/connect/twitter" target="_top" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></a></div>
+                                    <% } %>
+
+                                    <% if(!user.facebook.token) { %>
+                                    <div class="mr5"><a href="/connect/facebook" target="_top" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></a></div>
+                                    <% } %>
+
+                                    <% if(!user.local.id) { %>
+                                    <div class="mr5"><a href="/connect/email" target="_top" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></a></div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <% } %>
+
+                            <% if(user.google.id || user.twitter.id || user.facebook.id) { %>
+                            <div class="center-text subtle-text flex-column mt20">
+                                <a onclick='$("#unlink").toggle()' class="clickable">Want to unlink an account?</a>
+                                <div id=unlink  style="display: none" class="alert alert-danger">
+                                    <div class="flex-row center-text mt10">
+                                        <% if(user.google.token) { %>
+                                        <div class="mr5"><div onclick="unlink('google')" class="btn btn-danger btn-sm"><span class="fa fa-google-plus"></span></div></div>
+                                        <% } %>
+
+                                        <% if(user.twitter.token) { %>
+                                        <div class="mr5"><div onclick="unlink('twitter')" class="btn btn-info btn-sm"><span class="fa fa-twitter"></span></div></div>
+                                        <% } %>
+
+                                        <% if(user.facebook.token) { %>
+                                        <div class="mr5"><div onclick="unlink('facebook')" class="btn btn-primary btn-sm"><span class="fa fa-facebook"></span></div></div>
+                                        <% } %>
+
+                                        <% if(user.local.id) { %>
+                                        <div class="mr5"><div onclick="unlink('local')" class="btn btn-default btn-sm"><span class="fa fa-envelope-o"></span></div></div>
+                                        <% } %>
+                                    </div>
+                                    <div class="center-text">
+                                        Select an account to unlink
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+
+                            <% if (typeof isAdmin != "undefined" && isAdmin) { %>
+                            <div class="admin-area">
+                                <div class="text-normal text-center">Admin Functions</div>
+                                <div class="flex-row">
+                                    <a href="/admin/users" class="header-admin-item text-danger"><i class="fa fa-users" aria-hidden="true" title="users"></i></a>
+                                    <a href="/admin/contacts" class="header-admin-item text-danger"><i class="fa fa-address-card" aria-hidden="true"></i></a>
+                                    <a href="/admin/overview" class="header-admin-item text-danger" title="admin"><i class="fa fa-pie-chart" aria-hidden="true"></i></a>
+                                    <a href="/admin/su" class="header-admin-item text-danger" title="log in as...">su</a>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+</nav>
 
 <script>
 
