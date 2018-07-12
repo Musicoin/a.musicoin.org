@@ -220,7 +220,7 @@ export class AdminRoutes {
     router.get('/admin/elements/releases', functions.isLoggedIn, functions.adminOnly, (req, res) => {
       let l: any = req.query.length;
       let s: any = req.query.start;
-      const length = typeof l !== "undefined" ? parseInt(l) : 10;
+      const length = typeof l !== "undefined" ? parseInt(l) : 1000;
       const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
       jsonAPI.getAllReleases(req.body.search, start, length)
         .then(results => {
@@ -230,7 +230,7 @@ export class AdminRoutes {
     });
 
     router.get('/peerverif/a7565fbd8b81b42031fd893db7645856f9d6f377a188e95423702e804c7b64b1', (req, res) => {
-      const length = 1000;
+      const length = 3000;
       const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
       const previous = Math.max(0, start - length);
       const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
@@ -421,7 +421,7 @@ export class AdminRoutes {
     router.get('/admin/elements/playback-history', functions.isLoggedIn, functions.adminOnly, function (req, res) {
       let l: any = req.query.length;
       let s: any = req.query.start;
-      const length = typeof l !== "undefined" ? parseInt(l) : 10;
+      const length = typeof l !== "undefined" ? parseInt(l) : 1000;
       const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
       var options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
