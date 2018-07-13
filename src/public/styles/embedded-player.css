@@ -1,150 +1,13 @@
-/* .player {
-  width: 400px;
-  height: 200px;
-} */
-
-/* #player-badge-image {}
-
-.player-foreground {}
-
-.song-badge-info {}
-
-.player-controls-wrapper {
-  flex: 0 1 80%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  flex-direction: row;
-}
-
-.player-widget-right {
-  display: flex;
-  flex-flow: row;
-  flex: 0 1 95%;
-}
-
-.player-badge-image-wrapper.player-widget-left {
-  flex: 0 1 auto;
-}
-
-.musicoin-declaration-banner {
-  display: none;
-  color: #FFF;
-  font-size: 14px;
-  margin-left: 10px;
-  text-align: center;
-}
-
-#track-description-in-player {
-  display: none;
-}
-
-.embedded-player .player-badge-image-wrapper {
-    padding: 5px 0;
-    width: 47%;
-    box-sizing: border-box;
-}
-
-.embedded-player .player-foreground {
-  align-items: flex-start;
-  padding: 0 5px;
-}
-
-.embedded-player .musicoin-declaration-banner {
-  display: block;
-}
-
-.embedded-player .player-widget-right {
-  flex-flow: column;
-}
-
-.embedded-player #track-description-in-player {
-  display: block;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  color: #e2e2e2;
-  height: 22px;
-  width: 100%;
-  white-space: nowrap;
-}
-
-.embedded-player .player-artist-name {
-  padding: 3px;
-  flex: 0 1 36%;
-}
-
-
-.embedded-player div#player-title-area {
-  flex: 0 1 64%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.embedded-player .song-badge-info {
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 260px;
-}
-
-.embedded-player .player-artist-name::before {
-  content: "By ";
-}
-
-.embedded-player div#player-section {
-  height: 100%;
-}
-
-.embedded-player #player-badge-image {
-      max-width: 100%;
-    width: 100%;
-    height: 100%;
-    display: block !important;
-}
-
-.embedded-player .player-progress {
-  display: block !important;
-}
-
-
-.embedded-player #player-title {}
-
-.embedded-player #player-options-overlay {
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    background: #c7c4c45e;
-    display: none;
-}
-
-.embedded-player #player-options {
-  width: 80%;
-    margin: 0 auto;
-    color: #FFF;
-    z-index: 1;
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.embedded-player #player-options > button {
-    font-size: 14px;
-    color: #FFF;
-    font-weight: bold;
-    border: 0;
-    background: #000;
-    width: 60%;
-    margin: 5px auto;
-    display: block;
-    padding: 12px;
-} */
-
 body {
-  background-color: transparent;
+  background: #e65c00;
+}
+
+.progress-thumb {
+  background-color: white !important;
 }
 
 .embedded-player * {
   font-family: Ubuntu;
-
 }
 
 .disabled {
@@ -153,10 +16,6 @@ body {
 
 .player-widget-left {
   width: 40%;
-}
-
-.player-widget-right {
-  width: 60%;
 }
 
 .embedded-player-foreground {
@@ -171,14 +30,12 @@ body {
 
 .song-badge-container {
   display: flex;
-  min-width: 400px;
 }
 
 .song-badge-info {
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
-  width: 260px !important;
 }
 
 .player-badge-image-wrapper {
@@ -187,7 +44,6 @@ body {
   align-items: center;
   justify-content: center;
   margin: 10px 5px;
-  width: 40%;
   max-width: 160px;
   background-color: #000;
   border-radius: 5px;
@@ -205,9 +61,7 @@ body {
   content: '';
 } */
 
-.player-song-name,
-.player-artist-name,
-.player-description {
+.player-song-name, .player-artist-name, .player-description {
   flex: unset !important;
   margin: 2px 5px;
   color: black;
@@ -281,10 +135,9 @@ body {
 }
 
 .player-button:not(.disabled):hover {
-  transform: scale(1.1);
-  color: rgb(226, 192, 0);
-  text-shadow: 1px 1px 1px rgb(226, 192, 0);
-
+  transform: scale(1.3);
+  color: white;
+  text-shadow: 1px 1px 1px white;
 }
 
 .player-progress {
@@ -366,20 +219,3 @@ body {
   justify-content: center;
   align-items: center;
 }
-
-/* BUTTON CONTROLS */
- .play-button-wrapper {
-    border: 1px solid #000;
-    border-radius: 50%;
-    width: 4rem;
-    height: 4rem;
- }
- .play-button-wrapper:not(.disabled):hover {
-    border: 1px solid rgb(226, 192, 0);
-    color: rgb(226, 192, 0);
-  }
-
-  .play-button-wrapper:not(.disabled):active {
-    border: 1px solid rgb(226, 192, 0);
-    color: rgb(226, 192, 0);
-  }
