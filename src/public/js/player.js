@@ -293,8 +293,8 @@
         $(".show-on-play", window.parent.document).css("display", "flex");
       }
       $(".show-on-play").css("display", "flex");
-      $("#player-title")[0].innerHTML = title;
-      $("#player-artist")[0].innerHTML = artist;
+      $("#player-title")[0].innerHTML = title.substring(0, 20);
+      $("#player-artist")[0].innerHTML = artist.substring(0, 20);
       var audioUrl = url + "?" + new Date().getTime();
       if(!audioPlayer.previewMode) {
         $("#player")[0].src = audioUrl;
