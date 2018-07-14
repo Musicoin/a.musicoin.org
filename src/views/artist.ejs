@@ -207,12 +207,12 @@ function formatNumber(value) {
 
 <div class="two-columns white-well">
     <% if (artist.verified) { %>
-    <div class="pad10">
+    <div class="pad10" style="width: 60%">
         <div class="center-text event-header" style="font-size: 40px; color: #555; font-family: 'Ubuntu', sans-serif;"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts </div>
         <% if (artist.profileAddress == user.profileAddress) { %>
         <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
             <a href="/artist/<%=artist.profileAddress%>"><div style="background-image: url('/images/musician.jpg')"></div></a>
-            <textarea class="general-post" target="de-user-messages" placeholder="What's on your mind now?"></textarea>
+            <textarea class="general-post" target="de-user-messages" placeholder="What's on your mind now? You can now compose a post in markdown!"></textarea>
         </div>
         <% } %>
         <div class="dynamic-element message-scroller"
@@ -230,7 +230,7 @@ function formatNumber(value) {
         </div>
     </div>
     <% } else { %>
-        <div class="pad10">
+        <div class="pad10" style="width: 60%">
             <div class="center-text event-header"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts (Unverified musician) </div>
             <div class="dynamic-element message-scroller"
                  data-behavior="chat-message-area"

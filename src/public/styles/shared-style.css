@@ -151,7 +151,7 @@ textarea.form-control {
     }
 
     .columns-2-to-1 > .col2 {
-        width: 50%;
+        width: 40%;
         padding: 10px;
         min-width: 350px;
     }
