@@ -120,7 +120,7 @@ function formatNumber(value) {
 }
 %>
 
-<div class="box-shadow-top white-well pad20 columns-2-to-1">
+<div class="white-well pad20 columns-2-to-1" style="border-color: white !important">
     <div id=description class="text-justify more col1">
         <div class="more-content">
             <%
@@ -252,15 +252,17 @@ function formatNumber(value) {
         <% if (releases.length > 0) { %>
           <% if (artist.verified) { %>
             <div class="event-header text-center" style="font-size: 40px; font-family: 'Ubuntu', sans-serif;">
-                <i class="fa fa-cloud"></i>Releases
+                <i class="fa fa-cloud" style="color: #464646"></i>Releases
                 <% if (typeof showPlayAll != "undefined" && showPlayAll) { %>
                 <div>
-                    <div class="btn btn-success party-button play-list pad5 play-all-button"
-                         target="artistReleases"
-                         title="Play all tracks by this artist">
-                        <i class="fa fa-play text-large mr5 text-default" aria-hidden="true"></i> PLAY ALL
+                        <div class="btn btn-success party-button play-list pad5 play-all-button"
+                             target="artistReleases"
+                             title="Play all tracks by this artist"
+                             style="border-color: white; background: #e65c00; background: -webkit-linear-gradient(to right, #F9D423, #e65c00); background: linear-gradient(to right, #F9D423, #e65c00);"
+                          >
+                            <i class="fa fa-play text-large mr5 text-default" aria-hidden="true" style="color: white !important"></i>PLAY ALL
+                        </div>
                     </div>
-                </div>
                 <% } %>
             </div>
 

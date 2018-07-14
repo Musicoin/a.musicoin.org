@@ -8,6 +8,15 @@
     background-color: white;
 }
 
+a {
+  color: #464646;
+}
+
+.btn-success {
+  background-color: #ffba02 !important;
+  border-color: white !important;
+}
+
 body {
     color: white;
     text-rendering: optimizeLegibility;
@@ -137,12 +146,12 @@ textarea.form-control {
     }
 
     .columns-2-to-1 > .col1 {
-        width: 66%;
+        width: 60%;
         padding: 10px;
     }
 
     .columns-2-to-1 > .col2 {
-        width: 40%;
+        width: 50%;
         padding: 10px;
         min-width: 350px;
     }

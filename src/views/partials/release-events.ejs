@@ -25,12 +25,9 @@
     <% } else { %>
     <div class="chat-message chat-message-normal event">
         <div class="top-center-text">
-            <a href="/track/<%=release.address%>"><div style="background-image: url('<%=release.image%>');" class="release-image" style="width: 100px ; height: 100px"></div></a>
+            <div style="background-image: url('<%=release.image%>');" class="release-image audio-track clickable m10" licenseAddress='<%=release.address%>' style="width: 100px ; height: 100px"></div>
         </div>
         <div class="chat-message-area">
-            <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=release.address%>' style="display: flex ; float: right">
-              <i class="fa fa-3x fa-play-circle" aria-hidden="true"></i>
-            </div>
             <div class="chat-message-sender" style="font-weight: bolder; display: inline-block; font-size: 25px;">
                 <a href="/track/<%=release.address%>"><%=release.title%></a>
             </div>

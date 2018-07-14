@@ -167,7 +167,7 @@
     }
 
     i {
-      color: #fbbf02;
+      color: black;
       padding: 5px;
     }
 
@@ -222,10 +222,6 @@
       outline: none;
     }
 
-    .search-button i {
-      color: #fbbf02;
-    }
-
     .icon-container {
       display: flex;
       align-items: center;
@@ -262,7 +258,7 @@
               <img width="150px" class="big-screen-only" src="/images/logon.png">
               </img>
             </a>
-            <p class="beta big-screen-only" style="font: 'Lato'; color: #fbbf02; position: absolute; top: 2px; left: 160px;"> beta </p>
+            <p class="beta big-screen-only" style="font: 'Lato'; color: #fbbf02; position: absolute; top: 2px; left: 160px; font-weight: 800"> beta </p>
         </div>
 
         <% if (isAuthenticated) { %>
@@ -286,19 +282,19 @@
             <a href="/artist/<%= user.profileAddress %>" title="View your public profile" style="color: white; margin-right:15px">
                 <div>
                     <a href="/artist/<%= user.profileAddress %>">
-                        <i class="fa fa-users" title="View your public profile" aria-hidden="true" style="font-size: 18px"></i>
+                        <i class="fa fa-users" title="View your public profile" aria-hidden="true" style="font-size: 18px; color: white"></i>
                     </a>
                 </div>
             </a>
         <% } else { %>
             <div class="unpublished-info" data-toggle="tooltip" data-html="true"
                 data-placement="auto" title="By publishing your profile, you agree to our <a href='/terms'>terms of use</a>">
-                    <i class="fa fa-info" aria-hidden="true"></i>
+                    <i class="fa fa-info" aria-hidden="true" style="color: white"></i>
             </div>
         <% } %>
         <div>
             <a href="https://forum.musicoin.org" target="_blank">
-                <i class="fa fa-wpforms" title="Forum" style="font-size: 18px"></i>
+                <i class="fa fa-wpforms" title="Forum" style="font-size: 18px; color: white"></i>
             </a>
         </div>
         <div class="flex-row">
@@ -307,8 +303,8 @@
                     <a href="#" class="trigger" title="<%=user.profile.artistName%>">
                         <div class="user-badge-image" style="background-image: url('<%=user.profile.image%>')" small></div>
                         <div class="balance-placeholder" title="My balance" style="margin-left: -10px">
-                            <span class="text-large" style="padding-left:5px; font-size: 14px; color: #fbbf02"><%= user.formattedBalance%></span>
-                            <span style="color: white; font-size: 14px; color: #fbbf02"><b> MC</b></span>
+                            <span class="text-large" style="padding-left:5px; font-size: 14px; color: white"><%= user.formattedBalance%></span>
+                            <span style="color: white; font-size: 14px; color: white"><b> MC</b></span>
                         </div>
                     </a>
                     <div class="head hide"><%=user.profile.artistName%></div>

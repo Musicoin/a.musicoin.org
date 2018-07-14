@@ -42,7 +42,7 @@
     <% var senderClass = user.mostRecentReleaseDate ? "sender-image-artist" : "sender-image" %>
 
     <div class="columns-2-to-1 white-well box-shadow-top" style="background-color: black">
-        <div class="col1" style="background: #fff;margin: 10px 10px 10px 10px;border-radius: 5px;padding: 50px 50px 20px 50px;">
+        <div class="col1" style="background: #fff;margin: 10px -5px 10px 0px;border-radius: 5px; padding-top: 30px">
             <div class="flex-row event-header mr10" style="justify-content: space-between; margin-right: 40px">
                 <div style="width: 100px" class="big-screen-only"></div>
                 <div>
@@ -75,7 +75,7 @@
 
             <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
                 <a href="/artist/<%=user.profileAddress%>"><div style="background-image: url('<%=user.profile.image%>')" class="<%=senderClass%>"></div></a>
-                <textarea class="general-post" target="de-track-messages" placeholder="What's on your mind now?"></textarea>
+                <textarea class="general-post" target="de-track-messages" placeholder="What's on your mind now? You can now compose a post in markdown!"></textarea>
             </div>
 
             <div class="flex-row" style="justify-content: center">
@@ -123,7 +123,7 @@
             </div>
         </div>
 
-        <div class="pad10 col2" style="background-color: #fff;margin: 10px 10px 10px 0px;border-radius: 5px; padding: 20px 20px 20px 20px;">
+        <div class="pad10 col2" style="background-color: #fff;margin: 10px 0px 10px 0px; padding-top: 30px">
             <%- include('partials/mini-hero.ejs', { display: minimizeHeroInFeed }) %>
 
             <% if (typeof recentlyPlayed != "undefined" && recentlyPlayed.length > 0) { %>
