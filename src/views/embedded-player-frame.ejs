@@ -3,6 +3,13 @@
 
 <head>
   <%- include('partials/page-head.ejs') %>
+  <meta property="og:title" content="<%=data.title%>"/>
+  <meta property="og:type" content="music.song"/>
+  <meta property="og:url" content="<%=data.audioUrl%>"/>
+  <meta property="og:image" content="<%=data.image%>"/>
+  <meta property="og:site_name" content="Musicoin"/>
+  <meta property="fb:app_id" content="<%=process.env.FACEBOOK_CLIENT_ID%>"/>
+  <meta property="music:musician" content="<%=data.artistProfileAddress%>">
   <style>
     @font-face {
       font-family: Ubuntu;
