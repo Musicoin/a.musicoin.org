@@ -86,11 +86,12 @@
             <a class="plain" href="<%=hero.subtitleLink%>"><%=hero.subtitle%></a>
         </div>
     <div class="mini-hero-image box-shadow-top" style="background-image: url('<%=bgImage%>'); <%=style%>">
-        <div class="hero-toggle large-hero-toggle clickable"><i class="fa fa-expand" aria-hidden="true"></i></div>
+        <div class="hero-toggle large-hero-toggle clickable"><i style="color: white" class="fa fa-expand" aria-hidden="true"></i></div>
         <% if(hero.licenseAddress) { %>
         <div class="mini-hero-play center-text">
             <i class="fa fa-play-circle mini-hero-play-button clickable audio-track"
                licenseaddress="<%=hero.licenseAddress%>"
+               style="color: white"
                aria-hidden="true"></i>
         </div>
         <% } %>
