@@ -196,7 +196,7 @@
       right: 200px;
     }
 
-    form {
+    #form1 {
       background-color: white;
       border-radius: 50px;
       height: 30px;
@@ -206,11 +206,12 @@
       justify-content: center;
     }
 
-    input[type=text] {
+    #input1{
       width: 80%;
       border: none;
       outline: none;
       color: black;
+      height: 20px
     }
 
     .search-button {
@@ -263,9 +264,10 @@
 
         <% if (isAuthenticated) { %>
             <div class="search-container">
-                <form action="/browse?genre=<%= typeof genreFilter != "undefined" ? genreFilter : "" %>&sort=<%= typeof sort != "undefined" ? sort : "" %>" method="post">
+                <form id="form1" action="/browse?genre=<%= typeof genreFilter != "undefined" ? genreFilter : "" %>&sort=<%= typeof sort != "undefined" ? sort : "" %>" method="post">
                     <input class="search-txt form-control text-large pl25"
                             type="text"
+                            id="input1"
                             name="search"
                             placeholder="Search"
                             value="<%= typeof searchTerm != "undefined" ? searchTerm : ""  %>"
