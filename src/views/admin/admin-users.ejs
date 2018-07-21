@@ -113,11 +113,11 @@
             <td class="text-center middle">
                 <div class="flex-row">
                     <div class="btn btn-sm mr5 <%= user.verified ? "btn-warning" : "btn-success" %>"
-                         onclick="verifyUser(this, '<%= user._id %>', '<%= name %>')"><%= user.verified ? "Unverify" : "Verify"%></div>
+                         onclick="verifyUser(this, '<%= user._id %>')"><%= user.verified ? "Unverify" : "Verify"%></div>
                     <div class="btn btn-sm mr5 <%= user.blocked ? "btn-success" : "btn-warning" %>"
-                         onclick="blockUser(this, '<%= user._id %>', '<%= name %>')"><%= user.blocked ? "Unblock Releases" : "Block Releases"%></div>
+                         onclick="blockUser(this, '<%= user._id %>')"><%= user.blocked ? "Unblock Releases" : "Block Releases"%></div>
                     <div class="btn btn-sm <%= user.accountLocked ? "btn-success" : "btn-danger" %>"
-                         onclick="lockUserAccount(this, '<%= user._id %>', '<%= name %>')"><%= user.accountLocked ? "Unlock" : "Lock"%></div>
+                         onclick="lockUserAccount(this, '<%= user._id %>')"><%= user.accountLocked ? "Unlock" : "Lock"%></div>
                 </div>
             </td>
             <td class="text-center middle">
@@ -255,12 +255,12 @@
     })
   }
 
-  function lockUserAccount(element, id, name) {
+  function lockUserAccount(element, id) {
     var button= $(element);
     var lock = button.text() == "Lock";
     var msg = lock
-      ? "Are you sure you want to lock " + name + "? The user will not be able to log in."
-      : "Are you sure you want to enable " + name + "? The user will be able to log in again.";
+      ? "Are you sure you want to lock this user? The user will not be able to log in."
+      : "Are you sure you want to enable this user? The user will be able to log in again.";
     var resultMsg = lock
       ? "User account locked"
       : "User account unlocked";
@@ -284,12 +284,12 @@
       })
   }
 
-  function verifyUser(element, id, name) {
+  function verifyUser(element, id) {
     var button= $(element);
     var verified = button.text() == "Verify";
     var msg = verified
-      ? "Are you sure you want to verify " + name + "?"
-      : "Are you sure you want remove verification for " + name + "?"
+      ? "Are you sure you want to verify this user?"
+      : "Are you sure you want remove verification for this user?"
     var resultMsg = verified
       ? "User marked as verified"
       : "Verification flag removed";
@@ -313,12 +313,12 @@
       })
   }
 
-  function blockUser(element, id, name) {
+  function blockUser(element, id) {
     var button= $(element);
     var block = button.text() == "Block Releases";
     var msg = block
-        ? "Are you sure you want to block releases " + name + "?"
-        : "Are you sure you want to enable releases" + name + "?";
+        ? "Are you sure you want to block releases for this user?"
+        : "Are you sure you want to enable releases for this user?";
     var resultMsg = block
         ? "User releases blocked"
         : "User releases enabled";
