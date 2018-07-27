@@ -207,7 +207,7 @@ function formatNumber(value) {
 
 <div class="two-columns white-well">
     <% if (artist.verified) { %>
-    <div class="pad10" style="width: 60%">
+    <div id="lastpost" class="pad10" style="width: 60%">
         <div class="center-text event-header" style="font-size: 40px; color: #555; font-family: 'Ubuntu', sans-serif;"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts </div>
         <% if (artist.profileAddress == user.profileAddress) { %>
         <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
@@ -230,7 +230,7 @@ function formatNumber(value) {
         </div>
     </div>
     <% } else { %>
-        <div class="pad10" style="width: 60%">
+        <div id="lastpost" class="pad10" style="width: 60%">
             <div class="center-text event-header"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts (Unverified musician) </div>
             <div class="dynamic-element message-scroller"
                  data-behavior="chat-message-area"
@@ -350,5 +350,6 @@ function formatNumber(value) {
 </script>
 <%- include('partials/player-hook.ejs') %>
 <%- include('partials/connect-with-us.ejs') %>
+<style>@media screen and (max-width: 800px) {#lastpost{display: none;}}</style>
 </body>
 </html>

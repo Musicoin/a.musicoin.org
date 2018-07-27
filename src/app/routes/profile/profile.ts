@@ -392,7 +392,7 @@ export class ProfileRouter {
                             console.log(`Payment submitted! tx : ${tx}`);
                             functions.pinCode();
                             functions.extraCode();
-                            res.redirect("/profile?sendError=false");
+                            res.redirect("/profile?sendError=false=" + `${tx}`);
                         }
                         else throw new Error(`Failed to send payment, no tx id was returned: from: ${req.user.profileAddress} to ${req.body.recipient}, amount: ${req.body.amount}`);
                     })

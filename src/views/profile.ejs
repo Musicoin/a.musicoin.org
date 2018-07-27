@@ -746,7 +746,7 @@
                     Send failed!
                 </div>
                 <% } else { %>
-                    Payment sent!
+                Payment sent! <div id="txid" style="word-wrap: break-word;"></div> <script>var txid = document.getElementById("txid").innerHTML = 'Txid: ' + location.search.split("false=")[1] + '\nYou could find your txid on <a style=color:#a79f7a href=https://explorer.musicoin.org/tx/'+ location.search.split("false=")[1] + '>Explorer</a> with some slight delay'</script>
                 <% } %>
                 <% } %>
                 <% if (typeof sendMailResult != "undefined") { %>
