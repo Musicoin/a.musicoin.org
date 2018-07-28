@@ -208,7 +208,7 @@ function formatNumber(value) {
 <div class="two-columns white-well">
     <% if (artist.verified) { %>
     <div id="lastpost" class="pad10" style="width: 60%">
-        <div class="center-text event-header" style="font-size: 40px; color: #555; font-family: 'Ubuntu', sans-serif;"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts </div>
+        <div class="center-text event-header" style="font-size: 30px; color: #555; font-family: 'Ubuntu', sans-serif;"><i class="fa fa-comment subtle-text text-default mr10" aria-hidden="true"></i> Posts </div>
         <% if (artist.profileAddress == user.profileAddress) { %>
         <div class="post-area mb10 flex-row" style="border-bottom: 1px solid #eee">
             <a href="/artist/<%=artist.profileAddress%>"><div style="background-image: url('/images/musician.jpg')"></div></a>
@@ -251,8 +251,8 @@ function formatNumber(value) {
     <div class="pad10">
         <% if (releases.length > 0) { %>
           <% if (artist.verified) { %>
-            <div class="event-header text-center" style="font-size: 40px; font-family: 'Ubuntu', sans-serif;">
-                <i class="fa fa-cloud" style="color: #464646"></i>Releases
+            <div class="event-header text-center" style="font-size: 30px; font-family: 'Ubuntu', sans-serif;">
+                <i class="fa fa-cloud" style="color: #464646"></i>Releases by <%= artist.artistName %>
                 <% if (typeof showPlayAll != "undefined" && showPlayAll) { %>
                 <div>
                         <div class="btn btn-success party-button play-list pad5 play-all-button"
