@@ -14,9 +14,10 @@ if (message.length > 0) message = `<div class=alert role=alert style=color:#ffff
 <link rel="shortcut icon" href="/favicon.ico">
 <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
 <div id="container" class="text-center" style="width:100%;">
-  <div style="float:left; width:50%;">
+  <div id="login" style="float:left;">
     <img src="/images/logo/logo.svg" alt="Musicoin Logo" style="margin-top:56px">
     <p style="margin-top:21px;height: 24px;color: #000000;font-family:Ubuntu;font-size:14px;font-weight: 300;line-height:24px;">Already Musicoin member? <a href="/welcome-musician">Sign In</a></p>
+    <p id="role" style="margin-top:21px;height: 24px;font-family:Ubuntu;font-size:24px;font-weight: 300;line-height:24px;width:296px;color: #FFAF00;">Select your role</p><br>
     <%-message%>
     <div style="float:left; width:50%;">
     <img src="/images/musician-and-listener/musician.png" alt="Musician" style="margin-top:142px"><br><br><br><br>
@@ -30,7 +31,7 @@ if (message.length > 0) message = `<div class=alert role=alert style=color:#ffff
     <div class="alert" role="alert" style="margin-top:21px;color:#000000;background-color:#fffffff;border-color:#FFAF00;font-family:Ubuntu;font-size:14px;font-weight:300;margin-left:auto;margin-right:auto;opacity:0.55;"><strong>Examples:</strong><br> Listen published tracks and albums on musicoin platform<br> Buy tracks <br> Communicate with musicians <br> Support musicians with PPP</div>
     </div>
   </div>
-  <div style="float:right; width:50%; background-color:#000000">
+  <div id="img" style="float:right; width:50%; background-color:#000000">
     <div class="container">
     <div class="row">
         <div class="col-lg-offset-1 col-lg-2">
@@ -94,5 +95,6 @@ if (message.length > 0) message = `<div class=alert role=alert style=color:#ffff
   ga('send', 'pageview');
 
 </script>
+<style>#login{width: 50%;}#role{display: none;}@media screen and (max-width: 1300px) {#img{display: none;}#role{display: unset;}#login{width: 100%;}}</style>
 </body>
 </html>
