@@ -14,6 +14,7 @@ const userSchema = mongoose.Schema({
     index: true,
     default: false
   },
+  AOWBadge:{type:Boolean,default:false},
   pendingTx: String,
   local: {
     id: String,

@@ -121,6 +121,18 @@ export class AdminRoutes {
           res.json({ success: true })
         })
     });
+    router.post('/admin/users/AOWBadge', (req, res) => {
+      if (!req.body.id) return res.json({ success: false, reason: "No id" });
+      User.findById(req.body.id).exec()
+        .then(user => {
+          console.log(`User AOW status changed by ${req.user.draftProfile.artistName}, artist=${user.draftProfile.artistName}, newStatus=${req.body.AOWBadge == "true"}`);
+          user.AOWBadge = req.body.AOWBadge == "true";
+          return user.save();
+        })
+        .then(() => {
+          res.json({ success: true })
+        })
+    });
 
     router.post('/admin/session/boot', (req, res) => {
       const idx = bootSession.indexOf(req.body.session);
@@ -160,7 +172,7 @@ export class AdminRoutes {
       const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
       jsonAPI.getAllUsers(req.query.search, null, null, null, start, length, null)
         .then(results => {
-          const users = results.users;
+          const users:any = results.users;
           return doRender(req, res, 'admin/admin-users.ejs', {
             search: req.query.search,
             users: users,

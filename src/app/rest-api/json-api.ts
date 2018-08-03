@@ -295,7 +295,7 @@ export class MusicoinOrgJsonAPI {
     })
   }
 
-  getAllUsers(_search: string, invitedByIds: string[], verified: string, artist: string, start: number, length: number, blocked: string,): Promise<any> {
+  getAllUsers(_search: string, invitedByIds: string[], verified: string, artist: string, start: number, length: number, blocked: string, ): Promise<any> {
     let filter = {};
     if (_search) {
       const search = _search.trim();
@@ -430,8 +430,8 @@ export class MusicoinOrgJsonAPI {
 
   getPlaysCount(): Promise<any> {
     return ReleaseStats.aggregate(
-      {$match: {duration: "all"}},
-      {$group: {_id: "all", plays: {$sum: "$playCount"}}})
+      { $match: { duration: "all" } },
+      { $group: { _id: "all", plays: { $sum: "$playCount" } } })
       .then(results => {
         let c = results.length ? results[0].plays : 0;
         return Promise.join(c, (count) => {
