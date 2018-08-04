@@ -23,6 +23,7 @@ const User = require('../../models/user');
 const Release = require('../../models/release');
 let publicPagesEnabled = false;
 let pin = functions.pinCodeReturnVal();
+let tDate = functions.tCodeReturnVal();
 let extraCode = functions.extraCodeReturnVal();
 var txRequest = [];
 const MESSAGE_TYPES = {
@@ -375,7 +376,9 @@ export class ProfileRouter {
                 let ip = get_ip.getClientIp(req);
                 let uAgent = "" + req.headers['user-agent'];
                 functions.extraCode();
-                txRequest = [req.user.profileAddress, txRecipient, amount, ip, extraCode];
+                functions.tCode();
+                let cTime = tDate;
+                txRequest = [req.user.profileAddress, txRecipient, amount, ip, extraCode, cTime];
 
                 mailSender.sendWithdrawConfirmation(req.user.primaryEmail, amount, txRecipient, rTime, ip, uAgent, config.serverEndpoint + "/send/" + pin)
                     .then(() => console.log("Message notification sent to " + req.user.primaryEmail))
@@ -385,21 +388,20 @@ export class ProfileRouter {
         });
 
         router.get('/send/:pinId', functions.isLoggedIn, function (req, res) {
-            if (req.params.pinId == pin && txRequest[4] == extraCode) {
+            if (req.params.pinId == pin && txRequest[4] == extraCode && txRequest[5] == tDate) {
+                functions.tCode();
+                functions.pinCode();
+                functions.extraCode();
                 musicoinApi.sendFromProfile(txRequest[0], txRequest[1], txRequest[2])
                     .then(function (tx) {
                         if (tx) {
                             console.log(`Payment submitted! tx : ${tx}`);
-                            functions.pinCode();
-                            functions.extraCode();
                             res.redirect("/profile?sendError=false=" + `${tx}`);
                         }
                         else throw new Error(`Failed to send payment, no tx id was returned: from: ${req.user.profileAddress} to ${req.body.recipient}, amount: ${req.body.amount}`);
                     })
                     .catch(function (err) {
                         console.log(err);
-                        functions.pinCode();
-                        functions.extraCode();
                         res.redirect("/profile?sendError=true");
                     });
 

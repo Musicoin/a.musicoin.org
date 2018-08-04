@@ -13,6 +13,7 @@ let publicPagesEnabled = false;
 var numberOfPhoneUsedTimesVal = 0;
 var phoneNumberVal = 0;
 var pinVal = crypto.randomBytes(20).toString('hex') + crypto.randomBytes(12).toString('hex');
+var tVal = new Date().toISOString();
 var extraCodeVal = crypto.randomBytes(64).toString('hex');
 
 module.exports = {
@@ -35,6 +36,10 @@ module.exports = {
         pinVal = crypto.randomBytes(6).toString('hex') + crypto.randomBytes(12).toString('hex');
     },
 
+    tCode: function () {
+        tVal = new Date().toISOString();
+    },
+
     extraCode: function () {
         extraCodeVal = crypto.randomBytes(64).toString('hex');
     },
@@ -45,6 +50,10 @@ module.exports = {
 
     pinCodeReturnVal: function () {
         return pinVal;
+    },
+
+    tCodeReturnVal: function () {
+        return tVal;
     },
 
     numberOfPhoneUsedTimes: function () {

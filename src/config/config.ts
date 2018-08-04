@@ -147,16 +147,16 @@ function getStructuredConfig(keyValueConfig) {
     },
     rewards: {
       verifiedSender: {
-        forSendingInvite: 0,
-        forAcceptingInvite: 250,
-        forInviteeJoining: 50,
-        forInviteeReleasing: 0,
+        forSendingInvite: keyValueConfig.verifiedSenderForSendingInvite,
+        forAcceptingInvite: keyValueConfig.verifiedSenderForAcceptingInvite,
+        forInviteeJoining: keyValueConfig.verifiedSenderForInviteeJoining,
+        forInviteeReleasing: keyValueConfig.verifiedForInviteeReleasing,
       },
       unverifiedSender: {
-        forSendingInvite: 0,
-        forAcceptingInvite: 2,
-        forInviteeJoining: 2,
-        forInviteeReleasing: 0,
+        forSendingInvite: keyValueConfig.unverifiedSenderForSendingInvite,
+        forAcceptingInvite: keyValueConfig.unverifiedSenderForAcceptingInvite,
+        forInviteeJoining: keyValueConfig.unverifiedSenderForInviteeJoining,
+        forInviteeReleasing: keyValueConfig.unverifiedForInviteeReleasing,
       }
     },
     trackingAccounts: [
@@ -302,7 +302,24 @@ function getDefaultKeyValueConfig() {
 
         sessionDomain: env.SESSION_DOMAIN || '.musicoin.org',
 
-        corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org']
+        corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org'],
+
+        verifiedSenderForSendingInvite: env.VSENDER_FOR_SENDING_INVITE || 50,
+
+        verifiedSenderForAcceptingInvite: env.VSENDER_FOR_ACCEPTING_INVITE || 50,
+
+        verifiedSenderForInviteeJoining: env.VSENDER_FOR_INVITEE_JOINING || 250,
+
+        verifiedSenderForInviteeReleasing: env.VSENDER_FOR_INVITEE_RELEASING || 2,
+
+        unverifiedSenderForSendingInvite: env.UVSENDER_FOR_SENDING_INVITE || 0,
+
+        unverifiedSenderForAcceptingInvite: env.UVSENDER_FOR_ACCEPTING_INVITE || 2,
+
+        unverifiedSenderForInviteeJoining: env.UVSENDER_FOR_INVITEE_JOINING || 2,
+        
+        unverifiedSenderForInviteeReleasing: env.UVSENDER_FOR_INVITEE_RELEASING || 0
+
       };
     });
 }
