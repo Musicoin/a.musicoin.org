@@ -559,7 +559,8 @@ export class MusicoinOrgJsonAPI {
           profileImage: this.mediaProvider.resolveIpfsUrl(user.draftProfile.ipfsImageUrl),
           licenseAddress: "",
           label: "",
-          description: user.draftProfile
+          description: user.draftProfile,
+          aowBadge:user.AOWBadge
         }
       })
   }

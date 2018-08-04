@@ -88,6 +88,9 @@
             <% if (typeof artist.verified != "undefined" && artist.verified) { %>
             <i class="verified large" title="verified user"></i>
             <% } %>
+            <% if(hero.aowBadge) {%>
+            <img width="40" src="/images/AOWBadge.png" style="float: right"></img>
+            <%}%>
         </div>
         <div class="text-hero text-subtitle">
             <div><a class="plain" href="<%=hero.subtitleLink%>"><%=hero.subtitle%></a></div>
