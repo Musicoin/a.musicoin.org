@@ -60,23 +60,19 @@ export class FrontRouter {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/privacy/legal', (req, res) => {
+        router.get('/legal/legal', (req, res) => {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/privacy/legal/legal', (req, res) => {
+        router.get('/legal/tos', (req, res) => {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/privacy/legal/tos', (req, res) => {
+        router.get('/legal/artist-policy', (req, res) => {
             res.render('../overview/index.html', {});
         });
 
-        router.get('/privacy/legal/artist-policy', (req, res) => {
-            res.render('../overview/index.html', {});
-        });
-
-        router.get('/privacy/legal/copyright', (req, res) => {
+        router.get('/legal/copyright', (req, res) => {
             res.render('../overview/index.html', {});
         });
     }
