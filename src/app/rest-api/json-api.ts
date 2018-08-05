@@ -118,7 +118,35 @@ export class MusicoinOrgJsonAPI {
     });
   }
 
+  getUser(_id: object) {
 
+    if (!_id) {
+      console.log('Invalid user id');
+      return
+    }
+
+    console.log("Fetching user details for forum login");
+    let query = { _id: _id };
+    return User.findOne(query)
+      .then((user) => {
+        console.log("Returning user id", user.id, " and email:", user.primaryEmail);
+        let result = {
+          _id: user.id,
+          isMusician: user.isMusician !== 'listener',
+          isListener: user.isMusician === 'listener',
+          followers: user.followerCount,
+          tips: user.directTipCount,
+          fullname: null,
+          username: user.primaryEmail,
+          picture: null,
+          freePlaysRemaining: user.freePlaysRemaining,
+          primaryEmail: user.primaryEmail,
+          emailVerified: user.emailVerified,
+          profileAddress: user.profileAddress
+        };
+        return result;
+      })
+  }
 
   sendRewardsForInvite(p: any): Promise<any> {
     if (!p || !p.invite || !p.invite.invitedBy) {

@@ -84,7 +84,7 @@ export class MusicoinRestAPI {
 
     jsonRouter.post('/user/send-email-address-verification-email', (req) => jsonAPI.userService.sendEmailAddressVerificationEmail(req.user));
 
-    jsonRouter.get('/profile/me', (req) => jsonAPI.userService.getUser(req.user));
+    jsonRouter.get('/profile/me', (req) => jsonAPI.getUser(req.isAuthenticated() ? req.user._id.toString() : "You aren't logged in"));
     jsonRouter.get('/profile/:address', (req) => jsonAPI.getArtist(req.params.address, true, true));
 
     jsonRouter.post('/profile/voting-power/add', (req) => jsonAPI.userService.incrementVotingPower(req.body));
