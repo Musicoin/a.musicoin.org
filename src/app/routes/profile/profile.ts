@@ -388,25 +388,41 @@ export class ProfileRouter {
         });
 
         router.get('/send/:pinId', functions.isLoggedIn, function (req, res) {
-            if (req.params.pinId == pin && txRequest[4] == extraCode && txRequest[5] == tDate) {
-                functions.tCode();
-                functions.pinCode();
-                functions.extraCode();
-                musicoinApi.sendFromProfile(txRequest[0], txRequest[1], txRequest[2])
-                    .then(function (tx) {
-                        if (tx) {
-                            console.log(`Payment submitted! tx : ${tx}`);
-                            res.redirect("/profile?sendError=false=" + `${tx}`);
-                        }
-                        else throw new Error(`Failed to send payment, no tx id was returned: from: ${req.user.profileAddress} to ${req.body.recipient}, amount: ${req.body.amount}`);
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                        res.redirect("/profile?sendError=true");
-                    });
-
+            if (req.params.pinId !== pin) {
+                console.log(`Incorrect withdraw details provided: Wrong security code`);
+            } else if (txRequest[4] !== extraCode) {
+                let ip = get_ip.getClientIp(req);
+                console.log(`Incorrect extraCode, possible hacking attempt from: ` + ip);
+            } else if (txRequest[5] !== tDate) {
+                console.log(`Incorrect details provided: Wrong withdrawal time`);
             } else {
-                res.redirect("/profile?sendError=true");
+                if (req.params.pinId == pin && txRequest[4] == extraCode && txRequest[5] == tDate) {
+                    function foxySend(target, recipient, count) {
+                        if (req.params.pinId !== pin) {
+                            return;
+                        } else {
+                            functions.pinCode();
+                            functions.extraCode();
+                            functions.tCode();
+                            return musicoinApi.sendFromProfile(target, recipient, count)
+                                .then(function (tx) {
+                                    if (tx) {
+                                        console.log(`Payment submitted! tx : ${tx}`);
+                                        res.redirect("/profile?sendError=false=" + `${tx}`);
+                                    }
+                                    else throw new Error(`Failed to send payment`);
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                    res.redirect("/profile?sendError=true");
+                                });
+                        }
+                    }
+                    foxySend(txRequest[0], txRequest[1], txRequest[2]);
+                    txRequest = [];
+                } else {
+                    res.redirect("/profile?sendError=true");
+                }
             }
         });
 
