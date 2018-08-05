@@ -381,8 +381,6 @@ export class HomeRouter {
         });
     });
 
-
-    router.get('/terms', (req, res) => doRender(req, res, 'terms.ejs', {}));
     router.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
 
     router.post('/preferences/urlIsPublic', functions.isLoggedIn, function (req, res) {
