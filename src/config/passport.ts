@@ -159,7 +159,11 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
   },
     function (req, token, tokenSecret, profile, done) {
-
+      let isMusician=false;
+      if(req.session.isMusician)
+      {
+        isMusician=true;
+      }
       // asynchronous
       process.nextTick(function () {
         const localProfile = {
@@ -171,11 +175,10 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
           picture: profile._json.picture,
           url: profile._json.link
         };
-
         doStandardLogin("google",
           req,
           localProfile,
-          done);
+          done,null,isMusician);
       });
     }));
 
@@ -190,7 +193,11 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
   },
     function (req, token, tokenSecret, profile, done) {
-
+      let isMusician=false;
+      if(req.session.isMusician)
+      {
+        isMusician=true;
+      }
       // asynchronous
       process.nextTick(function () {
         const localProfile = {
@@ -205,7 +212,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         doStandardLogin("facebook",
           req,
           localProfile,
-          done);
+          done,null,isMusician);
       });
     }));
 
@@ -221,7 +228,11 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
 
   },
     function (req, token, tokenSecret, profile, done) {
-
+      let isMusician=false;
+      if(req.session.isMusician)
+      {
+        isMusician=true;
+      }
       // asynchronous
       process.nextTick(function () {
         const localProfile = {
@@ -236,8 +247,8 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         doStandardLogin("twitter",
           req,
           localProfile,
-          done);
-      });
+          done,null,isMusician);
+      }); 
     }));
 
   // =========================================================================
@@ -301,8 +312,12 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
       })
   }
 
-  function createUserWithNoInvite() {
+  function createUserWithNoInvite(isMusician:Boolean) {
     const newUser = new User();
+    if(isMusician==true)
+    {
+      newUser.role="Musician";
+    }
     newUser.invite = {
       noReward: false,
       invitedBy: null,
@@ -322,7 +337,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     req,
     localProfile,
     done,
-    validation?) {
+    validation?,isMusician=false) {
 
     console.log(`Handling login request: ip=${get_ip.getClientIp(req)}, session=${req.session.id}, auth=${authProvider}, id=${localProfile.id}`);
     // if the user is already logged in, see if the account can be linked
@@ -406,7 +421,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
             })
             .then(user => {
               if (!user) {
-                return createUserWithNoInvite();
+                return createUserWithNoInvite(isMusician);
               }
               return user;
             })

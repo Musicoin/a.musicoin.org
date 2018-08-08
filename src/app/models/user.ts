@@ -138,6 +138,10 @@ const userSchema = mongoose.Schema({
     type: String,
     default: 'listener'
   },
+  role:{
+    type:String,
+    default:'listener'
+  },
   blocked: Boolean,
   verified: Boolean,
   accountLocked: Boolean,

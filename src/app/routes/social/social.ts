@@ -69,6 +69,9 @@ export class SocialRouter {
         function setSignUpFlag(isSignup) {
             return function (req, res, next) {
                 req.session.signup = isSignup;
+                if(req.query.isMusician) {
+                    req.session.isMusician=true;
+                }
                 next();
             }
         }
