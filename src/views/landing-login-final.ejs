@@ -86,8 +86,8 @@ function onSubmit(token) {
 }
 </script>
 <script>
-$(document).ready(function() {
-  $("#confirm-phone").on('click', function() {
+document.addEventListener("DOMContentLoaded", function(event) {
+  document.getElementById('confirm-phone').onclick = function() {
     var phone = document.getElementById('phone').value;
     var xhr = new XMLHttpRequest();
     if (!phone || phone.trim().length == 0) {
@@ -100,7 +100,7 @@ $(document).ready(function() {
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
       xhr.send('phone='+ phone);
     }
-  });
+  };
 });
 </script>
 <script>
