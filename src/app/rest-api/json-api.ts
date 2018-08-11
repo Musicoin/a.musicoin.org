@@ -129,8 +129,25 @@ export class MusicoinOrgJsonAPI {
     let query = { _id: _id };
     return User.findOne(query)
       .then((user) => {
-        console.log("Returning user id", user.id, " and email:", user.primaryEmail);
+        //console.log("Returning user id", user.id, " and email:", user.primaryEmail);
+        if (user.local.email !== '') {
         let result = {
+          _id: user.id,
+          isMusician: user.isMusician !== 'listener',
+          isListener: user.isMusician === 'listener',
+          followers: user.followerCount,
+          tips: user.directTipCount,
+          fullname: null,
+          username: user.local.email,
+          picture: null,
+          freePlaysRemaining: user.freePlaysRemaining,
+          primaryEmail: user.local.email,
+          emailVerified: user.emailVerified,
+          profileAddress: user.profileAddress
+        };
+        return result;
+        } else {
+          let result = {
           _id: user.id,
           isMusician: user.isMusician !== 'listener',
           isListener: user.isMusician === 'listener',
@@ -145,6 +162,7 @@ export class MusicoinOrgJsonAPI {
           profileAddress: user.profileAddress
         };
         return result;
+        }
       })
   }
 
