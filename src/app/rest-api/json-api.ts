@@ -182,45 +182,39 @@ export class MusicoinOrgJsonAPI {
       })
 }
 
-  sendRewardsForInvite(p: any): Promise<any> {
-    if (!p || !p.invite || !p.invite.invitedBy) {
-      console.log(`Could not send an invite reward, user did not have an invite, newUser.id: ${p._id}, invite: ${JSON.stringify(p.invite)}`);
-      return Promise.resolve();
-    }
-
-    return User.findById(p.invite.invitedBy).exec()
-      .then(sender => {
-        if (!sender || !sender.invite) {
-          console.log("Not sending reward because there is no sender or not sender invite field");
-          return {};
-        }
-        if (sender.invite.noReward) {
-          console.log("Not sending reward because the sender was blacklisted, or inherited blacklist status: " + sender.profileAddress);
-          return {};
-        }
-
-        if (!sender.verified && this._onlyEmailAuth(sender)) {
-          console.log("Not sending reward because the sender does not have a social account linked and is not verified: " + sender.profileAddress + ", email: " + sender.local.email);
-          return {};
-        }
-
-        // rewards for invites sent by verified users are different
-        const rewards = sender.verified ? this.config.rewards.verifiedSender : this.config.rewards.unverifiedSender;
-
-        // no reward sent to invitee if they don't link a social (too many scammers)
-        const inviteeReward = this._onlyEmailAuth(p) ? 0 : rewards.forAcceptingInvite;
-
-        console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}', rewards=${JSON.stringify(rewards)}`);
-        const sendRewardToInvitee = this.musicoinAPI.sendReward(p.profileAddress, inviteeReward);
-        const sendRewardToInviter = this.musicoinAPI.sendReward(sender.profileAddress, rewards.forInviteeJoining);
-        return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
-          return {
-            inviteeRewardTx: tx1,
-            inviterRewardTx: tx2
-          }
-        });
-      })
+sendRewardsForInvite(p: any): Promise<any> {
+  if (!p || !p.invite || !p.invite.invitedBy) {
+    console.log(`Could not send an invite reward, user did not have an invite, newUser.id: ${p._id}, invite: ${JSON.stringify(p.invite)}`);
+    return Promise.resolve();
   }
+
+  return User.findById(p.invite.invitedBy).exec()
+    .then(sender => {
+      if (!sender || !sender.invite) {
+        console.log("Not sending reward because there is no sender or not sender invite field");
+        return {};
+      }
+      if (sender.invite.noReward) {
+        console.log("Not sending reward because the sender was blacklisted, or inherited blacklist status: " + sender.profileAddress);
+        return {};
+      }
+
+      if (!sender.verified && this._onlyEmailAuth(sender)) {
+        console.log("Not sending reward because the sender does not have a social account linked and is not verified: " + sender.profileAddress + ", email: " + sender.local.email);
+        return {};
+      }
+
+      console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}'`);
+      const sendRewardToInvitee = this.musicoinAPI.sendRewardMin(p.profileAddress);
+      const sendRewardToInviter = this.musicoinAPI.sendRewardMax(sender.profileAddress);
+      return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
+        return {
+          inviteeRewardTx: tx1,
+          inviterRewardTx: tx2
+        }
+      });
+    })
+}
 
   sendInvite(sender: any, email: string): Promise<any> {
     let promise = Promise.resolve(null);
@@ -1788,7 +1782,7 @@ export class MusicoinOrgJsonAPI {
     return !this._hasAuthMethod(user, "facebook")
       && !this._hasAuthMethod(user, "twitter")
       && !this._hasAuthMethod(user, "google")
-      && this._hasAuthMethod(user, "local");
+      && !this._hasAuthMethod(user, "local");
   }
 
   private _hasAuthMethod(user: any, method: string): boolean {

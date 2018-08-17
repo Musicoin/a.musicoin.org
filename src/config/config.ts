@@ -127,7 +127,8 @@ function getStructuredConfig(keyValueConfig) {
       publishProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
       sendFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/send`,
       pppFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/ppp`,
-      sendReward: `${keyValueConfig.musicoinApiEndpoint}/reward`,
+      sendRewardMin: `${keyValueConfig.musicoinApiEndpoint}/rewardmin `,
+      sendRewardMax: `${keyValueConfig.musicoinApiEndpoint}/rewardmax`,
       releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,
       updateLicense: `${keyValueConfig.musicoinApiEndpoint}/license/update`,
       getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,
@@ -144,20 +145,6 @@ function getStructuredConfig(keyValueConfig) {
       link: "https://coinmarketcap.com/currencies/musicoin/",
       cacheTTL: 1000 * 60 * 5,
       disclaimer: "For informational purposes only, based on current price reported by coinmarketcap.com. Does not represent a promise by Musicoin to buy/sell at this price."
-    },
-    rewards: {
-      verifiedSender: {
-        forSendingInvite: keyValueConfig.verifiedSenderForSendingInvite,
-        forAcceptingInvite: keyValueConfig.verifiedSenderForAcceptingInvite,
-        forInviteeJoining: keyValueConfig.verifiedSenderForInviteeJoining,
-        forInviteeReleasing: keyValueConfig.verifiedForInviteeReleasing,
-      },
-      unverifiedSender: {
-        forSendingInvite: keyValueConfig.unverifiedSenderForSendingInvite,
-        forAcceptingInvite: keyValueConfig.unverifiedSenderForAcceptingInvite,
-        forInviteeJoining: keyValueConfig.unverifiedSenderForInviteeJoining,
-        forInviteeReleasing: keyValueConfig.unverifiedForInviteeReleasing,
-      }
     },
     trackingAccounts: [
       { name: "Miner-1 (Dev Fund)", address: "0x13559ecbdbf8c32d6a86c5a277fd1efbc8409b5b" },

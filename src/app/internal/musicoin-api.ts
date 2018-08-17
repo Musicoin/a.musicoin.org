@@ -12,7 +12,8 @@ cachedRequest.setValue('ttl', 30000);
 interface MusicoinApiConfig {
   sendFromProfile: string,
   pppFromProfile: string,
-  sendReward: string,
+  sendRewardMin: string,
+  sendRewardMax: string,
   publishProfile: string,
   releaseLicense: string,
   updateLicense: string,
@@ -158,10 +159,15 @@ export class MusicoinAPI {
       });
   }
 
-  sendReward(recipient: string, musicoins: number): Promise<string> {
-    return this.postJson(this.apiConfig.sendReward, {
-      recipient: recipient,
-      musicoins: musicoins
+  sendRewardMax(recipient: string): Promise<string> {
+    return this.postJson(this.apiConfig.sendRewardMax, {
+      recipient: recipient
+    }).then(body => body.tx);
+  }
+
+  sendRewardMin(recipient: string): Promise<string> {
+    return this.postJson(this.apiConfig.sendRewardMin, {
+      recipient: recipient
     }).then(body => body.tx);
   }
 
