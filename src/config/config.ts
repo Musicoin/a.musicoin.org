@@ -55,7 +55,7 @@ function getStructuredConfig(keyValueConfig) {
     termsOfUseVersion: keyValueConfig.termsOfUseVersion,
     database: {
       url: `${keyValueConfig.mongoEndpoint}/musicoin-org`,
-      pendingReleaseIntervalMs: 30 * 1000
+      pendingReleaseIntervalMs: 3000
     },
     redis: {
       url: `${keyValueConfig.redisEndpoint}?db=0`,
@@ -289,23 +289,7 @@ function getDefaultKeyValueConfig() {
 
         sessionDomain: env.SESSION_DOMAIN || '.musicoin.org',
 
-        corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org'],
-
-        verifiedSenderForSendingInvite: env.VSENDER_FOR_SENDING_INVITE || 50,
-
-        verifiedSenderForAcceptingInvite: env.VSENDER_FOR_ACCEPTING_INVITE || 50,
-
-        verifiedSenderForInviteeJoining: env.VSENDER_FOR_INVITEE_JOINING || 250,
-
-        verifiedSenderForInviteeReleasing: env.VSENDER_FOR_INVITEE_RELEASING || 2,
-
-        unverifiedSenderForSendingInvite: env.UVSENDER_FOR_SENDING_INVITE || 0,
-
-        unverifiedSenderForAcceptingInvite: env.UVSENDER_FOR_ACCEPTING_INVITE || 2,
-
-        unverifiedSenderForInviteeJoining: env.UVSENDER_FOR_INVITEE_JOINING || 2,
-        
-        unverifiedSenderForInviteeReleasing: env.UVSENDER_FOR_INVITEE_RELEASING || 0
+        corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org']
 
       };
     });
