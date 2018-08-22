@@ -648,7 +648,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.send("Failed to play track");
       });
     
-       aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { dir: "/tmp" });
+       aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { dir: "/var/www/stream_storage/"+ req.params.address+ "/" + req.params.address + ".mp3" });
   });
 
   app.post('/admin/hero/select', (req, res) => {
