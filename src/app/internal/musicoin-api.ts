@@ -93,7 +93,7 @@ export class MusicoinAPI {
     return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60 * 1000);
   }
 
-  getPPPUrl(address: string): Promise<string> {
+  getPPPUrl(address: string) {
     // config.playbackLinkTTLMillis
     return "https://musicoin.org/ppp/" + UrlUtils.createExpiringLink(address, 180000);
   }
