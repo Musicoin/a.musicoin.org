@@ -2,6 +2,7 @@ import { Promise } from 'bluebird';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as request from 'request';
+import * as UrlUtils from '../utils/url-utils';
 
 import ReadableStream = NodeJS.ReadableStream;
 const cachedRequest = require('cached-request')(request);
@@ -92,6 +93,12 @@ export class MusicoinAPI {
     return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60 * 1000);
   }
 
+  getPPPUrl(address: string) {
+    // config.playbackLinkTTLMillis
+    console.log("https://musicoin.org/ppp/" + UrlUtils.createExpiringLink(address, 180000));
+    return "https://musicoin.org/ppp/" + UrlUtils.createExpiringLink(address, 180000);
+  }
+
   updateTrack(
     contractAddress: string,
     title: string,
@@ -158,6 +165,8 @@ export class MusicoinAPI {
         return response;
       });
   }
+
+
 
   sendRewardMax(recipient: string): Promise<string> {
     return this.postJson(this.apiConfig.sendRewardMax, {
