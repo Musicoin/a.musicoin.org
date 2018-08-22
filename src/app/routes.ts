@@ -147,27 +147,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   new PendingTxDaemon(newProfileListener, newReleaseListener)
     .start(musicoinApi, config.database.pendingReleaseIntervalMs);
 
-  function handleBrowseRequest(req, res, _search, genre) {
-    const search = FormUtils.defaultString(_search, null);
-    const maxGroupSize = req.query.maxGroupSize ? parseInt(req.query.maxGroupSize) : 8;
-    const sort = req.query.sort || "tips";
-    const rs = jsonAPI.getNewReleasesByGenre(150, maxGroupSize, search, genre, sort).catchReturn([]);
-    const as = jsonAPI.getNewArtists(maxGroupSize, search, genre).catchReturn([]);
-    Promise.join(rs, as, function (releases, artists) {
-      return doRender(req, res, "browse.ejs", {
-        searchTerm: search,
-        genreFilter: genre,
-        releases: releases,
-        maxItemsPerGroup: maxGroupSize,
-        artists: artists,
-        sort: sort
-      });
-    })
-      .catch(function (err) {
-        console.log(err);
-        res.redirect('/error');
-      });
-  }
   app.use('/json-api', restAPI.getRouter());
   app.use('/', preProcessUser(mediaProvider, jsonAPI), functions.checkInviteCode);
   app.use('/release-manager', functions.isLoggedIn, releaseManager.getRouter());
