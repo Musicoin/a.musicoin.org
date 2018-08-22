@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "aria2": "^4.0.2",
     "async": "^2.6.0",
     "bcrypt-nodejs": "*",
     "bluebird": "*",

@@ -39,6 +39,7 @@ const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 50;
+const Aria2 = require("aria2");
 const MESSAGE_TYPES = {
   admin: "admin",
   comment: "comment",
@@ -47,6 +48,13 @@ const MESSAGE_TYPES = {
   follow: "follow",
   tip: "tip",
 };
+const ARIA_OPTIONS = {
+  host: 'localhost',
+  port: 6800,
+  secure: false,
+  secret: '',
+  path: '/jsonrpc'
+}
 
 let publicPagesEnabled = false;
 var phoneNumberVal = 0;
@@ -609,6 +617,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
+    const aria2 = new Aria2([ARIA_OPTIONS]);
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
@@ -638,7 +647,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.status(500);
         res.send("Failed to play track");
       });
-      musicoinApi.getPPPUrl(req.params.address);
+    musicoinApi.getPPPUrl(req.params.address).then(async function (downloadFile) {
+      await aria2.call("addUri", [downloadFile], { dir: "/tmp" });
+    });
   });
 
   app.post('/admin/hero/select', (req, res) => {
