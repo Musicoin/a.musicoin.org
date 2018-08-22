@@ -161,7 +161,6 @@ export class ProfileRouter {
                             invitedOn: functions._formatDate(i.invitedOn.getTime() / 1000),
                             claimed: i.claimed,
                             inviteCode: i.inviteCode,
-                            inviteUrl: serverEndpoint + "/accept/" + i.inviteCode,
                             profileAddress: i.profileAddress,
                             artistName: i.artistName,
                             hasReleased: i.hasReleased
@@ -205,6 +204,11 @@ export class ProfileRouter {
                 if (typeof req.query.sendMail != "undefined") {
                     output['sendMailResult'] = {
                         error: req.query.sendMail,
+                    };
+                }
+                if (typeof req.query.pwdError != "undefined") {
+                    output['pwdResult'] = {
+                        error: req.query.pwdError,
                     };
                 }
                 output['metadata'] = {

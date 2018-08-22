@@ -94,14 +94,10 @@ export class AuthRouter {
             doRender(req, res, "password-forgot.ejs", {});
         });
 
-        router.post('/connect/email', functions.setSignUpFlag(false), functions.validateLoginEmail('/connect/email'), passport.authenticate('local', {
+        router.post('/connect/email', functions.setSignUpFlag(true), functions.validateNewAccount('/connect/email'), passport.authenticate('local', {
             failureRedirect: '/connect/email', // redirect back to the signup page if there is an error
             failureFlash: true // allow flash messages
-        }), functions.SetSessionAfterLoginSuccessfullyAndRedirect);
-
-        router.get('/connect/email', function (req, res) {
-            doRender(req, res, 'landing-connect-email.ejs', {});
-        });
+        }), functions.SetSessionAfterLoginSuccessfullyAndRedirectProfile);
 
         router.post('/login/music', (req, res) => {
             const email = req.body.email || "";

@@ -167,6 +167,26 @@ module.exports = {
         res.redirect('/loginRedirect'); // redirect to the secure profile section
     },
 
+    SetSessionAfterLoginSuccessfullyAndRedirectProfile: function (req, res) {
+        //user loggined succesfully, then redirect to '/loginRedirect' URL
+        if (req.user) {
+            if (req.user.profileAddress && req.user.profileAddress !== '') {
+                req.session.userAccessKey = req.user.profileAddress; //set session value as user.profileAddress;
+            } else if (req.user.id && req.user.id !== '') {
+                req.session.userAccessKey = req.user.id;  //set session value as user.id
+            }
+        }
+        let query = { _id: req.user.id };
+        return User.findOne(query)
+            .then((user) => {
+                if (!user.local.email) {
+                    res.redirect("/profile?pwdError=true");
+                } else {
+                    res.redirect('/profile');
+                }
+            })
+    },
+
     redirectIfLoggedIn: function (dest) {
         return function (req, res, next) {
             if (req.isAuthenticated()) {

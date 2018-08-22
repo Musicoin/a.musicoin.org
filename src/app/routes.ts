@@ -276,7 +276,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           mailSender.sendEmailConfirmationCode(req.body.email, code)
             .then(() => {
               console.log(`Sent email confirmation code to ${req.body.email}: ${code}, session=${req.session.id}`);
-              return doRender(req, res, "landing-connect-email-confirmation.ejs", { email: req.body.email });
+              return doRender(req, res, "connect-email/landing-connect-email-confirmation.ejs", { email: req.body.email });
             })
         })
         .catch((err) => {
@@ -295,7 +295,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     res.render('admin/admin-su.ejs', { message: req.flash('loginMessage') });
   });
 
-  // process the login form
+  app.get('/connect/email', function (req, res) {
+    const message = req.flash('loginMessage');
+    return doRender(req, res, 'connect-email/landing-connect-email.ejs', {
+      message: message,
+    });
+  });
+
   app.post('/admin/su', functions.isLoggedIn, functions.adminOnly, passport.authenticate('local-su', {
     failureRedirect: '/admin/su', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
@@ -351,7 +357,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             req.session.inviteCode = req.params.code;
           }
           console.log(`Redirecting to welcome page, invite ok!: ${req.params.code}`);
-          res.redirect("/welcome?inviteClaimed=" + record.invite.claimed);
+          res.redirect("/join?inviteClaimed=" + record.invite.claimed);
         }
         else {
           console.log(`Checking for group invite: ${req.params.code}`);
@@ -364,7 +370,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               if (inviter) {
                 console.log(`Redirecting to welcome page, group invite ok!: ${req.params.code}`);
                 req.session.inviteCode = req.params.code;
-                res.redirect("/welcome?inviteClaimed=false");
+                res.redirect("/join?inviteClaimed=false");
               }
               else {
                 console.log(`Invalid invite code: ${req.params.code}`);
@@ -530,6 +536,20 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
+  app.get('/join', function (req, res) {
+    if (req.user) {
+      return res.redirect('/loginRedirect');
+    }
+    if (req.query.returnTo) {
+      req.session.destinationUrl = req.query.returnTo;
+    }
+    // render the page and pass in any flash data if it exists
+    const message = "Invited to Join Musicoin";
+    return doRender(req, res, 'inviting-landings/landing-musician-vs-listener.ejs', {
+      message: message,
+    });
+  });
+
   app.get('/welcome-musician', function (req, res) {
     if (req.user) {
       return res.redirect('/loginRedirect');
@@ -542,7 +562,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   // have /login route for forum
-  app.get('/login', function(req, res) {
+  app.get('/login', function (req, res) {
     if (req.user) {
       return res.redirect('/loginRedirect');
     }
@@ -577,6 +597,34 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     // render the page and pass in any flash data if it exists
     const message = req.flash('loginMessage');
     return doRender(req, res, 'landing-musician.ejs', {
+      message: message,
+    });
+  });
+
+  app.get('/join-listener', function (req, res) {
+    if (req.user) {
+      return res.redirect('/loginRedirect');
+    }
+    if (req.query.returnTo) {
+      req.session.destinationUrl = req.query.returnTo;
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    return doRender(req, res, 'inviting-landings/landing-listener.ejs', {
+      message: message,
+    });
+  });
+
+  app.get('/join-artist', function (req, res) {
+    if (req.user) {
+      return res.redirect('/loginRedirect');
+    }
+    if (req.query.returnTo) {
+      req.session.destinationUrl = req.query.returnTo;
+    }
+    // render the page and pass in any flash data if it exists
+    const message = req.flash('loginMessage');
+    return doRender(req, res, 'inviting-landings/landing-musician.ejs', {
       message: message,
     });
   });

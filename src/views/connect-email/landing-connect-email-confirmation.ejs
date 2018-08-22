@@ -19,7 +19,7 @@ if (message.length > 0) message = `<div class=alert role=alert style=color:#ffff
     <p style="margin-top:21px;height: 24px;color: #000000;font-family:Ubuntu;font-size:14px;font-weight: 300;line-height:24px;">You can set new or change password for email/password authentification there</p>
     <%-message%>
     <span class="badge" style="margin-right: 240px;	margin-top:12px; height: 24px;	width: 312px;	opacity: 0.5;	color: #000000;	font-family: Ubuntu;	font-size: 12px;	font-weight: 300;	line-height: 24px;">Password</span>
-    <form name="signupForm" id="signupForm" class="signup" action="/signup" method="post">
+    <form name="signupForm" id="signupForm" class="signup" action="/connect/email" method="post">
     <input class="form-control" type="password" name="password" placeholder="****************" required style="width:296px;display:unset;opacity:0.85;color:#000000;font-family:Ubuntu;font-size:14px;line-height: 20px;"><br>
     <input class="form-control" type="hidden" name="email" required value="<%= email %>">
     <div style="width:296px; height: 12px; border-bottom: 1px solid #dddddd;margin-top:24px;margin-left:auto;margin-right:auto;">
