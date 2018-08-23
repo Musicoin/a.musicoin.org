@@ -57,10 +57,6 @@ const ARIA_OPTIONS = {
   path: '/jsonrpc'
 }
 const aria2 = new Aria2([ARIA_OPTIONS]);
-aria2
-  .open()
-  .then(() => console.log("open"))
-  .catch(err => console.log("error", err));
 
 let publicPagesEnabled = false;
 var phoneNumberVal = 0;
@@ -656,6 +652,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       if (err == null) {
         //console.log("track already saved");
       } else if (err.code == 'ENOENT') {
+        aria2.open();
         aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/" + req.params.address });
         aria2.on("onDownloadError", ([guid]) => {
           console.log('onDownloadError: ' + req.params.address, guid);
@@ -687,6 +684,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         var filestream = fs.createReadStream(track);
         filestream.pipe(res);
       } else if (err.code == 'ENOENT') {
+        aria2.open();
         aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/" + req.params.address });
         aria2.on("onDownloadError", ([guid]) => {
           console.log('onDownloadError: ' + req.params.address, guid);
