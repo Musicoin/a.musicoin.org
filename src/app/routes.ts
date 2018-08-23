@@ -655,13 +655,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         aria2.open();
         aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/" + req.params.address });
         aria2.on("onDownloadError", ([guid]) => {
-          console.log('onDownloadError: ' + req.params.address, guid);
+          console.log('trackDownloadError: ' + req.params.address, guid);
         });
         aria2.on("onDownloadStart", ([guid]) => {
-          console.log('onDownloadStart: ' + req.params.address, guid);
+          console.log('trackDownloadStart: ' + req.params.address, guid);
         });
         aria2.on("onDownloadComplete", ([guid]) => {
-          console.log('onDownloadComplete: ' + req.params.address, guid);
+          console.log('trackDownloadComplete: ' + req.params.address, guid);
           aria2.close();
         });
       } else {
@@ -672,14 +672,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
   app.get('/download/:address', function (req, res) {
     var track = "/var/www/stream_storage/" + req.params.address + "/" + req.params.address + ".mp3";
-    var trackName = path.basename(track);
-
     fs.stat(track, function (err) {
       if (err == null) {
         //console.log("track already saved, serving download");
         musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
           var mimetype = mime.lookup(track);
-          res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle);
+          res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/\s+/g,"_") + ".mp3");
           res.setHeader('Content-type', mimetype);
           var filestream = fs.createReadStream(track);
           filestream.pipe(res);
@@ -688,17 +686,17 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         aria2.open();
         aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/" + req.params.address });
         aria2.on("onDownloadError", ([guid]) => {
-          console.log('onDownloadError: ' + req.params.address, guid);
+          console.log('trackDownloadError: ' + req.params.address, guid);
         });
         aria2.on("onDownloadStart", ([guid]) => {
-          console.log('onDownloadStart: ' + req.params.address, guid);
+          console.log('trackDownloadStart: ' + req.params.address, guid);
         });
         aria2.on("onDownloadComplete", ([guid]) => {
-          console.log('onDownloadComplete: ' + req.params.address, guid);
+          console.log('trackDownloadComplete: ' + req.params.address, guid);
           aria2.close();
           musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
             var mimetype = mime.lookup(track);
-            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle);
+            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/\s+/g,"_") + ".mp3");
             res.setHeader('Content-type', mimetype);
             var filestream = fs.createReadStream(track);
             filestream.pipe(res);
