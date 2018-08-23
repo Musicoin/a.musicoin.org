@@ -671,7 +671,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/download/:address', function (req, res) {
-
     var track = "/var/www/stream_storage/" + req.params.address + "/" + req.params.address + ".mp3";
     var trackName = path.basename(track);
 
@@ -695,11 +694,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         aria2.on("onDownloadComplete", ([guid]) => {
           console.log('onDownloadComplete: ' + req.params.address, guid);
           aria2.close();
-          var mimetype = mime.lookup(track);
-          res.setHeader('Content-disposition', 'attachment; filename=' + trackName);
-          res.setHeader('Content-type', mimetype);
-          var filestream = fs.createReadStream(track);
-          filestream.pipe(res);
+          musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
+            var mimetype = mime.lookup(track);
+            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle);
+            res.setHeader('Content-type', mimetype);
+            var filestream = fs.createReadStream(track);
+            filestream.pipe(res);
+          });
         });
       } else {
         console.log('Save file from ppp error from download (probably incorrect track address: ' + req.params.address + ')', err.code);

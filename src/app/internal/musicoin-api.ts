@@ -165,7 +165,13 @@ export class MusicoinAPI {
       });
   }
 
-
+  getTrackTitle(licenseAddress: string) {
+    return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60 * 1000)
+      .then(function (response) {
+        if (response.err) throw response.err;
+        return response.title;
+      });
+  }
 
   sendRewardMax(recipient: string): Promise<string> {
     return this.postJson(this.apiConfig.sendRewardMax, {
