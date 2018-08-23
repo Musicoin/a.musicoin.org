@@ -57,6 +57,7 @@ const ARIA_OPTIONS = {
   path: '/jsonrpc'
 }
 const aria2 = new Aria2([ARIA_OPTIONS]);
+const notifications = aria2.listNotifications();
 
 let publicPagesEnabled = false;
 var phoneNumberVal = 0;
@@ -650,18 +651,19 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       });
     fs.stat("/var/www/stream_storage/" + req.params.address + "/" + req.params.address + ".mp3", function (err) {
       if (err == null) {
-        console.log("track already saved");
+        //console.log("track already saved");
       } else if (err.code == 'ENOENT') {
         aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/" + req.params.address });
-        aria2.onDownloadError = function(event) {
-          console.log('onDownloadError');
-          console.log(event);
-        };
-        aria2.onDownloadComplete = function (event) {
-          console.log('onDownloadStop');
-          console.log(event);
+        aria2.on("onDownloadError", ([guid]) => {
+          console.log('onDownloadError: ' + req.params.address, guid);
+        });
+        aria2.on("onDownloadStart", ([guid]) => {
+          console.log('onDownloadStart: ' + req.params.address, guid);
+        });
+        aria2.on("onDownloadComplete", ([guid]) => {
+          console.log('onDownloadComplete: ' + req.params.address, guid);
           aria2.close();
-        };
+        });
       } else {
         console.log('Save file from ppp error', err.code);
       }
@@ -675,7 +677,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
     fs.stat(track, function (err) {
       if (err == null) {
-        console.log("track already saved, serving download");
+        //console.log("track already saved, serving download");
         var mimetype = mime.lookup(track);
         res.setHeader('Content-disposition', 'attachment; filename=' + trackName);
         res.setHeader('Content-type', mimetype);
@@ -683,22 +685,23 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         filestream.pipe(res);
       } else if (err.code == 'ENOENT') {
         aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/" + req.params.address });
-        aria2.onDownloadError = function(event) {
-          console.log('onDownloadError');
-          console.log(event);
-        };
-        aria2.onDownloadComplete = function (event) {
-          console.log('onDownloadStop');
-          console.log(event);
+        aria2.on("onDownloadError", ([guid]) => {
+          console.log('onDownloadError: ' + req.params.address, guid);
+        });
+        aria2.on("onDownloadStart", ([guid]) => {
+          console.log('onDownloadStart: ' + req.params.address, guid);
+        });
+        aria2.on("onDownloadComplete", ([guid]) => {
+          console.log('onDownloadComplete: ' + req.params.address, guid);
           aria2.close();
           var mimetype = mime.lookup(track);
           res.setHeader('Content-disposition', 'attachment; filename=' + trackName);
           res.setHeader('Content-type', mimetype);
           var filestream = fs.createReadStream(track);
           filestream.pipe(res);
-        };
+        });
       } else {
-        console.log('Save file from ppp error from download', err.code);
+        console.log('Save file from ppp error from download (probably incorrect track address: ' + req.params.address + ')', err.code);
       }
     });
   });
