@@ -57,7 +57,10 @@ const ARIA_OPTIONS = {
   path: '/jsonrpc'
 }
 const aria2 = new Aria2([ARIA_OPTIONS]);
-const notifications = aria2.listNotifications();
+aria2
+  .open()
+  .then(() => console.log("open"))
+  .catch(err => console.log("error", err));
 
 let publicPagesEnabled = false;
 var phoneNumberVal = 0;
