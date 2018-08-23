@@ -677,11 +677,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     fs.stat(track, function (err) {
       if (err == null) {
         //console.log("track already saved, serving download");
-        var mimetype = mime.lookup(track);
-        res.setHeader('Content-disposition', 'attachment; filename=' + trackName);
-        res.setHeader('Content-type', mimetype);
-        var filestream = fs.createReadStream(track);
-        filestream.pipe(res);
+        musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
+          var mimetype = mime.lookup(track);
+          res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle);
+          res.setHeader('Content-type', mimetype);
+          var filestream = fs.createReadStream(track);
+          filestream.pipe(res);
+        });
       } else if (err.code == 'ENOENT') {
         aria2.open();
         aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/" + req.params.address });
