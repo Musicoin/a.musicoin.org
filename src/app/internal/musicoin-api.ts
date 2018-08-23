@@ -169,7 +169,7 @@ export class MusicoinAPI {
     return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60 * 1000)
       .then(function (response) {
         if (response.err) throw response.err;
-        return response.title;
+        return response.artistName + '_' + response.title;
       });
   }
 

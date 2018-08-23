@@ -677,7 +677,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         //console.log("track already saved, serving download");
         musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
           var mimetype = mime.lookup(track);
-          res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]/g,'_') + ".mp3");
+          res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g,'_') + ".mp3");
           res.setHeader('Content-type', mimetype);
           var filestream = fs.createReadStream(track);
           filestream.pipe(res);
@@ -696,7 +696,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           aria2.close();
           musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
             var mimetype = mime.lookup(track);
-            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]/g,'_') + ".mp3");
+            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g,'_') + ".mp3");
             res.setHeader('Content-type', mimetype);
             var filestream = fs.createReadStream(track);
             filestream.pipe(res);
