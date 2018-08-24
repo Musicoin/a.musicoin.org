@@ -648,14 +648,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.status(500);
         res.send("Failed to play track");
       });
-    fs.stat(config.streaming.hls + req.params.address + '/' + req.params.address + 'index.m3u8', function (err) {
+    fs.stat(config.streaming.hls + req.params.address + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
       if (err == null) {
         //console.log("hls transcoding already done");
       } else if (err.code == 'ENOENT') {
         fs.stat(config.streaming.tracks + req.params.address + '/' + req.params.address + '.mp3', function (err) {
           if (err == null) {
             //console.log("track already saved");
-            require('child_process').exec('ffmpeg -re -i ' + config.streaming.tracks + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list' + config.streaming.hls + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.hls + req.params.address + '/ts%d.ts');
+            require('child_process').exec('ffmpeg -re -i ' + config.streaming.tracks + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list ' + config.streaming.hls + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.hls + req.params.address + '/ts%d.ts');
           } else if (err.code == 'ENOENT') {
             aria2.open();
             aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.tracks + req.params.address });
@@ -668,7 +668,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             aria2.on("onDownloadComplete", ([guid]) => {
               console.log('trackDownloadComplete: ' + req.params.address, guid);
               aria2.close();
-              require('child_process').exec('ffmpeg -re -i ' + config.streaming.tracks + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list' + config.streaming.hls + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.hls + req.params.address + '/ts%d.ts');
+              require('child_process').exec('ffmpeg -re -i ' + config.streaming.tracks + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list ' + config.streaming.hls + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.hls + req.params.address + '/ts%d.ts');
             });
           } else {
             console.log('Save file from ppp error', err.code);

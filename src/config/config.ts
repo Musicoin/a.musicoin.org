@@ -295,9 +295,9 @@ function getDefaultKeyValueConfig() {
 
         corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org'],
 
-        streamingTracksLocation: env.STREAMING_TRACKS || "/var/www/stream_storage/tracks/",
+        streamingTracksLocation: env.STREAMING_TRACKS || '/var/www/stream_storage/tracks',
 
-        streamingHlsLocation: env.STREAMING_HLS || "/var/www/stream_storage/hls/"
+        streamingHlsLocation: env.STREAMING_HLS || '/var/www/stream_storage/hls'
 
       };
     });
