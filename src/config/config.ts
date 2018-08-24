@@ -60,6 +60,10 @@ function getStructuredConfig(keyValueConfig) {
     redis: {
       url: `${keyValueConfig.redisEndpoint}?db=0`,
     },
+    streaming: {
+      tracks: keyValueConfig.streamingTracksLocation,
+      hls: keyValueConfig.streamingHlsLocation,
+    },
     ipfs: {
       ipfsHost: keyValueConfig.ipfsReadEndpoint,
       ipfsAddUrl: `${keyValueConfig.ipfsAddEndpoint}/api/v0/add`,
@@ -289,7 +293,11 @@ function getDefaultKeyValueConfig() {
 
         sessionDomain: env.SESSION_DOMAIN || '.musicoin.org',
 
-        corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org']
+        corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org'],
+
+        streamingTracksLocation: env.STREAMING_TRACKS || "/var/www/stream_storage/tracks/",
+
+        streamingHlsLocation: env.STREAMING_HLS || "/var/www/stream_storage/hls/"
 
       };
     });

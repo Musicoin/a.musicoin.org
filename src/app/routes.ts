@@ -648,45 +648,53 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.status(500);
         res.send("Failed to play track");
       });
-    fs.stat("/var/www/stream_storage/tracks/" + req.params.address + "/" + req.params.address + ".mp3", function (err) {
+    fs.stat(config.streaming.hls + req.params.address + '/' + req.params.address + 'index.m3u8', function (err) {
       if (err == null) {
-        //console.log("track already saved");
-        require('child_process').exec('/var/www/stream_storage/ffmpeg/bin/ffmpeg -re -i /var/www/stream_storage/tracks/' + req.params.address + '/' + req.params.address + '.mp3' +  ' -bsf:v h264_mp4toannexb -c copy -f mpegts http://127.0.0.1:8000/publish/' + req.params.address);
+        //console.log("hls transcoding already done");
       } else if (err.code == 'ENOENT') {
-        aria2.open();
-        aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/tracks/" + req.params.address });
-        aria2.on("onDownloadError", ([guid]) => {
-          console.log('trackDownloadError: ' + req.params.address, guid);
-        });
-        aria2.on("onDownloadStart", ([guid]) => {
-          console.log('trackDownloadStart: ' + req.params.address, guid);
-        });
-        aria2.on("onDownloadComplete", ([guid]) => {
-          console.log('trackDownloadComplete: ' + req.params.address, guid);
-          aria2.close();
-          require('child_process').exec('/var/www/stream_storage/ffmpeg/bin/ffmpeg -re -i /var/www/stream_storage/tracks/' + req.params.address + '/' + req.params.address + '.mp3' +  ' -bsf:v h264_mp4toannexb -c copy -f mpegts http://127.0.0.1:8000/publish/' + req.params.address);
+        fs.stat(config.streaming.tracks + req.params.address + '/' + req.params.address + '.mp3', function (err) {
+          if (err == null) {
+            //console.log("track already saved");
+            require('child_process').exec('ffmpeg -re -i ' + config.streaming.tracks + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list' + config.streaming.hls + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.hls + req.params.address + '/ts%d.ts');
+          } else if (err.code == 'ENOENT') {
+            aria2.open();
+            aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.tracks + req.params.address });
+            aria2.on("onDownloadError", ([guid]) => {
+              console.log('trackDownloadError: ' + req.params.address, guid);
+            });
+            aria2.on("onDownloadStart", ([guid]) => {
+              console.log('trackDownloadStart: ' + req.params.address, guid);
+            });
+            aria2.on("onDownloadComplete", ([guid]) => {
+              console.log('trackDownloadComplete: ' + req.params.address, guid);
+              aria2.close();
+              require('child_process').exec('ffmpeg -re -i ' + config.streaming.tracks + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time 10 -segment_format mpegts -segment_list' + config.streaming.hls + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.hls + req.params.address + '/ts%d.ts');
+            });
+          } else {
+            console.log('Save file from ppp error', err.code);
+          }
         });
       } else {
-        console.log('Save file from ppp error', err.code);
+        console.log('Somethign went wrong with hls file detection', err.code);
       }
     });
   });
 
   app.get('/download/:address', function (req, res) {
-    var track = "/var/www/stream_storage/tracks/" + req.params.address + "/" + req.params.address + ".mp3";
+    var track = config.streaming.tracks + req.params.address + "/" + req.params.address + ".mp3";
     fs.stat(track, function (err) {
       if (err == null) {
         //console.log("track already saved, serving download");
         musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
           var mimetype = mime.lookup(track);
-          res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g,'_') + ".mp3");
+          res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g, '_') + ".mp3");
           res.setHeader('Content-type', mimetype);
           var filestream = fs.createReadStream(track);
           filestream.pipe(res);
         });
       } else if (err.code == 'ENOENT') {
         aria2.open();
-        aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/tracks/" + req.params.address });
+        aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.tracks + req.params.address });
         aria2.on("onDownloadError", ([guid]) => {
           console.log('trackDownloadError: ' + req.params.address, guid);
         });
@@ -698,7 +706,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           aria2.close();
           musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
             var mimetype = mime.lookup(track);
-            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g,'_') + ".mp3");
+            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g, '_') + ".mp3");
             res.setHeader('Content-type', mimetype);
             var filestream = fs.createReadStream(track);
             filestream.pipe(res);
