@@ -62,7 +62,7 @@ function getStructuredConfig(keyValueConfig) {
     },
     streaming: {
       tracks: keyValueConfig.streamingTracksLocation,
-      hls: keyValueConfig.streamingHlsLocation,
+      segments: keyValueConfig.streamingSegments,
     },
     ipfs: {
       ipfsHost: keyValueConfig.ipfsReadEndpoint,
@@ -297,7 +297,7 @@ function getDefaultKeyValueConfig() {
 
         streamingTracksLocation: env.STREAMING_TRACKS || '/var/www/stream_storage/tracks',
 
-        streamingHlsLocation: env.STREAMING_HLS || '/var/www/stream_storage/hls'
+        streamingSegments: env.STREAMING_SEGMENTS || '23'
 
       };
     });
