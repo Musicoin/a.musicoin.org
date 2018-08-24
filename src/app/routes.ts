@@ -651,7 +651,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     fs.stat("/var/www/stream_storage/tracks/" + req.params.address + "/" + req.params.address + ".mp3", function (err) {
       if (err == null) {
         //console.log("track already saved");
-        require('child_process').exec('/var/www/stream_storage/ffmpeg/bin/ffmpeg -re -i /var/www/stream_storage/' + req.params.address + '/' + req.params.address + '.mp3' +  '-bsf:v h264_mp4toannexb -c copy -f mpegts http://127.0.0.1:8000/publish/' + req.params.address);
+        require('child_process').exec('/var/www/stream_storage/ffmpeg/bin/ffmpeg -re -i /var/www/stream_storage/tracks/' + req.params.address + '/' + req.params.address + '.mp3' +  ' -bsf:v h264_mp4toannexb -c copy -f mpegts http://127.0.0.1:8000/publish/' + req.params.address);
       } else if (err.code == 'ENOENT') {
         aria2.open();
         aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: "/var/www/stream_storage/tracks/" + req.params.address });
@@ -664,7 +664,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         aria2.on("onDownloadComplete", ([guid]) => {
           console.log('trackDownloadComplete: ' + req.params.address, guid);
           aria2.close();
-          require('child_process').exec('/var/www/stream_storage/ffmpeg/bin/ffmpeg -re -i /var/www/stream_storage/' + req.params.address + '/' + req.params.address + '.mp3' +  '-bsf:v h264_mp4toannexb -c copy -f mpegts http://127.0.0.1:8000/publish/' + req.params.address);
+          require('child_process').exec('/var/www/stream_storage/ffmpeg/bin/ffmpeg -re -i /var/www/stream_storage/tracks/' + req.params.address + '/' + req.params.address + '.mp3' +  ' -bsf:v h264_mp4toannexb -c copy -f mpegts http://127.0.0.1:8000/publish/' + req.params.address);
         });
       } else {
         console.log('Save file from ppp error', err.code);
