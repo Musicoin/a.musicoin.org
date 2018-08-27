@@ -9,7 +9,8 @@ import { MusicoinAPI } from '../../internal/musicoin-api';
 import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
 import * as FormUtils from '../../utils/form-utils';
-
+const fs = require('fs');
+const mime = require('mime');
 const User = require('../../models/user');
 const Release = require('../../models/release');
 const APIClient = require('../../models/api-client');
@@ -172,7 +173,7 @@ export class AdminRoutes {
       const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
       jsonAPI.getAllUsers(req.query.search, null, null, null, start, length, null)
         .then(results => {
-          const users:any = results.users;
+          const users: any = results.users;
           return doRender(req, res, 'admin/admin-users.ejs', {
             search: req.query.search,
             users: users,
@@ -581,6 +582,21 @@ export class AdminRoutes {
 
     router.get('/admin/account-balances', functions.isLoggedIn, functions.adminOnly, function (req, res) {
       doRender(req, res, 'admin/account-balances.ejs', {});
+    });
+
+    router.get('/admin/ppp-logs', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      fs.stat(process.cwd() + '/logs/ppp.json', function (err) {
+        if (err == null) {
+          var mimetype = mime.lookup(process.cwd() + '/logs/ppp.json');
+          res.setHeader('Content-disposition', 'attachment; filename=ppp.json');
+          res.setHeader('Content-type', mimetype);
+          var filestream = fs.createReadStream(process.cwd() + '/logs/ppp.json');
+          filestream.pipe(res);
+        } else if (err.code == 'ENOENT') {
+        } else {
+          console.log(err.code);
+        }
+      });
     });
 
     router.get('/admin/api-clients', functions.isLoggedIn, functions.adminOnly, function (req, res) {

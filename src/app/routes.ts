@@ -22,8 +22,8 @@ import { SocialRouter } from './routes/social/social';
 import { RequestCache } from './utils/cached-request';
 import * as FormUtils from './utils/form-utils';
 import * as UrlUtils from './utils/url-utils';
+var fs = require('fs');
 
-var path = require('path');
 
 var functions = require('./routes/routes-functions');
 
@@ -868,6 +868,22 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         : req.user ? req.user._id : get_ip.getClientIp(req);
       const profileAddress = req.user ? req.user.profileAddress : "Anonymous";
       console.log(`Resolve ppp request for ${resolved}, ip: ${get_ip.getClientIp(req)}, session: ${req.session.id}, user: ${profileAddress} (${userName})`);
+      fs.stat(process.cwd() + '/logs/ppp.json', function (err) {
+        if (err == null) {
+          let file = fs.readFileSync(process.cwd() + '/logs/ppp.json', 'utf8');
+          pppReqLog = JSON.parse(file);
+          pppReqLog.ppp.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
+          let json = JSON.stringify(pppReqLog, null, 4);
+          fs.writeFileSync(process.cwd() + '/logs/ppp.json', json, 'utf8');
+        } else if (err.code == 'ENOENT') {
+          var pppReqLog = { ppp: [] };
+          pppReqLog.ppp.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
+          let startFile = JSON.stringify(pppReqLog, null, 4);
+          fs.writeFileSync(process.cwd() + '/logs/ppp.json', startFile, 'utf8');
+        } else {
+          console.log(err.code);
+        }
+      });
     }
     req.params.address = resolved;
     next();
