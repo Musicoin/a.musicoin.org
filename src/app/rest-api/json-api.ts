@@ -194,8 +194,8 @@ export class MusicoinOrgJsonAPI {
           console.log("Not sending reward because there is no sender or not sender invite field");
           return {};
         }
-        if (sender.invite.noReward && sender.accountLocked) {
-          console.log("Not sending reward has no remaining invites or just locked: " + sender.profileAddress);
+        if (sender.invite.noReward) {
+          console.log("Not sending reward has no remaining invites: " + sender.profileAddress);
           return {};
         }
 
