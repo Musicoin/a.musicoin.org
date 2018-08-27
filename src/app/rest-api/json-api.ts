@@ -118,7 +118,7 @@ export class MusicoinOrgJsonAPI {
     });
   }
 
-   getUser(_id: object) {
+  getUser(_id: object) {
 
     if (!_id) {
       console.log('Invalid user id');
@@ -131,90 +131,95 @@ export class MusicoinOrgJsonAPI {
       .then((user) => {
         //console.log("Returning user id", user.id, " and email:", user.primaryEmail);
         if (!user.local.email) {
-        let result = {
-          _id: user.id,
-          isMusician: user.isMusician !== 'listener',
-          isListener: user.isMusician === 'listener',
-          followers: user.followerCount,
-          tips: user.directTipCount,
-          fullname: null,
-          username: user.primaryEmail,
-          picture: null,
-          freePlaysRemaining: user.freePlaysRemaining,
-          primaryEmail: user.primaryEmail,
-          emailVerified: user.emailVerified,
-          profileAddress: user.profileAddress
-        };
-        return result;
+          let result = {
+            _id: user.id,
+            isMusician: user.isMusician !== 'listener',
+            isListener: user.isMusician === 'listener',
+            followers: user.followerCount,
+            tips: user.directTipCount,
+            fullname: null,
+            username: user.primaryEmail,
+            picture: null,
+            freePlaysRemaining: user.freePlaysRemaining,
+            primaryEmail: user.primaryEmail,
+            emailVerified: user.emailVerified,
+            profileAddress: user.profileAddress
+          };
+          return result;
         } else if (user.local.email !== '') {
-        let result = {
-          _id: user.id,
-          isMusician: user.isMusician !== 'listener',
-          isListener: user.isMusician === 'listener',
-          followers: user.followerCount,
-          tips: user.directTipCount,
-          fullname: null,
-          username: user.local.email,
-          picture: null,
-          freePlaysRemaining: user.freePlaysRemaining,
-          primaryEmail: user.local.email,
-          emailVerified: user.emailVerified,
-          profileAddress: user.profileAddress
-        };
-        return result;
+          let result = {
+            _id: user.id,
+            isMusician: user.isMusician !== 'listener',
+            isListener: user.isMusician === 'listener',
+            followers: user.followerCount,
+            tips: user.directTipCount,
+            fullname: null,
+            username: user.local.email,
+            picture: null,
+            freePlaysRemaining: user.freePlaysRemaining,
+            primaryEmail: user.local.email,
+            emailVerified: user.emailVerified,
+            profileAddress: user.profileAddress
+          };
+          return result;
         } else {
           let result = {
-          _id: user.id,
-          isMusician: user.isMusician !== 'listener',
-          isListener: user.isMusician === 'listener',
-          followers: user.followerCount,
-          tips: user.directTipCount,
-          fullname: null,
-          username: user.primaryEmail,
-          picture: null,
-          freePlaysRemaining: user.freePlaysRemaining,
-          primaryEmail: user.primaryEmail,
-          emailVerified: user.emailVerified,
-          profileAddress: user.profileAddress
-        };
-        return result;
+            _id: user.id,
+            isMusician: user.isMusician !== 'listener',
+            isListener: user.isMusician === 'listener',
+            followers: user.followerCount,
+            tips: user.directTipCount,
+            fullname: null,
+            username: user.primaryEmail,
+            picture: null,
+            freePlaysRemaining: user.freePlaysRemaining,
+            primaryEmail: user.primaryEmail,
+            emailVerified: user.emailVerified,
+            profileAddress: user.profileAddress
+          };
+          return result;
         }
       })
-}
-
-sendRewardsForInvite(p: any): Promise<any> {
-  if (!p || !p.invite || !p.invite.invitedBy) {
-    console.log(`Could not send an invite reward, user did not have an invite, newUser.id: ${p._id}, invite: ${JSON.stringify(p.invite)}`);
-    return Promise.resolve();
   }
 
-  return User.findById(p.invite.invitedBy).exec()
-    .then(sender => {
-      if (!sender || !sender.invite) {
-        console.log("Not sending reward because there is no sender or not sender invite field");
-        return {};
-      }
-      if (sender.invite.noReward) {
-        console.log("Not sending reward because the sender was blacklisted, or inherited blacklist status: " + sender.profileAddress);
-        return {};
-      }
+  sendRewardsForInvite(p: any): Promise<any> {
+    if (!p || !p.invite || !p.invite.invitedBy) {
+      console.log(`Could not send an invite reward, user did not have an invite, newUser.id: ${p._id}, invite: ${JSON.stringify(p.invite)}`);
+      return Promise.resolve();
+    }
 
-      if (!sender.verified && this._onlyEmailAuth(sender)) {
-        console.log("Not sending reward because the sender does not have a social account linked and is not verified: " + sender.profileAddress + ", email: " + sender.local.email);
-        return {};
-      }
-
-      console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}'`);
-      const sendRewardToInvitee = this.musicoinAPI.sendRewardMin(p.profileAddress);
-      const sendRewardToInviter = this.musicoinAPI.sendRewardMax(sender.profileAddress);
-      return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
-        return {
-          inviteeRewardTx: tx1,
-          inviterRewardTx: tx2
+    return User.findById(p.invite.invitedBy).exec()
+      .then(sender => {
+        if (!sender || !sender.invite) {
+          console.log("Not sending reward because there is no sender or not sender invite field");
+          return {};
         }
-      });
-    })
-}
+        if (sender.invite.noReward && sender.accountLocked) {
+          console.log("Not sending reward has no remaining invites or just locked: " + sender.profileAddress);
+          return {};
+        }
+
+        if (!sender.verified) {
+          console.log("Not sending reward because the sender is not verified: " + sender.profileAddress);
+          return {};
+        }
+
+        if (!sender.verified && !p.verified) {
+          console.log("Not sending reward because we don't want a reward for invited user as well: " + p.profileAddress);
+          return {};
+        }
+
+        console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}'`);
+        const sendRewardToInvitee = this.musicoinAPI.sendRewardMin(p.profileAddress);
+        const sendRewardToInviter = this.musicoinAPI.sendRewardMax(sender.profileAddress);
+        return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
+          return {
+            inviteeRewardTx: tx1,
+            inviterRewardTx: tx2
+          }
+        });
+      })
+  }
 
   sendInvite(sender: any, email: string): Promise<any> {
     let promise = Promise.resolve(null);
@@ -616,7 +621,7 @@ sendRewardsForInvite(p: any): Promise<any> {
           licenseAddress: "",
           label: "",
           description: user.draftProfile,
-          aowBadge:user.AOWBadge
+          aowBadge: user.AOWBadge
         }
       })
   }
@@ -1776,13 +1781,6 @@ sendRewardsForInvite(p: any): Promise<any> {
       unit += "s";
     }
     return `${rounded} ${unit} ago`;
-  }
-
-  private _onlyEmailAuth(user) {
-    return !this._hasAuthMethod(user, "facebook")
-      && !this._hasAuthMethod(user, "twitter")
-      && !this._hasAuthMethod(user, "google")
-      && !this._hasAuthMethod(user, "local");
   }
 
   private _hasAuthMethod(user: any, method: string): boolean {
