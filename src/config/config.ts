@@ -62,6 +62,7 @@ function getStructuredConfig(keyValueConfig) {
     },
     streaming: {
       tracks: keyValueConfig.streamingTracksLocation,
+      org: keyValueConfig.streamingOrgFiles,
       segments: keyValueConfig.streamingSegments,
     },
     ipfs: {
@@ -297,7 +298,9 @@ function getDefaultKeyValueConfig() {
 
         streamingTracksLocation: env.STREAMING_TRACKS || '/var/www/stream_storage/tracks',
 
-        streamingSegments: env.STREAMING_SEGMENTS || '23'
+        streamingSegments: env.STREAMING_SEGMENTS || '23',
+
+        streamingOrgFiles: env.STREAMING_ORG_FILES || '/var/www/stream_storage/org'
 
       };
     });
