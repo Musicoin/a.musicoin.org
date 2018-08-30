@@ -719,6 +719,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
+  app.get('/play/*', functions.isLoggedIn, functions.adminOnly, function(req, res, next) {
+      next(); // allow the next route to run
+  });
+
   app.post('/admin/hero/select', (req, res) => {
     jsonAPI.promoteTrackToHero(req.body.licenseAddress)
       .then(result => res.json(result))

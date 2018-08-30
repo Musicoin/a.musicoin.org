@@ -54,10 +54,7 @@ ConfigUtils.loadConfig()
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.static(path.join(__dirname, 'overview')));
     app.use(express.static(path.join(__dirname, 'overview')));
-    console.log(path.join(__dirname, 'overview'));
-    console.log(path.join(config.streaming.tracks));
     app.use('/play', express.static(path.join(config.streaming.tracks)));
-     
 
     app.use(session({
       name: app.get('env') === 'development' ? 'staging-musicoin-session' : 'musicoin-session',
