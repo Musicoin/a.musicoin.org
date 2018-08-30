@@ -21,6 +21,7 @@ const flash = require('connect-flash');
 const ConfigUtils = require('./config/config');
 const MediaProvider = require('./media/media-provider');
 const get_ip = require('request-ip');
+const serveStatic = require('serve-static')
 
 ConfigUtils.loadConfig()
   .then(config => {
@@ -53,7 +54,8 @@ ConfigUtils.loadConfig()
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.static(path.join(__dirname, 'overview')));
-    app.use('/play', express.static(path.join(config.streaming.tracks)));
+    var serveStatic = require('serve-static')
+    app.use('/play', serveStatic(config.streaming.tracks));
 
     app.use(session({
       name: app.get('env') === 'development' ? 'staging-musicoin-session' : 'musicoin-session',
