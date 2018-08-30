@@ -21,7 +21,6 @@ const flash = require('connect-flash');
 const ConfigUtils = require('./config/config');
 const MediaProvider = require('./media/media-provider');
 const get_ip = require('request-ip');
-const fastify = require('fastify')();
 
 ConfigUtils.loadConfig()
   .then(config => {
@@ -54,10 +53,10 @@ ConfigUtils.loadConfig()
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.static(path.join(__dirname, 'overview')));
-    fastify.register(require('fastify-static'), {
-      root: config.streaming.tracks,
-      prefix: '/play/',
-    });
+    app.use(express.static(path.join(__dirname, 'overview')));
+    console.log(path.join(__dirname, 'overview'));
+    console.log(path.join(config.streaming.tracks));
+    app.use('/play', express.static(path.join(config.streaming.tracks)));
      
 
     app.use(session({

@@ -19,7 +19,6 @@
     "express-gettext": "*",
     "express-session": "*",
     "fastest-validator": "^0.6.6",
-    "fastify-static": "^0.14.0",
     "feed": "*",
     "formidable": "*",
     "helmet": "*",
