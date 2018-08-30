@@ -584,6 +584,10 @@ export class AdminRoutes {
       doRender(req, res, 'admin/account-balances.ejs', {});
     });
 
+    router.get('/admin/ppp-analyzer', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      doRender(req, res, 'admin/ppp-analyzer.ejs', {});
+    });
+
     router.get('/admin/ppp-logs', functions.isLoggedIn, functions.adminOnly, function (req, res) {
       fs.stat(process.cwd() + '/logs/ppp.json', function (err) {
         if (err == null) {

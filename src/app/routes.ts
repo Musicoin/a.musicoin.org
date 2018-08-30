@@ -872,12 +872,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         if (err == null) {
           let file = fs.readFileSync(process.cwd() + '/logs/ppp.json', 'utf8');
           pppReqLog = JSON.parse(file);
-          pppReqLog.ppp.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
+          pppReqLog.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
           let json = JSON.stringify(pppReqLog, null, 4);
           fs.writeFileSync(process.cwd() + '/logs/ppp.json', json, 'utf8');
         } else if (err.code == 'ENOENT') {
-          var pppReqLog = { ppp: [] };
-          pppReqLog.ppp.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
+          var pppReqLog = [];
+          pppReqLog.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
           let startFile = JSON.stringify(pppReqLog, null, 4);
           fs.writeFileSync(process.cwd() + '/logs/ppp.json', startFile, 'utf8');
         } else {
