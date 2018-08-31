@@ -105,15 +105,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     config,
     doRender);
 
-  const streamingRouter = new StreamingRouter(musicoinApi,
-    jsonAPI,
-    addressResolver,
-    maxImageWidth,
-    maxHeroImageWidth,
-    mediaProvider,
-    config,
-    doRender);
-
   const authRouter = new AuthRouter(musicoinApi,
     jsonAPI,
     addressResolver,
