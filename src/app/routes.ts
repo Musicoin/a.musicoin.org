@@ -719,13 +719,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/play/:address/index.m3u8', function (req, res, next) {
-    var streamPlaylist = config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8';
-    var mimetype = mime.lookup(streamPlaylist);
-    res.setHeader('Content-disposition', 'attachment; filename=index.m3u8');
-    res.setHeader('Content-type', mimetype);
-    var filestream = fs.createReadStream(streamPlaylist);
-    filestream.pipe(res);
+  app.get('/play/:address/:encoded', function (req, res, next) {
+    if (req.params.encoded == "index.m3u8") {
+      var streamPlaylist = config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8';
+      var mimetype = mime.lookup(streamPlaylist);
+      res.setHeader('Content-disposition', 'attachment; filename=index.m3u8');
+      res.setHeader('Content-type', mimetype);
+      var filestream = fs.createReadStream(streamPlaylist);
+      filestream.pipe(res);
+    } else if (req.params.encoded == req.params.encoded.match(/ts[0-9]+/) + ".ts") {
+      var streamPlaylist = config.streaming.tracks + '/' + req.params.address + '/' + req.params.encoded;
+      var mimetype = mime.lookup(streamPlaylist);
+      res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
+      res.setHeader('Content-type', mimetype);
+      var filestream = fs.createReadStream(streamPlaylist);
+      filestream.pipe(res);
+    } else {
+      //console.log("Couldn't find encoded file");
+    }
   });
 
   app.post('/admin/hero/select', (req, res) => {
