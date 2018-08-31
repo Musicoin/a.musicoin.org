@@ -618,7 +618,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
+  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
@@ -676,12 +676,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           }
         });
       } else {
-        console.log('Somethign went wrong with hls file detection', err.code);
+        console.log('Something went wrong with hls file detection', err.code);
+        return next();
       }
     });
   });
 
-  app.get('/download/:address', function (req, res) {
+  app.get('/download/:address', function (req, res, next) {
     var track = config.streaming.org + '/' + req.params.address + "/" + req.params.address + ".mp3";
     fs.stat(track, function (err) {
       if (err == null) {
@@ -715,11 +716,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         });
       } else {
         console.log('Save file from ppp error from download (probably incorrect track address: ' + req.params.address + ')', err.code);
+        return next();
       }
     });
   });
 
-  app.get('/track/:address/:encoded', function (req, res, next) {
+  app.get('/tracks/:address/:encoded', function (req, res, next) {
     if (req.params.encoded == "index.m3u8") {
       var streamPlaylist = config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8';
       var mimetype = mime.lookup(streamPlaylist);
@@ -736,6 +738,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       filestream.pipe(res);
     } else {
       //console.log("Couldn't find encoded file");
+      return next();
     }
   });
 
