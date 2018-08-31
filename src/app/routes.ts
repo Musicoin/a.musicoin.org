@@ -23,7 +23,6 @@ import { RequestCache } from './utils/cached-request';
 import * as FormUtils from './utils/form-utils';
 import * as UrlUtils from './utils/url-utils';
 import * as fs from 'fs';
-import { StreamingRouter } from './routes/streaming/streaming';
 var path = require('path');
 var mime = require('mime');
 
@@ -183,7 +182,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/elements', functions.isLoggedIn, functions.adminOnly);
   app.use('/admin/*', functions.isLoggedIn, functions.adminOnly);
   app.use('/elements/*', functions.isLoggedIn, functions.adminOnly);
-  app.use('/play', streamingRouter.getRouter());
 
   app.delete('/admin/user/delete', (req, res) => {
     if (req.body.email) { req.body.email = req.body.email.trim(); }
@@ -728,6 +726,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log('Save file from ppp error from download (probably incorrect track address: ' + req.params.address + ')', err.code);
       }
     });
+  });
+
+  app.get('/play/:address/index.m3u8', function (req, res, next) {
+    var streamPlaylist = config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8';
+    var mimetype = mime.lookup(streamPlaylist);
+    res.setHeader('Content-disposition', 'attachment; filename=index.m3u8');
+    res.setHeader('Content-type', mimetype);
+    var filestream = fs.createReadStream(streamPlaylist);
+    filestream.pipe(res);
   });
 
   app.post('/admin/hero/select', (req, res) => {

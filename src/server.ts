@@ -53,7 +53,6 @@ ConfigUtils.loadConfig()
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.static(path.join(__dirname, 'overview')));
-    app.use(express.static(path.join(__dirname, 'overview')));
 
     app.use(session({
       name: app.get('env') === 'development' ? 'staging-musicoin-session' : 'musicoin-session',
