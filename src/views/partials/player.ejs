@@ -331,7 +331,6 @@
         if (eligibility.success) {
           console.log("Getting details for " + licenseAddress);
           $.get( "/json-api/track/" + licenseAddress, function( data ) {
-            data.audioUrl = 'http://51.38.49.153/tracks/' + data.audioUrl.replace('https://musicoin.org/nav/track/','') + '/index.m3u8';
             var result = audioPlayer.playItem(null,
               data.audioUrl,
               data.title,
