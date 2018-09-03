@@ -275,7 +275,7 @@
                     dynamic.refreshElement($($("#user-container").closest('.dynamic-element')))
                 }
             $(document).ready(function () {
-                
+
                 $(function () {
                     $("#example1").DataTable({
                         "processing": true,
@@ -303,11 +303,11 @@
                                     } else {
                                         profile += 'unchecked';
                                     }
-                                    if (user.draftProfile && typeof user.draftProfile.version != "undefined") {
-                                        profile += user.draftProfile.version;
-                                    }
                                     if (user.verified) {
-                                        profile += '<i class="verified" title="verified user"></i>';
+                                        profile += ' (Verified) ';
+                                    }
+                                    if !(user.role == 'listener') {
+                                        profile += ' (Musician) ';
                                     }
                                     profile += '<br>';
                                     //Profile End
@@ -320,35 +320,31 @@
                                         invitedBy += 'by <a target="' + invitedByUser + '" href="/artist/' + invitedByUser.profileAddress + '">' + invitedByUser.draftProfile.artistName + '</a>';
                                     }
                                     invitedBy += '<br>';
-                                    invitedBy +=  invite.inviteCode ? invite.inviteCode : "";
+                                    invitedBy += invite.inviteCode ? invite.inviteCode : "";
                                     //END
                                     //Invite Clicked
                                     linked += '<table cellpadding="2">';
-                                    var isInArray = user.hasOwnProperty('google.token');
-                                    if (isInArray) {
-                                        if (!!user.google.token) {
+                                    if (user.google) {
+                                        if (user.google.url) {
                                             const googleUrl = user.google.url ? user.google.url : "https://plus.google.com/" + user.google.id;
                                             linked += '<tr><td><span class="btn fa fa-google-plus"></span></td><td class="text-left"><a target=_blank href="' + googleUrl + '">' + user.google.name + "," + user.google.email + '</a></td ></tr >';
                                         }
                                     }
-                                    isInArray = user.hasOwnProperty('twitter.token');
-                                    if (isInArray) {
-                                        if (!!user.twitter.token) {
+                                    if (user.twitter) {
+                                        if (user.twitter.username) {
                                             linked += '<tr><td><span class="btn fa fa-twitter"></span></td><td class="text-left">';
                                             const twitterUrl = user.twitter.url ? user.twitter.url : "https://twitter.com/" + user.twitter.username;
                                             linked += '<a target=_blank href="' + twitterUrl + '"> ' + user.twitter.username + ', ' + user.twitter.displayName + '</a></td></tr>';
                                         }
                                     }
-                                    isInArray = user.hasOwnProperty('facebook.token');
-                                    if (isInArray) {
-                                        if (!!user.facebook.token) {
+                                    if (user.facebook) {
+                                        if (user.facebook.id) {
                                             const facebookUrl = user.facebook.url ? user.facebook.url : "https://www.facebook.com/app_scoped_user_id/" + user.facebook.id;
-                                            linked += '<tr><td class=""><span class="btn fa fa-facebook"></span></td><td class="text-left"><a target=_blank href="' + facebookUrl + '">' + user.facebook.name + ', ' + user.facebook.email + '</a></td></tr>';
+                                            linked += '<tr><td class=""><span class="btn fa fa-facebook"></span></td><td class="text-left"><a target=_blank href="' + facebookUrl + '">' + user.facebook.name + ', ' + '</a></td></tr>';
                                         }
                                     }
-                                    var isInArray = user.hasOwnProperty('local.id');
-                                    if (isInArray) {
-                                        if (!!user.local.id) {
+                                    if (user.local) {
+                                        if (user.local.email) {
                                             linked += '<tr><td><span class="btn fa fa-envelope-o"></span></td><td class="text-left">' + user.local.email + '</td></tr>';
                                         }
                                     }
@@ -397,7 +393,7 @@
                             { 'data': 'actionLinks' }
                         ],
                     });
-                });               
+                });
             });
         </script>
 </body>
