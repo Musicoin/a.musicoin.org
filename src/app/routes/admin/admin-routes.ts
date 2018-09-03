@@ -227,7 +227,6 @@ export class AdminRoutes {
       let search : any = req.query.search.value ? req.query.search.value:"";
       const length = typeof l !== "undefined" ? parseInt(l) : 1000;
       const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
-      console.log("SEARCH",search);
       jsonAPI.getAllUsers(search, null, null, null, start, length, null)
         .then(results => {
           const users= results.users;

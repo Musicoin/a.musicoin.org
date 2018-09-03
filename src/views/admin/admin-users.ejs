@@ -50,10 +50,8 @@
                                     <thead>
                                         <tr>
                                             <th>Profile</th>
-                                            <th>Balance</th>
                                             <th>Voting Power</th>
                                             <th>Invited By</th>
-                                            <th>Invite Clicked</th>
                                             <th>Linked</th>
                                             <th>Music Released</th>
                                             <th>Invite Left</th>
@@ -66,10 +64,8 @@
                                     <tfoot>
                                         <tr>
                                             <th>Profile</th>
-                                            <th>Balance</th>
                                             <th>Voting Power</th>
                                             <th>Invited By</th>
-                                            <th>Invite Clicked</th>
                                             <th>Linked</th>
                                             <th>Music Released</th>
                                             <th>Invite Left</th>
@@ -292,10 +288,8 @@
                                     var invite = user.invite ? user.invite : {};
                                     var invitedByUser = invite.invitedBy || {};
                                     var profile = "";
-                                    var balance = "";
                                     var votingPower = "";
                                     var invitedBy = "";
-                                    var inviteClicked = "";
                                     var linked = "";
                                     var musicReleased = "";
                                     var invitedLeft = "";
@@ -316,24 +310,19 @@
                                         profile += '<i class="verified" title="verified user"></i>';
                                     }
                                     profile += '<br>';
-                                    profile += user.timeSinceJoining;
                                     //Profile End
-                                    //Balance Start
-                                    balance += user.balance;
-                                    //Balance End
                                     //Vtox Start
                                     votingPower += user.voteMultiplier;
                                     //End
                                     //Invite Start
                                     invitedBy += invite.invitedAs + '<br>';
                                     if (invitedByUser.profileAddress && invitedByUser.draftProfile.artistName) {
-                                        invitedBy += 'by <a target="' + invitedByUser + '" href="/artist/' + invitedByUser.profileAddress + '">' + invitedByUser.draftProfile.artistNam + '</a>';
+                                        invitedBy += 'by <a target="' + invitedByUser + '" href="/artist/' + invitedByUser.profileAddress + '">' + invitedByUser.draftProfile.artistName + '</a>';
                                     }
                                     invitedBy += '<br>';
-                                    invitedBy += invite.inviteCode;
+                                    invitedBy +=  invite.inviteCode ? invite.inviteCode : "";
                                     //END
                                     //Invite Clicked
-                                    inviteClicked += invite.clicked ? 'checked' : 'unchecked';
                                     linked += '<table cellpadding="2">';
                                     var isInArray = user.hasOwnProperty('google.token');
                                     if (isInArray) {
@@ -387,10 +376,8 @@
                                     actionLinks += '</div></div>';
                                     return_data.push({
                                         'profile': profile,
-                                        'balance': balance,
                                         'votingPower': votingPower,
                                         'invitedBy': invitedBy,
-                                        'inviteClicked': inviteClicked,
                                         'linked': linked,
                                         'musicReleased': musicReleased,
                                         'invitedLeft': invitedLeft,
@@ -402,10 +389,8 @@
                         },
                         columns: [
                             { 'data': 'profile' },
-                            { 'data': 'balance' },
                             { 'data': 'votingPower' },
                             { 'data': 'invitedBy' },
-                            { 'data': 'inviteClicked' },
                             { 'data': 'linked' },
                             { 'data': 'musicReleased' },
                             { 'data': 'invitedLeft' },
