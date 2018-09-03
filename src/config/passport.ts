@@ -159,10 +159,14 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
   },
     function (req, token, tokenSecret, profile, done) {
-      let isMusician=false;
+      let isRole="listener";
       if(req.session.isMusician)
       {
-        isMusician=true;
+        isRole="Musician";
+      }
+      if(req.session.isReviewers)
+      {
+        isRole="Reviewers";
       }
       // asynchronous
       process.nextTick(function () {
@@ -178,7 +182,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         doStandardLogin("google",
           req,
           localProfile,
-          done,null,isMusician);
+          done,null,isRole);
       });
     }));
 
@@ -193,10 +197,14 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
   },
     function (req, token, tokenSecret, profile, done) {
-      let isMusician=false;
+      let isRole="listener";
       if(req.session.isMusician)
       {
-        isMusician=true;
+        isRole="Musician";
+      }
+      if(req.session.isReviewers)
+      {
+        isRole="Reviewers";
       }
       // asynchronous
       process.nextTick(function () {
@@ -212,7 +220,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         doStandardLogin("facebook",
           req,
           localProfile,
-          done,null,isMusician);
+          done,null,isRole);
       });
     }));
 
@@ -228,10 +236,14 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
 
   },
     function (req, token, tokenSecret, profile, done) {
-      let isMusician=false;
+      let isRole="listener";
       if(req.session.isMusician)
       {
-        isMusician=true;
+        isRole="Musician";
+      }
+      if(req.session.isReviewers)
+      {
+        isRole="Reviewers";
       }
       // asynchronous
       process.nextTick(function () {
@@ -247,7 +259,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
         doStandardLogin("twitter",
           req,
           localProfile,
-          done,null,isMusician);
+          done,null,isRole);
       }); 
     }));
 
@@ -312,11 +324,12 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
       })
   }
 
-  function createUserWithNoInvite(isMusician:Boolean) {
+  function createUserWithNoInvite(role:String) {
     const newUser = new User();
-    if(isMusician==true)
-    {
+    if(role==="Musician") {
       newUser.role="Musician";
+    } else if (role==="Reviewers") {
+      newUser.role="Reviewers";
     }
     newUser.invite = {
       noReward: false,
@@ -337,7 +350,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
     req,
     localProfile,
     done,
-    validation?,isMusician=false) {
+    validation?,role?) {
 
     console.log(`Handling login request: ip=${get_ip.getClientIp(req)}, session=${req.session.id}, auth=${authProvider}, id=${localProfile.id}`);
     // if the user is already logged in, see if the account can be linked
@@ -421,7 +434,7 @@ export function configure(passport: any, mediaProvider, configAuth: any) {
             })
             .then(user => {
               if (!user) {
-                return createUserWithNoInvite(isMusician);
+                return createUserWithNoInvite(role);
               }
               return user;
             })

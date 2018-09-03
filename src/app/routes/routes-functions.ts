@@ -24,6 +24,13 @@ module.exports = {
     setSignUpFlag: function (isSignup) {
         return function (req, res, next) {
             req.session.signup = isSignup;
+            if(req.query.isMusician) {
+                req.session.isMusician=true;
+            }
+            else if(req.query.isReviewers)
+            {
+                req.session.isReviewers=true;
+            }
             next();
         }
     },
@@ -230,7 +237,10 @@ module.exports = {
 
 
     adminOnly: function (req, res, next) {
-
+        let url:String = req.originalUrl;
+        if(url.indexOf("/admin/users")>-1 && req.user.role=="Reviewers")
+            return next();
+        
         // if user is authenticated in the session, carry on
         if (module.exports.isAdmin(req.user))
             return next();
