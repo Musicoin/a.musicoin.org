@@ -296,11 +296,11 @@ function getDefaultKeyValueConfig() {
 
         corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org'],
 
-        streamingTracksLocation: env.STREAMING_TRACKS || '/var/www/stream_storage/tracks',
+        streamingTracksLocation: env.STREAMING_TRACKS || '/var/www/mcorg/streaming-storage/tracks',
 
         streamingSegments: env.STREAMING_SEGMENTS || '23',
 
-        streamingOrgFiles: env.STREAMING_ORG_FILES || '/var/www/stream_storage/org'
+        streamingOrgFiles: env.STREAMING_ORG_FILES || '/var/www/mcorg/streaming-storage/org'
 
       };
     });
