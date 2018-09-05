@@ -618,7 +618,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
+  app.get('/ppp-new/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
@@ -680,6 +680,38 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         return next();
       }
     });
+  });
+
+  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
+    getPlaybackEligibility(req)
+      .then(playbackEligibility => {
+        if (!playbackEligibility.success) {
+          console.log("Rejecting ppp request: " + JSON.stringify(playbackEligibility));
+          return res.send(new Error("PPP request failed: " + playbackEligibility.message));
+        }
+
+        const context = { contentType: "audio/mpeg" };
+        const l = musicoinApi.getLicenseDetails(req.params.address);
+        const r = Release.findOne({ contractAddress: req.params.address, state: "published" }).exec();
+
+        return Promise.join(l, r, (license, release) => {
+          return getPPPKeyForUser(req, release, license, playbackEligibility)
+            .then(keyResponse => {
+              return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
+                .then(function (result) {
+                  res.sendSeekable(result.stream, {
+                    type: context.contentType,
+                    length: result.headers['content-length']
+                  });
+                })
+            })
+        })
+      })
+      .catch(function (err) {
+        console.error(err.stack);
+        res.status(500);
+        res.send("Failed to play track");
+      });
   });
 
   app.get('/download/:address', function (req, res, next) {
