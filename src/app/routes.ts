@@ -780,7 +780,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
     allReleases.forEach(function (i) {
       //aria2.call("addUri", [musicoinApi.getPPPUrl(i)], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
-      require('child_process').exec('aria2c' + musicoinApi.getPPPUrl(i) + '-d ' + config.streaming.org + '/' + i + '-c -o ' + i + ".mp3");
+      require('child_process').exec('aria2c ' + musicoinApi.getPPPUrl(i) + ' -d ' + config.streaming.org + '/' + i + ' -c -o ' + i + ".mp3");
     });
     //aria2.close();
   });
