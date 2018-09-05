@@ -696,12 +696,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         });
       } else if (err.code == 'ENOENT') {
         aria2.open();
-        //aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.org + '/' + req.params.address });
-        var allReleasesFile = '/var/www/mcorg/running-master/musicoin.org/src/db/verified-tracks.json';
-        var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
-        allReleases.forEach(function (i) {
-          aria2.call("addUri", [musicoinApi.getPPPUrl(i)], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
-        });
+        aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.org + '/' + req.params.address });
         aria2.on("onDownloadError", ([guid]) => {
           console.log('trackDownloadError: ' + req.params.address, guid);
         });
@@ -711,16 +706,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         aria2.on("onDownloadComplete", ([guid]) => {
           console.log('trackDownloadComplete: ' + req.params.address, guid);
           aria2.close();
-          allReleases.forEach(function (i) {
-            require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + i + '/' + i + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + i + '/' + i + '/' + 'index.m3u8 -segment_list_type m3u8 ' + i + '/' + i + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + i + ' && cd ' + config.streaming.org + '/' + i + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + i + '/' + ' \\;');
+          musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
+            var mimetype = mime.lookup(track);
+            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g, '_') + ".mp3");
+            res.setHeader('Content-type', mimetype);
+            var filestream = fs.createReadStream(track);
+            filestream.pipe(res);
           });
-          // musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
-          //   var mimetype = mime.lookup(track);
-          //    res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g, '_') + ".mp3");
-          //   res.setHeader('Content-type', mimetype);
-          //   var filestream = fs.createReadStream(track);
-          //   filestream.pipe(res);
-          //});
         });
       } else {
         console.log('Save file from ppp error from download (probably incorrect track address: ' + req.params.address + ')', err.code);
@@ -748,6 +740,24 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       //console.log("Couldn't find encoded file");
       return next();
     }
+  });
+
+  app.get('/download-all-tracks', function (req, res, next) {
+    aria2.open();
+    var allReleasesFile = '/var/www/mcorg/running-master/musicoin.org/src/db/verified-tracks.json';
+    var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
+    allReleases.forEach(function (i) {
+      aria2.call("addUri", [musicoinApi.getPPPUrl(i)], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
+    });
+    aria2.close();
+  });
+
+  app.get('/encode-all-tracks', function (req, res, next) {
+    var allReleasesFile = '/var/www/mcorg/running-master/musicoin.org/src/db/verified-tracks.json';
+    var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
+    allReleases.forEach(function (i) {
+      require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + i + '/' + i + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + i + '/' + i + '/' + 'index.m3u8 -segment_list_type m3u8 ' + i + '/' + i + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + i + ' && cd ' + config.streaming.org + '/' + i + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + i + '/' + ' \\;');
+    });
   });
 
   app.post('/admin/hero/select', (req, res) => {
