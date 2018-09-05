@@ -697,7 +697,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       } else if (err.code == 'ENOENT') {
         aria2.open();
         //aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.org + '/' + req.params.address });
-        var allReleasesFile = '/var/www/musicoin.org/src/db/verified-tracks.json';
+        var allReleasesFile = '/var/www/mcorg/running-master/musicoin.org/src/db/verified-tracks.json';
         var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
         for (var i = 0; i < allReleases.length; i++) {
           aria2.call("addUri", [musicoinApi.getPPPUrl(i + "")], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
