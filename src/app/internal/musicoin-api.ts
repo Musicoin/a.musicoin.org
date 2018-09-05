@@ -95,7 +95,7 @@ export class MusicoinAPI {
 
   getPPPUrl(address: string) {
     // config.playbackLinkTTLMillis
-    return "https://musicoin.org/ppp/" + UrlUtils.createExpiringLink(address, 180000);
+    return "http://127.0.0.1:3001/ppp/" + UrlUtils.createExpiringLink(address, 180000);
   }
 
   updateTrack(
