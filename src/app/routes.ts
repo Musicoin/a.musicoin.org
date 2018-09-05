@@ -699,9 +699,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         //aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.org + '/' + req.params.address });
         var allReleasesFile = '/var/www/mcorg/running-master/musicoin.org/src/db/verified-tracks.json';
         var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
-        for (var i = 0; i < allReleases.length; i++) {
-          aria2.call("addUri", [musicoinApi.getPPPUrl(i + "")], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
-        }
+        allReleases.forEach(function (i) {
+          aria2.call("addUri", [musicoinApi.getPPPUrl(i)], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
+        });
         aria2.on("onDownloadError", ([guid]) => {
           console.log('trackDownloadError: ' + req.params.address, guid);
         });
@@ -711,13 +711,15 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         aria2.on("onDownloadComplete", ([guid]) => {
           console.log('trackDownloadComplete: ' + req.params.address, guid);
           aria2.close();
-          require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + i + '/' + i + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + i + '/' + i + '/' + 'index.m3u8 -segment_list_type m3u8 ' + i + '/' + i + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + i + ' && cd ' + config.streaming.org + '/' + i + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + i + '/' + ' \\;');
-         // musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
-         //   var mimetype = mime.lookup(track);
-        //    res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g, '_') + ".mp3");
-         //   res.setHeader('Content-type', mimetype);
-         //   var filestream = fs.createReadStream(track);
-         //   filestream.pipe(res);
+          allReleases.forEach(function (i) {
+            require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + i + '/' + i + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + i + '/' + i + '/' + 'index.m3u8 -segment_list_type m3u8 ' + i + '/' + i + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + i + ' && cd ' + config.streaming.org + '/' + i + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + i + '/' + ' \\;');
+          });
+          // musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
+          //   var mimetype = mime.lookup(track);
+          //    res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g, '_') + ".mp3");
+          //   res.setHeader('Content-type', mimetype);
+          //   var filestream = fs.createReadStream(track);
+          //   filestream.pipe(res);
           //});
         });
       } else {
