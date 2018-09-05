@@ -775,13 +775,14 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/download-all-tracks', function (req, res, next) {
-    aria2.open();
+    //aria2.open();
     var allReleasesFile = '/var/www/mcorg/running-master/musicoin.org/src/db/verified-tracks.json';
     var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
     allReleases.forEach(function (i) {
-      aria2.call("addUri", [musicoinApi.getPPPUrl(i)], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
+      //aria2.call("addUri", [musicoinApi.getPPPUrl(i)], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
+      require('child_process').exec('aria2c' + musicoinApi.getPPPUrl(i) + '-d ' + config.streaming.org + '/' + i + '-c -o ' + i + ".mp3");
     });
-    aria2.close();
+    //aria2.close();
   });
 
   app.get('/encode-all-tracks', function (req, res, next) {
