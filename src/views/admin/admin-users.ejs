@@ -306,8 +306,9 @@
                                     if (user.verified) {
                                         profile += ' (Verified) ';
                                     }
-                                    if !(user.role == 'listener') {
-                                        profile += ' (Musician) ';
+                                    if (user.role == 'listener') {
+                                    } else {
+                                      profile += ' (Musician) ';
                                     }
                                     profile += '<br>';
                                     //Profile End
