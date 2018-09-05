@@ -695,30 +695,30 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           filestream.pipe(res);
         });
       } else if (err.code == 'ENOENT') {
-        aria2.open();
-        aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.org + '/' + req.params.address });
+        //aria2.open();
+        //aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.org + '/' + req.params.address });
         var allReleasesFile = '/var/www/musicoin.org/src/db/verified-tracks.json';
         var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
         for (var i = 0; i < allReleases.length; i++) {
           aria2.call("addUri", [musicoinApi.getPPPUrl(i + "")], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
         }
-        aria2.on("onDownloadError", ([guid]) => {
-          console.log('trackDownloadError: ' + req.params.address, guid);
-        });
-        aria2.on("onDownloadStart", ([guid]) => {
-          console.log('trackDownloadStart: ' + req.params.address, guid);
-        });
-        aria2.on("onDownloadComplete", ([guid]) => {
-          console.log('trackDownloadComplete: ' + req.params.address, guid);
-          aria2.close();
-          musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
-            var mimetype = mime.lookup(track);
-            res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g, '_') + ".mp3");
-            res.setHeader('Content-type', mimetype);
-            var filestream = fs.createReadStream(track);
-            filestream.pipe(res);
-          });
-        });
+        //aria2.on("onDownloadError", ([guid]) => {
+        //  console.log('trackDownloadError: ' + req.params.address, guid);
+        //});
+        //aria2.on("onDownloadStart", ([guid]) => {
+        //  console.log('trackDownloadStart: ' + req.params.address, guid);
+        //});
+       // aria2.on("onDownloadComplete", ([guid]) => {
+        //  console.log('trackDownloadComplete: ' + req.params.address, guid);
+         // aria2.close();
+         // musicoinApi.getTrackTitle(req.params.address).then(function (trackTitle) {
+         //   var mimetype = mime.lookup(track);
+        //    res.setHeader('Content-disposition', 'attachment; filename=' + trackTitle.replace(/[^a-zA-Z0-9]+/g, '_') + ".mp3");
+         //   res.setHeader('Content-type', mimetype);
+         //   var filestream = fs.createReadStream(track);
+         //   filestream.pipe(res);
+          //});
+        //});
       } else {
         console.log('Save file from ppp error from download (probably incorrect track address: ' + req.params.address + ')', err.code);
         return next();
