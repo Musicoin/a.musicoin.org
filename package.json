@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "aria2": "^4.0.2",
-    "async": "^2.6.0",
+    "async": "^2.6.1",
     "bcrypt-nodejs": "*",
     "bluebird": "*",
     "body-parser": "*",
@@ -41,6 +41,7 @@
     "qr-image": "*",
     "request": "*",
     "request-ip": "^2.0.2",
+    "save": "^2.3.2",
     "send-seekable": "*",
     "sendgrid": "^5.2.3",
     "serve-favicon": "^2.5.0",

@@ -25,6 +25,7 @@ import * as UrlUtils from './utils/url-utils';
 import * as fs from 'fs';
 var path = require('path');
 var mime = require('mime');
+var async = require("async");
 
 var functions = require('./routes/routes-functions');
 
@@ -775,15 +776,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/download-all-tracks', function (req, res, next) {
-    //aria2.open();
     var allReleasesFile = '/var/www/mcorg/running-master/musicoin.org/src/db/verified-tracks.json';
     var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
-    allReleases.forEach(function (i) {
-      //aria2.call("addUri", [musicoinApi.getPPPUrl(i)], { continue: "true", out: i + ".mp3", dir: config.streaming.org + '/' + i });
-      require('child_process').exec('sleep 5s; aria2c ' + musicoinApi.getPPPUrl(i) + ' -d ' + config.streaming.org + '/' + i + ' -c -o ' + i + ".mp3");
-      //console.log('aria2c ' + musicoinApi.getPPPUrl(i) + ' -d ' + config.streaming.org + '/' + i + ' -c -o ' + i + ".mp3");
-    });
-    //aria2.close();
+    var i = 0;
+    var interval = setInterval(function () {
+      aria2.call("addUri", [musicoinApi.getPPPUrl(allReleases[i])], { continue: "true", out: allReleases[i] + ".mp3", dir: config.streaming.org + '/' + allReleases[i] });
+      //console.log('aria2c ' + musicoinApi.getPPPUrl(allReleases[i]) + ' -d ' + config.streaming.org + '/' + allReleases[i] + ' -c -o ' + allReleases[i] + ".mp3");
+      //require('child_process').exec('aria2c ' + musicoinApi.getPPPUrl(allReleases[i]) + ' -d ' + config.streaming.org + '/' + allReleases[i] + ' -c -o ' + allReleases[i] + ".mp3");
+      i++;
+      if (i === allReleases.length) clearInterval(interval);
+    }, 5000);
   });
 
   app.get('/encode-all-tracks', function (req, res, next) {
@@ -968,13 +970,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               else if (req.anonymousUser) {
                 return { success: true, message: "Thank you for listening" };
               }
-              else {
-                const diff = new Date(user.nextFreePlayback).getTime() - Date.now();
-                if (diff > 0 && diff < config.freePlayDelay) {
-                  return { success: false, skip: false, message: "Sorry, please wait a few more seconds for your next free play." }
-                }
-              }
-              const unit = user.freePlaysRemaining - 1 == 1 ? "play" : "plays";
               return {
                 success: true,
                 payFromProfile: payFromProfile,
