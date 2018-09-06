@@ -686,7 +686,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
-        
+        if (!playbackEligibility.success) {
+          console.log("Rejecting ppp request: " + JSON.stringify(playbackEligibility));
+          return res.send(new Error("PPP request failed: " + playbackEligibility.message));
+        }
+
         const context = { contentType: "audio/mpeg" };
         const l = musicoinApi.getLicenseDetails(req.params.address);
         const r = Release.findOne({ contractAddress: req.params.address, state: "published" }).exec();
@@ -966,6 +970,13 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               else if (req.anonymousUser) {
                 return { success: true, message: "Thank you for listening" };
               }
+              else {
+                const diff = new Date(user.nextFreePlayback).getTime() - Date.now();
+                if (diff > 0 && diff < config.freePlayDelay) {
+                  return { success: false, skip: false, message: "Sorry, please wait a few more seconds for your next free play." }
+                }
+              }
+              const unit = user.freePlaysRemaining - 1 == 1 ? "play" : "plays";
               return {
                 success: true,
                 payFromProfile: payFromProfile,
