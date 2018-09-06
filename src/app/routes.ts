@@ -686,11 +686,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
-        if (!playbackEligibility.success) {
-          console.log("Rejecting ppp request: " + JSON.stringify(playbackEligibility));
-          return res.send(new Error("PPP request failed: " + playbackEligibility.message));
-        }
-
+        
         const context = { contentType: "audio/mpeg" };
         const l = musicoinApi.getLicenseDetails(req.params.address);
         const r = Release.findOne({ contractAddress: req.params.address, state: "published" }).exec();
