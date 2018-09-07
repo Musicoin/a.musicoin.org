@@ -871,7 +871,18 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       fs.stat(process.cwd() + '/logs/ppp.json', function (err) {
         if (err == null) {
           let file = fs.readFileSync(process.cwd() + '/logs/ppp.json', 'utf8');
-          pppReqLog = JSON.parse(file);
+          var parseErr;
+          try {
+            parseErr = JSON.parse(file);
+          } catch (e) {
+            var pppReqLog = [];
+            pppReqLog.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
+            let startFile = JSON.stringify(pppReqLog, null, 4);
+            fs.unlinkSync(process.cwd() + '/logs/ppp.json');
+            fs.writeFileSync(process.cwd() + '/logs/ppp.json', startFile, 'utf8');
+            console.log("Something strange was with json write to the ppp.json log" + e);
+          }
+          pppReqLog = parseErr;
           pppReqLog.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
           let json = JSON.stringify(pppReqLog, null, 4);
           fs.writeFileSync(process.cwd() + '/logs/ppp.json', json, 'utf8');
