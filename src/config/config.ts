@@ -123,7 +123,6 @@ function getStructuredConfig(keyValueConfig) {
       getKey: `${keyValueConfig.musicoinApiEndpoint}/license/ppp`,
       distributeLicenseBalance: `${keyValueConfig.musicoinApiEndpoint}/license/distributeBalance`,
       getTransactionStatus: `${keyValueConfig.musicoinApiEndpoint}/tx/status`,
-      getTransactionHistory: `${keyValueConfig.musicoinApiEndpoint}/tx/history`,
       publishProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
       sendFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/send`,
       pppFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/ppp`,
