@@ -160,14 +160,14 @@ function formatNumber(value) {
             <div class="btn-group">
                 <button type="button"
                         class="tip-button btn btn-success"
-                        title="Tip 1 MC"
+                        title="Tip 10 MC"
                         recipient="<%= artist.profileAddress %>"
-                        amount="1"
+                        amount="10"
                         context-type="User"
                         text-success="Thanks! :)"
                         text-fail=":("
-                        text-default="Tip 1 MC">
-                    Tip 1 MC
+                        text-default="Tip 10 MC">
+                    Tip 10 MC
                 </button>
                 <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="sr-only">Toggle Dropdown</span>
@@ -175,7 +175,7 @@ function formatNumber(value) {
                 </button>
                 <ul class="dropdown-menu tip-options">
                     <%
-                    var amounts = [5, 10, 100, 1000];
+                    var amounts = [1, 25, 50, 100, 250, 500, 1000];
                     for (var i=0; i < amounts.length; i++) {
                         var amount = amounts[i];
                         var message = amount > 1 ? "Are you sure you want to tip " + amount + " coins?" : "";
@@ -198,9 +198,9 @@ function formatNumber(value) {
 
         <div class="text-large flex-column center-text mr10 earnings-container" >
             <div style="top: -6px; position: relative;">
-                <span class="text-large" data-behavior="total-earned"><%=formatNumber(artistStats.totalEarned)%></span><span class="text-medium-small">MC</span>
+                <span class="text-large" data-behavior="total-earned"><%=formatNumber(artistStats.playCount)%></span><span class="text-medium-small">PPP</span>
             </div>
-            <span class="text-medium-small subtle-text" style="position: relative; top: -11px;"><span data-behavior="total-earned-usd"></span> earned</span>
+            <span class="text-medium-small subtle-text" style="position: relative; top: -11px;">plays</span>
         </div>
     </div>
 </div>

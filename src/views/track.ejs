@@ -352,19 +352,12 @@
                       <tr>
                         <td align="center" class="pr5">
                           <div class="dynamic-data" data-behavior="track-earnings" de-refresh-period="20" de-releaseId="<%=releaseId%>" de-url="/json-api/track/earnings/">
-                            <div class="text-large">
-                              <span class="text-large" data-behavior="track-earnings">
-                                <%=formatNumber(parseInt(license.directPlayCount) + parseInt(license.directTipCount))%>
-                              </span>
-                              <span class="text-medium-small">MC</span>
-                              <br>
-                            </div>
                             <div class="subtle-text" style="position:relative; top:-5px">
                               <b>
                                 <span data-behavior="track-plays">
                                   <%=formatNumber(license.directPlayCount)%>
                                 </span>
-                              </b> Plays +
+                              </b> PPP &
                               <b>
                                 <span data-behavior="track-tips">
                                   <%=formatNumber(license.directTipCount)%>
@@ -376,9 +369,9 @@
                       <tr>
                         <td align="center" class="pr5 subtle-text">
                           <div class="btn-group">
-                            <button type="button" class="tip-button btn btn-success" title="Tip 1 MC" recipient="<%=license.address%>" amount="1" context-type="Release"
-                              text-success="Thanks! :)" text-fail=":(" text-default="Tip 1 MC">
-                              Tip 1 MC
+                            <button type="button" class="tip-button btn btn-success" title="Tip 10 MC" recipient="<%=license.address%>" amount="10" context-type="Release"
+                              text-success="Thanks! :)" text-fail=":(" text-default="Tip 10 MC">
+                              Tip 10 MC
                             </button>
                             <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true"
                               aria-expanded="false">
@@ -387,7 +380,7 @@
                             </button>
                             <ul class="dropdown-menu tip-options">
                               <%
-                                        var amounts = [5, 10, 100, 1000];
+                                        var amounts = [1, 25, 50, 100, 250, 500, 1000];
                                         for (var i=0; i < amounts.length; i++) {
                                             var amount = amounts[i];
                                             var message = amount > 1 ? "Are you sure you want to tip " + amount + " coins?" : "";
