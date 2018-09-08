@@ -819,7 +819,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
     var i = 0;
     var interval = setInterval(function () {
-      require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + i + '/' + i + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + i + '/' + i + '/' + 'index.m3u8 -segment_list_type m3u8 ' + i + '/' + i + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + i + ' && cd ' + config.streaming.org + '/' + i + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + i + '/' + ' \\;');
+      require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + allReleases[i] + '/' + allReleases[i] + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + allReleases[i] + '/' + allReleases[i] + '/' + 'index.m3u8 -segment_list_type m3u8 ' + allReleases[i] + '/' + allReleases[i] + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + allReleases[i] + ' && cd ' + config.streaming.org + '/' + allReleases[i] + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + allReleases[i] + '/' + ' \\;');
       i++;
       if (i === allReleases.length) clearInterval(interval);
     }, 25000);
