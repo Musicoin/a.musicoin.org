@@ -23,24 +23,18 @@ import { RequestCache } from './utils/cached-request';
 import * as FormUtils from './utils/form-utils';
 import * as UrlUtils from './utils/url-utils';
 import * as fs from 'fs';
-var path = require('path');
 var mime = require('mime');
-var async = require("async");
 
 var functions = require('./routes/routes-functions');
 
-const Playback = require('./models/user-playback');
 const Release = require('./models/release');
 const AnonymousUser = require('./models/anonymous-user');
-const TrackMessage = require('./models/track-message');
 const EmailConfirmation = require('./models/email-confirmation');
 const User = require('./models/user');
 const sendSeekable = require('send-seekable');
 const get_ip = require('request-ip');
 const maxImageWidth = 400;
 const maxHeroImageWidth = 1300;
-const MAX_MESSAGE_LENGTH = 1000;
-const MAX_MESSAGES = 50;
 const Aria2 = require("aria2");
 const MESSAGE_TYPES = {
   admin: "admin",
@@ -60,8 +54,6 @@ const ARIA_OPTIONS = {
 const aria2 = new Aria2([ARIA_OPTIONS]);
 
 let publicPagesEnabled = false;
-var phoneNumberVal = 0;
-var numberOfPhoneUsedTimesVal = 0;
 
 export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider, config: any) {
 

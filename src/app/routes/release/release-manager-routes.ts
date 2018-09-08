@@ -15,6 +15,15 @@ const User = require('../../models/user');
 const defaultTrackImage = "ipfs://QmRsPLxCAgDZLfujibUF8EwYY9uZVU9vRq73rpAotiAsdf";
 const defaultProfileIPFSImage = "ipfs://QmR8mmsMn9TUdJiA6Ja3SYcQ4ckBdky1v5KGRimC7LkhGF";
 const defaultProfileIPFSImageOld = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
+const Aria2 = require("aria2");
+const ARIA_OPTIONS = {
+  host: 'localhost',
+  port: 6800,
+  secure: false,
+  secret: '',
+  path: '/jsonrpc'
+}
+const aria2 = new Aria2([ARIA_OPTIONS]);
 
 export class ReleaseManagerRouter {
   constructor(musicoinApi: MusicoinAPI,
@@ -268,6 +277,19 @@ export class ReleaseManagerRouter {
           })
           .then(function (releaseRecord) {
             console.log(`Saved releases txs to database!`);
+            aria2.open();
+            aria2.call("addUri", [musicoinApi.getPPPUrl(releaseRecord.tx)], { continue: "true", out: releaseRecord.tx + ".mp3", dir: config.streaming.org + '/' + releaseRecord.tx });
+            aria2.on("onDownloadError", ([guid]) => {
+              console.log('trackDownloadError: ' + releaseRecord.tx, guid);
+            });
+            aria2.on("onDownloadStart", ([guid]) => {
+              console.log('trackDownloadStart: ' + releaseRecord.tx, guid);
+            });
+            aria2.on("onDownloadComplete", ([guid]) => {
+              console.log('trackDownloadComplete: ' + releaseRecord.tx, guid);
+              aria2.close();
+              require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.tx + '/' + releaseRecord.tx + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.tx + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.tx + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.tx + ' && cd ' + config.streaming.org + '/' + releaseRecord.tx + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.tx + '/' + ' \\;');
+            });
             return res.json({ success: true, tx: releaseRecord.tx });
           })
           .catch(function (err) {
