@@ -128,6 +128,7 @@ function getStructuredConfig(keyValueConfig) {
       pppFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/ppp`,
       sendRewardMin: `${keyValueConfig.musicoinApiEndpoint}/rewardmin `,
       sendRewardMax: `${keyValueConfig.musicoinApiEndpoint}/rewardmax`,
+      sendRewardExtraPPP: `${keyValueConfig.musicoinApiEndpoint}/rewardppp`,
       releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,
       updateLicense: `${keyValueConfig.musicoinApiEndpoint}/license/update`,
       getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,

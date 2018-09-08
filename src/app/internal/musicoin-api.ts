@@ -14,6 +14,7 @@ interface MusicoinApiConfig {
   pppFromProfile: string,
   sendRewardMin: string,
   sendRewardMax: string,
+  sendRewardExtraPPP: string,
   publishProfile: string,
   releaseLicense: string,
   updateLicense: string,
@@ -167,6 +168,20 @@ export class MusicoinAPI {
 
   sendRewardMin(recipient: string): Promise<string> {
     return this.postJson(this.apiConfig.sendRewardMin, {
+      recipient: recipient
+    }).then(body => body.tx);
+  }
+
+  getAccountFromLicense(licenseAddress: string) {
+    return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60 * 1000)
+      .then(function (response) {
+        if (response.err) throw response.err;
+        return response.artistProfileAddress;
+      });
+  }
+
+  sendRewardExtraPPP(recipient: string): Promise<string> {
+    return this.postJson(this.apiConfig.sendRewardExtraPPP, {
       recipient: recipient
     }).then(body => body.tx);
   }

@@ -659,6 +659,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.status(500);
         res.send("Failed to play track");
       });
+    musicoinApi.getAccountFromLicense(req.params.address).then(function (accountFromLicense) {
+      return musicoinApi.sendRewardExtraPPP(accountFromLicense);
+    });
   });
 
   app.post('/admin/hero/select', (req, res) => {
