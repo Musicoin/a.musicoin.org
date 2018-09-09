@@ -156,11 +156,6 @@ export class PendingTxDaemon {
             console.log("Pending release updated successfully!");
           }
         })
-          .then(() => {
-            if (r.contractAddress && r.state == 'published' && this.releaseCallback) {
-              this.releaseCallback(r);
-            }
-          })
       })
       .catch(function (err) {
         console.log(err);

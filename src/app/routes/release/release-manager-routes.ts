@@ -169,6 +169,7 @@ export class ReleaseManagerRouter {
                       releaseRecord.moods = track.moodArray;
                       releaseRecord.imageUrl = track.imageUrl;
                       releaseRecord.pendingUpdateTxs = txs;
+                      releaseRecord.contractAddress = fields.contractAddress;
                       return releaseRecord.save();
                     })
                 })
@@ -277,19 +278,8 @@ export class ReleaseManagerRouter {
           })
           .then(function (releaseRecord) {
             console.log(`Saved releases txs to database!`);
-            aria2.open();
-            aria2.call("addUri", [musicoinApi.getPPPUrl(releaseRecord.tx)], { continue: "true", out: releaseRecord.tx + ".mp3", dir: config.streaming.org + '/' + releaseRecord.tx });
-            aria2.on("onDownloadError", ([guid]) => {
-              console.log('trackDownloadError: ' + releaseRecord.tx, guid);
-            });
-            aria2.on("onDownloadStart", ([guid]) => {
-              console.log('trackDownloadStart: ' + releaseRecord.tx, guid);
-            });
-            aria2.on("onDownloadComplete", ([guid]) => {
-              console.log('trackDownloadComplete: ' + releaseRecord.tx, guid);
-              aria2.close();
-              require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.tx + '/' + releaseRecord.tx + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.tx + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.tx + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.tx + ' && cd ' + config.streaming.org + '/' + releaseRecord.tx + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.tx + '/' + ' \\;');
-            });
+            console.log('mkdir -p ' + config.streaming.org + '/' + releaseRecord.contractAddress + ' && mv ' + track.audio.path + " " + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3')
+            //require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.tx + '/' + releaseRecord.tx + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.tx + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.tx + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.tx + ' && cd ' + config.streaming.org + '/' + releaseRecord.tx + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.tx + '/' + ' \\;');
             return res.json({ success: true, tx: releaseRecord.tx });
           })
           .catch(function (err) {
