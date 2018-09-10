@@ -143,11 +143,12 @@ export class ReleaseManagerRouter {
             const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
             return Promise.join(i, m, c, function (imageUrl, metadataUrl, contributors) {
               track.imageUrl = imageUrl;
+              track.audio.path = tmpAudioUrl;
               return musicoinApi.updateTrack(
                 fields.contractAddress,
                 track.title,
                 imageUrl,
-                track.audio.path,
+                tmpAudioUrl,
                 metadataUrl,
                 contributors).then(txs => {
                   console.log("Updating track: " + JSON.stringify(txs));
@@ -221,7 +222,8 @@ export class ReleaseManagerRouter {
         const m = mediaProvider.uploadText(JSON.stringify(track.metadata));
         const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
         const r = addressResolver.resolveAddresses(selfAddress, track.royalties);
-        return Promise.join(a, i, m, c, r, function (audioUrl, imageUrl, metadataUrl, contributors, royalties) {
+        const y = track.audio.path;
+        return Promise.join(a, i, m, c, r, y, function (audioUrl, imageUrl, tmpAudioUrl, metadataUrl, contributors, royalties) {
           track.imageUrl = imageUrl;
           return musicoinApi.releaseTrack(
             req.user.profileAddress,
