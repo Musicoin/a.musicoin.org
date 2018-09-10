@@ -141,7 +141,9 @@ export class ReleaseManagerRouter {
 
             const m = mediaProvider.uploadText(JSON.stringify(track.metadata));
             const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
-            return Promise.join(i, m, c, function (imageUrl, metadataUrl, contributors) {
+            const y = mediaProvider.uploadText(JSON.stringify(track.audio.path));
+
+            return Promise.join(i, m, c, y, function (imageUrl, tmpAudioUrl, metadataUrl, contributors) {
               track.imageUrl = imageUrl;
               track.audio.path = tmpAudioUrl;
               return musicoinApi.updateTrack(
@@ -222,9 +224,10 @@ export class ReleaseManagerRouter {
         const m = mediaProvider.uploadText(JSON.stringify(track.metadata));
         const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
         const r = addressResolver.resolveAddresses(selfAddress, track.royalties);
-        const y = track.audio.path;
+        const y = mediaProvider.uploadText(JSON.stringify(track.audio.path));
         return Promise.join(a, i, m, c, r, y, function (audioUrl, imageUrl, tmpAudioUrl, metadataUrl, contributors, royalties) {
           track.imageUrl = imageUrl;
+          track.audio.path = tmpAudioUrl;
           return musicoinApi.releaseTrack(
             req.user.profileAddress,
             req.user.draftProfile.artistName,
