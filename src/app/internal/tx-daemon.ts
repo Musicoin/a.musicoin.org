@@ -7,7 +7,7 @@ const User = require('../models/user');
 
 export class PendingTxDaemon {
   constructor(private newProfileCallback, private releaseCallback) { }
-  
+
   start(musicoinApi: MusicoinAPI, intervalMs: number) {
     console.log(`Starting pending release daemon with interval ${intervalMs}ms`);
     Timers.setInterval(() => this.checkForPendingReleases(musicoinApi), intervalMs);
@@ -153,10 +153,11 @@ export class PendingTxDaemon {
             console.log(`Failed to save release record: ${err}`);
           }
           else {
-            return Release.findOne({ contractAddress: result.receipt.contractAddress }).then(releaseRecord => {
-            console.log('mkdir -p ' + process.env.STREAMING_ORG_FILES + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + process.env.STREAMING_ORG_FILES + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3')
-            console.log("Pending release updated successfully!");
-          });
+            return Release.findOne({ contractAddress: result.receipt.contractAddress }).exec()
+              .then(releaseRecord => {
+                console.log('mkdir -p ' + process.env.STREAMING_ORG_FILES + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + process.env.STREAMING_ORG_FILES + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3')
+                console.log("Pending release updated successfully!");
+              });
           }
         })
       })
