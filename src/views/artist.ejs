@@ -196,9 +196,9 @@ function formatNumber(value) {
             <div class="subtle-text"><span data-behavior="total-tips"><%= formatNumber(artistStats.tipCount)%></span> tipped</div>
         </div>
 
-        <div class="text-large flex-column center-text mr10 earnings-container" >
+        <div class="text-large flex-column center-text mr10 plays-container" >
             <div style="top: -6px; position: relative;">
-                <span class="text-large" data-behavior="total-earned"><%=formatNumber(artistStats.playCount)%></span><span class="text-medium-small">PPP</span>
+                <span class="text-large" data-behavior="total-plays"><%=formatNumber(artistStats.playCount)%></span><span class="text-medium-small">PPP</span>
             </div>
             <span class="text-medium-small subtle-text" style="position: relative; top: -11px;">plays</span>
         </div>
@@ -323,7 +323,11 @@ function formatNumber(value) {
         tipElement.text(format.formatNumber(newTips));
         element.find(".tips-container").effect("bounce");
       }
-
+      var playElement = element.find("[data-behavior~=total-plays]");
+      if (format.formatNumber(newPlays) != playElement.text()) {
+        playElement.text(format.formatNumber(newPlays));
+        element.find(".plays-container").effect("bounce");
+      }
       var newFollowers = parseInt(data.followers);
       var followElement = element.find("[data-behavior~=total-followers]");
       if (format.formatNumber(newFollowers) != followElement.text()) {
