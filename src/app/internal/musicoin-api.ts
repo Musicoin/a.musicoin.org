@@ -120,6 +120,7 @@ export class MusicoinAPI {
     artistName: string,
     title: string,
     imageUrl: string,
+    tmpAudioUrl: string,
     metadataUrl: string,
     audioUrl: string,
     contributors: any[],

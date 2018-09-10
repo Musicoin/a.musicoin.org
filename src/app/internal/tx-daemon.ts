@@ -1,4 +1,5 @@
 import * as Timers from 'timers';
+import { Promise } from 'bluebird';
 
 import { MusicoinAPI } from './musicoin-api';
 
@@ -6,7 +7,7 @@ const Release = require('../models/release');
 const User = require('../models/user');
 
 export class PendingTxDaemon {
-  constructor(private newProfileCallback, private releaseCallback) { }
+  constructor(public musicoinApi: MusicoinAPI, private newProfileCallback, private releaseCallback,  public streamingOrgFiles: string) { }
 
   start(musicoinApi: MusicoinAPI, intervalMs: number) {
     console.log(`Starting pending release daemon with interval ${intervalMs}ms`);
@@ -155,7 +156,7 @@ export class PendingTxDaemon {
           else {
             return Release.findOne({ contractAddress: result.receipt.contractAddress }).exec()
               .then(releaseRecord => {
-                console.log('mkdir -p ' + process.env.STREAMING_ORG_FILES + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + process.env.STREAMING_ORG_FILES + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3')
+                console.log('mkdir -p ' + this.streamingOrgFiles + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + this.streamingOrgFiles + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3')
                 console.log("Pending release updated successfully!");
               });
           }

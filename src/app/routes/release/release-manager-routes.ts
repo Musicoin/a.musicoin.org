@@ -15,15 +15,6 @@ const User = require('../../models/user');
 const defaultTrackImage = "ipfs://QmRsPLxCAgDZLfujibUF8EwYY9uZVU9vRq73rpAotiAsdf";
 const defaultProfileIPFSImage = "ipfs://QmR8mmsMn9TUdJiA6Ja3SYcQ4ckBdky1v5KGRimC7LkhGF";
 const defaultProfileIPFSImageOld = "ipfs://QmQTAh1kwntnDUxf8kL3xPyUzpRFmD3GVoCKA4D37FK77C";
-const Aria2 = require("aria2");
-const ARIA_OPTIONS = {
-  host: 'localhost',
-  port: 6800,
-  secure: false,
-  secret: '',
-  path: '/jsonrpc'
-}
-const aria2 = new Aria2([ARIA_OPTIONS]);
 
 export class ReleaseManagerRouter {
   constructor(musicoinApi: MusicoinAPI,
@@ -169,7 +160,6 @@ export class ReleaseManagerRouter {
                       releaseRecord.moods = track.moodArray;
                       releaseRecord.imageUrl = track.imageUrl;
                       releaseRecord.pendingUpdateTxs = txs;
-                      releaseRecord.tmpAudioUrl = track.audio.path;
                       return releaseRecord.save();
                     })
                 })
@@ -237,6 +227,7 @@ export class ReleaseManagerRouter {
             req.user.draftProfile.artistName,
             track.title,
             imageUrl,
+            track.audio.path,
             metadataUrl,
             audioUrl,
             contributors,
