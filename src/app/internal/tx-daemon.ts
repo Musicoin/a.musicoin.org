@@ -7,7 +7,7 @@ const Release = require('../models/release');
 const User = require('../models/user');
 
 export class PendingTxDaemon {
-  constructor(public musicoinApi: MusicoinAPI, private newProfileCallback, private releaseCallback,  public streamingOrgFiles: string) { }
+  constructor(public musicoinApi: MusicoinAPI, private newProfileCallback, private releaseCallback, public streamingOrgFiles: string) { }
 
   start(musicoinApi: MusicoinAPI, intervalMs: number) {
     console.log(`Starting pending release daemon with interval ${intervalMs}ms`);
@@ -136,6 +136,10 @@ export class PendingTxDaemon {
           r.state = 'published';
           r.contractAddress = result.receipt.contractAddress;
           r.canReceiveFunds = true;
+          return Release.findOne({ contractAddress: result.receipt.contractAddress }).exec()
+            .then(releaseRecord => {
+              console.log('mkdir -p ' + this.streamingOrgFiles + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + this.streamingOrgFiles + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
+            });
         }
         else if (result.status == "error") {
           console.log(`pending release error: ${r.title}, api.musicoin.org returned error message.  Out of gas?`);
@@ -154,11 +158,7 @@ export class PendingTxDaemon {
             console.log(`Failed to save release record: ${err}`);
           }
           else {
-            return Release.findOne({ contractAddress: result.receipt.contractAddress }).exec()
-              .then(releaseRecord => {
-                console.log('mkdir -p ' + this.streamingOrgFiles + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + this.streamingOrgFiles + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3')
-                console.log("Pending release updated successfully!");
-              });
+            console.log("Pending release updated successfully!");
           }
         })
       })
