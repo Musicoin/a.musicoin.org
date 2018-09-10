@@ -135,6 +135,7 @@ export class MusicoinAPI {
       imageUrl: imageUrl,
       metadataUrl: metadataUrl,
       audioUrl: audioUrl,
+      tmpAudioUrl: tmpAudioUrl,
       contributors: contributors,
       royalties: royalties,
       contentType: contentType,
