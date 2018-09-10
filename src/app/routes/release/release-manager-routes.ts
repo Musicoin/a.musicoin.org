@@ -147,6 +147,7 @@ export class ReleaseManagerRouter {
                 fields.contractAddress,
                 track.title,
                 imageUrl,
+                track.audio.path,
                 metadataUrl,
                 contributors).then(txs => {
                   console.log("Updating track: " + JSON.stringify(txs));

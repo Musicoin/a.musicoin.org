@@ -103,6 +103,7 @@ export class MusicoinAPI {
     contractAddress: string,
     title: string,
     imageUrl: string,
+    tmpAudioUrl: string,
     metadataUrl: string,
     contributors: any[]
   ): Promise<string> {
@@ -111,6 +112,7 @@ export class MusicoinAPI {
       contractAddress: contractAddress,
       title: title,
       imageUrl: imageUrl,
+      tmpAudioUrl: tmpAudioUrl,
       metadataUrl: metadataUrl,
       contributors: contributors
     }).then(body => body.txs);
@@ -133,9 +135,9 @@ export class MusicoinAPI {
       artistName: artistName,
       title: title,
       imageUrl: imageUrl,
+      tmpAudioUrl: tmpAudioUrl,
       metadataUrl: metadataUrl,
       audioUrl: audioUrl,
-      tmpAudioUrl: tmpAudioUrl,
       contributors: contributors,
       royalties: royalties,
       contentType: contentType,
@@ -188,12 +190,13 @@ export class MusicoinAPI {
     }).then(body => body.tx);
   }
 
-  publishProfile(profileAddress: string, artistName: string, descriptionUrl: string, imageUrl: string, socialUrl: string): Promise<string> {
+  publishProfile(profileAddress: string, artistName: string, descriptionUrl: string, imageUrl: string, tmpAudioUrl: string, socialUrl: string): Promise<string> {
     return this.postJson(this.apiConfig.publishProfile, {
       profileAddress: profileAddress,
       artistName: artistName,
       descriptionUrl: descriptionUrl,
       imageUrl: imageUrl,
+      tmpAudioUrl: tmpAudioUrl,
       socialUrl: socialUrl,
     }).then(body => body.tx);
   }
