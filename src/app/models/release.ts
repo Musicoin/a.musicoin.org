@@ -20,6 +20,7 @@ module.exports = mongoose.model('Release', mongoose.Schema({
   description: String,
   title: String,
   imageUrl: String,
+  tmpAudioUrl: String,
 
   genres: [String],
   languages: [String],
