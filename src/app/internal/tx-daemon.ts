@@ -138,11 +138,14 @@ export class PendingTxDaemon {
           Release.findOne({ contractAddress: result.receipt.contractAddress }).exec()
             .then(releaseRecord => {
               let config = ConfigUtils.getConfig();
-              console.log('mkdir -p ' + config.streaming.org + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
-              console.log('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.contractAddress + ' && cd ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.contractAddress + '/' + ' \\;');
+              require('child_process').exec('mkdir -p ' + config.streaming.org + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
+              require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.contractAddress + ' && cd ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.contractAddress + '/' + ' \\;');
             });
-          r.state = 'published';
-          r.canReceiveFunds = true;
+          setTimeout(function () {
+            // I really have no idea how to do it better at the moment
+            r.state = 'published';
+            r.canReceiveFunds = true;
+          }, 300000);
         }
         else if (result.status == "error") {
           console.log(`pending release error: ${r.title}, api.musicoin.org returned error message.  Out of gas?`);
