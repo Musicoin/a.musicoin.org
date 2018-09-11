@@ -6,8 +6,15 @@ import { MusicoinAPI } from './musicoin-api';
 const Release = require('../models/release');
 const User = require('../models/user');
 
+interface PendingTxDaemonConfig {
+  streamingOrgFiles: string,
+  streamingTracksLocation: string,
+  streamingSegments: string
+}
+
 export class PendingTxDaemon {
-  constructor(private newProfileCallback, private releaseCallback) { }
+  constructor(private newProfileCallback, private releaseCallback, public apiConfig: PendingTxDaemonConfig) {
+  }
 
   start(musicoinApi: MusicoinAPI, intervalMs: number) {
     console.log(`Starting pending release daemon with interval ${intervalMs}ms`);
@@ -133,13 +140,14 @@ export class PendingTxDaemon {
 
         if (result.status == "complete") {
           console.log("pending release complete: " + r.title);
-          r.state = 'published';
           r.contractAddress = result.receipt.contractAddress;
-          r.canReceiveFunds = true;
           Release.findOne({ contractAddress: result.receipt.contractAddress }).exec()
             .then(releaseRecord => {
               console.log('mkdir -p ' + '/var/www/mcorg/streaming-storage/org' + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + '/var/www/mcorg/streaming-storage/org' + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
+              console.log('ffmpeg -re -i ' + this.apiConfig.streamingOrgFiles + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + this.apiConfig.streamingSegments + ' -segment_format mpegts -segment_list ' + this.apiConfig.streamingOrgFiles + '/' + releaseRecord.contractAddress + '/' + 'index.m3u8 -segment_list_type m3u8 ' + this.apiConfig.streamingOrgFiles + '/' + releaseRecord.contractAddress + '/ts%d.ts ' + '&& cd ' + this.apiConfig.streamingTracksLocation + '/' + ' && mkdir ' + releaseRecord.contractAddress + ' && cd ' + this.apiConfig.streamingOrgFiles + '/' + releaseRecord.contractAddress + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + this.apiConfig.streamingTracksLocation + '/' + releaseRecord.contractAddress + '/' + ' \\;');
             });
+          r.state = 'published';
+          r.canReceiveFunds = true;
         }
         else if (result.status == "error") {
           console.log(`pending release error: ${r.title}, api.musicoin.org returned error message.  Out of gas?`);
