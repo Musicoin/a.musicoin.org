@@ -118,7 +118,8 @@ export class PendingTxDaemon {
           else {
             console.log(`pending playback tx not found, wating for the next check!: tx=${r.tx}`);
             r.missingCount++;
-            return r.save();
+            return;
+            //return r.save();
           }
         }
       });
@@ -138,8 +139,11 @@ export class PendingTxDaemon {
           Release.findOne({ contractAddress: result.receipt.contractAddress }).exec()
             .then(releaseRecord => {
               let config = ConfigUtils.getConfig();
-              require('child_process').exec('mkdir -p ' + config.streaming.org + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
-              require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.contractAddress + ' && cd ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.contractAddress + '/' + ' \\;');
+              function moveAndFFmpeg() {
+                require('child_process').exec('mkdir -p ' + config.streaming.org + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
+                require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.contractAddress + ' && cd ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.contractAddress + '/' + ' \\;');
+              }
+              moveAndFFmpeg();
             });
           setTimeout(function () {
             // I really have no idea how to do it better at the moment
@@ -159,14 +163,14 @@ export class PendingTxDaemon {
         }
 
         console.log("Saving updates release record...")
-        r.save(function (err) {
-          if (err) {
-            console.log(`Failed to save release record: ${err}`);
-          }
-          else {
-            console.log("Pending release updated successfully!");
-          }
-        })
+        //r.save(function (err) {
+        //  if (err) {
+        //    console.log(`Failed to save release record: ${err}`);
+        //  }
+        //  else {
+        //    console.log("Pending release updated successfully!");
+        //  }
+        //})
       })
       .catch(function (err) {
         console.log(err);
