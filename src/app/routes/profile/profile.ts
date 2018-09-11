@@ -521,7 +521,7 @@ export class ProfileRouter {
                         const d = mediaProvider.uploadText(fields.description);
                         const s = mediaProvider.uploadText(JSON.stringify(socialData));
                         return Promise.join(d, s, (descriptionUrl, socialUrl) => {
-                            return musicoinApi.publishProfile(req.user.profileAddress, fields.artistName, descriptionUrl, profile.ipfsImageUrl, socialUrl)
+                            return musicoinApi.publishProfile(req.user.profileAddress, fields.artistName, descriptionUrl, profile.ipfsImageUrl, "", socialUrl)
                                 .then((tx) => {
                                     req.user.pendingTx = tx;
                                     req.user.updatePending = true;

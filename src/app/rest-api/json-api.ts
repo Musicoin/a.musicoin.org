@@ -1031,7 +1031,7 @@ sendRewardsForInvite(p: any): Promise<any> {
     const d = this.mediaProvider.uploadText(user.draftProfile.description);
     const s = this.mediaProvider.uploadText(JSON.stringify(user.draftProfile.social));
     return Promise.join(user.save(), d, s, (saved, descriptionUrl, socialUrl) => {
-      return this.musicoinAPI.publishProfile(null, name, descriptionUrl, user.draftProfile.ipfsImageUrl, socialUrl)
+      return this.musicoinAPI.publishProfile(null, name, descriptionUrl, user.draftProfile.ipfsImageUrl, "", socialUrl)
     })
       .then((tx) => {
         console.log(`Transaction submitted! Profile tx : ${tx}`);
