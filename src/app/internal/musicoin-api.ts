@@ -190,12 +190,13 @@ export class MusicoinAPI {
     }).then(body => body.tx);
   }
 
-  publishProfile(profileAddress: string, artistName: string, descriptionUrl: string, imageUrl: string, socialUrl: string): Promise<string> {
+  publishProfile(profileAddress: string, artistName: string, descriptionUrl: string, imageUrl: string, tmpAudioUrl: string, socialUrl: string): Promise<string> {
     return this.postJson(this.apiConfig.publishProfile, {
       profileAddress: profileAddress,
       artistName: artistName,
       descriptionUrl: descriptionUrl,
       imageUrl: imageUrl,
+      tmpAudioUrl: tmpAudioUrl,
       socialUrl: socialUrl,
     }).then(body => body.tx);
   }
