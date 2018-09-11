@@ -141,16 +141,15 @@ export class ReleaseManagerRouter {
 
             const m = mediaProvider.uploadText(JSON.stringify(track.metadata));
             const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
-            const y = mediaProvider.uploadText(JSON.stringify(track.audio.path));
+            const y = track.audio.path;
 
-            return Promise.join(i, m, c, y, function (imageUrl, tmpAudioUrl, metadataUrl, contributors) {
+            return Promise.join(i, m, c, y, function (imageUrl, metadataUrl, contributors) {
               track.imageUrl = imageUrl;
-              track.audio.path = tmpAudioUrl;
               return musicoinApi.updateTrack(
                 fields.contractAddress,
                 track.title,
                 imageUrl,
-                tmpAudioUrl,
+                track.audio.path,
                 metadataUrl,
                 contributors).then(txs => {
                   console.log("Updating track: " + JSON.stringify(txs));
@@ -224,16 +223,14 @@ export class ReleaseManagerRouter {
         const m = mediaProvider.uploadText(JSON.stringify(track.metadata));
         const c = addressResolver.resolveAddresses(selfAddress, track.contributors);
         const r = addressResolver.resolveAddresses(selfAddress, track.royalties);
-        const y = mediaProvider.uploadText(JSON.stringify(track.audio.path));
-        return Promise.join(a, i, m, c, r, y, function (audioUrl, imageUrl, tmpAudioUrl, metadataUrl, contributors, royalties) {
+        return Promise.join(a, i, m, c, r, function (audioUrl, imageUrl, metadataUrl, contributors, royalties) {
           track.imageUrl = imageUrl;
-          track.audio.path = tmpAudioUrl;
           return musicoinApi.releaseTrack(
             req.user.profileAddress,
             req.user.draftProfile.artistName,
             track.title,
             imageUrl,
-            tmpAudioUrl,
+            track.audio.path,
             metadataUrl,
             audioUrl,
             contributors,
