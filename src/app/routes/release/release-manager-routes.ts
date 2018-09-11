@@ -233,7 +233,7 @@ export class ReleaseManagerRouter {
             req.user.draftProfile.artistName,
             track.title,
             imageUrl,
-            track.audio.path,
+            tmpAudioUrl,
             metadataUrl,
             audioUrl,
             contributors,
