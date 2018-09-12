@@ -140,10 +140,9 @@ export class PendingTxDaemon {
               let config = ConfigUtils.getConfig();
               fs.stat(releaseRecord.tmpAudioUrl, function (err) {
                 if (err == null) {
-                  //console.log("hls transcoding already done");
-                } else if (err.code == 'ENOENT') {
                   require('child_process').exec('mkdir -p ' + config.streaming.org + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
                   require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.contractAddress + ' && cd ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.contractAddress + '/' + ' \\;');
+                } else if (err.code == 'ENOENT') {
                 } else {
                   console.log('Something went wrong with track file detection', err.code);
                 }
