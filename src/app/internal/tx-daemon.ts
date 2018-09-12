@@ -6,6 +6,7 @@ import { MusicoinAPI } from './musicoin-api';
 const Release = require('../models/release');
 const User = require('../models/user');
 const ConfigUtils = require('../../config/config');
+import * as fs from 'fs';
 
 export class PendingTxDaemon {
   constructor(private newProfileCallback, private releaseCallback) { }
@@ -118,8 +119,7 @@ export class PendingTxDaemon {
           else {
             console.log(`pending playback tx not found, wating for the next check!: tx=${r.tx}`);
             r.missingCount++;
-            return;
-            //return r.save();
+            return r.save();
           }
         }
       });
@@ -132,21 +132,25 @@ export class PendingTxDaemon {
           console.log("pending release still pending: " + r.title);
           return;
         }
-
         if (result.status == "complete") {
           console.log("pending release complete: " + r.title);
           r.contractAddress = result.receipt.contractAddress;
           Release.findOne({ contractAddress: result.receipt.contractAddress }).exec()
             .then(releaseRecord => {
               let config = ConfigUtils.getConfig();
-              require('child_process').exec('mkdir -p ' + config.streaming.org + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
-              require('child_process').exec('if pgrep -f ' + releaseRecord.contractAddress + ' > /dev/null; then' + ' \\; else' + 'ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.contractAddress + ' && cd ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.contractAddress + '/' + ' \\;' + ' \\; fi');
+              fs.stat(releaseRecord.tmpAudioUrl, function (err) {
+                if (err == null) {
+                  //console.log("hls transcoding already done");
+                } else if (err.code == 'ENOENT') {
+                  require('child_process').exec('mkdir -p ' + config.streaming.org + '/' + releaseRecord.contractAddress + ' && mv ' + releaseRecord.tmpAudioUrl + " " + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3');
+                  require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + releaseRecord.contractAddress + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + releaseRecord.contractAddress + ' && cd ' + config.streaming.org + '/' + releaseRecord.contractAddress + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + releaseRecord.contractAddress + '/' + ' \\;');
+                } else {
+                  console.log('Something went wrong with track file detection', err.code);
+                }
+              });
             });
-          setTimeout(function () {
-            // I really have no idea how to do it better at the moment
-            r.state = 'published';
-            r.canReceiveFunds = true;
-          }, 5000);
+          r.state = 'published';
+          r.canReceiveFunds = true;
         }
         else if (result.status == "error") {
           console.log(`pending release error: ${r.title}, api.musicoin.org returned error message.  Out of gas?`);
@@ -160,14 +164,14 @@ export class PendingTxDaemon {
         }
 
         console.log("Saving updates release record...")
-        //r.save(function (err) {
-        //  if (err) {
-        //    console.log(`Failed to save release record: ${err}`);
-        //  }
-        //  else {
-        //    console.log("Pending release updated successfully!");
-        //  }
-        //})
+        r.save(function (err) {
+          if (err) {
+            console.log(`Failed to save release record: ${err}`);
+          }
+          else {
+            console.log("Pending release updated successfully!");
+          }
+        })
       })
       .catch(function (err) {
         console.log(err);
