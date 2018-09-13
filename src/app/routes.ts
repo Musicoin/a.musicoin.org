@@ -611,7 +611,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/ppp-new/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
+  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
@@ -641,7 +641,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.status(500);
         res.send("Failed to play track");
       });
-
     fs.stat(config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
       if (err == null) {
         //console.log("hls transcoding already done");
@@ -649,7 +648,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         fs.stat(config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3', function (err) {
           if (err == null) {
             //console.log("track already saved");
-            require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + req.params.address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + req.params.address + ' && cd ' + config.streaming.org + '/' + req.params.address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + req.params.address + '/' + ' \\;');
+            fs.stat(config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
+              if (err == null) {
+                //console.log("hls transcoding already done");
+              } else if (err.code == 'ENOENT') {
+                require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + req.params.address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + req.params.address + ' && cd ' + config.streaming.org + '/' + req.params.address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + req.params.address + '/' + ' \\;');
+              } else {
+                console.log('Something went wrong with hls file detection', err.code);
+                return next();
+              }
+            });
           } else if (err.code == 'ENOENT') {
             aria2.open();
             aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.org + '/' + req.params.address });
@@ -662,7 +670,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             aria2.on("onDownloadComplete", ([guid]) => {
               console.log('trackDownloadComplete: ' + req.params.address, guid);
               aria2.close();
-              require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + req.params.address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + req.params.address + ' && cd ' + config.streaming.org + '/' + req.params.address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + req.params.address + '/' + ' \\;');
+              fs.stat(config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
+                if (err == null) {
+                  //console.log("hls transcoding already done");
+                } else if (err.code == 'ENOENT') {
+                  require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + req.params.address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + req.params.address + ' && cd ' + config.streaming.org + '/' + req.params.address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + req.params.address + '/' + ' \\;');
+                } else {
+                  console.log('Something went wrong with hls file detection', err.code);
+                  return next();
+                }
+              });
             });
           } else {
             console.log('Save file from ppp error', err.code);
@@ -675,7 +692,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
+  app.get('/ppp-legacy/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
