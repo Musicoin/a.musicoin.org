@@ -138,7 +138,8 @@ function getStructuredConfig(keyValueConfig) {
       messagebirdID: keyValueConfig.messagebirdID,
       bootSession: keyValueConfig.bootSession,
       whiteLocalIpList: keyValueConfig.whiteLocalIpList,
-      baseUrl: keyValueConfig.baseUrl
+      baseUrl: keyValueConfig.baseUrl,
+      regionalAccount: keyValueConfig.regionalAccount
     },
     exchangeRateService: {
       endpoint: "https://api.coinmarketcap.com/v1/ticker/musicoin/",
@@ -289,7 +290,9 @@ function getDefaultKeyValueConfig() {
 
         sessionDomain: env.SESSION_DOMAIN || '.musicoin.org',
 
-        corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org']
+        corsDomains: env.CORS || ['https://musicoin.org', 'https://www.musicoin.org', 'https://www.twitter.com', 'https://twitter.com', 'https://staging.musicoin.org', 'https://forum.musicoin.org'],
+
+        regionalAccount: env.REGIONAL_ACCOUNT || ['0x9fa5bd7c26e9dfc0e17846866389aca200c4e941', '0x610ec47329c28a85f006b236e433b4f98074ba60']
 
       };
     });

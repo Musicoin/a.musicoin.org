@@ -8,6 +8,7 @@ import { MusicoinAPI } from '../internal/musicoin-api';
 import { MusicoinHelper } from '../internal/musicoin-helper';
 import { song as songService, songVote as songVoteService, user as userService } from '../rest-api/services';
 import * as FormUtils from '../utils/form-utils';
+const ConfigUtils = require('../../config/config');
 
 import unitOfTime = moment.unitOfTime;
 const User = require('../models/user');
@@ -209,9 +210,15 @@ export class MusicoinOrgJsonAPI {
           return {};
         }
 
-        console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}'`);
+        let config = ConfigUtils.getConfig();
+        var RegionalAccounts = config.musicoinApi.regionalAccount;
+        if (RegionalAccounts.includes(sender.profileAddress)) {
+          var sendRewardToInviter = this.musicoinAPI.sendRewardMax(p.profileAddress);
+        } else {
+          sendRewardToInviter = this.musicoinAPI.sendRewardMax(sender.profileAddress);
+        }
         const sendRewardToInvitee = this.musicoinAPI.sendRewardMin(p.profileAddress);
-        const sendRewardToInviter = this.musicoinAPI.sendRewardMax(sender.profileAddress);
+        console.log(`Sending invite rewards: invitee=${p.profileAddress}, and inviter=${sender.profileAddress}, since sender.invite.noReward = '${sender.invite.noReward}'`);
         return Promise.join(sendRewardToInvitee, sendRewardToInviter, (tx1, tx2) => {
           return {
             inviteeRewardTx: tx1,
