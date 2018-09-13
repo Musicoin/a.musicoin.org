@@ -622,14 +622,6 @@
     var fileInput = $('#' + inputId)[0];
     var fileName = fileInput.files[0].name;
     var display = $('#' + targetId)[0];
-    if (fileName.endsWith(".mp3") || fileName.endsWith(".mpg") || fileName.endsWith(".mpeg")) {
-      display.innerText = fileName;
-    }
-    else {
-      fileInput.value = "";
-      display.innerText = "Audio...";
-      alert("Currently, Musicoin only supports mp3 format");
-    }
   }
 
   function getLicensePreviewFields() {
