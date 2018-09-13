@@ -156,7 +156,7 @@ export class ProfileRouter {
                             fs.stat(config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3', function (err) {
                                 if (err == null) {
                                     //console.log("track already saved");
-                                    fs.stat(config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
+                                    fs.stat(config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
                                         if (err == null) {
                                             //console.log("hls transcoding already done");
                                         } else if (err.code == 'ENOENT') {
@@ -178,7 +178,7 @@ export class ProfileRouter {
                                     aria2.on("onDownloadComplete", ([guid]) => {
                                         console.log('trackDownloadComplete: ' + req.params.address, guid);
                                         aria2.close();
-                                        fs.stat(config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
+                                        fs.stat(config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
                                             if (err == null) {
                                                 //console.log("hls transcoding already done");
                                             } else if (err.code == 'ENOENT') {
