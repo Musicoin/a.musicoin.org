@@ -8,9 +8,8 @@
   <%- include('partials/track/artist-card-metadata.ejs') %>
 
         <link rel="stylesheet" href="/dependencies/bootstrap-social.css">
-        <script src="https://unpkg.com/@videojs/http-streaming@1.2.5/dist/videojs-http-streaming.min.js" integrity="sha384-5CdxnMzHW8AYkmHreHuTYCw22w8ut9vh+8Of+IPd6zbET1JAVH2+XQ/52kkQAhOr" crossorigin="anonymous"></script>
-
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.2.3/video.min.js" integrity="sha256-hbYfrH0y1vT4L/LVyqokCi325kqW6hu2Wtpt89Sl8yY=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.2.3/video-js.min.css" integrity="sha256-fRRh8wAHObBnLKwq1LdT6o4jjc68e01Sd+nZtUEWDjI=" crossorigin="anonymous" />
         <meta name="keywords" content="Musicoin, Music, Blockchain, Crypto, Cryptocurrency">
         <meta name="description" content="Musicoin, revolutionizing the music industry with the help of the blockchain">
         <meta name="robots" content="index,follow,noodp,noydir">
@@ -274,8 +273,6 @@
      src='http://51.38.49.153:8080/tracks/' + '<%=license.address%>' + '/index.m3u8'
      type="application/x-mpegURL">
 </video-js>
-<script src="video.js"></script>
-<script src="videojs-http-streaming.min.js"></script>
 <script>
 var player = videojs('track');
 player.play();
