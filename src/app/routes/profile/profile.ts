@@ -138,6 +138,7 @@ export class ProfileRouter {
                             return doRender(req, res, "track.ejs", {
                                 artist: response.artist,
                                 license: license,
+                                trackAddress: 'http://51.38.49.153:8080/tracks/' + address + '/index.m3u8',
                                 contributors: resolvedAddresses,
                                 releaseId: release._id,
                                 description: release.description,
