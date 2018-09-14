@@ -1,4 +1,4 @@
-<audio autoplay id="player"></audio>
+<video autoplay id="player"></video>
 <style>
     .player {
         background-color: #333;
@@ -333,7 +333,7 @@
           console.log("Getting details for " + licenseAddress);
           $.get( "/json-api/track/" + licenseAddress, function( data ) {
             var result = audioPlayer.playItem(null,
-              data.audioUrl,
+              'http://51.38.49.153:8080/tracks/' + licenseAddress + '/index.m3u8',
               data.title,
               data.artistName,
               data.image,
