@@ -34,28 +34,14 @@
             flex-direction: column;
             background-color: #eee;
         }
-
-        #playerFrame {
-            height: 64px;
-            position: fixed;
-            bottom:0;
-            left:0;
-            width: 100%;
-        }
-
-        #playerFill {
-            min-height: 64px;
-        }
     </style>
 </head>
 <body onload="setupPopWatch()">
-<iframe id=playerFrame src="/player" frameborder="0" class="show-on-play"></iframe>
 
 <div id="outer">
     <div id=mainSection>
         <iframe id=mainFrame src="<%=mainFrameLocation%>" frameborder="0" onload="mainFrameLocationChange()"></iframe>
     </div>
-    <div id=playerFill class="show-on-play"></div>
 </div>
 
 <script>

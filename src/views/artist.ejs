@@ -27,18 +27,6 @@
                 flex-direction: column;
             }
 
-            #playerFrame {
-                height: 64px;
-                position: fixed;
-                bottom:0;
-                left:0;
-                width: 100%;
-            }
-
-            #playerFill {
-                min-height: 64px;
-            }
-
         body {
             background-color: #333;
             color: #eee;
@@ -294,9 +282,6 @@ function formatNumber(value) {
 <% } %>
 
 </div>
-<div id=playerFill class="show-on-play"></div>
-<iframe id=playerFrame src="/player" frameborder="0" class="show-on-play"></iframe>
-</div>
 
 <script>
   function refreshMessageList() {
@@ -348,7 +333,6 @@ function formatNumber(value) {
   }
 
 </script>
-<%- include('partials/player-hook.ejs') %>
 <%- include('partials/connect-with-us.ejs') %>
 <style>@media screen and (max-width: 800px) {#lastpost{display: none;}}</style>
 </body>

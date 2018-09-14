@@ -126,21 +126,6 @@
 
                     <i class="fa fa-reply btn subtle-text inline-reply-action" aria-hidden="true"  title="reply"></i>
                     <div class="flex-row">
-                        <div id="player-tip-button"
-                             class="tip-button btn-xs clickable <%=textClass%>"
-                             style="padding-right: 12px"
-                             recipient="<%=message.sender.profileAddress%>"
-                             amount="1"
-                             on-success="refreshMessageList()"
-                             text-success=':)'
-                             text-fail=":("
-                             text-default='<%-icon%>'
-                             text-pending='<%-pendingIcon%>'
-                             context-type="TrackMessage"
-                             title="Send 1 musicoin to <%=message.sender.name%> for this comment"
-                             context-id="<%=message.id%>">
-                            <%-icon%>
-                        </div>
                         <div class="subtle-text big-screen-only"><%= message.tips > 0 ? `(${message.tips})` : ""%>&nbsp;</div>
                     </div>
                     <% } %>

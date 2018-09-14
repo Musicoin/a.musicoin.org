@@ -13,7 +13,6 @@ import { AdminRoutes } from './routes/admin/admin-routes';
 import { AuthRouter } from './routes/auth/auth';
 import { ExtendedRouter } from './routes/extended-routes/extended';
 import { IpfsRouter } from './routes/extended-routes/ipfs';
-import { PlayerRouter } from './routes/extended-routes/player';
 import { FrontRouter } from './routes/front-parts/front-routes';
 import { HomeRouter } from './routes/home-page/home';
 import { ProfileRouter } from './routes/profile/profile';
@@ -105,14 +104,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     config,
     doRender);
 
-  const playerRouter = new PlayerRouter(musicoinApi,
-    jsonAPI,
-    addressResolver,
-    exchangeRateProvider,
-    mediaProvider,
-    config,
-    doRender);
-
   const extendedRouter = new ExtendedRouter(musicoinApi,
     jsonAPI,
     addressResolver,
@@ -158,7 +149,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   app.use('/', socialRouter.getRouter());
   app.use('/', profileRouter.getRouter());
   app.use('/', authRouter.getRouter());
-  app.use('/', playerRouter.getRouter());
   app.use('/', ipfsRouter.getRouter());
   app.use('/', extendedRouter.getRouter());
   app.use('/', adminRoutes.getRouter());

@@ -30,18 +30,6 @@
             flex-direction: column;
           }
 
-          #playerFrame {
-            height: 64px;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-          }
-
-          #playerFill {
-            min-height: 64px;
-          }
-
           body {
             word-wrap: break-word;
             background-size: cover;
@@ -104,42 +92,6 @@
             /*visibility: hidden;*/
           }
 
-
-
-
-          .music-player-container {
-            -webkit-transform: translate(-50%, -50%);
-            -moz-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            -o-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-            display: inline-block;
-            height: 370px;
-            position: relative;
-            min-width: 400px;
-            left: 25%;
-            top: 25%;
-          }
-
-          .music-player {
-            height: 370px;
-            padding: 40px 250px 40px 40px;
-            position: absolute;
-            text-align: right;
-            width: 400px;
-            z-index: 3;
-          }
-
-          .player-content-container {
-            -webkit-transform: translateY(-50%);
-            -moz-transform: translateY(-50%);
-            -ms-transform: translateY(-50%);
-            -o-transform: translateY(-50%);
-            transform: translateY(-50%);
-            top: 50%;
-            position: relative;
-          }
-
           .album {
             box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.65);
             height: 256px;
@@ -183,10 +135,6 @@
 
           .is-playing .vinyl {
             left: 52%;
-          }
-
-          .music-player-controls {
-            text-align: center;
           }
 
           [class^="control-"] {
@@ -321,11 +269,9 @@
                         <div class="player-content-container">
                           <div class="music-player-controls">
                             <% if ((artist.verified) || (isAuthenticated && user.verified)) { %>
-                              <div class="audio-track clickable text-large btn mt5 control-play" id="play-button" licenseAddress='<%=license.address%>'>
                                 <i id="play-button" aria-hidden="true" style="font-size: 50px; position: relative; left: -10px; color: green; display: inline-block;border-radius: 200px;"
                                   class="fa fa-play-circle-o"></i>
                                 <div style="display: inline-block; position: absolute; top: 15px;"> Play Song </div>
-                              </div>
                               <% } %>
                           </div>
                         </div>
@@ -556,9 +502,6 @@
           </div>
 
     </div>
-    <div id=playerFill class="show-on-play"></div>
-    <iframe id=playerFrame src="/player" frameborder="0" class="show-on-play"></iframe>
-  </div>
 
   <script>
     var trackId = "<%=license.address%>"
@@ -653,84 +596,9 @@
       dynamic.refreshElement($("#de-track-messages"));
     }
   </script>
-  <script>
-    $('#play-button').hover(function () {
-      $(this).css("opacity", "1");
-    }, function () {
-      $(this).css("opacity", "0.8");
-    });
-    (function ($) {
-      $(document).ready(function () {
-        $('.music-player-container').toggleClass('is-playing');
-        $('#play-button').click(function () {
-          $('.music-player-container').toggleClass('is-playing');
-        });
-      });
-    })(jQuery);
-  </script>
 <div class="hearts"></div>
 <script>
   $( document ).ready(function() {
-    var _audioPlayer = parent.document.getElementById("playerFrame");
-    if (!_audioPlayer && !window.location.pathname.startsWith("/nav")) {
-      window.location = '/nav' + window.location.pathname + window.location.search;
-    }
-
-    function distinct(array) {
-      var n = {},r=[];
-      for(var i = 0; i < array.length; i++)
-      {
-        if (!n[array[i]])
-        {
-          n[array[i]] = true;
-          r.push(array[i]);
-        }
-      }
-      return r;
-    }
-
-
-    $(document).on('click', '.play-list', function() {
-      var items = $(this).attr('items');
-      if (!items) {
-        var target = $("#" + $(this).attr('target'));
-        var all = target.find('.audio-track').map(function(i, e){return ($(e).attr('licenseAddress'))}).get()
-        items = distinct(all).join();
-      }
-
-      var shuffle = $(this).attr('shuffle') === "true";
-      console.log("Playing list: " + items);
-      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.setShuffle(shuffle);
-      _audioPlayer.playList(items.split(","));
-    })
-
-    $(document).on('click', '.audio-track', function() {
-      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.queueTrack($(this).attr("licenseAddress"), true);
-    });
-
-    $(document).on('click', '.queue-audio-track', function() {
-      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.queueTrack($(this).attr("licenseAddress"), false);
-    });
-
-    $(document).on('click', '.audio-pause', function() {
-      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      _audioPlayer.pause();
-    });
-
-    $(document).on('click', '.playlist-item', function() {
-      console.log("clicked on playlist-item");
-      var idx = parseInt($(this).attr('idx'));
-      var _audioPlayer = parent.document.getElementById("playerFrame").contentWindow.audioPlayer;
-      if (idx === _audioPlayer.currentIdx) {
-        _audioPlayer.togglePlayState();
-      }
-      else {
-        _audioPlayer.jumpToIndex(idx);
-      }
-    });
   });
 </script>
 <style>
