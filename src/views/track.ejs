@@ -264,7 +264,8 @@
                   <div class="flex-column center-text">
                           <div class="music-player-controls">
                           <video-js id=track width=600 height=300 class="vjs-default-skin" controls>
-                          <source src='http://51.38.49.153:8080/tracks/' + '<%=license.address%>' + '/index.m3u8' type="application/vnd.apple.mpegurl"></video-js>
+                          <script>var audioUrl = 'http://51.38.49.153:8080/tracks/' + '<%=license.address%>' + '/index.m3u8';</script>
+                          <source src=audioUrl type="application/x-mpegURL"></video-js>
                             <script>var player = videojs('track');player.play();</script>
                             <% if ((artist.verified) || (isAuthenticated && user.verified)) { %>
                                 <i id="play-button" aria-hidden="true" style="font-size: 50px; position: relative; left: -10px; color: green; display: inline-block;border-radius: 200px;"
