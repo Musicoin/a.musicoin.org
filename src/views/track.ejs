@@ -8,8 +8,9 @@
   <%- include('partials/track/artist-card-metadata.ejs') %>
 
         <link rel="stylesheet" href="/dependencies/bootstrap-social.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.9/mediaelement.min.js" integrity="sha256-azPLgoxym4tb1pJK+4KbkQpJRtKd1nwDa4KhQ/PH63c=" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.9/mediaelementplayer.min.css" integrity="sha256-ji1bfJaTGnyscoc7LzcV9yNJy5vGKJ0frO3KJo1oaGQ=" crossorigin="anonymous" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/0.10.1/hls.min.js" integrity="sha256-kUDqIYft9ZexoU7ZeHzJnhr32kjQO3KQAYmeUAMIru8=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.fluidplayer.com/v2/current/fluidplayer.min.css" integrity="sha384-g1yapoMx0MoHvSIMPfhfqCGduACB+vvNr9TadJCbfCyNLZS8dp5q5wsz/3KXzhj2" crossorigin="anonymous">
+        <script src="https://cdn.fluidplayer.com/v2/current/fluidplayer.min.js" integrity="sha384-ez0wAcJx0laONDmE1PU3J4plSPAjQLKMgUqpwAT9EHpo3EaYi1tp4rsDciyXz7rJ" crossorigin="anonymous"></script>
         <meta name="keywords" content="Musicoin, Music, Blockchain, Crypto, Cryptocurrency">
         <meta name="description" content="Musicoin, revolutionizing the music industry with the help of the blockchain">
         <meta name="robots" content="index,follow,noodp,noydir">
@@ -90,6 +91,42 @@
 
           .show-on-edit {
             /*visibility: hidden;*/
+          }
+
+
+
+
+          .music-player-container {
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            display: inline-block;
+            height: 370px;
+            position: relative;
+            min-width: 400px;
+            left: 25%;
+            top: 25%;
+          }
+
+          .music-player {
+            height: 370px;
+            padding: 40px 250px 40px 40px;
+            position: absolute;
+            text-align: right;
+            width: 400px;
+            z-index: 3;
+          }
+
+          .player-content-container {
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+            top: 50%;
+            position: relative;
           }
 
           .album {
@@ -197,7 +234,7 @@
         <link rel="stylesheet" href="/styles/vote.css">
 </head>
 
-<body onload="setupPopWatch()">
+<body>
   <div id="outer">
     <div id=mainSection>
 
@@ -262,57 +299,52 @@
               <div class="col-sm-5 flex-column mb20">
                 <div class="well white-well track-info-area">
                   <div class="flex-column center-text">
+
+                    <div class="music-player-container is-playing" style="width: 400px; height: 370px; position: relative;top: 170px;left: 50%; margin-bottom: -50px">
+
+                      <div class="music-player">
+                        <div class="player-content-container">
                           <div class="music-player-controls">
-                          <script>$('video, audio').mediaelementplayer({
-                            // Do not forget to put a final slash (/)
-                            pluginPath: 'https://cdnjs.com/libraries/mediaelement/',
-                            // this will allow the CDN to use Flash without restrictions
-                            // (by default, this is set as `sameDomain`)
-                            shimScriptAccess: 'always'
-                            // more configuration
-                          });</script>
-                          <audio src="<%=trackAddress%>" width="320" height="240" type="application/vnd.apple.mpegurl"></audio>
                             <% if ((artist.verified) || (isAuthenticated && user.verified)) { %>
-                                <i id="play-button" aria-hidden="true" style="font-size: 50px; position: relative; left: -10px; color: green; display: inline-block;border-radius: 200px;"
-                                  class="fa fa-play-circle-o"></i>
-                                <div style="display: inline-block; position: absolute; top: 15px;"> Play Song </div>
+                              <video id='hls-video'>
+                      <source src='<%=trackAddress%>' type='application/x-mpegURL'/>
+                  </video>
+                  
+                  <script>
+                  fluidPlayer(
+                      'hls-video',
+                      {
+                          layoutControls: {
+                              posterImage: '<%=license.image%>',
+                              primaryColor: "#FFAF00",
+                              allowDownload: true,
+                              playbackRateEnabled: true,
+                              logo: {
+                                imageUrl: '<%=license.image%>',
+                                position: 'top right'
+                            }
+                          }
+                      }
+                  );
+                  </script>
+                              </div>
                               <% } %>
                           </div>
-
-                      <div class="album">
-                        <div class="large-track-image show-off-container album-art" style="background-image: url('<%=license.image%>'); border-radius: 5px;">
                         </div>
-                        <div class="vinyl"></div>
                       </div>
 
-                    </div>
-
-                    <div class="flex-row" style="justify-content: space-between; width: 100%">
-                      <div style="width: 44px"></div>
-                      <div class="btn queue-audio-track" licenseAddress='<%=license.address%>' title="Add to now-playing queue" style="position: relative">
-                        <i class="fa fa-list subtle-text" aria-hidden="true"></i>
-                        <i class="fa fa-plus" aria-hidden="true" style="position: absolute; position: absolute; bottom: 4px; right: 7px;"></i>
-
-                      </div>
                     </div>
 
                     <table class="mb5" style="width: 100%">
                       <tr>
                         <td align="center" class="pr5">
                           <div class="dynamic-data" data-behavior="track-earnings" de-refresh-period="20" de-releaseId="<%=releaseId%>" de-url="/json-api/track/earnings/">
-                            <div class="text-large">
-                              <span class="text-large" data-behavior="track-earnings">
-                                <%=formatNumber(parseInt(license.directPlayCount) + parseInt(license.directTipCount))%>
-                              </span>
-                              <span class="text-medium-small">MC</span>
-                              <br>
-                            </div>
                             <div class="subtle-text" style="position:relative; top:-5px">
                               <b>
                                 <span data-behavior="track-plays">
                                   <%=formatNumber(license.directPlayCount)%>
                                 </span>
-                              </b> Plays +
+                              </b> PPP &
                               <b>
                                 <span data-behavior="track-tips">
                                   <%=formatNumber(license.directTipCount)%>
@@ -324,9 +356,9 @@
                       <tr>
                         <td align="center" class="pr5 subtle-text">
                           <div class="btn-group">
-                            <button type="button" class="tip-button btn btn-success" title="Tip 1 MC" recipient="<%=license.address%>" amount="1" context-type="Release"
-                              text-success="Thanks! :)" text-fail=":(" text-default="Tip 1 MC">
-                              Tip 1 MC
+                            <button type="button" class="tip-button btn btn-success" title="Tip 10 MC" recipient="<%=license.address%>" amount="10" context-type="Release"
+                              text-success="Thanks! :)" text-fail=":(" text-default="Tip 10 MC">
+                              Tip 10 MC
                             </button>
                             <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true"
                               aria-expanded="false">
@@ -335,7 +367,7 @@
                             </button>
                             <ul class="dropdown-menu tip-options">
                               <%
-                                        var amounts = [5, 10, 100, 1000];
+                                        var amounts = [1, 25, 50, 100, 250, 500, 1000];
                                         for (var i=0; i < amounts.length; i++) {
                                             var amount = amounts[i];
                                             var message = amount > 1 ? "Are you sure you want to tip " + amount + " coins?" : "";
@@ -414,7 +446,7 @@
                                         %>
                                 <tr>
                                   <td>
-                                    <a href="<%=url%>">
+                                    <a target="_blank" href="<%=url%>">
                                       <%=name%>
                                     </a>
                                   </td>
@@ -630,15 +662,6 @@
 
       <script async src="/js/vote.js" charset="utf-8"></script>
       <script>
-        function setupPopWatch() {
-          var mainFrame = document.getElementById("mainFrame");
-          window.onpopstate = function (e) {
-            if (window.location.pathname.startsWith("/nav")) {
-              mainFrame.src = window.location.pathname.substr(4);
-            }
-          };
-        }
-
         function showMessage(msg, type, timeout) {
           new Message(msg, type, timeout);
         }
