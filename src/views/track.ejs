@@ -93,42 +93,6 @@
             /*visibility: hidden;*/
           }
 
-
-
-
-          .music-player-container {
-            -webkit-transform: translate(-50%, -50%);
-            -moz-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            -o-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-            display: inline-block;
-            height: 370px;
-            position: relative;
-            min-width: 400px;
-            left: 25%;
-            top: 25%;
-          }
-
-          .music-player {
-            height: 370px;
-            padding: 40px 250px 40px 40px;
-            position: absolute;
-            text-align: right;
-            width: 400px;
-            z-index: 3;
-          }
-
-          .player-content-container {
-            -webkit-transform: translateY(-50%);
-            -moz-transform: translateY(-50%);
-            -ms-transform: translateY(-50%);
-            -o-transform: translateY(-50%);
-            transform: translateY(-50%);
-            top: 50%;
-            position: relative;
-          }
-
           .album {
             box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.65);
             height: 256px;
@@ -299,17 +263,10 @@
               <div class="col-sm-5 flex-column mb20">
                 <div class="well white-well track-info-area">
                   <div class="flex-column center-text">
-
-                    <div class="music-player-container is-playing" style="width: 400px; height: 370px; position: relative;top: 170px;left: 50%; margin-bottom: -50px">
-
-                      <div class="music-player">
-                        <div class="player-content-container">
-                          <div class="music-player-controls">
                             <% if ((artist.verified) || (isAuthenticated && user.verified)) { %>
                               <video id='hls-video'>
                       <source src='<%=trackAddress%>' type='application/x-mpegURL'/>
                   </video>
-                  
                   <script>
                   fluidPlayer(
                       'hls-video',
@@ -324,13 +281,7 @@
                   </script>
                               </div>
                               <% } %>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-
-                    <table class="mb5" style="width: 100%">
+                    <br><table class="mb5" style="width: 100%">
                       <tr>
                         <td align="center" class="pr5">
                           <div class="dynamic-data" data-behavior="track-earnings" de-refresh-period="20" de-releaseId="<%=releaseId%>" de-url="/json-api/track/earnings/">
@@ -659,7 +610,6 @@
         function showMessage(msg, type, timeout) {
           new Message(msg, type, timeout);
         }
-
       </script>
 </body>
 
