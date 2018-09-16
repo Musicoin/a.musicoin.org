@@ -12,11 +12,12 @@ export class MusicoinHelper {
       .then((profile) => {
         const s = this.mediaProvider.readJsonFromIpfs(profile.socialUrl).catchReturn({});
         const d = this.mediaProvider.readTextFromIpfs(profile.descriptionUrl).catchReturn("");
-        return Promise.join(s, d, function (social, description) {
+        return Promise.join(s, d, function (social, description, artistName) {
           profile.image = profile.imageUrl ? this.mediaProvider.resolveIpfsUrl(profile.imageUrl) : "";
           profile.social = social;
           profile.description = description;
           profile.profileAddress = profileAddress;
+          profile.artistName = artistName;
           return profile;
         }.bind(this))
       });
