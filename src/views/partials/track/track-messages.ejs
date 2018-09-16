@@ -44,7 +44,7 @@
         <div class="center-text" style="align-items: flex-start">
             <% if (showThisTrack) { %>
             <div class="audio-track clickable m10 text-large subtle-text" licenseAddress='<%=track.contractAddress%>'>
-                <i class="fa fa-play-circle" aria-hidden="true"></i>
+                <a class="fa fa-play-circle clickable" aria-hidden="true" href="/track/<%=track.contractAddress%>">
             </div>
             <% } else { %>
             <div class="m10 text-large" style="visibility: hidden">
