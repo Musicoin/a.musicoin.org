@@ -269,7 +269,7 @@
  %>
 
           <div class="container">
-            <h1>
+            <h2>
               <%=license.title%> by
                 <% if (artist.verified) { %>
                   <b style="color: green">
@@ -294,7 +294,7 @@
                             <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check out '<%=license.title%>' by <%=twitterHandle%> on $MUSIC #blockchain"
                               data-url="https://musicoin.org/nav/track/<%=license.address%>" data-show-count="true">Tweet</a>
                             <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </h1>
+            </h2>
             <div class="row">
               <div class="col-sm-5 flex-column mb20">
                 <div class="well white-well track-info-area">
@@ -317,12 +317,7 @@
                           layoutControls: {
                               posterImage: '<%=license.image%>',
                               primaryColor: "#FFAF00",
-                              allowDownload: true,
-                              playbackRateEnabled: true,
-                              logo: {
-                                imageUrl: '<%=license.image%>',
-                                position: 'top right'
-                            }
+                              playbackRateEnabled: true
                           }
                       }
                   );
@@ -503,8 +498,7 @@
                     </blockquote>
                   </div>
                 </div>
-              </div>
-              <div class="col-sm-7 chat-area">
+                <div class="col-sm-7 chat-area">
                 <div class="chat-input-area">
                   <% if ((isAuthenticated) && (user.profileAddress)) {%>
                     <div class="chat-input">
@@ -531,7 +525,7 @@
                   <a href="mailto:musicoin@musicoin.org?subject=Report Track&body=LicenseId:<%=license.address%>" target="_blank">Report abuse</a>
                 </div>
               </div>
-
+              </div>
             </div>
           </div>
 
