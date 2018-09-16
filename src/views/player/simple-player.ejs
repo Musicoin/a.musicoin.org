@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<%
+if (typeof message == "undefined") message = "";
+if (message.length > 0) message = `<div class=alert role=alert style=color:#ffffff;background-color:#FFAF00;border-color:#FFAF00;font-family:Ubuntu;font-size:14px;font-weight:300;width:296px;margin-left:auto;margin-right:auto;>` + message + `</div>`;
+%>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<%- include('partials/track/track-card-metadata.ejs') %>
+<%- include('partials/track/artist-card-metadata.ejs') %>
+<title><%=trackAddress%></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="wb:webmaster" content="388a22fbc545b0b0" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha256-NJWeQ+bs82iAeoT5Ktmqbi3NXwxcHlfaVejzJI2dklU=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/0.10.1/hls.min.js" integrity="sha256-kUDqIYft9ZexoU7ZeHzJnhr32kjQO3KQAYmeUAMIru8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.fluidplayer.com/v2/current/fluidplayer.min.css" integrity="sha384-g1yapoMx0MoHvSIMPfhfqCGduACB+vvNr9TadJCbfCyNLZS8dp5q5wsz/3KXzhj2" crossorigin="anonymous">
+<script src="https://cdn.fluidplayer.com/v2/current/fluidplayer.min.js" integrity="sha384-ez0wAcJx0laONDmE1PU3J4plSPAjQLKMgUqpwAT9EHpo3EaYi1tp4rsDciyXz7rJ" crossorigin="anonymous"></script>
+<link rel="shortcut icon" href="/favicon.ico">
+<video id='hls-video'><source src='<%=trackAddress%>' type='application/x-mpegURL'/></video>
+                  <script>
+                  fluidPlayer(
+                      'hls-video',
+                      {
+                          layoutControls: {
+                              posterImage: '<%=license.image%>',
+                              primaryColor: "#FFAF00",
+                              playbackRateEnabled: true
+                          }
+                      }
+                  );
+                  </script></div>
+</body>
+</html>
