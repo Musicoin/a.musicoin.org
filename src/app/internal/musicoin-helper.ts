@@ -17,7 +17,6 @@ export class MusicoinHelper {
           profile.social = social;
           profile.description = description;
           profile.profileAddress = profileAddress;
-          profile.artistName = artistName;
           return profile;
         }.bind(this))
       });
