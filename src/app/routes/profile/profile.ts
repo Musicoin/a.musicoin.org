@@ -115,13 +115,61 @@ export class ProfileRouter {
                     console.log(`Failed to load track page for license: ${address}, err: Not found`);
                     return res.render('not-found.ejs');
                 }
-                return doRender(req, res, "player/simple-player.ejs", {
-                    trackAddress: 'http://51.38.49.153:8080/tracks/' + address + '/index.m3u8',
-                    license: license
+                fs.stat(config.streaming.tracks + '/' + address + '/' + 'index.m3u8', function (err) {
+                    if (err == null) {
+                        //console.log("hls transcoding already done");
+                        return doRender(req, res, "player/simple-player.ejs", {
+                            trackAddress: 'http://51.38.49.153:8080/tracks/' + address + '/index.m3u8',
+                            license: license
+                        });
+                    } else if (err.code == 'ENOENT') {
+                        fs.stat(config.streaming.org + '/' + address + '/' + address + '.mp3', function (err) {
+                            if (err == null) {
+                                //console.log("track already saved");
+                                fs.stat(config.streaming.org + '/' + address + '/' + 'index.m3u8', function (err) {
+                                    if (err == null) {
+                                        //console.log("hls transcoding already done");
+                                    } else if (err.code == 'ENOENT') {
+                                        require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + address + '/' + address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + address + ' && cd ' + config.streaming.org + '/' + address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + address + '/' + ' \\;');
+                                    } else {
+                                        console.log('Something went wrong with hls file detection', err.code);
+                                    }
+                                });
+                                res.render('encoding-not-done.ejs');
+                            } else if (err.code == 'ENOENT') {
+                                aria2.open();
+                                aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
+                                aria2.on("onDownloadError", ([guid]) => {
+                                    console.log('trackDownloadError: ' + address, guid);
+                                });
+                                aria2.on("onDownloadStart", ([guid]) => {
+                                    console.log('trackDownloadStart: ' + address, guid);
+                                });
+                                aria2.on("onDownloadComplete", ([guid]) => {
+                                    console.log('trackDownloadComplete: ' + address, guid);
+                                    aria2.close();
+                                    fs.stat(config.streaming.org + '/' + address + '/' + 'index.m3u8', function (err) {
+                                        if (err == null) {
+                                            //console.log("hls transcoding already done");
+                                        } else if (err.code == 'ENOENT') {
+                                            require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + address + '/' + address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + address + ' && cd ' + config.streaming.org + '/' + address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + address + '/' + ' \\;');
+                                        } else {
+                                            console.log('Something went wrong with hls file detection', err.code);
+                                        }
+                                    });
+                                    res.render('encoding-not-done.ejs');
+                                });
+                            } else {
+                                console.log('Save file from ppp error', err.code);
+                            }
+                        });
+                    } else {
+                        console.log('Something went wrong with hls file detection', err.code);
+                    }
                 });
             })
                 .catch(err => {
-                    console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
+                    console.log(`Failed to load track page for license: ${address}, err: ${err}`);
                     res.render('not-found.ejs');
                 })
         });
@@ -158,7 +206,7 @@ export class ProfileRouter {
                     const plays = release.directPlayCount || 0;
                     const tips = release.directTipCount || 0;
                     const usd = exchangeRate.success ? "$" + functions._formatNumber((plays + tips) * exchangeRate.usd, 2) : "";
-                    fs.stat(config.streaming.tracks + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
+                    fs.stat(config.streaming.tracks + '/' + address + '/' + 'index.m3u8', function (err) {
                         if (err == null) {
                             //console.log("hls transcoding already done");
                             return doRender(req, res, "track.ejs", {
@@ -180,14 +228,14 @@ export class ProfileRouter {
                                 }
                             });
                         } else if (err.code == 'ENOENT') {
-                            fs.stat(config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3', function (err) {
+                            fs.stat(config.streaming.org + '/' + address + '/' + address + '.mp3', function (err) {
                                 if (err == null) {
                                     //console.log("track already saved");
-                                    fs.stat(config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
+                                    fs.stat(config.streaming.org + '/' + address + '/' + 'index.m3u8', function (err) {
                                         if (err == null) {
                                             //console.log("hls transcoding already done");
                                         } else if (err.code == 'ENOENT') {
-                                            require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + req.params.address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + req.params.address + ' && cd ' + config.streaming.org + '/' + req.params.address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + req.params.address + '/' + ' \\;');
+                                            require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + address + '/' + address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + address + ' && cd ' + config.streaming.org + '/' + address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + address + '/' + ' \\;');
                                         } else {
                                             console.log('Something went wrong with hls file detection', err.code);
                                         }
@@ -195,21 +243,21 @@ export class ProfileRouter {
                                     res.render('encoding-not-done.ejs');
                                 } else if (err.code == 'ENOENT') {
                                     aria2.open();
-                                    aria2.call("addUri", [musicoinApi.getPPPUrl(req.params.address)], { continue: "true", out: req.params.address + ".mp3", dir: config.streaming.org + '/' + req.params.address });
+                                    aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
                                     aria2.on("onDownloadError", ([guid]) => {
-                                        console.log('trackDownloadError: ' + req.params.address, guid);
+                                        console.log('trackDownloadError: ' + address, guid);
                                     });
                                     aria2.on("onDownloadStart", ([guid]) => {
-                                        console.log('trackDownloadStart: ' + req.params.address, guid);
+                                        console.log('trackDownloadStart: ' + address, guid);
                                     });
                                     aria2.on("onDownloadComplete", ([guid]) => {
-                                        console.log('trackDownloadComplete: ' + req.params.address, guid);
+                                        console.log('trackDownloadComplete: ' + address, guid);
                                         aria2.close();
-                                        fs.stat(config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8', function (err) {
+                                        fs.stat(config.streaming.org + '/' + address + '/' + 'index.m3u8', function (err) {
                                             if (err == null) {
                                                 //console.log("hls transcoding already done");
                                             } else if (err.code == 'ENOENT') {
-                                                require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + req.params.address + '/' + req.params.address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + req.params.address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + req.params.address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + req.params.address + ' && cd ' + config.streaming.org + '/' + req.params.address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + req.params.address + '/' + ' \\;');
+                                                require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + address + '/' + address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + address + ' && cd ' + config.streaming.org + '/' + address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + address + '/' + ' \\;');
                                             } else {
                                                 console.log('Something went wrong with hls file detection', err.code);
                                             }
@@ -227,7 +275,7 @@ export class ProfileRouter {
                 })
             })
                 .catch(err => {
-                    console.log(`Failed to load track page for license: ${req.params.address}, err: ${err}`);
+                    console.log(`Failed to load track page for license: ${address}, err: ${err}`);
                     res.render('not-found.ejs');
                 })
 
