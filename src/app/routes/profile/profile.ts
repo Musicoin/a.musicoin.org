@@ -135,7 +135,7 @@ export class ProfileRouter {
                                         console.log('Something went wrong with hls file detection', err.code);
                                     }
                                 });
-                                res.render('encoding-not-done.ejs');
+                                res.render('encoding/encoding-not-done.ejs');
                             } else if (err.code == 'ENOENT') {
                                 aria2.open();
                                 aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
@@ -157,7 +157,7 @@ export class ProfileRouter {
                                             console.log('Something went wrong with hls file detection', err.code);
                                         }
                                     });
-                                    res.render('encoding-not-done.ejs');
+                                    res.render('encoding/encoding-not-done.ejs');
                                 });
                             } else {
                                 console.log('Save file from ppp error', err.code);
@@ -240,7 +240,7 @@ export class ProfileRouter {
                                             console.log('Something went wrong with hls file detection', err.code);
                                         }
                                     });
-                                    res.render('encoding-not-done.ejs');
+                                    res.render('encoding/encoding-not-done.ejs');
                                 } else if (err.code == 'ENOENT') {
                                     aria2.open();
                                     aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
@@ -262,7 +262,7 @@ export class ProfileRouter {
                                                 console.log('Something went wrong with hls file detection', err.code);
                                             }
                                         });
-                                        res.render('encoding-not-done.ejs');
+                                        res.render('encoding/encoding-not-done.ejs');
                                     });
                                 } else {
                                     console.log('Save file from ppp error', err.code);

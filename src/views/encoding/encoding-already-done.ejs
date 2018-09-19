@@ -1,0 +1,145 @@
+<html>
+
+<head>
+  <style media="screen">
+    @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:700|Source+Sans+Pro');
+
+    body {
+      background-color: #2146ff;
+      background: url("https://www.toptal.com/designers/subtlepatterns/patterns/struckaxiom.png");
+    }
+
+    label {
+      font-weight: 600;
+    }
+
+
+    .form-control:focus {
+      border-color: black;
+      box-shadow: 3px 3px 0px black;
+    }
+
+    .btn-lg:focus {
+      outline: none;
+      box-shadow: 3px 3px 0px black;
+    }
+
+    .emailButton:focus {
+      border-color: black;
+      box-shadow: 3px 3px 0px black;
+    }
+
+    .searchBox {
+      background-color: white;
+      min-height: 200px;
+      border-radius: 5px;
+      border-style: solid;
+      border-width: 2px;
+      margin: 5%;
+    }
+
+    h1 {
+      color: white;
+      font-size: 4em;
+      color: black;
+      margin-left: auto;
+      margin-right: auto;
+      -webkit-text-fill-color: #ffaf00;
+      /* Will override color (regardless of order) */
+      -webkit-text-stroke-width: .03em;
+      -webkit-text-stroke-color: black;
+      font-family: "IBM Plex Mono", sans-serif;
+      font-weight: 900;
+    }
+
+    h3 {
+      color: white;
+      font-size: 1.2em;
+      color: black;
+      margin-left: auto;
+      margin-right: auto;
+      -webkit-text-fill-color: #581845;
+      /* Will override color (regardless of order) */
+      -webkit-text-stroke-width: .05em;
+      -webkit-text-stroke-color: black;
+      font-family: "IBM Plex Mono", sans-serif;
+      font-weight: 900;
+    }
+
+    .form > p {
+      font-size: 0.8em;
+      font-family: "IBM Plex Mono", sans-serif;
+    }
+
+    .emailButton {
+      font-family: "IBM Plex Mono", sans-serif;
+      color: black;
+      border-style: solid;
+      border-width: 1px;
+      border-color: black;
+      margin-left: 5px;
+      background-color: white;
+      font-weight: 300;
+    }
+
+    .emailButton:hover,
+    .emailButton:active {
+      background-color: #2146ff;
+      color: white;
+      transition-duration: .3s;
+    }
+
+    .emailButton:not( :hover) {
+      transition-duration: .3s;
+    }
+
+    .search {
+      margin: 5% 10%;
+    }
+
+    .form-group {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+
+
+    .form-control {
+      border-color: lightgrey;
+      border-radius: 5px !important;
+    }
+
+    .form-control:not( :hover),
+    .form-control:not( :active) {
+      transition-duration: .3s;
+    }
+
+    .form-control:hover,
+    .form-control:active {
+      border-color: black !important;
+      border-radius: 5px !important;
+      transition-duration: .3s;
+    }
+
+    .errorMessage {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+    </div>
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 searchBox">
+
+        <div class="form search">
+          <h1><%=track%> encoding was already done.</h1>
+          <h3>With love, <img src="https://marketing-image-production.s3.amazonaws.com/uploads/fd101f8e53b0fd0718118a98b6d109f76509da8007e528d4d86c41f946f49e524115cdfe40c1a3c92c730fb08239347994b6e9bef05d4cf7382f120d5af8bf8b.png" width="30"></img>&nbsp;Musicoin<br><a href="mailto:support@musicoin.org">support@musicoin.org</a></h3>
+        </div>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+  </div>
+</body>
+</html>
