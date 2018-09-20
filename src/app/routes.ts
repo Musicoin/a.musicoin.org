@@ -189,7 +189,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       req.session.destinationUrl = null;
       return res.redirect(url);
     }
-    return res.redirect('/nav/feed');
+    return res.redirect('/feed');
   });
 
   app.post('/login/confirm', function (req, res) {

@@ -95,7 +95,7 @@
                     <div class="subtle-text text-small"><%= release.genres ? release.genres.join(", ") : "" %></div>
                     <div class="chat-message-body chat-message-preview subtle-text"><%= release.description %></div>
                     <% if (done) { %>
-                    <a class=text-center target=_top href="/nav/track/<%=release.address%>">View track</a>
+                    <a class=text-center target=_top href="/track/<%=release.address%>">View track</a>
                     <% } %>
                 </div>
             </div>
@@ -107,7 +107,7 @@
             <h3 class="text-center">Share your track on your social networks using this link:</h3>
 
             <div class="flex-row" style="border: 1px solid #ddd; border-radius: 2px; padding-left: 5px">
-                <input id="trackUrl" type="text" value="https://musicoin.org/nav/track/<%=release.address%>" style="width: 100%; border: none; font-size: 12px">
+                <input id="trackUrl" type="text" value="https://musicoin.org/track/<%=release.address%>" style="width: 100%; border: none; font-size: 12px">
                 <span class="input-group-button">
                     <span class="btn btn-default btn-sm"
                           title="Copy to clipboard"

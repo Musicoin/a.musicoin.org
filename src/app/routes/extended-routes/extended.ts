@@ -34,42 +34,11 @@ export class ExtendedRouter {
     // Using the oembed server routerroach would be MUCH better, but I can't get it to work. :/
     // Twitter just ignores my oembed link.
     router.get('/nav/track/:address', (req, res) => {
-      console.log("Got external request for a nav/track page, rendering metadata in the outer frame: " + req.params.address);
-      jsonAPI.getLicense(req.params.address)
-        .then(license => {
-          if (!license) {
-            console.log(`Failed to load track page for license: ${req.params.address}, err: Not found`);
-            return res.render('not-found.ejs');
-          }
-          res.render('index-frames.ejs', {
-            license: license,
-            mainFrameLocation: req.originalUrl.substr(4)
-          });
-        });
+      res.redirect('/track/' + req.params.address);
     });
 
     router.get('/nav/artist/:address', (req, res) => {
-      console.log("Got external request for a nav/artist page, rendering metadata in the outer frame: " + req.params.address);
-      jsonAPI.getArtist(req.params.address, false, false)
-        .then(result => {
-          try {
-            res.render('index-frames.ejs', {
-              artist: result.artist,
-              mainFrameLocation: req.originalUrl.substr(4)
-            });
-          } catch (Error) {
-            res.render('not-found.ejs')
-          }
-        }
-        ).catch(error => {
-          console.log('ERROR!!', error.message);
-        });
-    });
-
-    // anything under "/nav/" is a pseudo url that indicates the location of the mainFrame
-    // e.g. /nav/xyz will be re-routed to "/" with a parameter that sets the mainFrame url to "xyz"
-    router.get('/nav/*', functions.isLoggedInOrIsPublic, (req, res) => {
-      res.render('index-frames.ejs', { mainFrameLocation: req.originalUrl.substr(4) });
+      res.redirect('/artist/' + req.params.address);
     });
 
     // =====================================
@@ -102,12 +71,12 @@ export class ExtendedRouter {
         newReleases.forEach(release => {
           feed.addItem({
             title: release.title,
-            id: `${config.serverEndpoint}/nav/track/${release.address}`,
-            link: `${config.serverEndpoint}/nav/track/${release.address}`,
+            id: `${config.serverEndpoint}/track/${release.address}`,
+            link: `${config.serverEndpoint}/track/${release.address}`,
             description: `New release by ${release.artistName}`,
             author: [{
               name: `${release.artistName}`,
-              link: `${config.serverEndpoint}/nav/artist/${release.artistProfileAddress}`
+              link: `${config.serverEndpoint}/artist/${release.artistProfileAddress}`
             }],
             date: release.releaseDate,
             image: `${config.serverEndpoint}${release.image}`
@@ -137,12 +106,12 @@ export class ExtendedRouter {
         topTipped.forEach(release => {
           feed.addItem({
             title: release.title,
-            id: `${config.serverEndpoint}/nav/track/${release.address}`,
-            link: `${config.serverEndpoint}/nav/track/${release.address}`,
+            id: `${config.serverEndpoint}/track/${release.address}`,
+            link: `${config.serverEndpoint}/track/${release.address}`,
             description: `${release.artistName} is a top-tipped track!`,
             author: [{
               name: `${release.artistName}`,
-              link: `${config.serverEndpoint}/nav/artist/${release.artistProfileAddress}`
+              link: `${config.serverEndpoint}/artist/${release.artistProfileAddress}`
             }],
             date: release.releaseDate,
             image: `${config.serverEndpoint}${release.image}`

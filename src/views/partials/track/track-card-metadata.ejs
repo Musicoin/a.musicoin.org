@@ -10,7 +10,7 @@
 <meta property="og:site_name" content="Musicoin"/>
 <meta property="og:description" content="<%=license.description || "Find this track and other amazing tracks on musicoin.org"%>">
 <meta property="og:image" content="https://musicoin.org<%=license.image%>">
-<meta property="og:url" content="https://musicoin.org/nav/track/<%=license.address%>">
+<meta property="og:url" content="https://musicoin.org/track/<%=license.address%>">
 <meta property="fb:app_id" content="1845789109028247"/>
 
 <meta name="medium"         content="video">
@@ -29,12 +29,12 @@
 <meta property="twitter:player:height" content="150">
 <meta property="twitter:player:width" content="435">
 
-<link rel="alternate" type="application/json+oembed" href="https://musicoin.org/services/oembed?url=https://musicoin.org/nav/track/<%=license.address%>&format=json" title="<%=license.title%>" />
-<link rel="alternate" type="text/xml+oembed" href="https://musicoin.org/services/oembed?url=https://musicoin.org/nav/track/<%=license.address%>&format=xml" title="<%=license.title%>" />
+<link rel="alternate" type="application/json+oembed" href="https://musicoin.org/services/oembed?url=https://musicoin.org/track/<%=license.address%>&format=json" title="<%=license.title%>" />
+<link rel="alternate" type="text/xml+oembed" href="https://musicoin.org/services/oembed?url=https://musicoin.org/track/<%=license.address%>&format=xml" title="<%=license.title%>" />
 
 <noscript><article itemscope itemtype="http://schema.org/MusicRecording">
   <header>
-    <h1 itemprop="name"><a itemprop="url" href="/nav/track/<%=license.address%>"><%=license.title%></a>
+    <h1 itemprop="name"><a itemprop="url" href="/track/<%=license.address%>"><%=license.title%></a>
     by <a href="/artist/<%=license.artistAddress%>"><%=license.artistName%></a></h1>
     published on <time pubdate>2012-01-20T22:06:27Z</time>
 

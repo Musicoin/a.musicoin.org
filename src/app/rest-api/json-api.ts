@@ -1254,7 +1254,7 @@ sendRewardsForInvite(p: any): Promise<any> {
 
             if (recipient) {
               console.log(`Sending message notification to: ${recipient}`);
-              const urlPath = `/nav/thread-page?thread=${threadId}`;
+              const urlPath = `/thread-page?thread=${threadId}`;
               const notification = {
                 trackName: release ? release.title : null,
                 actionUrl: this.config.serverEndpoint + urlPath,
@@ -1512,7 +1512,7 @@ sendRewardsForInvite(p: any): Promise<any> {
     return this.getUserStatsReport(user.profileAddress, asOf, duration)
       .then(report => {
         report.exchangeRateInfo = exchangeRateInfo;
-        report.actionUrl = "https://musicoin.org/nav/feed";
+        report.actionUrl = "https://musicoin.org/feed";
         report.baseUrl = "https://musicoin.org";
         report.description = `Musicoin ${durationAdj} report`;
         report.duration = duration;

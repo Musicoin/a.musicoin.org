@@ -123,7 +123,7 @@ function formatNumber(value, decimals) {
             totalComments += stats.commentCount;
         %>
         <tr>
-            <td><a target="_blank" href="<%=report.baseUrl%>/nav/track/<%=stats.track.contractAddress%>"><%=stats.track.title%></a></td>
+            <td><a target="_blank" href="<%=report.baseUrl%>/track/<%=stats.track.contractAddress%>"><%=stats.track.title%></a></td>
             <td><%=formatNumber(stats.playCount)%></td>
             <td><%=formatNumber(stats.tipCount)%></td>
             <td><%= "$" + formatNumber(earningsEst, 2)%></td>
