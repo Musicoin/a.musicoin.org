@@ -631,6 +631,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.status(500);
         res.send("Failed to play track");
       });
+    musicoinApi.getAccountFromLicense(req.params.address).then(function (accountFromLicense) {
+      return musicoinApi.sendRewardExtraPPP(accountFromLicense);
+    });
     const address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
       console.log(`Failed to load track page, no address provided`);
@@ -827,6 +830,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.status(500);
         res.send("Failed to play track");
       });
+    musicoinApi.getAccountFromLicense(req.params.address).then(function (accountFromLicense) {
+      return musicoinApi.sendRewardExtraPPP(accountFromLicense);
+    });
   });
 
   app.get('/download/:address', functions.adminOnly, function (req, res, next) {
@@ -1284,6 +1290,33 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         : req.user ? req.user._id : get_ip.getClientIp(req);
       const profileAddress = req.user ? req.user.profileAddress : "Anonymous";
       console.log(`Resolve ppp request for ${resolved}, ip: ${get_ip.getClientIp(req)}, session: ${req.session.id}, user: ${profileAddress} (${userName})`);
+      fs.stat(process.cwd() + '/logs/ppp.json', function (err) {
+        if (err == null) {
+          let file = fs.readFileSync(process.cwd() + '/logs/ppp.json', 'utf8');
+          var parseErr;
+          try {
+            parseErr = JSON.parse(file);
+          } catch (e) {
+            var pppReqLog = [];
+            pppReqLog.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
+            let startFile = JSON.stringify(pppReqLog, null, 4);
+            fs.unlinkSync(process.cwd() + '/logs/ppp.json');
+            fs.writeFileSync(process.cwd() + '/logs/ppp.json', startFile, 'utf8');
+            console.log("Something strange was with json write to the ppp.json log" + e);
+          }
+          pppReqLog = parseErr;
+          pppReqLog.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
+          let json = JSON.stringify(pppReqLog, null, 4);
+          fs.writeFileSync(process.cwd() + '/logs/ppp.json', json, 'utf8');
+        } else if (err.code == 'ENOENT') {
+          var pppReqLog = [];
+          pppReqLog.push({ date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''), user: userName, address: profileAddress, session: req.session.id, ip: get_ip.getClientIp(req), track: resolved });
+          let startFile = JSON.stringify(pppReqLog, null, 4);
+          fs.writeFileSync(process.cwd() + '/logs/ppp.json', startFile, 'utf8');
+        } else {
+          console.log(err.code);
+        }
+      });
     }
     req.params.address = resolved;
     next();

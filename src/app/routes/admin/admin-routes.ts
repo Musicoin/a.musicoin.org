@@ -9,7 +9,8 @@ import { MusicoinAPI } from '../../internal/musicoin-api';
 import { MusicoinOrgJsonAPI } from '../../rest-api/json-api';
 import { RequestCache } from '../../utils/cached-request';
 import * as FormUtils from '../../utils/form-utils';
-
+const fs = require('fs');
+const mime = require('mime');
 const User = require('../../models/user');
 const Release = require('../../models/release');
 const APIClient = require('../../models/api-client');
@@ -122,6 +123,7 @@ export class AdminRoutes {
         })
     });
     router.post('/admin/users/AOWBadge', (req, res) => {
+      console.log("bodyID",req.body.id);
       if (!req.body.id) return res.json({ success: false, reason: "No id" });
       User.findById(req.body.id).exec()
         .then(user => {
@@ -166,28 +168,7 @@ export class AdminRoutes {
     });
 
     router.get('/admin/users', functions.isLoggedIn, functions.adminOnly, (req, res) => {
-      const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 10;
-      const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
-      const previous = Math.max(0, start - length);
-      const url = '/admin/users?search=' + (req.query.search ? req.query.search : '');
-      jsonAPI.getAllUsers(req.query.search, null, null, null, start, length, null)
-        .then(results => {
-          const users:any = results.users;
-          return doRender(req, res, 'admin/admin-users.ejs', {
-            search: req.query.search,
-            users: users,
-            navigation: {
-              show10: `${url}&length=10`,
-              show25: `${url}&length=25`,
-              show50: `${url}&length=50`,
-              show100: `${url}&length=100`,
-              description: `Showing ${start + 1} to ${start + users.length}`,
-              start: previous > 0 ? `${url}&length=${length}` : null,
-              back: previous >= 0 && previous < start ? `${url}&length=${length}&start=${start - length}` : null,
-              next: users.length >= length ? `${url}&length=${length}&start=${start + length}` : null
-            }
-          });
-        });
+          return doRender(req, res, 'admin/admin-users.ejs', {});
     });
 
     router.get('/admin/contacts', (req, res) => {
@@ -238,6 +219,18 @@ export class AdminRoutes {
         .then(results => {
           const releases = results.releases;
           res.json(releases);
+        });
+    });
+    router.get('/admin/elements/users', functions.isLoggedIn, functions.adminOnly, (req, res) => {
+      let l: any = req.query.length;
+      let s: any = req.query.start;
+      let search : any = req.query.search.value ? req.query.search.value:"";
+      const length = typeof l !== "undefined" ? parseInt(l) : 1000;
+      const start = typeof s !== "undefined" ? Math.max(0, parseInt(s)) : 0;
+      jsonAPI.getAllUsers(search, null, null, null, start, length, null)
+        .then(results => {
+          const users= results.users;
+          res.json(users);
         });
     });
 
@@ -581,6 +574,25 @@ export class AdminRoutes {
 
     router.get('/admin/account-balances', functions.isLoggedIn, functions.adminOnly, function (req, res) {
       doRender(req, res, 'admin/account-balances.ejs', {});
+    });
+
+    router.get('/admin/ppp-analyzer', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      doRender(req, res, 'admin/ppp-analyzer.ejs', {});
+    });
+
+    router.get('/admin/ppp-logs', functions.isLoggedIn, functions.adminOnly, function (req, res) {
+      fs.stat(process.cwd() + '/logs/ppp.json', function (err) {
+        if (err == null) {
+          var mimetype = mime.lookup(process.cwd() + '/logs/ppp.json');
+          res.setHeader('Content-disposition', 'attachment; filename=ppp.json');
+          res.setHeader('Content-type', mimetype);
+          var filestream = fs.createReadStream(process.cwd() + '/logs/ppp.json');
+          filestream.pipe(res);
+        } else if (err.code == 'ENOENT') {
+        } else {
+          console.log(err.code);
+        }
+      });
     });
 
     router.get('/admin/api-clients', functions.isLoggedIn, functions.adminOnly, function (req, res) {

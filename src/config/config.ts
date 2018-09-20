@@ -128,12 +128,12 @@ function getStructuredConfig(keyValueConfig) {
       getKey: `${keyValueConfig.musicoinApiEndpoint}/license/ppp`,
       distributeLicenseBalance: `${keyValueConfig.musicoinApiEndpoint}/license/distributeBalance`,
       getTransactionStatus: `${keyValueConfig.musicoinApiEndpoint}/tx/status`,
-      getTransactionHistory: `${keyValueConfig.musicoinApiEndpoint}/tx/history`,
       publishProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/profile`,
       sendFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/send`,
       pppFromProfile: `${keyValueConfig.musicoinApiEndpoint}/artist/ppp`,
       sendRewardMin: `${keyValueConfig.musicoinApiEndpoint}/rewardmin `,
       sendRewardMax: `${keyValueConfig.musicoinApiEndpoint}/rewardmax`,
+      sendRewardExtraPPP: `${keyValueConfig.musicoinApiEndpoint}/rewardppp`,
       releaseLicense: `${keyValueConfig.musicoinApiEndpoint}/license`,
       updateLicense: `${keyValueConfig.musicoinApiEndpoint}/license/update`,
       getClientBalance: `${keyValueConfig.musicoinApiEndpoint}/client/balance`,
@@ -143,7 +143,8 @@ function getStructuredConfig(keyValueConfig) {
       messagebirdID: keyValueConfig.messagebirdID,
       bootSession: keyValueConfig.bootSession,
       whiteLocalIpList: keyValueConfig.whiteLocalIpList,
-      baseUrl: keyValueConfig.baseUrl
+      baseUrl: keyValueConfig.baseUrl,
+      regionalAccount: keyValueConfig.regionalAccount
     },
     exchangeRateService: {
       endpoint: "https://api.coinmarketcap.com/v1/ticker/musicoin/",
@@ -300,7 +301,9 @@ function getDefaultKeyValueConfig() {
 
         streamingSegments: env.STREAMING_SEGMENTS || '23',
 
-        streamingOrgFiles: env.STREAMING_ORG_FILES || '/var/www/mcorg/streaming-storage/org'
+        streamingOrgFiles: env.STREAMING_ORG_FILES || '/var/www/mcorg/streaming-storage/org',
+
+        regionalAccount: env.REGIONAL_ACCOUNT || ['0x9fa5bd7c26e9dfc0e17846866389aca200c4e941', '0x610ec47329c28a85f006b236e433b4f98074ba60']
 
       };
     });

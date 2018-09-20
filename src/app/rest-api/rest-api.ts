@@ -118,7 +118,6 @@ export class MusicoinRestAPI {
         req.query.search);
     });
 
-    jsonRouter.get('/tx/history/:address', req => jsonAPI.getTransactionHistory(req.params.address, this._getLimit(req), this._getStart(req)));
     jsonRouter.get('/tx/status/:tx', req => jsonAPI.getTransactionStatus(req.params.tx));
 
     router.use(function (err, req, res, next) {

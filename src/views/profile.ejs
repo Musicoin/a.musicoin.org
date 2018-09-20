@@ -705,7 +705,7 @@
         <div class="profile-info-wrapper">
             <div class="profile-image-wrapper">
                 <div id="profileImageEdit" class="edit-image edit-picture clickable">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <i style="color: white !important" class="fa fa-pencil" aria-hidden="true"></i>
                 </div>
                     <img src="<%= user.profile.image %>" class="profile-image" title="Click to change your profile" style="width:400px">
                     <!-- <img id="profileImage" src="https://musicoin.org/static/media/ad-free-streaming.6c7ee93a.png" -->
@@ -723,23 +723,10 @@
                 </div>
                 <div class="balance-wrapper">
                     <div class="my-wallet">
-                        <!-- <div class="wallet-header">
-                            <h3 class="golden-grey">My Wallet</h3>
-                            <a id="showTransactionHistory" href="/tx/history/<%= user.profileAddress %>"
-                                class="clickable clickable-icon " title="Transaction history">
-                                <i class="fa fa-list-ul golden-grey" aria-hidden="true"></i>
-                            </a>
-                        </div> -->
-
                         <div class="text-center balance balance-with-label golden-grey">
                             <span style="display: block; overflow: hidden; text-overflow: ellipsis;"><%= artist.formattedBalance %></span>
                             <span class="musicoin-currency-label">MUSIC</span>
                         </div>
-                        <!-- <% if (exchangeRate.success) { %>
-                        <div class="text-center" style="color: #337ab7;">
-                            <a href="<%=exchangeRate.link%>" target=_blank title="<%=exchangeRate.disclaimer%>" ><%= artist.formattedUSD %> USD</a>
-                        </div>
-                        <% } %> -->
                     </div>
                 </div>
                 <% if (typeof sendResult != "undefined") { %>
@@ -748,7 +735,7 @@
                     Send failed!
                 </div>
                 <% } else { %>
-                Payment sent! <div id="txid" style="word-wrap: break-word;"></div> <script>var txid = document.getElementById("txid").innerHTML = 'Txid: ' + location.search.split("false=")[1] + '\nYou could find your txid on <a style=color:#a79f7a href=https://explorer.musicoin.org/tx/'+ location.search.split("false=")[1] + '>Explorer</a> with some slight delay'</script>
+                Payment sent! <div id="txid" style="word-wrap: break-word;"></div> <script>var txid = document.getElementById("txid").innerHTML = 'Txid: ' + location.search.split("false=")[1] + '\nYou could find your txid on <a style=color:#a79f7a target=_blank href=https://explorer.musicoin.org/tx/'+ location.search.split("false=")[1] + '>Explorer</a> with some slight delay'</script>
                 <% } %>
                 <% } %>
                 <% if (typeof sendMailResult != "undefined") { %>
@@ -946,7 +933,7 @@
                         <div class="back wallet-wrapper-sides">
                             <div class="toggle-flip-container container-space-between">
                                 <div>
-                                    <a id="showTransactionHistory" href="/tx/history/<%= user.profileAddress %>"
+                                    <a target="_blank" id="showTransactionHistory" href="https://explorer.musicoin.org/account/<%= user.profileAddress %>"
                                         class="clickable clickable-icon " title="Transaction history">
                                         <i class="fa fa-list-ul" aria-hidden="true"></i>
                                     </a>

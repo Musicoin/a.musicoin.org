@@ -343,40 +343,6 @@ export class HomeRouter {
       res.render('not-found.ejs');
     });
 
-    router.get('/tx/history/:address', functions.isLoggedIn, function (req, res) {
-      const length = typeof req.query.length != "undefined" ? parseInt(req.query.length) : 20;
-      const start = typeof req.query.start != "undefined" ? parseInt(req.query.start) : 0;
-      const previous = Math.max(0, start - length);
-      const url = `/tx/history/${req.params.address}`;
-
-      Promise.join(
-        musicoinApi.getTransactionHistory(req.params.address, length, start),
-        addressResolver.lookupAddress(req.user.profileAddress, req.params.address),
-        function (history, name) {
-          if (!Array.isArray(history)) {
-            history = [];
-          }
-          history.forEach(h => {
-            h.formattedDate = functions._formatAsISODateTime(h.timestamp);
-            h.musicoins = functions._formatNumber(h.musicoins, 5);
-          });
-          // .catch (function(e) {
-          //  console.log(e);
-          // });
-          return doRender(req, res, 'history.ejs', {
-            address: req.params.address,
-            name: name ? name : "Transaction History",
-            history: history,
-            navigation: {
-              description: `Showing ${start + 1} to ${start + length}`,
-              start: previous > 0 ? `${url}?length=${length}` : null,
-              back: previous >= 0 && previous < start ? `${url}?length=${length}&start=${start - length}` : null,
-              next: `${url}?length=${length}&start=${start + length}`,
-            }
-          });
-        });
-    });
-
     router.get('/error', (req, res) => doRender(req, res, 'error.ejs', {}));
 
     router.post('/preferences/urlIsPublic', functions.isLoggedIn, function (req, res) {

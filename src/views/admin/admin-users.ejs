@@ -1,411 +1,402 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>Users - Musicoin</title>
-    <%- include('../partials/page-head.ejs') %>
-        <style>
-            body {
-                word-wrap: break-word;
-            }
-
-            .history {
-                padding: 3px;
-                min-width: 20px;
-            }
-
-            .history-nav {
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .history-nav-link {
-                margin-left: 10px;
-                font-size: 14pt;
-            }
-
-            .history-nav-link-disabled {
-                margin-left: 10px;
-                font-size: 14pt;
-                color: #aaa
-            }
-
-            tr.claimed {
-                background-color: rgba(0, 200, 0, 0.1);
-            }
-
-            tr.profile {
-                background-color: rgba(0, 200, 0, 0.2);
-            }
-
-            .table>tbody>tr>td {
-                vertical-align: middle;
-            }
-        </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Musicoin Admin Dashboard Template</title>
+    <link rel="stylesheet" href="/dependencies/admin/css/admin.min.css">
+    <link rel="stylesheet" href="/dependencies/admin/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/dependencies/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/dependencies/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/dependencies/messg-2.1.0/index.css">
 </head>
 
-<body>
-    <%- include('../partials/header.ejs') %>
-        <div class="container">
-            <div class="search-area mb20">
-                <div class="col-sm-5">
-                    <form action="/admin/users" method="get">
-                        <div class="flex-row">
-                            <i class="fa fa-search shift-r20 subtle-text" aria-hidden="true"></i>
-                            <input class="form-control text-large pl25" name="search" value="<%= search %>" placeholder="Search Users" autofocus onfocus="this.value = this.value;">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="m10 white-well pad10">
-            <div class="history-nav ">
-                <div>
-                    <%= navigation.description %>
-                </div>
-                <div>
-                    Show
-                    <a class="history-nav-link" href="<%= navigation.show10 %>">10</a>
-                    <a class="history-nav-link" href="<%= navigation.show25 %>">25</a>
-                    <a class="history-nav-link" href="<%= navigation.show50 %>">50</a>
-                    <a class="history-nav-link" href="<%= navigation.show100 %>">100</a>
-                </div>
-                <div>
-                    <% if (navigation.start) { %>
-                        <a class="history-nav-link" href="<%= navigation.start %>">First</a>
-                        <% } %>
-                            <% if (navigation.back) { %>
-                                <a class="history-nav-link" href="<%= navigation.back %>">Back</a>
-                                <% } %>
-                                    <% if (navigation.next) { %>
-                                        <a class="history-nav-link" href="<%= navigation.next %>">Next</a>
-                                        <% } else { %>
-                                            <span class="history-nav-link-disabled">next</span>
-                                            <% } %>
-                </div>
-            </div>
-            <a href="https://musicoin.org/admin/" class="btn btn-info btn-sm mr5" role="button">Go To Admin Panel</a>
-            <div class="btn btn-success btn-sm mr5" onclick="sendWeeklyReports()">Send Weekly Reports</div>
-            <table class="table table-responsive white-well">
-                <tr>
-                    <th class="text-center">Profile</th>
-                    <th class="text-center">Invited</th>
-                    <th class="text-center">Invite
-                        <br>Clicked</th>
-                    <th class="text-center">Linked</th>
-                    <th class="text-center">Music
-                        <br>Released</th>
-                    <th class="text-center">Invites
-                        <br>Left</th>
-                </tr>
-
-                <% for (var ivt = 0; ivt < users.length; ivt++) {
-            var user = users[ivt];
-            var checked = 'yes';
-            var unchecked = '-';
-            var invite = user.invite ? user.invite : {};
-            var invitedBy = invite.invitedBy || {};
-            var state = invite.claimed
-                    ? (user.profileAddress && user.draftProfile.artistName) ? "profile" : "claimed"
-                    : "";
-            var name = user.draftProfile && user.draftProfile.artistName ? user.draftProfile.artistName : "this user";
-        %>
-                    <tr class="<%= state %>">
-                        <td class="text-center middle">
-                            <div class="flex-row">
-                                <div class="btn btn-sm mr5 <%= user.verified ? " btn-warning " : "btn-success " %>" onclick="verifyUser(this, '<%= user._id %>')">
-                                    <%= user.verified ? "Unverify" : "Verify"%>
-                                </div>
-                                <div class="btn btn-sm mr5 <%= user.blocked ? " btn-success " : "btn-warning " %>" onclick="blockUser(this, '<%= user._id %>')">
-                                    <%= user.blocked ? "Unblock Releases" : "Block Releases"%>
-                                </div>
-                                <div class="btn btn-sm mr5 <%= user.accountLocked ? " btn-success " : "btn-danger " %>" onclick="lockUserAccount(this, '<%= user._id %>')">
-                                    <%= user.accountLocked ? "Unlock" : "Lock"%>
-                                </div>
-                                <div class="btn btn-sm <%= user.AOWBadge ? " btn-success " : "btn-danger " %>" onclick="activeAOWBadge(this, '<%= user._id %>')">
-                                    <%= user.AOWBadge ? "OFF" : "ON" %>
-                                </div>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include admin-header.ejs %>
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+                <div class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1 class="m-0 text-dark">Dashboard v2</h1>
                             </div>
-                        </td>
-                        <td class="text-center middle">
-                            <% if(user.profileAddress && user.draftProfile.artistName) { %>
-                                <a target="_blank" href="/artist/<%= user.profileAddress %>">
-                                    <%= user.draftProfile.artistName %>
-                                </a>
-                                <% } else if (user.draftProfile && user.draftProfile.artistName) { %>
-                                    <%= user.draftProfile.artistName %>
-                                        <% } else { %>
-                                            <%= unchecked %>
-                                                <% } %>
+                            <!-- /.col -->
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item">
+                                        <a href="https://musicoin.org/feed">Musicoin</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Dashboard v2</li>
+                                </ol>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.container-fluid -->
+                </div>
+                <!-- /.content-header -->
+                <!-- Main content -->
 
-                                                    <% if (user.draftProfile && typeof user.draftProfile.version != "undefined") { %>
-                                                        (v
-                                                        <%= user.draftProfile.version %>)
-                                                            <% } %>
-                                                                <br>
-                                                                <%=user.timeSinceJoining%>
-                        </td>
-                        <td class="text-left middle">
-                            <%= invite.invitedAs %>
-                                <br>
-                                <% if(invitedBy.profileAddress && invitedBy.draftProfile.artistName) { %>
-                                    by
-                                    <a target="_blank" href="/artist/<%= invitedBy.profileAddress %>">
-                                        <%= invitedBy.draftProfile.artistName %>
-                                    </a>
-                                    <% } %>
-                                        <BR>
-                                        <%= invite.inviteCode %>
-                        </td>
-                        <td class="text-center middle">
-                            <%- invite.clicked ? checked : unchecked %>
-                        </td>
-                        <td class="text-center middle">
-                            <table cellpadding="2">
-                                <% if (!!user.google.token) { %>
-                                    <%
-                        const googleUrl = user.google.url ? user.google.url : "https://plus.google.com/" + user.google.id;
-                    %>
+                <section class="content">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
                                         <tr>
-                                            <td>
-                                                <span class="btn fa fa-google-plus"></span>
-                                            </td>
-                                            <td class="text-left">
-                                                <a target=_blank href="<%= googleUrl %>">
-                                                    <%- user.google.name %>,
-                                                        <%- user.google.email %>
-                                                </a>
-                                            </td>
+                                            <th>Profile</th>
+                                            <th>Voting Power</th>
+                                            <th>Invited By</th>
+                                            <th>Linked</th>
+                                            <th>Music Released</th>
+                                            <th>Invite Left</th>
+                                            <th></th>
                                         </tr>
-                                        <% } %>
+                                    </thead>
+                                    <tbody>
 
-                                            <% if (!!user.twitter.token) { %>
-                                                <tr>
-                                                    <td>
-                                                        <span class="btn fa fa-twitter"></span>
-                                                    </td>
-                                                    <td class="text-left">
-                                                        <%
-                             const twitterUrl = user.twitter.url ? user.twitter.url : "https://twitter.com/" + user.twitter.username;
-                            %>
-                                                            <a target=_blank href="<%= twitterUrl %>">
-                                                                <%- user.twitter.username %>,
-                                                                    <%- user.twitter.displayName %>
-                                                            </a>
-                                                    </td>
-                                                </tr>
-                                                <% } %>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Profile</th>
+                                            <th>Voting Power</th>
+                                            <th>Invited By</th>
+                                            <th>Linked</th>
+                                            <th>Music Released</th>
+                                            <th>Invite Left</th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.card -->
+            </div>
+            <!-- /.col -->
+    </div>
 
-                                                    <% if (!!user.facebook.token) { %>
-                                                        <%
-                        const facebookUrl = user.facebook.url ? user.facebook.url : "https://www.facebook.com/app_scoped_user_id/" + user.facebook.id;
-                    %>
-                                                            <tr>
-                                                                <td class="">
-                                                                    <span class="btn fa fa-facebook"></span>
-                                                                </td>
-                                                                <td class="text-left">
-                                                                    <a target=_blank href="<%= facebookUrl %>">
-                                                                        <%- user.facebook.name %>,
-                                                                            <%- user.facebook.email %>
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
-                                                            <% } %>
-
-                                                                <% if (!!user.local.id) { %>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <span class="btn fa fa-envelope-o"></span>
-                                                                        </td>
-                                                                        <td class="text-left">
-                                                                            <%- user.local.email %>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <% } %>
-                            </table>
-                        </td>
-                        <td class="text-center middle">
-                            <%- user.mostRecentReleaseDate ? checked : unchecked %>
-                        </td>
-                        <td class="text-center middle">
-                            <%= user.invitesRemaining %>
-                                <div class="flex-row">
-                                    <div class="btn btn-success btn-sm mr5" onclick="addInvites('<%= user._id %>', 10)">+10</div>
-                                    <% if (user.invite.noReward) { %>
-                                        <div class="btn btn-warning btn-sm" onclick="blacklist('<%= user._id %>', false)">De-Blacklist</div>
-                                        <% } else { %>
-                                            <div class="btn btn-danger btn-sm" onclick="blacklist('<%= user._id %>', true)">Blacklist</div>
-                                            <% } %>
-                                </div>
-                        </td>
-                    </tr>
-                    <% } %>
-            </table>
-        </div>
+    <!-- /.row -->
+    </section>
+    <!--/. container-fluid -->
+    <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    </div>
+    <script src="/dependencies/admin/js/jquery.min.js" type="text/javascript"></script>
+    <!-- Bootstrap -->
+    <script src="/dependencies/admin/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/dataTables.bootstrap4.js" type="text/javascript"></script>
+    <!-- AdminLTE App -->
+    <script src="/dependencies/admin/js/admin.js" type="text/javascript"></script>
+    <!-- PAGE PLUGINS -->
+    <!-- SparkLine -->
+    <script src="/dependencies/admin/js/jquery.sparkline.min.js" type="text/javascript"></script>
+    <script src="/dependencies/admin/js/chart.min.js" type="text/javascript"></script>
+    <script src="/dependencies/messg-2.1.0/index.js"></script>
+    <!-- End custom js for this page-->
+    <!-- ./wrapper -->
+    <%- include admin-footer.ejs %>
+        <!-- plugins:js -->
 
         <script>
             function addInvites(id, cnt) {
-                $.post('/admin/invites/add', {
-                    id: id,
-                    count: cnt
-                }, function (data) {
-                    if (data.success) {
-                        new Message("Invites added!", "success", 3000);
-                    }
-                    else {
-                        new Message("Failed: " + data.reason, 'error', 5000)
-                    }
-                })
-            }
-
-            function sendWeeklyReports() {
-                new Message("Are you sure you want to send a weekly reports to all user?", 'error', 5000)
-                    .button("Yes", function () {
-                        $.post('/admin/send-all-weekly-reports', {}, function (data) {
-                            if (data.success) {
-                                new Message("Sent!", "success", 3000);
-                            }
-                            else {
-                                new Message("Failed: " + data.reason, 'error', 5000)
-                            }
-                        })
-                    }
-                    )
-            }
-
-            function blacklist(id, blacklist) {
-                $.post('/admin/invites/blacklist', {
-                    id: id,
-                    blacklist: blacklist
-                }, function (data) {
-                    if (data.success) {
-                        new Message(blacklist ? "User blacklisted!" : "User de-blacklisted", "success", 3000);
-                    }
-                    else {
-                        new Message("Failed: " + data.reason, 'error', 5000)
-                    }
-                })
-            }
-
-            function lockUserAccount(element, id) {
-                var button = $(element);
-                var lock = button.text() == "Lock";
-                var msg = lock
-                    ? "Are you sure you want to lock this user? The user will not be able to log in."
-                    : "Are you sure you want to enable this user? The user will be able to log in again.";
-                var resultMsg = lock
-                    ? "User account locked"
-                    : "User account unlocked";
-
-                new Message(msg, 'error', 5000)
-                    .button("Yes", function () {
-                        $.post('/admin/users/lock', {
-                            id: id,
-                            lock: lock
-                        }, function (data) {
-                            if (data.success) {
-                                $(element).text(lock ? "Unlock" : "Lock");
-                                $(element).toggleClass("btn-danger", !lock);
-                                $(element).toggleClass("btn-success", lock);
-                                new Message(resultMsg, "success", 3000);
-                            }
-                            else {
-                                new Message("Failed: " + data.reason, 'error', 5000)
-                            }
-                        })
+                    $.post('/admin/invites/add', {
+                        id: id,
+                        count: cnt
+                    }, function (data) {
+                        if (data.success) {
+                            new Message("Invites added!", "success", 3000);
+                            refreshUserContainer();
+                        }
+                        else {
+                            new Message("Failed: " + data.reason, 'error', 5000)
+                        }
                     })
-            }
-
-            function verifyUser(element, id) {
-                var button = $(element);
-                var verified = button.text() == "Verify";
-                var msg = verified
-                    ? "Are you sure you want to verify this user?"
-                    : "Are you sure you want remove verification for this user?"
-                var resultMsg = verified
-                    ? "User marked as verified"
-                    : "Verification flag removed";
-
-                new Message(msg, 'error', 5000)
-                    .button("Yes", function () {
-                        $.post('/admin/users/verify', {
-                            id: id,
-                            verified: verified
-                        }, function (data) {
-                            if (data.success) {
-                                $(element).text(verified ? "Unverify" : "Verify");
-                                $(element).toggleClass("btn-warning", verified);
-                                $(element).toggleClass("btn-success", !verified);
-                                new Message(resultMsg, "success", 3000);
+                }
+                function addVotingPower(id, count) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/json-api/profile/voting-power/add',
+                        data: JSON.stringify({
+                            user: id,
+                            count: +count
+                        }),
+                        dataType: 'application/json',
+                        contentType: 'application/json'
+                    })
+                        .always(function (data) {
+                            if (data.status === 200) {
+                                new Message("Voting power increased!", "success", 3000);
+                                refreshUserContainer();
                             }
                             else {
                                 new Message("Failed: " + data.reason, 'error', 5000)
                             }
+                        });
+                }
+                function activeAOWBadge(element, id) {
+                    var button = $(element);
+                    var AOWBadge = button.text().trim() == "ON";
+                    console.log("Aow",AOWBadge);
+                    var msg = AOWBadge
+                        ? "Are you sure you want to Active AOW Badge this user?"
+                        : "Are you sure you want remove AOW Badge for this user?"
+                    var resultMsg = AOWBadge
+                        ? "User marked as AOW"
+                        : "AOW flag removed";
+
+                    new Message(msg, 'error', 5000)
+                        .button("Yes", function () {
+                            $.post('/admin/users/AOWBadge', {
+                                id: id,
+                                AOWBadge: AOWBadge
+                            }, function (data) {
+                                if (data.success) {
+                                    $(element).text(AOWBadge ? "OFF" : "ON");
+                                    $(element).toggleClass("btn-warning", AOWBadge);
+                                    $(element).toggleClass("btn-success", !AOWBadge);
+                                    new Message(resultMsg, "success", 3000);
+                                }
+                                else {
+                                    new Message("Failed: " + data.reason, 'error', 5000)
+                                }
+                            })
                         })
+                }
+                function blacklist(id, blacklist) {
+                    $.post('/admin/invites/blacklist', {
+                        id: id,
+                        blacklist: blacklist
+                    }, function (data) {
+                        if (data.success) {
+                            new Message(blacklist ? "User blacklisted!" : "User de-blacklisted", "success", 3000);
+                            refreshUserContainer();
+                        }
+                        else {
+                            new Message("Failed: " + data.reason, 'error', 5000)
+                        }
                     })
-            }
-
-            function activeAOWBadge(element, id) {
-                var button = $(element);
-                var AOWBadge = button.text().trim() == "ON";
-
-                var msg = AOWBadge
-                    ? "Are you sure you want to Active AOW Badge this user?"
-                    : "Are you sure you want remove AOW Badge for this user?"
-                var resultMsg = AOWBadge
-                    ? "User marked as AOW"
-                    : "AOW flag removed";
-
-                new Message(msg, 'error', 5000)
-                    .button("Yes", function () {
-                        $.post('/admin/users/AOWBadge', {
-                            id: id,
-                            AOWBadge: AOWBadge
-                        }, function (data) {
-                            if (data.success) {
-                                $(element).text(AOWBadge ? "Off" : "On");
-                                $(element).toggleClass("btn-warning", AOWBadge);
-                                $(element).toggleClass("btn-success", !AOWBadge);
-                                new Message(resultMsg, "success", 3000);
-                            }
-                            else {
-                                new Message("Failed: " + data.reason, 'error', 5000)
-                            }
+                }
+                function lockUserAccount(element, id, name) {
+                    var button = $(element);
+                    var lock = button.text() == "Lock Account";
+                    var msg = lock
+                        ? "Are you sure you want to lock " + name + "? The user will not be able to log in."
+                        : "Are you sure you want to enable " + name + "? The user will be able to log in again.";
+                    var resultMsg = lock
+                        ? "User account locked"
+                        : "User account unlocked";
+                    new Message(msg, 'error', 5000)
+                        .button("Yes", function () {
+                            $.post('/admin/users/lock', {
+                                id: id,
+                                lock: lock
+                            }, function (data) {
+                                if (data.success) {
+                                    $(element).text(lock ? "Unlock Account" : "Lock Account");
+                                    $(element).toggleClass("btn-danger", !lock);
+                                    $(element).toggleClass("btn-success", lock);
+                                    new Message(resultMsg, "success", 3000);
+                                    refreshUserContainer();
+                                }
+                                else {
+                                    new Message("Failed: " + data.reason, 'error', 5000)
+                                }
+                            })
                         })
-                    })
-            }
-
-            function blockUser(element, id) {
-                var button = $(element);
-                var block = button.text() == "Block Releases";
-                var msg = block
-                    ? "Are you sure you want to block releases for this user?"
-                    : "Are you sure you want to enable releases for this user?";
-                var resultMsg = block
-                    ? "User releases blocked"
-                    : "User releases enabled";
-
-                new Message(msg, 'error', 5000)
-                    .button("Yes", function () {
-                        $.post('/admin/users/block', {
-                            id: id,
-                            block: block
-                        }, function (data) {
-                            if (data.success) {
-                                $(element).text(block ? "Unblock Releases" : "Block Releases");
-                                $(element).toggleClass("btn-warning", !block);
-                                $(element).toggleClass("btn-success", block);
-                                new Message(resultMsg, "success", 3000);
-                            }
-                            else {
-                                new Message("Failed: " + data.reason, 'error', 5000)
-                            }
+                }
+                function verifyUser(element, id, name) {
+                    console.log("calling verifyUser " + name);
+                    var button = $(element);
+                    var verified = button.text() == "Verify";
+                    var msg = verified
+                        ? "Are you sure you want to verify " + name + "?"
+                        : "Are you sure you want remove verification for " + name + "?"
+                    var resultMsg = verified
+                        ? "User marked as verified"
+                        : "Verification flag removed";
+                    new Message(msg, 'error', 5000)
+                        .button("Yes", function () {
+                            $.post('/admin/users/verify', {
+                                id: id,
+                                verified: verified
+                            }, function (data) {
+                                if (data.success) {
+                                    $(element).text(verified ? "Unverify" : "Verify");
+                                    $(element).toggleClass("btn-warning", verified);
+                                    $(element).toggleClass("btn-success", !verified);
+                                    new Message(resultMsg, "success", 3000);
+                                    refreshUserContainer();
+                                }
+                                else {
+                                    new Message("Failed: " + data.reason, 'error', 5000)
+                                }
+                            })
                         })
-                    })
-            }
+                }
+                function blockUser(element, id, name) {
+                    var button = $(element);
+                    var block = button.text() == "Block Releases";
+                    var msg = block
+                        ? "Are you sure you want to block releases " + name + "?"
+                        : "Are you sure you want to enable releases" + name + "?";
+                    var resultMsg = block
+                        ? "User releases blocked"
+                        : "User releases enabled";
+                    new Message(msg, 'error', 5000)
+                        .button("Yes", function () {
+                            $.post('/admin/users/block', {
+                                id: id,
+                                block: block
+                            }, function (data) {
+                                if (data.success) {
+                                    $(element).text(block ? "Unblock Releases" : "Block Releases");
+                                    $(element).toggleClass("btn-warning", !block);
+                                    $(element).toggleClass("btn-success", block);
+                                    new Message(resultMsg, "success", 3000);
+                                    refreshUserContainer();
+                                }
+                                else {
+                                    new Message("Failed: " + data.reason, 'error', 5000)
+                                }
+                            })
+                        })
+                }
+                function refreshUserContainer() {
+                    dynamic.refreshElement($($("#user-container").closest('.dynamic-element')))
+                }
+            $(document).ready(function () {
+
+                $(function () {
+                    $("#example1").DataTable({
+                        "processing": true,
+                        "serverSide": true,
+                        "ajax": {
+                            "url": "/admin/elements/users", "dataSrc": function (json) {
+                                var return_data = new Array();
+                                for (var i = 0; i < json.length; i++) {
+                                    var user = json[i];
+                                    var invite = user.invite ? user.invite : {};
+                                    var invitedByUser = invite.invitedBy || {};
+                                    var profile = "";
+                                    var votingPower = "";
+                                    var invitedBy = "";
+                                    var linked = "";
+                                    var musicReleased = "";
+                                    var invitedLeft = "";
+                                    var aowBadge = "";
+                                    //Profile Start
+                                    if (user.profileAddress && user.draftProfile.artistName) {
+                                        profile += '<a target="_blank" href="/artist/' + user.profileAddress + '">' + user.draftProfile.artistName + '</a>';
+                                    }
+                                    else if (user.draftProfile && user.draftProfile.artistName) {
+                                        profile += user.draftProfile.artistName;
+                                    } else {
+                                        profile += 'unchecked';
+                                    }
+                                    if (user.verified) {
+                                        profile += ' (Verified) ';
+                                    }
+                                    if (user.role == 'listener') {
+                                    } else {
+                                      profile += ' (Musician) ';
+                                    }
+                                    profile += '<br>';
+                                    //Profile End
+                                    //Vtox Start
+                                    votingPower += user.voteMultiplier;
+                                    //End
+                                    //Invite Start
+                                    invitedBy += invite.invitedAs + '<br>';
+                                    if (invitedByUser.profileAddress && invitedByUser.draftProfile.artistName) {
+                                        invitedBy += 'by <a target="' + invitedByUser + '" href="/artist/' + invitedByUser.profileAddress + '">' + invitedByUser.draftProfile.artistName + '</a>';
+                                    }
+                                    invitedBy += '<br>';
+                                    invitedBy += invite.inviteCode ? invite.inviteCode : "";
+                                    //END
+                                    //Invite Clicked
+                                    linked += '<table cellpadding="2">';
+                                    if (user.google) {
+                                        if (user.google.url) {
+                                            const googleUrl = user.google.url ? user.google.url : "https://plus.google.com/" + user.google.id;
+                                            linked += '<tr><td><span class="btn fa fa-google-plus"></span></td><td class="text-left"><a target=_blank href="' + googleUrl + '">' + user.google.name + "," + user.google.email + '</a></td ></tr >';
+                                        }
+                                    }
+                                    if (user.twitter) {
+                                        if (user.twitter.username) {
+                                            linked += '<tr><td><span class="btn fa fa-twitter"></span></td><td class="text-left">';
+                                            const twitterUrl = user.twitter.url ? user.twitter.url : "https://twitter.com/" + user.twitter.username;
+                                            linked += '<a target=_blank href="' + twitterUrl + '"> ' + user.twitter.username + ', ' + user.twitter.displayName + '</a></td></tr>';
+                                        }
+                                    }
+                                    if (user.facebook) {
+                                        if (user.facebook.id) {
+                                            const facebookUrl = user.facebook.url ? user.facebook.url : "https://www.facebook.com/app_scoped_user_id/" + user.facebook.id;
+                                            linked += '<tr><td class=""><span class="btn fa fa-facebook"></span></td><td class="text-left"><a target=_blank href="' + facebookUrl + '">' + user.facebook.name + ', ' + '</a></td></tr>';
+                                        }
+                                    }
+                                    if (user.local) {
+                                        if (user.local.email) {
+                                            linked += '<tr><td><span class="btn fa fa-envelope-o"></span></td><td class="text-left">' + user.local.email + '</td></tr>';
+                                        }
+                                    }
+                                    linked += '</table>'
+                                    //Invite End
+                                    //sa
+                                    if (user.mostRecentReleaseDate) {
+                                        musicReleased += 'yes<br>'
+                                    }
+                                    else { musicReleased += "no" };
+                                    var veryState = user.verified ? "Unverify" : "Verify";
+                                    invitedLeft += user.invitesRemaining;
+                                    var name = user.draftProfile && user.draftProfile.artistName ? user.draftProfile.artistName : "this user";
+                                    var escapedName = name.replace(/'/g, "\\'");
+                                    var blockState = user.blocked ? "Unblock Releases" : "Block Releases";
+                                    var accountLockState = user.accountLocked ? "Unlock Account" : "Lock Account";
+                                    var aowState = user.AOWBadge ? "OFF" : "ON";
+                                    var actionLinks = '<div class="btn-group"><button type="button" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button><div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(-65px, 38px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item" href="javascript:void(0)" onclick="verifyUser(this, \'' + user._id + '\', \'' + escapedName + '\')">' + veryState + '</a><a class="dropdown-item" href="javascript:void(0)" onclick="verifyUser(this, \'' + user._id + '\', \'' + escapedName + '\')">' + veryState + '</a><a class="dropdown-item" href="javascript:void(0)" onclick="activeAOWBadge(this,\'' + user._id + '\')">' + aowState +'</a><a class="dropdown-item" href="javascript:void(0)" onclick="addVotingPower(\'' + user._id + '\', -10)">-10 voting power </a><a class="dropdown-item" href="javascript:void(0)" onclick="addInvites(\'' + user._id + '\', 10)">+10 Invites </a><a class="dropdown-item" href="javascript:void(0)" onclick="blockUser(this, \'' + user._id + '\', \'' + escapedName + '\')" > ' + blockState + '</a><a class="dropdown-item" href="javascript:void(0)" onclick="lockUserAccount(this, \'' + user._id + '\', \'' + escapedName + '\')" > ' + accountLockState + '</a>';
+                                    if (user.invite.noReward) {
+                                        actionLinks += '<a class="dropdown-item" href="javascript:void(0)" onclick="blacklist(\'' + user._id + '\', false)">De-Blacklist (allow invite rewards)</a>';
+                                    }
+                                    else {
+                                        actionLinks += '<a class="dropdown-item" href="javascript:void(0)" onclick="blacklist(\'' + user._id + '\', true)">Blacklist (no invite rewards)</a>';
+                                    }
+                                    actionLinks += '</div></div>';
+                                    return_data.push({
+                                        'profile': profile,
+                                        'votingPower': votingPower,
+                                        'invitedBy': invitedBy,
+                                        'linked': linked,
+                                        'musicReleased': musicReleased,
+                                        'invitedLeft': invitedLeft,
+                                        'actionLinks': actionLinks
+                                    });
+                                }
+                                return return_data;
+                            }
+                        },
+                        columns: [
+                            { 'data': 'profile' },
+                            { 'data': 'votingPower' },
+                            { 'data': 'invitedBy' },
+                            { 'data': 'linked' },
+                            { 'data': 'musicReleased' },
+                            { 'data': 'invitedLeft' },
+                            { 'data': 'actionLinks' }
+                        ],
+                    });
+                });
+            });
         </script>
-        <%- include('../partials/connect-with-us.ejs') %>
 </body>
 
 </html>
