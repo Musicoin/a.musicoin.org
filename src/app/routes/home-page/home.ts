@@ -246,10 +246,6 @@ export class HomeRouter {
         })
     });
 
-    router.get('/nav/*', function (req, res) {
-      res.redirect(req.url);
-    });
-
     router.post('/thread-view', function (req, res) {
       // don't redirect if they aren't logged in, this is just page section
       const limit = req.body.limit && req.body.limit > 0 && req.body.limit < MAX_MESSAGES ? parseInt(req.body.limit) : config.ui.thread.newMessages;

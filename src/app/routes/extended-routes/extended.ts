@@ -29,10 +29,7 @@ export class ExtendedRouter {
     mediaProvider: any, // TODO
     config: any,
     doRender: any) {
-    // This sucks.  If I want twitter cards to work, we need metadata about the
-    // track in the top frame, not the inner frame.  I can't sort out a better way
-    // Using the oembed server routerroach would be MUCH better, but I can't get it to work. :/
-    // Twitter just ignores my oembed link.
+
     router.get('/nav/track/:address', (req, res) => {
       res.redirect('/track/' + req.params.address);
     });
@@ -41,6 +38,10 @@ export class ExtendedRouter {
       res.redirect('/artist/' + req.params.address);
     });
 
+    router.get('/nav/feed', (req, res) => {
+      res.redirect('/feed');
+    });
+    
     // =====================================
     // LOGIN & LOGOUT ======================
     // =====================================
