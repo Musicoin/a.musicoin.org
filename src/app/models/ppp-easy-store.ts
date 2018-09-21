@@ -13,6 +13,10 @@ module.exports = mongoose.model('EasyStore', mongoose.Schema({
     type: String,
     index: true
   },
+  track: {
+    type: String,
+    index: true
+  },
   agent: {
     type: String,
     index: true

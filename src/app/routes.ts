@@ -1054,7 +1054,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           let uAgent = "" + req.headers['user-agent'];
           let pppRequest = [ip, cWallet];
           const d = EasyStore.findOne({ full: pppRequest }).exec();
-          return EasyStore.findOneAndUpdate({ full: pppRequest, ip: ip, wallet: cWallet, agent: uAgent }, {}, options).exec()
+          console.log(d);
+          console.log(d.date);
+          return EasyStore.findOneAndUpdate({ full: pppRequest, ip: ip, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec()
             .then(ppp => {
               let oldTime = d.date + 60000;
               console.log(" 1. Mongo date :" + d.date + " 2. Mongo date converted: " + new Date(d.date) + " 3. Mongo date + 60 seconds: " + oldTime);
