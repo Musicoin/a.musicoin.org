@@ -23,10 +23,11 @@ import * as FormUtils from './utils/form-utils';
 import * as UrlUtils from './utils/url-utils';
 import * as fs from 'fs';
 var mime = require('mime');
-
+const get_ip = require('request-ip');
 var functions = require('./routes/routes-functions');
 
 const Release = require('./models/release');
+const EasyStore = require('./models/ppp-easy-store');
 const AnonymousUser = require('./models/anonymous-user');
 const EmailConfirmation = require('./models/email-confirmation');
 const User = require('./models/user');
@@ -1040,15 +1041,33 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         var filestream = fs.createReadStream(streamPlaylist);
         filestream.pipe(res);
       } else if (req.params.encoded == req.params.encoded.match(/ts[0-9]+/) + ".ts") {
-        var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
-        var mimetype = mime.lookup(streamPart);
-        res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
-        res.setHeader('Content-type', mimetype);
-        var filestream = fs.createReadStream(streamPart);
-        filestream.pipe(res);
+        let ip = get_ip.getClientIp(req);
+        var cTime = new Date();
+        let session = req.user.profileAddress;
+        let uAgent = "" + req.headers['user-agent'];
+        console.log(session);
+        let pppRequest = [ip, session];
+        EasyStore.findOne({ full: pppRequest }).exec()
+          .then(ppp => {
+            let oldTime = ppp.date + 60000;
+            console.log(" 1. Mongo date :" + ppp.date + " 2. Mongo date converted: " + new Date(ppp.date) + " 3. Mongo date + 60 seconds: " + oldTime);
+            if (cTime > oldTime) {
+              EasyStore.updateOne({ full: pppRequest, ip, cTime, session, uAgent }).exec();
+              return res.json({ success: true, message: "1" });
+            } else {
+              EasyStore.updateOne({ full: pppRequest, ip, cTime, session, uAgent }).exec();
+              return res.json({ success: false, message: "4" });
+            }
+          });
+        //var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
+        //var mimetype = mime.lookup(streamPart);
+        //res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
+        //res.setHeader('Content-type', mimetype);
+        //var filestream = fs.createReadStream(streamPart);
+        //filestream.pipe(res);
       } else {
         //console.log("Couldn't find encoded file");
-        return next();
+        res.render('encoding/encoded-file-no-exist.ejs');
       }
     })
       .catch(err => {
