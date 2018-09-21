@@ -9,7 +9,7 @@ module.exports = mongoose.model('EasyStore', mongoose.Schema({
     type: String,
     index: true
   },
-  session: {
+  wallet: {
     type: String,
     index: true
   },
