@@ -1038,6 +1038,38 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.setHeader('Content-type', mimetype);
         var filestream = fs.createReadStream(streamPlaylist);
         filestream.pipe(res);
+      } else if (req.params.encoded == "ts1.ts") {
+        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        let ip = get_ip.getClientIp(req);
+        var cTime = new Date().getTime();
+        let cWallet = req.user.profileAddress;
+        let uAgent = "" + req.headers['user-agent'];
+        let username = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
+        EasyStore.findOne({ ip: ip, wallet: cWallet }).exec()
+          .then(ppp => {
+            var oldTime = new Date(ppp.date).getTime();
+            oldTime += (60000);
+            console.log(" 1. Mongo date :" + ppp.date + " 3. Mongo date + 60 seconds: " + oldTime);
+            if (cTime > oldTime) {
+              var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
+              var mimetype = mime.lookup(streamPart);
+              res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
+              res.setHeader('Content-type', mimetype);
+              var filestream = fs.createReadStream(streamPart);
+              filestream.pipe(res);
+              console.log("1");
+              EasyStore.findOneAndUpdate({ ip: ip, user: username, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
+            } else {
+              var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
+              var mimetype = mime.lookup(streamPart);
+              res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
+              res.setHeader('Content-type', mimetype);
+              var filestream = fs.createReadStream(streamPart);
+              filestream.pipe(res);
+              console.log("4");
+              EasyStore.findOneAndUpdate({ ip: ip, user: username, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
+            }
+          });
       } else if (req.params.encoded == req.params.encoded.match(/ts[0-9]+/) + ".ts") {
         var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
         var mimetype = mime.lookup(streamPart);
@@ -1045,38 +1077,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         res.setHeader('Content-type', mimetype);
         var filestream = fs.createReadStream(streamPart);
         filestream.pipe(res);
-        if (req.params.encoded == "ts1.ts") {
-          const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-          let ip = get_ip.getClientIp(req);
-          var cTime = new Date();
-          let cWallet = req.user.profileAddress;
-          let uAgent = "" + req.headers['user-agent'];
-          let username = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
-          return EasyStore.findOne({ ip: ip, wallet: cWallet }).exec()
-            .then(ppp => {
-              let oldTime = ppp.date + 60000;
-              console.log(" 1. Mongo date :" + ppp.date + " 2. Mongo date converted: " + new Date(ppp.date) + " 3. Mongo date + 60 seconds: " + oldTime);
-              if (cTime > oldTime) {
-                var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
-                var mimetype = mime.lookup(streamPart);
-                res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
-                res.setHeader('Content-type', mimetype);
-                var filestream = fs.createReadStream(streamPart);
-                filestream.pipe(res);
-                console.log("1");
-                EasyStore.findOneAndUpdate({ ip: ip, user: username, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
-              } else {
-                var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
-                var mimetype = mime.lookup(streamPart);
-                res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
-                res.setHeader('Content-type', mimetype);
-                var filestream = fs.createReadStream(streamPart);
-                filestream.pipe(res);
-                console.log("4");
-                EasyStore.findOneAndUpdate({ ip: ip, user: username, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
-              }
-            });
-        }
       } else {
         //console.log("Couldn't find encoded file");
         res.render('encoding/encoded-file-no-exist.ejs');
