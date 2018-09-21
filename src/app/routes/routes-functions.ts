@@ -11,6 +11,7 @@ const Blacklist = require('../models/blacklist');
 const get_ip = require('request-ip');
 let publicPagesEnabled = false;
 var numberOfPhoneUsedTimesVal = 0;
+const ConfigUtils = require('../../config/config');
 var phoneNumberVal = 0;
 var pinVal = crypto.randomBytes(20).toString('hex') + crypto.randomBytes(12).toString('hex');
 var tVal = new Date().toISOString();
@@ -24,12 +25,11 @@ module.exports = {
     setSignUpFlag: function (isSignup) {
         return function (req, res, next) {
             req.session.signup = isSignup;
-            if(req.query.isMusician) {
-                req.session.isMusician=true;
+            if (req.query.isMusician) {
+                req.session.isMusician = true;
             }
-            else if(req.query.isReviewers)
-            {
-                req.session.isReviewers=true;
+            else if (req.query.isReviewers) {
+                req.session.isReviewers = true;
             }
             next();
         }
@@ -237,10 +237,10 @@ module.exports = {
 
 
     adminOnly: function (req, res, next) {
-        let url:String = req.originalUrl;
-        if(url.indexOf("/admin/users")>-1 && req.user.role=="Reviewers")
+        let url: String = req.originalUrl;
+        if (url.indexOf("/admin/users") > -1 && req.user.role == "Reviewers")
             return next();
-        
+
         // if user is authenticated in the session, carry on
         if (module.exports.isAdmin(req.user))
             return next();
@@ -251,6 +251,21 @@ module.exports = {
 
     isAdmin: function (user) {
         return (user && user.google && user.google.email && user.google.email.endsWith("@musicoin.org"));
+    },
+
+    remoteIpCheck: function (req, res, next) {
+        const ConfigUtils = require('../../config/config');
+        if (module.exports.ipMatch(get_ip.getClientIp(req), config.remoteIpList)) {
+        
+        } else {
+            //request's ipaddress not local we send error message.
+            var result = {
+                result: false,
+                message: 'unauthorized request',
+                ip: get_ip.getClientIp(req) || 'your-ip'
+            }
+            res.send(JSON.stringify(result));
+        }
     },
 
     hasProfile: function (req, res, next) {
@@ -507,5 +522,39 @@ module.exports = {
                 }
             });
         }
+    },
+    ipMatch: function (clientIp, list) {
+        var Address = require('ipaddr.js');
+        var isNumeric = function (n) { return !isNaN(parseFloat(n)) && isFinite(n); };
+
+
+        if (clientIp && Address.isValid(clientIp)) {
+            // `Address.process` return the IP instance in IPv4 or IPv6 form.
+            // It will return IPv4 instance if it's a IPv4 mroutered IPv6 address
+            clientIp = Address.process(clientIp);
+
+            return list.some(function (e) {
+                // IPv6 address has 128 bits and IPv4 has 32 bits.
+                // Setting the routing prefix to all bits in a CIDR address means only the specified address is allowed.
+                e = e || '';
+                e = e.indexOf('/') === -1 ? e + '/128' : e;
+
+                var range = e.split('/');
+                if (range.length === 2 && Address.isValid(range[0]) && isNumeric(range[1])) {
+                    var ip = Address.process(range[0]);
+                    var bit = parseInt(range[1], 10);
+
+                    // `IP.kind()` return `'ipv4'` or `'ipv6'`. Only same type can be `match`.
+                    if (clientIp.kind() === ip.kind()) {
+                        return clientIp.match(ip, bit);
+                    }
+                }
+
+                return false;
+            });
+        }
+
+        return false;
     }
+
 };

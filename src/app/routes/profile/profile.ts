@@ -565,7 +565,7 @@ export class ProfileRouter {
 
         router.post('/api/getUserInfoById', function (req, res) {
             //checking request's ip adress. if request source not local network, we don't servise api.
-            if (ipMatch(get_ip.getClientIp(req), whiteLocalIpList)) {
+            if (functions.ipMatch(get_ip.getClientIp(req), whiteLocalIpList)) {
                 //request's ipaddress local. we can send user information.
                 functions.FindUserByIdOrProfileAddress(req, function (_result) {
                     res.send(JSON.stringify(_result));
@@ -583,7 +583,7 @@ export class ProfileRouter {
         router.get('/api/getUserInfoById/:userAccessKey', function (req, res) {
             //checking request's ip adress. if request source not local network, we don't servise api.
 
-            if (ipMatch(get_ip.getClientIp(req), whiteLocalIpList)) {
+            if (functions.ipMatch(get_ip.getClientIp(req), whiteLocalIpList)) {
                 //request's ipaddress local. we can send user information.
                 functions.FindUserByIdOrProfileAddress(req, function (_result) {
                     res.send(JSON.stringify(_result));
@@ -762,41 +762,6 @@ export class ProfileRouter {
                     res.json({ success: false, message: err.message });
                 });
         });
-
-        var isNumeric = function (n) { return !isNaN(parseFloat(n)) && isFinite(n); };
-
-        var ipMatch = function (clientIp, list) {
-            var Address = require('ipaddr.js');
-
-
-            if (clientIp && Address.isValid(clientIp)) {
-                // `Address.process` return the IP instance in IPv4 or IPv6 form.
-                // It will return IPv4 instance if it's a IPv4 mroutered IPv6 address
-                clientIp = Address.process(clientIp);
-
-                return list.some(function (e) {
-                    // IPv6 address has 128 bits and IPv4 has 32 bits.
-                    // Setting the routing prefix to all bits in a CIDR address means only the specified address is allowed.
-                    e = e || '';
-                    e = e.indexOf('/') === -1 ? e + '/128' : e;
-
-                    var range = e.split('/');
-                    if (range.length === 2 && Address.isValid(range[0]) && isNumeric(range[1])) {
-                        var ip = Address.process(range[0]);
-                        var bit = parseInt(range[1], 10);
-
-                        // `IP.kind()` return `'ipv4'` or `'ipv6'`. Only same type can be `match`.
-                        if (clientIp.kind() === ip.kind()) {
-                            return clientIp.match(ip, bit);
-                        }
-                    }
-
-                    return false;
-                });
-            }
-
-            return false;
-        };
     }
     getRouter() {
         return router;

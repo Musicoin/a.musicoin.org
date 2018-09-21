@@ -601,7 +601,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });
   });
 
-  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
+  app.get('/ppp-fallback/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
     getPlaybackEligibility(req)
       .then(playbackEligibility => {
         if (!playbackEligibility.success) {
@@ -634,104 +634,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     musicoinApi.getAccountFromLicense(req.params.address).then(function (accountFromLicense) {
       return musicoinApi.sendRewardExtraPPP(accountFromLicense);
     });
-    const address = FormUtils.defaultString(req.params.address, null);
-    if (!address) {
-      console.log(`Failed to load track page, no address provided`);
-      return res.render('not-found.ejs');
-    }
-    const l = jsonAPI.getLicense(address);
-    const r = Release.findOne({ contractAddress: address, state: 'published' })
-
-    Promise.join(l, r, (license, release) => {
-      if (!license || !release) {
-        console.log(`Failed to load track page for license: ${address}, err: Not found`);
-        return res.render('not-found.ejs');
-      }
-      fs.stat(config.streaming.tracks + '/' + address + '/' + 'index.m3u8', function (err) {
-        if (err == null) {
-          //console.log("hls transcoding already done");
-        } else if (err.code == 'ENOENT') {
-          fs.stat(config.streaming.org + '/' + address + '/' + address + '.mp3', function (err) {
-            if (err == null) {
-              //console.log("track already saved");
-              fs.stat(config.streaming.org + '/' + address + '/' + 'index.m3u8', function (err) {
-                if (err == null) {
-                  //console.log("hls transcoding already done");
-                } else if (err.code == 'ENOENT') {
-                  require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + address + '/' + address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + address + ' && cd ' + config.streaming.org + '/' + address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + address + '/' + ' \\;');
-                } else {
-                  console.log('Something went wrong with hls file detection', err.code);
-                }
-              });
-              res.render('encoding/encoding-not-done.ejs');
-            } else if (err.code == 'ENOENT') {
-              aria2.open();
-              aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
-              aria2.on("onDownloadError", ([guid]) => {
-                console.log('trackDownloadError: ' + address, guid);
-              });
-              aria2.on("onDownloadStart", ([guid]) => {
-                console.log('trackDownloadStart: ' + address, guid);
-              });
-              aria2.on("onDownloadComplete", ([guid]) => {
-                console.log('trackDownloadComplete: ' + address, guid);
-                aria2.close();
-                fs.stat(config.streaming.org + '/' + address + '/' + 'index.m3u8', function (err) {
-                  if (err == null) {
-                    //console.log("hls transcoding already done");
-                  } else if (err.code == 'ENOENT') {
-                    require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + address + '/' + address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + address + ' && cd ' + config.streaming.org + '/' + address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + address + '/' + ' \\;');
-                  } else {
-                    console.log('Something went wrong with hls file detection', err.code);
-                  }
-                });
-                res.render('encoding/encoding-not-done.ejs');
-              });
-            } else {
-              console.log('Save file from ppp error', err.code);
-            }
-          });
-        } else {
-          console.log('Something went wrong with hls file detection', err.code);
-        }
-      });
-    })
-      .catch(err => {
-        console.log(`Failed to load track page for license: ${address}, err: ${err}`);
-        res.render('not-found.ejs');
-      })
-  });
-
-  app.get('/ppp-fallback/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
-    getPlaybackEligibility(req)
-      .then(playbackEligibility => {
-        if (!playbackEligibility.success) {
-          console.log("Rejecting ppp request: " + JSON.stringify(playbackEligibility));
-          return res.send(new Error("PPP request failed: " + playbackEligibility.message));
-        }
-
-        const context = { contentType: "audio/mpeg" };
-        const l = musicoinApi.getLicenseDetails(req.params.address);
-        const r = Release.findOne({ contractAddress: req.params.address, state: "published" }).exec();
-
-        return Promise.join(l, r, (license, release) => {
-          return getPPPKeyForUser(req, release, license, playbackEligibility)
-            .then(keyResponse => {
-              return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
-                .then(function (result) {
-                  res.sendSeekable(result.stream, {
-                    type: context.contentType,
-                    length: result.headers['content-length']
-                  });
-                })
-            })
-        })
-      })
-      .catch(function (err) {
-        console.error(err.stack);
-        res.status(500);
-        res.send("Failed to play track");
-      });
     const address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
       console.log(`Failed to load track page, no address provided`);
@@ -1018,7 +920,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/tracks/:address/:encoded', function (req, res, next) {
-    const address = FormUtils.defaultString(req.params.address, null);
+    var address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
       console.log(`Failed to load track page, no address provided`);
       return res.render('not-found.ejs');
@@ -1031,43 +933,46 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log(`Failed to load track page for license: ${address}, err: Not found`);
         return res.render('not-found.ejs');
       }
+      var streamPlaylist = config.streaming.tracks + '/' + address + '/' + 'index.m3u8';
+      var mimetype = mime.lookup(streamPlaylist);
       if (req.params.encoded == "index.m3u8") {
-        var streamPlaylist = config.streaming.tracks + '/' + address + '/' + 'index.m3u8';
-        var mimetype = mime.lookup(streamPlaylist);
         res.setHeader('Content-disposition', 'attachment; filename=index.m3u8');
         res.setHeader('Content-type', mimetype);
         var filestream = fs.createReadStream(streamPlaylist);
         filestream.pipe(res);
-      } else if (req.params.encoded == "ts1.ts") {
+      } else if (req.params.encoded == "ts2.ts") {
         const options = { upsert: true, new: true, setDefaultsOnInsert: true };
         let ip = get_ip.getClientIp(req);
-        var cTime = new Date().getTime();
+        let cTime = new Date().getTime();
+        console.log(cTime);
         let cWallet = req.user.profileAddress;
         let uAgent = "" + req.headers['user-agent'];
-        let username = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
+        let userName = req.user && req.user.draftProfile
+        ? req.user.draftProfile.artistName
+        : req.user ? req.user._id : get_ip.getClientIp(req);
         EasyStore.findOne({ ip: ip, wallet: cWallet }).exec()
           .then(ppp => {
-            var oldTime = new Date(ppp.date).getTime();
-            oldTime += (60000);
-            console.log(" 1. Mongo date :" + ppp.date + " 3. Mongo date + 60 seconds: " + oldTime);
+            let oldTime = new Date(ppp.date).getTime();
+            oldTime += (config.freePlayDelay);
             if (cTime > oldTime) {
-              var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
-              var mimetype = mime.lookup(streamPart);
               res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
               res.setHeader('Content-type', mimetype);
               var filestream = fs.createReadStream(streamPart);
               filestream.pipe(res);
-              console.log("1");
-              EasyStore.findOneAndUpdate({ ip: ip, user: username, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
+              EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
+              musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
+                return musicoinApi.pppFromProfile(accountFromLicense, address);
+              });
+              musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
+                return musicoinApi.sendRewardExtraPPP(accountFromLicense);
+              });
+              address = "";
             } else {
-              var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
-              var mimetype = mime.lookup(streamPart);
               res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
               res.setHeader('Content-type', mimetype);
               var filestream = fs.createReadStream(streamPart);
               filestream.pipe(res);
-              console.log("4");
-              EasyStore.findOneAndUpdate({ ip: ip, user: username, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
+              EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
             }
           });
       } else if (req.params.encoded == req.params.encoded.match(/ts[0-9]+/) + ".ts") {
