@@ -1,11 +1,11 @@
 import * as mongoose from 'mongoose';
 
 module.exports = mongoose.model('EasyStore', mongoose.Schema({
-  full: {
-    type: Object,
+  ip: {
+    type: String,
     index: true
   },
-  ip: {
+  user: {
     type: String,
     index: true
   },

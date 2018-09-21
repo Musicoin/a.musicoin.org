@@ -1018,7 +1018,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/tracks/:address/:encoded', function (req, res, next) {
-    // TODO: include add new ppp execution here
     const address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
       console.log(`Failed to load track page, no address provided`);
@@ -1052,14 +1051,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           var cTime = new Date();
           let cWallet = req.user.profileAddress;
           let uAgent = "" + req.headers['user-agent'];
-          let pppRequest = [ip, cWallet];
-          const d = EasyStore.findOne({ full: pppRequest }).exec();
-          console.log(d);
-          console.log(d.date);
-          return EasyStore.findOneAndUpdate({ full: pppRequest, ip: ip, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec()
+          let username = req.user && req.user.draftProfile ? req.user.draftProfile.artistName : "Anonymous";
+          return EasyStore.findOne({ ip: ip, wallet: cWallet }).exec()
             .then(ppp => {
-              let oldTime = d.date + 60000;
-              console.log(" 1. Mongo date :" + d.date + " 2. Mongo date converted: " + new Date(d.date) + " 3. Mongo date + 60 seconds: " + oldTime);
+              let oldTime = ppp.date + 60000;
+              console.log(" 1. Mongo date :" + ppp.date + " 2. Mongo date converted: " + new Date(ppp.date) + " 3. Mongo date + 60 seconds: " + oldTime);
               if (cTime > oldTime) {
                 var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
                 var mimetype = mime.lookup(streamPart);
@@ -1068,6 +1064,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 var filestream = fs.createReadStream(streamPart);
                 filestream.pipe(res);
                 console.log("1");
+                EasyStore.findOneAndUpdate({ ip: ip, user: username, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
               } else {
                 var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
                 var mimetype = mime.lookup(streamPart);
@@ -1076,6 +1073,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 var filestream = fs.createReadStream(streamPart);
                 filestream.pipe(res);
                 console.log("4");
+                EasyStore.findOneAndUpdate({ ip: ip, user: username, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
               }
             });
         }

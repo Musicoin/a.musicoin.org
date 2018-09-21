@@ -110,7 +110,6 @@ export class ReleaseManagerRouter {
         })
     });
 
-
     router.post('/update', function (req: any, res) {
       if (req.user && req.user.blocked) {
         return res.redirect("/profile?releaseError=true");
