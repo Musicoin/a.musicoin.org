@@ -13,13 +13,13 @@ module.exports = mongoose.model('EasyStore', mongoose.Schema({
     type: String,
     index: true
   },
+  agent: {
+    type: String,
+    index: true
+  },
   date: {
     type: Date,
     default: Date.now,
-    index: true
-  },
-  agent: {
-    type: String,
     index: true
   }
 }));
