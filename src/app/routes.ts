@@ -916,35 +916,36 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const options = { upsert: true, new: true, setDefaultsOnInsert: true };
         let ip = get_ip.getClientIp(req);
         let cTime = new Date().getTime();
-        console.log(cTime);
         let cWallet = req.user.profileAddress;
         let uAgent = "" + req.headers['user-agent'];
         let userName = req.user && req.user.draftProfile
           ? req.user.draftProfile.artistName
-          : req.user ? req.user._id : get_ip.getClientIp(req);
-        EasyStore.findOne({ ip: ip, wallet: cWallet }).exec()
+          : req.user ? req.user._id : ip;
+        EasyStore.find({ ip: ip })
+          .sort({ _id: -1 })
+          .limit(1)
+          .exec()
           .then(ppp => {
-            let oldTime = new Date(ppp.date).getTime();
+            let oldTime = new Date(ppp[0].date).getTime();
             oldTime += (config.freePlayDelay);
             if (cTime > oldTime) {
               res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
               res.setHeader('Content-type', mimetype);
               var filestream = fs.createReadStream(streamPart);
               filestream.pipe(res);
-              EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
-              musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
-                return musicoinApi.pppFromProfile(accountFromLicense, address);
-              });
-              musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
-                return musicoinApi.sendRewardExtraPPP(accountFromLicense);
-              });
-              address = "";
+              EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
+              return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
+                musicoinApi.pppFromProfile(accountFromLicense, address);
+                musicoinApi.sendRewardExtraPPP(accountFromLicense);
+                address = "";
+                accountFromLicense = "";
+              })
             } else {
               res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
               res.setHeader('Content-type', mimetype);
               var filestream = fs.createReadStream(streamPart);
               filestream.pipe(res);
-              EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent }, {}, options).exec();
+              EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
             }
           });
       } else if (req.params.encoded == req.params.encoded.match(/ts[0-9]+/) + ".ts") {
