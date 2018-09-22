@@ -18,6 +18,8 @@
 <meta name="video_width"    content="435">
 <meta name="video_type"     content="application/x-shockwave-flash">
 
+<meta property="og:video" content="https://musicoin.org/music-player/<%=license.address%>">
+<meta property="og:video:secure_url" content="https://musicoin.org/music-player/<%=license.address%>">
 <meta property="og:video:type" content="text/html">
 <meta property="og:video:height" content="150">
 <meta property="og:video:width" content="435">
@@ -26,11 +28,9 @@
 <!-- <meta name="twitter:card" content="summary"> -->
 <meta name="twitter:site" content="@musicoins">
 <meta property="twitter:card" content="player">
+<meta property="twitter:player" content="https://musicoin.org/music-player/<%=license.address%>">
 <meta property="twitter:player:height" content="150">
 <meta property="twitter:player:width" content="435">
-
-<link rel="alternate" type="application/json+oembed" href="https://musicoin.org/services/oembed?url=https://musicoin.org/track/<%=license.address%>&format=json" title="<%=license.title%>" />
-<link rel="alternate" type="text/xml+oembed" href="https://musicoin.org/services/oembed?url=https://musicoin.org/track/<%=license.address%>&format=xml" title="<%=license.title%>" />
 
 <noscript><article itemscope itemtype="http://schema.org/MusicRecording">
   <header>
@@ -39,6 +39,7 @@
     published on <time pubdate>2012-01-20T22:06:27Z</time>
 
       <meta itemprop="height" content="400px" /></div>
+      <div itemscope itemprop="video" itemtype="https://schema.org/VideoObject"><meta itemprop="embedUrl" content="https://musicoin.org/music-player/<%=license.address%>" /><meta itemprop="height" content="400px" /></div>
       <div itemscope itemprop="byArtist" itemtype="http://schema.org/MusicGroup"><meta itemprop="name" content="The Bugle" /><meta itemprop="url" content="/artist/<%=license.artistAddress%>" /></div>
       <div itemscope itemprop="provider" itemtype="http://schema.org/Organization"><meta itemprop="name" content="Musicoin" /><meta itemprop="image" content="https://musicoin.org/images/logon.png" /></div>
   </header>

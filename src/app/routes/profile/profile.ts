@@ -119,7 +119,8 @@ export class ProfileRouter {
                     if (err == null) {
                         //console.log("hls transcoding already done");
                         return doRender(req, res, "player/simple-player.ejs", {
-                            trackAddress: 'http://51.38.49.153:8080/tracks/' + address + '/index.m3u8',
+                            // TODO: Change to baseurl (musicoin.org) in the production 
+                            trackAddress: 'https://a.musicoin.org/tracks/' + address + '/index.m3u8',
                             license: license
                         });
                     } else if (err.code == 'ENOENT') {
@@ -209,10 +210,11 @@ export class ProfileRouter {
                     fs.stat(config.streaming.tracks + '/' + address + '/' + 'index.m3u8', function (err) {
                         if (err == null) {
                             //console.log("hls transcoding already done");
+                            // TODO: Change to baseurl (musicoin.org) in the production
                             return doRender(req, res, "track.ejs", {
                                 artist: response.artist,
                                 license: license,
-                                trackAddress: 'http://51.38.49.153:8080/tracks/' + address + '/index.m3u8',
+                                trackAddress: 'https://a.musicoin.org/tracks/' + address + '/index.m3u8',
                                 contributors: resolvedAddresses,
                                 releaseId: release._id,
                                 description: release.description,
@@ -243,7 +245,7 @@ export class ProfileRouter {
                                     res.render('encoding/encoding-not-done.ejs');
                                 } else if (err.code == 'ENOENT') {
                                     aria2.open();
-                                    console.log('aria2c ' + ' --allow-overwrite=true ' + musicoinApi.getPPPUrl(address) + ' -d ' + config.streaming.org + '/' + address + ' -o ' + address + ".mp3");
+                                    //console.log('aria2c ' + ' --allow-overwrite=true ' + musicoinApi.getPPPUrl(address) + ' -d ' + config.streaming.org + '/' + address + ' -o ' + address + ".mp3");
                                     aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
                                     aria2.on("onDownloadError", ([guid]) => {
                                         console.log('trackDownloadError: ' + address, guid);
