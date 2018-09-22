@@ -243,6 +243,7 @@ export class ProfileRouter {
                                     res.render('encoding/encoding-not-done.ejs');
                                 } else if (err.code == 'ENOENT') {
                                     aria2.open();
+                                    console.log('aria2c ' + ' --allow-overwrite=true ' + musicoinApi.getPPPUrl(address) + ' -d ' + config.streaming.org + '/' + address + ' -o ' + address + ".mp3");
                                     aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
                                     aria2.on("onDownloadError", ([guid]) => {
                                         console.log('trackDownloadError: ' + address, guid);
