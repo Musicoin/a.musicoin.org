@@ -779,7 +779,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         console.log(`Failed to load track page for license: ${address}, err: Not found`);
         return res.render('not-found.ejs');
       }
-      require('child_process').exec('aria2c ' + ' --allow-overwrite=true ' + musicoinApi.getPPPUrl(allReleases[i]) + ' -d ' + config.streaming.org + '/' + allReleases[i] + ' -o ' + allReleases[i] + ".mp3");
+      require('child_process').exec('aria2c ' + ' --allow-overwrite=true ' + musicoinApi.getPPPUrl(address) + ' -d ' + config.streaming.org + '/' + address + ' -o ' + address + ".mp3");
       return doRender(req, res, "encoding/switch-original-track.ejs", { track: address });
     })
       .catch(err => {

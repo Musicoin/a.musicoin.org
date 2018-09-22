@@ -254,7 +254,7 @@ module.exports = {
     },
 
     remoteIpCheck: function (req, res, next) {
-        const ConfigUtils = require('../../config/config');
+        let config = ConfigUtils.getConfig();
         if (module.exports.ipMatch(get_ip.getClientIp(req), config.remoteIpList)) {
         
         } else {
