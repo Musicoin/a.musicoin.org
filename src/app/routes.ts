@@ -947,6 +947,21 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               filestream.pipe(res);
               EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
             }
+          })
+          .catch(err => {
+            let fallBackTime = cTime;
+            fallBackTime -= (config.freePlayDelay);
+            res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
+            res.setHeader('Content-type', mimetype);
+            var filestream = fs.createReadStream(streamPart);
+            filestream.pipe(res);
+            EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: fallBackTime }, {}, options).exec();
+            return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
+              musicoinApi.pppFromProfile(accountFromLicense, address);
+              musicoinApi.sendRewardExtraPPP(accountFromLicense);
+              address = "";
+              accountFromLicense = "";
+            })
           });
       } else if (req.params.encoded == req.params.encoded.match(/ts[0-9]+/) + ".ts") {
         var mimetype = mime.lookup(streamPart);
