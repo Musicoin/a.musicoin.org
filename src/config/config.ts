@@ -64,6 +64,7 @@ function getStructuredConfig(keyValueConfig) {
       tracks: keyValueConfig.streamingTracksLocation,
       org: keyValueConfig.streamingOrgFiles,
       segments: keyValueConfig.streamingSegments,
+      legacyToken: keyValueConfig.legacyToken
     },
     ipfs: {
       ipfsHost: keyValueConfig.ipfsReadEndpoint,
@@ -303,7 +304,9 @@ function getDefaultKeyValueConfig() {
 
         streamingOrgFiles: env.STREAMING_ORG_FILES || '/var/www/mcorg/streaming-storage/org',
 
-        regionalAccount: env.REGIONAL_ACCOUNT || ['0x9fa5bd7c26e9dfc0e17846866389aca200c4e941', '0x610ec47329c28a85f006b236e433b4f98074ba60']
+        regionalAccount: env.REGIONAL_ACCOUNT || ['0x9fa5bd7c26e9dfc0e17846866389aca200c4e941', '0x610ec47329c28a85f006b236e433b4f98074ba60'],
+
+        legacyToken: env.LEGACY_TOKEN || 'lonuy4Suzahghiech3ung0eiRuMax5'
 
       };
     });

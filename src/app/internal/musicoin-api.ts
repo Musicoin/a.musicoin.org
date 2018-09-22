@@ -7,6 +7,7 @@ import * as UrlUtils from '../utils/url-utils';
 import ReadableStream = NodeJS.ReadableStream;
 const cachedRequest = require('cached-request')(request);
 const cacheDir = os.tmpdir() + "/request-cache";
+const ConfigUtils = require('../../config/config');
 cachedRequest.setCacheDirectory(cacheDir);
 cachedRequest.setValue('ttl', 30000);
 
@@ -95,8 +96,9 @@ export class MusicoinAPI {
   }
 
   getPPPUrl(address: string) {
+    let config = ConfigUtils.getConfig();
     //return "https://musicoin.org/ppp/" + UrlUtils.createExpiringLink(address, 3000 * 60);
-    return "http://127.0.0.1:3001/ppp-fallback/" + UrlUtils.createExpiringLink(address, 3000 * 60) + "/lonuy4Suzahghiech3ung0eiRuMax5";
+    return "http://127.0.0.1:3001/ppp-fallback/" + UrlUtils.createExpiringLink(address, 3000 * 60) + "/" + config.streaming.legacyToken;
   }
 
   updateTrack(

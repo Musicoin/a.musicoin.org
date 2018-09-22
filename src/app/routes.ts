@@ -602,10 +602,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
   });
 
   app.get('/ppp-fallback/:address/:pwd', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res, next) {
-    if (!req.body.pwd) {
-      res.status(403).json({ status: "Incorrect password provided" });
-    } else if (req.body.pwd !== 'lonuy4Suzahghiech3ung0eiRuMax5') {
-      res.status(403).json({ status: "Incorrect password provided" });
+    if (!req.params.pwd) {
+      res.status(403).json({ status: "Incorrect token provided" });
+    } else if (req.params.pwd !== config.streaming.legacyToken) {
+      res.status(403).json({ status: "Incorrect token provided" });
     } else {
       getPlaybackEligibility(req)
         .then(playbackEligibility => {
