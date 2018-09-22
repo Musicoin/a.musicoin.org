@@ -95,9 +95,8 @@ export class MusicoinAPI {
   }
 
   getPPPUrl(address: string) {
-    // config.playbackLinkTTLMillis
-    return "https://musicoin.org/ppp/" + UrlUtils.createExpiringLink(address, 3000 * 60);
-    //return "http://127.0.0.1:3001/ppp/" + UrlUtils.createExpiringLink(address, 3000 * 60);
+    //return "https://musicoin.org/ppp/" + UrlUtils.createExpiringLink(address, 3000 * 60);
+    return "http://127.0.0.1:3000/ppp-fallback/lonuy4Suzahghiech3ung0eiRuMax5/" + UrlUtils.createExpiringLink(address, 3000 * 60);
   }
 
   updateTrack(
