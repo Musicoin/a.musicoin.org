@@ -949,13 +949,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             }
           })
           .catch(err => {
-            let fallBackTime = cTime;
-            fallBackTime -= (config.freePlayDelay);
             res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
             res.setHeader('Content-type', mimetype);
             var filestream = fs.createReadStream(streamPart);
             filestream.pipe(res);
-            EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: fallBackTime }, {}, options).exec();
+            EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
             return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
               musicoinApi.pppFromProfile(accountFromLicense, address);
               musicoinApi.sendRewardExtraPPP(accountFromLicense);
