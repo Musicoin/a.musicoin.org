@@ -890,7 +890,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.get('/tracks/:address/status', function (req, res, next) {
+  app.get('/encoding-status/:address', function (req, res, next) {
     var address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
       res.status(500).json({ error: `Failed to load track page, no address provided` });
@@ -931,7 +931,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     Promise.join(l, r, (license, release) => {
       if (!license || !release) {
         console.log(`Failed to load track page for license: ${address}, err: Not found`);
-        //return res.render('not-found.ejs');
+        return res.render('not-found.ejs');
       }
       var streamPlaylist = config.streaming.tracks + '/' + address + '/' + 'index.m3u8';
       var streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
