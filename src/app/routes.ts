@@ -945,7 +945,8 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const options = { upsert: true, new: true, setDefaultsOnInsert: true };
         let ip = get_ip.getClientIp(req);
         let cTime = new Date().getTime();
-        let cWallet = req.user.profileAddress;
+        let cWallet = req.user && req.user.draftProfile
+        ? req.user.profileAddress : req.user ? req.user._id : "Anonymous";
         let uAgent = "" + req.headers['user-agent'];
         let userName = req.user && req.user.draftProfile
           ? req.user.draftProfile.artistName
