@@ -112,7 +112,7 @@ export class ProfileRouter {
 
             Promise.join(l, r, (license, release) => {
                 if (!license || !release) {
-                    console.log(`Failed to load track page for license: ${address}, err: Not found`);
+                    //console.log(`Failed to load track page for license: ${address}, err: Not found`);
                     return res.render('not-found.ejs');
                 }
                 fs.stat(config.streaming.tracks + '/' + address + '/' + 'index.m3u8', function (err) {
