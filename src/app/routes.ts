@@ -890,6 +890,35 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.get('/tracks/:address/status', function (req, res, next) {
+    var address = FormUtils.defaultString(req.params.address, null);
+    if (!address) {
+      res.status(500).json({ error: `Failed to load track page, no address provided` });
+    }
+    const l = jsonAPI.getLicense(address);
+    const r = Release.findOne({ contractAddress: address, state: 'published' })
+
+    Promise.join(l, r, (license, release) => {
+      if (!license || !release) {
+        res.status(500).json({ error: `Failed to load track page for license: ${address}, err: Not found` });
+      }
+      fs.stat(config.streaming.org + '/' + address + '/' + 'index.m3u8', function (err) {
+        if (err == null) {
+          res.status(200).json({ message: '"hls transcoding already done' });
+        } else if (err.code == 'ENOENT') {
+          require('child_process').exec('ffmpeg -re -i ' + config.streaming.org + '/' + address + '/' + address + '.mp3' + ' -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ' + config.streaming.segments + ' -segment_format mpegts -segment_list ' + config.streaming.org + '/' + address + '/' + 'index.m3u8 -segment_list_type m3u8 ' + config.streaming.org + '/' + address + '/ts%d.ts ' + '&& cd ' + config.streaming.tracks + '/' + ' && mkdir ' + address + ' && cd ' + config.streaming.org + '/' + address + '/' + ' && find . ' + "-regex '.*\\.\\(ts\\|m3u8\\)' -exec mv {} " + config.streaming.tracks + '/' + address + '/' + ' \\;');
+          res.status(500).json({ error: `Encoding not done yet. Encoding process launched automatically.` });
+        } else {
+          console.log('Something went wrong with hls file detection', err.code);
+        }
+      });
+    })
+      .catch(err => {
+        console.log(`Failed to load track page for license: ${address}, err: ${err}`);
+        res.render('not-found.ejs');
+      })
+  });
+
   app.get('/tracks/:address/:encoded', function (req, res, next) {
     var address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
