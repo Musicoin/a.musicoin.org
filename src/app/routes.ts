@@ -950,6 +950,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         let userName = req.user && req.user.draftProfile
           ? req.user.draftProfile.artistName
           : req.user ? req.user._id : ip;
+        let user = req.isAuthenticated() ? req.user : req.anonymousUser;
+        let userId = req.isAuthenticated() ? user._id : null;
+        let anonymousUserId = req.isAuthenticated() ? null : user._id;
         EasyStore.find({ ip: ip })
           .sort({ _id: -1 })
           .limit(1)
@@ -966,6 +969,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
                 musicoinApi.pppFromProfile(accountFromLicense, address);
                 musicoinApi.sendRewardExtraPPP(accountFromLicense);
+                jsonAPI.addToReleasePlayCount(userId, anonymousUserId, release._id);
                 address = "";
                 accountFromLicense = "";
               })
@@ -986,6 +990,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
               musicoinApi.pppFromProfile(accountFromLicense, address);
               musicoinApi.sendRewardExtraPPP(accountFromLicense);
+              jsonAPI.addToReleasePlayCount(userId, anonymousUserId, release._id);
               address = "";
               accountFromLicense = "";
             })
