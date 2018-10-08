@@ -120,7 +120,7 @@ export class ProfileRouter {
                         //console.log("hls transcoding already done");
                         return doRender(req, res, "player/simple-player.ejs", {
                             // TODO: Change to baseurl (musicoin.org) in the production 
-                            trackAddress: 'https://a.musicoin.org/tracks/' + address + '/index.m3u8',
+                            trackAddress: 'https://musicoin.org/tracks/' + address + '/index.m3u8',
                             license: license
                         });
                     } else if (err.code == 'ENOENT') {
@@ -214,7 +214,7 @@ export class ProfileRouter {
                             return doRender(req, res, "track.ejs", {
                                 artist: response.artist,
                                 license: license,
-                                trackAddress: 'https://a.musicoin.org/tracks/' + address + '/index.m3u8',
+                                trackAddress: 'https://musicoin.org/tracks/' + address + '/index.m3u8',
                                 contributors: resolvedAddresses,
                                 releaseId: release._id,
                                 description: release.description,
