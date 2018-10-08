@@ -918,7 +918,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
-  app.get('/tracks/:address/:encoded', function (req, res, next) {
+  app.get('/tracks/:address/:encoded', populateAnonymousUser, function (req, res, next) {
     var address = FormUtils.defaultString(req.params.address, null);
     if (!address) {
       console.log(`Failed to load track page, no address provided`);
