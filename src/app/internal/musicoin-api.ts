@@ -202,14 +202,6 @@ export class MusicoinAPI {
       });
   }
 
-  getCoverFromLicense(licenseAddress: string) {
-    return this.getJson(this.apiConfig.getLicenseDetails + '/' + licenseAddress, 60 * 1000)
-      .then(function (response) {
-        if (response.err) throw response.err;
-        return "https://musicoin.org" + response.image;
-      });
-  }
-
   sendRewardExtraPPP(recipient: string): Promise<string> {
     return this.postJson(this.apiConfig.sendRewardExtraPPP, {
       recipient: recipient
