@@ -97,10 +97,10 @@ export class MusicoinAPI {
 
   getPPPUrl(address: string) {
     let config = ConfigUtils.getConfig();
-    // TODO: Change back to musicoin.org (baseurl) in the production
+    const baseUrl = config.musicoinApi.baseUrl;
     // return "https://musicoin.org/ppp-fallback/" + UrlUtils.createExpiringLink(address, config.playbackLinkTTLMillis) + "/" + config.streaming.legacyToken;
     // This works only with global hostname for ex. musicoin.org - works, 127.0.0.1:3001 - doesn't
-    return "https://musicoin.org/ppp-fallback/" + UrlUtils.createExpiringLink(address, config.playbackLinkTTLMillis) + "/" + config.streaming.legacyToken;
+    return config.musicoinApi.baseUrl + "/ppp-fallback/" + UrlUtils.createExpiringLink(address, config.playbackLinkTTLMillis) + "/" + config.streaming.legacyToken;
   }
 
   updateTrack(
