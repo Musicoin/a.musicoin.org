@@ -1107,23 +1107,20 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         const track_mp3_path = `${config.streaming.org}/${address}/${address}.mp3`;
         if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 4000) {
           console.log("streaming: " + address);
-          require('child_process').exec(`cd ${config.streaming.tracks} && mkdir ${address} && ffmpeg -re -i ${track_mp3_path} -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
+          require('child_process').exec(`cd ${config.streaming.tracks} && mkdir ${address} && ffmpeg -re -i ${track_mp3_path} -codec copy -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
         } else {
           // fetch ipfs resource
-          console.log("fetch ipfs resource: " + address);
-          aria2.open();
-          aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
-          aria2.on("onDownloadError", ([guid]) => {
-            console.log('trackDownloadError: ' + address, guid);
-          });
-          aria2.on("onDownloadStart", ([guid]) => {
-            console.log('trackDownloadStart: ' + address, guid);
-          });
-          aria2.on("onDownloadComplete", ([guid]) => {
-            console.log('trackDownloadComplete: ' + address, guid);
-            aria2.close();
-            console.log("streaming: " + address);
-            require('child_process').exec(`cd ${config.streaming.tracks} && mkdir ${address} && ffmpeg -re -i ${track_mp3_path} -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
+          const resourceUrl = mediaProvider._parseIpfsUrl(license.resourceUrl).ipfsUrl;;
+          console.log("fetch ipfs resource: " + resourceUrl);
+          const addressDir = `${config.streaming.org}/${address}`;
+          if (!fs.existsSync(addressDir)) {
+            fs.mkdirSync(addressDir);
+          }
+
+          const stream = fs.createWriteStream(`${addressDir}/${address}.mp3`);
+          request(resourceUrl).pipe(stream).on('close', () => {
+            console.log("fetch ipfs resource complete: " + address);
+            require('child_process').exec(`cd ${config.streaming.tracks} && mkdir ${address} && ffmpeg -re -i ${track_mp3_path} -codec copy -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
           });
         }
         res.status(500).json({
@@ -1136,6 +1133,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
     }
   });
+
   app.get('/download-all-tracks', functions.adminOnly, function (req, res, next) {
     var allReleasesFile = process.cwd() + '/src/db/verified-tracks.json';
     var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
