@@ -945,7 +945,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         let ip = get_ip.getClientIp(req);
         let cTime = new Date().getTime();
         let cWallet = req.user && req.user.draftProfile
-        ? req.user.profileAddress : req.user ? req.user._id : "Anonymous";
+          ? req.user.profileAddress : req.user ? req.user._id : "Anonymous";
         let uAgent = "" + req.headers['user-agent'];
         let userName = req.user && req.user.draftProfile
           ? req.user.draftProfile.artistName
@@ -1012,6 +1012,130 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.get('/track/:address/:encoded', populateAnonymousUser, async function (req, res, next) {
+    try {
+      const address = FormUtils.defaultString(req.params.address, null);
+      if (!address) {
+        console.log(`Failed to load track page, no address provided`);
+        return res.status(400).json({
+          error: "address is required!"
+        });
+      }
+
+      const license = await jsonAPI.getLicense(address);
+      const release = await Release.findOne({ contractAddress: address, state: 'published' }).exec();
+      if (!license || !release) {
+        console.log(`Failed to load track page for license: ${address}, err: Not found`);
+        return res.status(400).json({
+          error: "not found: " + address
+        });
+      }
+
+      const streamPlaylist = config.streaming.tracks + '/' + address + '/' + 'index.m3u8';
+      const streamPart = config.streaming.tracks + '/' + address + '/' + req.params.encoded;
+      const mimetype = mime.lookup(streamPlaylist);
+
+      if (fs.existsSync(streamPlaylist)) {
+        //file exists
+        const read_last_line = () => {
+          return new Promise((resolve, reject) => {
+            fs.readFile(streamPlaylist, 'utf-8', (err, data) => {
+              if (err) {
+                reject(err)
+              } else {
+                const lines = data.trim().split('\n');
+                const lastLine = lines.slice(-1)[0];
+                resolve(lastLine);
+              }
+            })
+          });
+        }
+        const last_line = await read_last_line();
+        console.log("file last line: " + last_line);
+        if (last_line === "#EXT-X-ENDLIST") {
+          res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
+          res.setHeader('Content-type', mimetype);
+          var filestream = fs.createReadStream(streamPart);
+          filestream.pipe(res);
+
+          // update EasyStore
+          if (req.params.encoded === "ts0.ts") {
+            console.log("update easystore");
+            const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+            let ip = get_ip.getClientIp(req);
+            let cTime = new Date().getTime();
+            let cWallet = req.user && req.user.draftProfile
+              ? req.user.profileAddress : req.user ? req.user._id : "Anonymous";
+            let uAgent = "" + req.headers['user-agent'];
+            let userName = req.user && req.user.draftProfile
+              ? req.user.draftProfile.artistName
+              : req.user ? req.user._id : ip;
+            let user = req.isAuthenticated() ? req.user : req.anonymousUser;
+            let userId = req.isAuthenticated() ? user._id : null;
+            let anonymousUserId = req.isAuthenticated() ? null : user._id;
+
+            EasyStore.findOne({ ip: ip })
+              .exec()
+              .then(ppp => {
+                EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
+                let oldTime = new Date(ppp.date).getTime();
+                oldTime += (config.freePlayDelay);
+                if (cTime > oldTime) {
+                  return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
+                    musicoinApi.pppFromProfile(accountFromLicense, address);
+                    musicoinApi.sendRewardExtraPPP(accountFromLicense);
+                    jsonAPI.addToReleasePlayCount(userId, anonymousUserId, release._id);
+                  })
+                }
+              })
+              .catch(err => {
+                EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
+                return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
+                  musicoinApi.pppFromProfile(accountFromLicense, address);
+                  musicoinApi.sendRewardExtraPPP(accountFromLicense);
+                  jsonAPI.addToReleasePlayCount(userId, anonymousUserId, release._id);
+                })
+              });
+          }
+        } else {
+          res.status(500).json({
+            error: "waiting for track streaming."
+          })
+        }
+      } else {
+        // streaming
+        const track_mp3_path = `${config.streaming.org}/${address}/${address}.mp3`;
+        if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 4000) {
+          console.log("streaming: " + address);
+          require('child_process').exec(`cd ${config.streaming.tracks} && mkdir ${address} && ffmpeg -re -i ${track_mp3_path} -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
+        } else {
+          // fetch ipfs resource
+          console.log("fetch ipfs resource: " + address);
+          aria2.open();
+          aria2.call("addUri", [musicoinApi.getPPPUrl(address)], { continue: "true", out: address + ".mp3", dir: config.streaming.org + '/' + address });
+          aria2.on("onDownloadError", ([guid]) => {
+            console.log('trackDownloadError: ' + address, guid);
+          });
+          aria2.on("onDownloadStart", ([guid]) => {
+            console.log('trackDownloadStart: ' + address, guid);
+          });
+          aria2.on("onDownloadComplete", ([guid]) => {
+            console.log('trackDownloadComplete: ' + address, guid);
+            aria2.close();
+            console.log("streaming: " + address);
+            require('child_process').exec(`cd ${config.streaming.tracks} && mkdir ${address} && ffmpeg -re -i ${track_mp3_path} -codec copy -bsf h264_mp4toannexb -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
+          });
+        }
+        res.status(500).json({
+          error: "waiting for track streaming."
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      })
+    }
+  });
   app.get('/download-all-tracks', functions.adminOnly, function (req, res, next) {
     var allReleasesFile = process.cwd() + '/src/db/verified-tracks.json';
     var allReleases = JSON.parse(fs.readFileSync(allReleasesFile, 'utf-8'));
