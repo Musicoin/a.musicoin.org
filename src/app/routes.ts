@@ -22,6 +22,7 @@ import { RequestCache } from './utils/cached-request';
 import * as FormUtils from './utils/form-utils';
 import * as UrlUtils from './utils/url-utils';
 import * as fs from 'fs';
+const request = require('request');
 var mime = require('mime');
 var functions = require('./routes/routes-functions');
 
@@ -1012,6 +1013,42 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       })
   });
 
+  app.get('/ppp/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, function (req, res) {
+    getPlaybackEligibility(req)
+      .then(playbackEligibility => {
+        if (!playbackEligibility.success) {
+          console.log("Rejecting ppp request: " + JSON.stringify(playbackEligibility));
+          return res.send(new Error("PPP request failed: " + playbackEligibility.message));
+        }
+
+        const context = { contentType: "audio/mpeg" };
+        const l = musicoinApi.getLicenseDetails(req.params.address);
+        const r = Release.findOne({ contractAddress: req.params.address, state: "published" }).exec();
+
+        return Promise.join(l, r, (license, release) => {
+          return getPPPKeyForUser(req, release, license, playbackEligibility)
+            .then(keyResponse => {
+              return mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key)
+                .then(function (result) {
+                  res.sendSeekable(result.stream, {
+                    type: context.contentType,
+                    length: result.headers['content-length']
+                  });
+                })
+            })
+        })
+      })
+      .catch(function (err) {
+        console.error(err.stack);
+        res.status(500).json({
+          error: err.message
+        });
+      });
+    musicoinApi.getAccountFromLicense(req.params.address).then(function (accountFromLicense) {
+      return musicoinApi.sendRewardExtraPPP(accountFromLicense);
+    });
+  });
+
   app.get('/track/:address/:encoded', populateAnonymousUser, async function (req, res, next) {
     try {
       const address = FormUtils.defaultString(req.params.address, null);
@@ -1110,7 +1147,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           require('child_process').exec(`cd ${config.streaming.tracks} && mkdir ${address} && ffmpeg -re -i ${track_mp3_path} -codec copy -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
         } else {
           // fetch ipfs resource
-          const resourceUrl = mediaProvider._parseIpfsUrl(license.resourceUrl).ipfsUrl;;
+          const resourceUrl = `${config.musicoinApi.baseUrl}/ppp/${UrlUtils.createExpiringLink(address, config.playbackLinkTTLMillis)}`;
           console.log("fetch ipfs resource: " + resourceUrl);
           const addressDir = `${config.streaming.org}/${address}`;
           if (!fs.existsSync(addressDir)) {
