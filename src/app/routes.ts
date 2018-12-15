@@ -1143,8 +1143,12 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
         // streaming
         const track_mp3_path = `${config.streaming.org}/${address}/${address}.mp3`;
         if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 4000) {
+          const trackDir = `${config.streaming.tracks}/${address}`;
+          if (!fs.existsSync(trackDir)) {
+            fs.mkdirSync(trackDir);
+          }
           console.log("streaming: " + address);
-          require('child_process').exec(`cd ${config.streaming.tracks} && mkdir ${address} && ffmpeg -re -i ${track_mp3_path} -codec copy -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
+          require('child_process').exec(`ffmpeg -re -i ${track_mp3_path} -codec copy -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
         } else {
           // fetch ipfs resource
           const resourceUrl = `http://localhost:3001/ppp/${UrlUtils.createExpiringLink(address, config.playbackLinkTTLMillis)}`;
