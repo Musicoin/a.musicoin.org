@@ -1061,7 +1061,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       const license = await jsonAPI.getLicense(address);
       const release = await Release.findOne({ contractAddress: address }).exec();
-      if (!license || !release) {
+      if (!license) {
         console.log(`Failed to load track page for license: ${address}, err: Not found`);
         return res.status(400).json({
           error: "not found: " + address
@@ -1142,7 +1142,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       } else {
         // streaming
         const track_mp3_path = `${config.streaming.org}/${address}/${address}.mp3`;
-        if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 4000) {
+        if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 1024*1024) {
           const trackDir = `${config.streaming.tracks}/${address}`;
           if (!fs.existsSync(trackDir)) {
             fs.mkdirSync(trackDir);
