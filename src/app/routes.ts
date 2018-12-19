@@ -1060,7 +1060,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       }
 
       const license = await jsonAPI.getLicense(address);
-      const release = await Release.findOne({ contractAddress: address, state: 'published' }).exec();
+      const release = await Release.findOne({ contractAddress: address }).exec();
       if (!license || !release) {
         console.log(`Failed to load track page for license: ${address}, err: Not found`);
         return res.status(400).json({
