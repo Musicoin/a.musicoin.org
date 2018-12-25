@@ -1074,7 +1074,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
       if (fs.existsSync(streamPlaylist)) {
         //file exists
-        const read_last_line = () => {
+        /*const read_last_line = () => {
           return new Promise((resolve, reject) => {
             fs.readFile(streamPlaylist, 'utf-8', (err, data) => {
               if (err) {
@@ -1086,10 +1086,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
               }
             })
           });
-        }
-        const last_line = await read_last_line();
-        console.log("file last line: " + last_line);
-        if (last_line === "#EXT-X-ENDLIST") {
+        }*/
+        //const last_line = await read_last_line();
+        //console.log("file last line: " + last_line);
           res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
           res.setHeader('Content-type', mimetype);
           var filestream = fs.createReadStream(streamPart);
@@ -1134,15 +1133,16 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 })
               });
           }
-        } else {
-          res.status(500).json({
-            error: "waiting for track streaming."
-          })
-        }
       } else {
         // streaming
         const track_mp3_path = `${config.streaming.org}/${address}/${address}.mp3`;
-        if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 1024*1024) {
+        if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 4*1024) {
+          const mimeType = mime.lookup(track_mp3_path);
+          res.setHeader('Content-disposition', `attachment; filename=${address}.mp3`);
+          res.setHeader('Content-type', mimeType);
+          const filestream = fs.createReadStream(track_mp3_path);
+          filestream.pipe(res);          
+
           const trackDir = `${config.streaming.tracks}/${address}`;
           if (!fs.existsSync(trackDir)) {
             fs.mkdirSync(trackDir);
@@ -1161,6 +1161,11 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           const stream = fs.createWriteStream(`${addressDir}/${address}.mp3`);
           request(resourceUrl).pipe(stream).on('close', () => {
             console.log("fetch ipfs resource complete: " + address);
+            const mimeType = mime.lookup(track_mp3_path);
+            res.setHeader('Content-disposition', `attachment; filename=${address}.mp3`);
+            res.setHeader('Content-type', mimeType);
+            const filestream = fs.createReadStream(track_mp3_path);
+            filestream.pipe(res);  
             const trackDir = `${config.streaming.tracks}/${address}`;
             if (!fs.existsSync(trackDir)) {
               fs.mkdirSync(trackDir);
@@ -1169,9 +1174,6 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             require('child_process').exec(`ffmpeg -re -i ${track_mp3_path} -codec copy -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
           });
         }
-        res.status(500).json({
-          error: "waiting for track streaming."
-        });
       }
     } catch (error) {
       res.status(500).json({
@@ -1327,9 +1329,10 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 otherRecord.session = req.session.id;
                 otherRecord.sessionDate = Date.now();
                 return otherRecord.save();
-              }
+              }else{
               console.log(`Different session with same IPs: session changed too quickly: req.session: ${req.session.id}, recordSession: "Anonymous Session", get_ip.getClientIp(req): ${get_ip.getClientIp(req)}, msSinceLastSession: ${diff}`);
-              return null;
+              return otherRecord;
+              }
             });
         }
       })
