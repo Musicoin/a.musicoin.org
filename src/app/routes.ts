@@ -1044,9 +1044,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
           error: err.message
         });
       });
-    musicoinApi.getAccountFromLicense(req.params.address).then(function (accountFromLicense) {
+    /*musicoinApi.getAccountFromLicense(req.params.address).then(function (accountFromLicense) {
       return musicoinApi.sendRewardExtraPPP(accountFromLicense);
-    });
+    });*/
   });
 
   app.get('/track/:address/:encoded', populateAnonymousUser, async function (req, res, next) {
@@ -1360,7 +1360,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
 
         return User.findOne({ profileAddress: release.artistAddress })
           .then(artist => {
-            const verifiedArtist = artist && artist.verified;
+            const verifiedArtist = artist;
             const hasNoFreePlays = false; //user.freePlaysRemaining <= 0; This should technically never happen
             const payFromProfile = req.isAuthenticated() && (!verifiedArtist);
             const b = payFromProfile
