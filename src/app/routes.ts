@@ -1049,7 +1049,7 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
     });*/
   });
 
-  app.get('/track/:address/:encoded', populateAnonymousUser, async function (req, res, next) {
+  app.get('/track/:address/:encoded', populateAnonymousUser, async function (req, res) {
     try {
       const address = FormUtils.defaultString(req.params.address, null);
       if (!address) {
@@ -1073,75 +1073,59 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
       const mimetype = mime.lookup(streamPlaylist);
 
       if (fs.existsSync(streamPlaylist)) {
-        //file exists
-        /*const read_last_line = () => {
-          return new Promise((resolve, reject) => {
-            fs.readFile(streamPlaylist, 'utf-8', (err, data) => {
-              if (err) {
-                reject(err)
-              } else {
-                const lines = data.trim().split('\n');
-                const lastLine = lines.slice(-1)[0];
-                resolve(lastLine);
-              }
-            })
-          });
-        }*/
-        //const last_line = await read_last_line();
-        //console.log("file last line: " + last_line);
-          res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
-          res.setHeader('Content-type', mimetype);
-          var filestream = fs.createReadStream(streamPart);
-          filestream.pipe(res);
+        res.setHeader('Content-disposition', 'attachment; filename=' + req.params.encoded);
+        res.setHeader('Content-type', mimetype);
+        var filestream = fs.createReadStream(streamPart);
+        filestream.pipe(res);
 
-          // update EasyStore
-          if (req.params.encoded === "ts0.ts") {
-            console.log("update easystore");
-            const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-            let ip = get_ip.getClientIp(req);
-            let cTime = new Date().getTime();
-            let cWallet = req.user && req.user.draftProfile
-              ? req.user.profileAddress : req.user ? req.user._id : "Anonymous";
-            let uAgent = "" + req.headers['user-agent'];
-            let userName = req.user && req.user.draftProfile
-              ? req.user.draftProfile.artistName
-              : req.user ? req.user._id : ip;
-            let user = req.isAuthenticated() ? req.user : req.anonymousUser;
-            let userId = req.isAuthenticated() ? user._id : null;
-            let anonymousUserId = req.isAuthenticated() ? null : user._id;
+        // update EasyStore
+        if (req.params.encoded === "ts0.ts") {
+          console.log("update easystore");
+          const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+          let ip = get_ip.getClientIp(req);
+          let cTime = new Date().getTime();
+          let cWallet = req.user && req.user.draftProfile
+            ? req.user.profileAddress : req.user ? req.user._id : "Anonymous";
+          let uAgent = "" + req.headers['user-agent'];
+          let userName = req.user && req.user.draftProfile
+            ? req.user.draftProfile.artistName
+            : req.user ? req.user._id : ip;
+          let user = req.isAuthenticated() ? req.user : req.anonymousUser;
+          let userId = req.isAuthenticated() ? user._id : null;
+          let anonymousUserId = req.isAuthenticated() ? null : user._id;
 
-            EasyStore.findOne({ ip: ip })
-              .exec()
-              .then(ppp => {
-                EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
-                let oldTime = new Date(ppp.date).getTime();
-                oldTime += (config.freePlayDelay);
-                if (cTime > oldTime) {
-                  return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
-                    musicoinApi.pppFromProfile(accountFromLicense, address);
-                    musicoinApi.sendRewardExtraPPP(accountFromLicense);
-                    jsonAPI.addToReleasePlayCount(userId, anonymousUserId, release._id);
-                  })
-                }
-              })
-              .catch(err => {
-                EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
+          EasyStore.findOne({ ip: ip })
+            .exec()
+            .then(ppp => {
+              EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
+              let oldTime = new Date(ppp.date).getTime();
+              oldTime += (config.freePlayDelay);
+              if (cTime > oldTime) {
                 return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
                   musicoinApi.pppFromProfile(accountFromLicense, address);
                   musicoinApi.sendRewardExtraPPP(accountFromLicense);
                   jsonAPI.addToReleasePlayCount(userId, anonymousUserId, release._id);
                 })
-              });
-          }
+              }
+            })
+            .catch(err => {
+              EasyStore.findOneAndUpdate({ ip: ip, user: userName, wallet: cWallet, track: address, agent: uAgent, date: cTime }, {}, options).exec();
+              return musicoinApi.getAccountFromLicense(address).then(function (accountFromLicense) {
+                musicoinApi.pppFromProfile(accountFromLicense, address);
+                musicoinApi.sendRewardExtraPPP(accountFromLicense);
+                jsonAPI.addToReleasePlayCount(userId, anonymousUserId, release._id);
+              })
+            });
+        }
       } else {
         // streaming
         const track_mp3_path = `${config.streaming.org}/${address}/${address}.mp3`;
-        if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 4*1024) {
+        if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 4 * 1024) {
           const mimeType = mime.lookup(track_mp3_path);
           res.setHeader('Content-disposition', `attachment; filename=${address}.mp3`);
           res.setHeader('Content-type', mimeType);
           const filestream = fs.createReadStream(track_mp3_path);
-          filestream.pipe(res);          
+          filestream.pipe(res);
 
           const trackDir = `${config.streaming.tracks}/${address}`;
           if (!fs.existsSync(trackDir)) {
@@ -1165,13 +1149,98 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
             res.setHeader('Content-disposition', `attachment; filename=${address}.mp3`);
             res.setHeader('Content-type', mimeType);
             const filestream = fs.createReadStream(track_mp3_path);
-            filestream.pipe(res);  
+            filestream.pipe(res);
             const trackDir = `${config.streaming.tracks}/${address}`;
             if (!fs.existsSync(trackDir)) {
               fs.mkdirSync(trackDir);
             }
             console.log("streaming: " + address);
             require('child_process').exec(`ffmpeg -re -i ${track_mp3_path} -codec copy -map 0 -f segment -segment_time ${config.streaming.segments} -segment_format mpegts -segment_list ${streamPlaylist} -segment_list_type m3u8 ${config.streaming.tracks}/${address}/ts%d.ts`);
+          });
+        }
+      }
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      })
+    }
+  });
+
+  app.get('/ppp/v1/:address', populateAnonymousUser, sendSeekable, resolveExpiringLink, async function (req, res) {
+    const address = req.params.address;
+    try {
+      const license = await musicoinApi.getLicenseDetails(address);
+      const keyResponse = await musicoinApi.getKey(address);
+      const resource = await mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key);
+      res.sendSeekable(resource.stream, {
+        type: { contentType: "audio/mpeg" },
+        length: resource.headers['content-length']
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      })
+    }
+  });
+
+  app.get('/track/v1/:address/:encoded', populateAnonymousUser, async function (req, res) {
+    try {
+      const address = req.params.address;
+      const encoded = req.params.encoded;
+      // find the release
+      const release = await Release.findOne({ contractAddress: address }).exec();
+      if (!release) {
+        const errorMsg = `not found: ${address}`;
+        console.log(errorMsg);
+        return res.status(400).json({
+          error: errorMsg
+        });
+      }
+      // media path
+      const tracksDir = `${config.streaming.tracks}/${address}`;
+      const streamPart = `${tracksDir}/${encoded}`;
+      const streamPlaylist = `${tracksDir}/index.m3u8`;
+      const mimetype = mime.lookup(streamPlaylist);
+      // return the streaming if it exists.
+      if (fs.existsSync(streamPart)) {
+        console.log("response m3u8");
+        res.setHeader('Content-disposition', 'attachment; filename=' + encoded);
+        res.setHeader('Content-type', mimetype);
+        var filestream = fs.createReadStream(streamPart);
+        filestream.pipe(res);
+        // add release plays
+        if (req.params.encoded === "ts0.ts") {
+          console.log("update release plays");
+        }
+      } else {
+        // streaming
+        const track_mp3_dir = `${config.streaming.org}/${address}`;
+        const track_mp3_path = `${track_mp3_dir}/${address}.mp3`;
+        const mimeType = mime.lookup(track_mp3_path);
+        res.setHeader('Content-disposition', `attachment; filename=${address}.mp3`);
+        res.setHeader('Content-type', mimeType);
+
+        if (fs.existsSync(track_mp3_path) && fs.statSync(track_mp3_path).size > 4 * 1024) {
+          console.log("response mp3");
+          const filestream = fs.createReadStream(track_mp3_path);
+          filestream.pipe(res);
+        } else {
+
+          // fetch ipfs resource
+          const license = await musicoinApi.getLicenseDetails(address);
+          const keyResponse = await musicoinApi.getKey(address);
+          const resource = await mediaProvider.getIpfsResource(license.resourceUrl, () => keyResponse.key);
+          console.log("fetch ipfs resource: ", address);
+
+          if (!fs.existsSync(track_mp3_dir)) {
+            fs.mkdirSync(track_mp3_dir);
+          }
+          const stream = fs.createWriteStream(track_mp3_path);
+
+          resource.stream.pipe(stream).on('close', () => {
+            console.log("fetch ipfs resource complete: " + address);
+            const filestream = fs.createReadStream(track_mp3_path);
+            filestream.pipe(res);
           });
         }
       }
@@ -1329,9 +1398,9 @@ export function configure(app, passport, musicoinApi: MusicoinAPI, mediaProvider
                 otherRecord.session = req.session.id;
                 otherRecord.sessionDate = Date.now();
                 return otherRecord.save();
-              }else{
-              console.log(`Different session with same IPs: session changed too quickly: req.session: ${req.session.id}, recordSession: "Anonymous Session", get_ip.getClientIp(req): ${get_ip.getClientIp(req)}, msSinceLastSession: ${diff}`);
-              return otherRecord;
+              } else {
+                console.log(`Different session with same IPs: session changed too quickly: req.session: ${req.session.id}, recordSession: "Anonymous Session", get_ip.getClientIp(req): ${get_ip.getClientIp(req)}, msSinceLastSession: ${diff}`);
+                return otherRecord;
               }
             });
         }
